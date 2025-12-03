@@ -3,13 +3,13 @@ const Schema = Joi.object({
   apellidos: Joi.string().min(3).required(),
   email: Joi.string().email().required(),
   password: Joi.string()
-    .min(6)
+    .min(8)
     .required()
-    .pattern(
+    .regex(
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
     ),
-  password_confirm: Joi.string().min(6).required().equal(Joi.ref("password")),
-  telefono: Joi.string().min(3).required(),
+  password_confirm: Joi.string().min(8).required().valid(Joi.ref("password")),
+  telefono: Joi.string().min(9).allow("").optional(),
 });
 
 const validateRegisterForm = () => {
@@ -44,7 +44,7 @@ const validateRegisterForm = () => {
     }
 
     if (isValid) {
-      console.log("Formulario válido, enviando...");
+      form.submit();
     }
   });
 };
