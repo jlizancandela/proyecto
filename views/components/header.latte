@@ -1,0 +1,18 @@
+<header>
+    <div>
+        <h1>Peluqueria</h1>
+    </div>
+    <nav>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="">About</a></li>
+            <li><a href="">Contact</a></li>
+        </ul>
+    </nav>
+    <div class="user-menu">
+        <span n:if="isset($_SESSION['user_id'])">Hola, {$_SESSION['name']}</span>
+        <a href="/logout" n:if="isset($_SESSION['user_id'])">Cerrar sesión</a>
+        <a href="/login" n:if="!isset($_SESSION['user_id'])">Login</a>
+        <a href="/register" n:if="!isset($_SESSION['user_id'])">Register</a>
+    </div>
+</header>

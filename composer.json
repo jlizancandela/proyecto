@@ -1,0 +1,30 @@
+{
+    "require": {
+        "vlucas/phpdotenv": "^5.6",
+        "respect/validation": "^2.4",
+        "nikic/fast-route": "^1.3",
+        "latte/latte": "^3.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Reservas\\": "src/Reservas/",
+            "Servicios\\": "src/Servicios/",
+            "Especialistas\\": "src/Especialistas/",
+            "Usuarios\\": "src/Usuarios/",
+            "Shared\\": "src/Shared/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "require-dev": {
+        "pestphp/pest": "^4.1"
+    },
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    }
+}
