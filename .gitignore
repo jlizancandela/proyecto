@@ -22,10 +22,13 @@ yarn-debug.log*
 yarn-error.log*
 
 # Temporary files
-/temp/
 /tmp/
 *.tmp
 *.cache
+
+# Temp cache contents (but keep the directory)
+/temp/cache/*
+!/temp/cache/.gitkeep
 
 # Build outputs
 /build/
