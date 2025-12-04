@@ -1,18 +1,55 @@
 <header>
-    <div>
-        <h1>Peluqueria</h1>
-    </div>
-    <nav>
-        <ul>
-            <li><a href="/">Home</a></li>
-            <li><a href="">About</a></li>
-            <li><a href="">Contact</a></li>
+  <nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <div class="container-fluid position-relative">
+      <a class="navbar-brand" href="/">
+        <img
+          src="public/images/logo.png"
+          alt="Logo"
+          width="30"
+          height="24"
+          class="d-inline-block align-text-top"
+        />
+        Peluquería
+      </a>
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-bs-toggle="collapse"
+        data-bs-target="#navbarNav"
+        aria-controls="navbarNav"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav navbar-nav-centered">
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="/">Inicio</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/servicios">Servicios</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/reservas">Reservas</a>
+          </li>
         </ul>
-    </nav>
-    <div class="user-menu">
-        <span n:if="isset($_SESSION['user_id'])">Hola, {$_SESSION['name']}</span>
-        <a href="/logout" n:if="isset($_SESSION['user_id'])">Cerrar sesión</a>
-        <a href="/login" n:if="!isset($_SESSION['user_id'])">Login</a>
-        <a href="/register" n:if="!isset($_SESSION['user_id'])">Register</a>
+
+        <hr class="d-lg-none my-2" />
+
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link d-lg-none" href="/login">Iniciar Sesión</a>
+            <a class="btn btn-outline-primary me-2 d-none d-lg-inline-block" href="/login">
+              Iniciar Sesión
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link d-lg-none" href="/register">Registrarse</a>
+            <a class="btn btn-primary d-none d-lg-inline-block" href="/register">Registrarse</a>
+          </li>
+        </ul>
+      </div>
     </div>
+  </nav>
 </header>

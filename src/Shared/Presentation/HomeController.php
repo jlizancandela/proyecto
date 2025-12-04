@@ -17,7 +17,7 @@ class HomeController
     public function index(): string
     {
         return $this->latte->renderToString(
-            __DIR__ . '/../../../views/layouts/Home.latte',
+            __DIR__ . '/../../../views/pages/Home.latte',
             []
         );
     }

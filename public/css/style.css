@@ -1,162 +1,118 @@
-/* ============================================
-   VARIABLES CSS
-   ============================================ */
-:root {
-    /* Colores principales */
-    --primary-color: #667eea;
-    --primary-dark: #5568d3;
-    --secondary-color: #764ba2;
-    
-    /* Colores de fondo */
-    --bg-light: #f8f9fa;
-    --bg-white: #ffffff;
-    --bg-dark: #1a1a2e;
-    
-    /* Colores de texto */
-    --text-primary: #2d3748;
-    --text-secondary: #718096;
-    --text-light: #a0aec0;
-    
-    /* Espaciado */
-    --spacing-xs: 0.5rem;
-    --spacing-sm: 1rem;
-    --spacing-md: 1.5rem;
-    --spacing-lg: 2rem;
-    --spacing-xl: 3rem;
-    
-    /* Bordes */
-    --radius-sm: 0.25rem;
-    --radius-md: 0.5rem;
-    --radius-lg: 1rem;
-    
-    /* Sombras */
-    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
-    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
-    --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.2);
-    
-    /* Transiciones */
-    --transition-fast: 0.15s ease;
-    --transition-normal: 0.3s ease;
-    --transition-slow: 0.5s ease;
+/* 
+ * Estilos personalizados para la Landing Page
+ * Las variables de color y utilidades de Bootstrap están en bootstrap-custom.css
+ */
+
+/* Navbar - Menú Centrado */
+@media (min-width: 992px) {
+  .navbar-nav-centered {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+  }
 }
 
-/* ============================================
-   RESET Y BASE
-   ============================================ */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+/* Landing Page Container */
+.landing-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 2rem;
 }
 
-html {
-    font-size: 16px;
-    scroll-behavior: smooth;
+/* Hero Section */
+.hero-bg {
+  aspect-ratio: 16 / 9;
+  min-height: 600px;
+  background-image: url('../images/hero-salon.avif');
+  background-size: cover;
+  background-position: center;
 }
 
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    color: var(--text-primary);
-    background: var(--bg-light);
-    line-height: 1.6;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+.hero-overlay {
+  background-color: rgba(0, 0, 0, 0.4);
 }
 
-/* ============================================
-   TIPOGRAFÍA
-   ============================================ */
-h1, h2, h3, h4, h5, h6 {
-    font-weight: 600;
-    line-height: 1.2;
-    margin-bottom: var(--spacing-sm);
+.hero-content {
+  max-width: 800px;
+  padding: 2rem;
 }
 
-h1 { font-size: 2.5rem; }
-h2 { font-size: 2rem; }
-h3 { font-size: 1.75rem; }
-h4 { font-size: 1.5rem; }
-h5 { font-size: 1.25rem; }
-h6 { font-size: 1rem; }
-
-p {
-    margin-bottom: var(--spacing-sm);
+.hero-title {
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  font-size: clamp(2rem, 5vw, 3.5rem);
 }
 
-/* ============================================
-   UTILIDADES
-   ============================================ */
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 var(--spacing-md);
+.hero-subtitle {
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  font-size: clamp(1rem, 2.5vw, 1.25rem);
 }
 
-.text-center { text-align: center; }
-.text-right { text-align: right; }
-.text-left { text-align: left; }
+/* Responsive Hero Section */
 
-.mt-1 { margin-top: var(--spacing-xs); }
-.mt-2 { margin-top: var(--spacing-sm); }
-.mt-3 { margin-top: var(--spacing-md); }
-.mt-4 { margin-top: var(--spacing-lg); }
-
-.mb-1 { margin-bottom: var(--spacing-xs); }
-.mb-2 { margin-bottom: var(--spacing-sm); }
-.mb-3 { margin-bottom: var(--spacing-md); }
-.mb-4 { margin-bottom: var(--spacing-lg); }
-
-/* ============================================
-   BOTONES
-   ============================================ */
-.btn {
-    display: inline-block;
-    padding: var(--spacing-sm) var(--spacing-md);
-    font-size: 1rem;
-    font-weight: 500;
-    text-align: center;
-    text-decoration: none;
-    border: none;
-    border-radius: var(--radius-md);
-    cursor: pointer;
-    transition: all var(--transition-normal);
+/* Móvil pequeño (hasta 576px) */
+@media (max-width: 575.98px) {
+  .hero-bg {
+    min-height: 400px;
+    aspect-ratio: 4 / 5;
+    margin: 0.5rem !important;
+  }
+  
+  .hero-content {
+    padding: 1rem;
+  }
+  
+  .hero-title {
+    margin-bottom: 1rem !important;
+  }
+  
+  .hero-subtitle {
+    margin-bottom: 1.5rem !important;
+  }
+  
+  .btn-lg {
+    padding: 0.75rem 2rem !important;
+    font-size: 1rem !important;
+  }
 }
 
-.btn-primary {
-    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-    color: white;
+/* Móvil (576px - 767px) */
+@media (min-width: 576px) and (max-width: 767.98px) {
+  .hero-bg {
+    min-height: 450px;
+    aspect-ratio: 3 / 4;
+  }
+  
+  .hero-content {
+    padding: 1.5rem;
+  }
 }
 
-.btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-lg);
+/* Tablet (768px - 991px) */
+@media (min-width: 768px) and (max-width: 991.98px) {
+  .hero-bg {
+    min-height: 500px;
+    aspect-ratio: 16 / 10;
+  }
+  
+  .hero-content {
+    padding: 2rem;
+  }
 }
 
-/* ============================================
-   CARDS
-   ============================================ */
-.card {
-    background: var(--bg-white);
-    border-radius: var(--radius-lg);
-    padding: var(--spacing-lg);
-    box-shadow: var(--shadow-md);
-    transition: all var(--transition-normal);
+/* Desktop pequeño (992px - 1199px) */
+@media (min-width: 992px) and (max-width: 1199.98px) {
+  .hero-bg {
+    min-height: 550px;
+  }
 }
 
-.card:hover {
-    transform: translateY(-5px);
-    box-shadow: var(--shadow-lg);
-}
-
-/* ============================================
-   RESPONSIVE
-   ============================================ */
-@media (max-width: 768px) {
-    html {
-        font-size: 14px;
-    }
-    
-    .container {
-        padding: 0 var(--spacing-sm);
-    }
+/* Desktop grande (1200px+) */
+@media (min-width: 1200px) {
+  .hero-bg {
+    min-height: 650px;
+  }
+  
+  .hero-content {
+    padding: 3rem;
+  }
 }

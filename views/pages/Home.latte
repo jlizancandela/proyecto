@@ -1,0 +1,84 @@
+{layout '../layouts/landpage.latte'} 
+{block title} Inicio {/block} 
+{block scripts} {/block} 
+{block content}
+{include '../components/hero.latte'}
+
+<!-- Sección de demostración de colores Bootstrap -->
+<div class="container my-5">
+  <h2 class="text-center mb-4 text-primary">Nuestros Servicios</h2>
+  
+  <div class="row g-4">
+    <div class="col-md-4">
+      <div class="card h-100 border-0 shadow-sm">
+        <div class="card-body">
+          <div class="d-flex align-items-center mb-3">
+            <span class="badge bg-primary rounded-pill px-3 py-2">Destacado</span>
+          </div>
+          <h5 class="card-title text-primary">Corte y Peinado</h5>
+          <p class="card-text text-secondary">
+            Transforma tu look con nuestros expertos estilistas
+          </p>
+          <a href="#" class="btn btn-outline-primary">Más información</a>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-md-4">
+      <div class="card h-100 border-0 shadow-sm">
+        <div class="card-body">
+          <div class="d-flex align-items-center mb-3">
+            <span class="badge bg-secondary rounded-pill px-3 py-2">Popular</span>
+          </div>
+          <h5 class="card-title text-primary">Coloración</h5>
+          <p class="card-text text-secondary">
+            Dale vida a tu cabello con colores vibrantes y naturales
+          </p>
+          <a href="#" class="btn btn-outline-primary">Más información</a>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-md-4">
+      <div class="card h-100 border-0 shadow-sm">
+        <div class="card-body">
+          <div class="d-flex align-items-center mb-3">
+            <span class="badge bg-success rounded-pill px-3 py-2">Nuevo</span>
+          </div>
+          <h5 class="card-title text-primary">Tratamientos</h5>
+          <p class="card-text text-secondary">
+            Cuida y revitaliza tu cabello con nuestros tratamientos premium
+          </p>
+          <a href="#" class="btn btn-outline-primary">Más información</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Ejemplo de alertas con colores personalizados -->
+  <div class="mt-5">
+    <div class="alert alert-primary d-flex align-items-center" role="alert">
+      <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
+        <use xlink:href="#info-fill"/>
+      </svg>
+      <div>
+        ¡Reserva ahora y obtén un 10% de descuento en tu primera visita!
+      </div>
+    </div>
+  </div>
+  
+  <!-- Ejemplo de botones con diferentes variantes -->
+  <div class="mt-4 text-center">
+    <h4 class="mb-3">Explora nuestros colores personalizados</h4>
+    <button type="button" class="btn btn-primary m-1">Primary</button>
+    <button type="button" class="btn btn-secondary m-1">Secondary</button>
+    <button type="button" class="btn btn-success m-1">Success</button>
+    <button type="button" class="btn btn-danger m-1">Danger</button>
+    <button type="button" class="btn btn-warning m-1">Warning</button>
+    <button type="button" class="btn btn-info m-1">Info</button>
+    <button type="button" class="btn btn-light m-1">Light</button>
+    <button type="button" class="btn btn-dark m-1">Dark</button>
+  </div>
+</div>
+{/block}
+
