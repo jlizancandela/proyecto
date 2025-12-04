@@ -37,7 +37,7 @@
 
         <hr class="d-lg-none my-2" />
 
-        <ul class="navbar-nav ms-auto">
+        <ul n:if="!isset($_SESSION['user_id'])" class="navbar-nav ms-auto">
           <li class="nav-item">
             <a class="nav-link d-lg-none" href="/login">Iniciar Sesión</a>
             <a class="btn btn-outline-primary me-2 d-none d-lg-inline-block" href="/login">
@@ -47,6 +47,22 @@
           <li class="nav-item">
             <a class="nav-link d-lg-none" href="/register">Registrarse</a>
             <a class="btn btn-primary d-none d-lg-inline-block" href="/register">Registrarse</a>
+          </li>
+        </ul>
+
+        <!-- Menú para usuarios logueados -->
+        <ul n:if="isset($_SESSION['user_id'])" class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link d-lg-none" href="/profile">Perfil</a>
+            <a class="btn btn-outline-primary me-2 d-none d-lg-inline-block" href="/profile">
+              Perfil
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link d-lg-none" href="/logout">Cerrar Sesión</a>
+            <a class="btn btn-outline-secondary d-none d-lg-inline-block" href="/logout">
+              Cerrar Sesión
+            </a>
           </li>
         </ul>
       </div>

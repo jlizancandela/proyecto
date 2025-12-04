@@ -1,9 +1,15 @@
 DROP DATABASE IF EXISTS sistema_reservas;
 
 CREATE DATABASE sistema_reservas CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+CREATE USER IF NOT EXISTS 'db'@'%' IDENTIFIED BY 'db';
+
+GRANT ALL PRIVILEGES ON sistema_reservas.* TO 'db'@'%';
+
+FLUSH PRIVILEGES;
+
 USE sistema_reservas;
 
--- Asegurar que la conexión use UTF-8 antes de cualquier operación
 SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci;
 SET CHARACTER SET utf8mb4;
 SET character_set_client = utf8mb4;
