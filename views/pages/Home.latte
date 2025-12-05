@@ -1,9 +1,7 @@
-{layout '../layouts/landpage.latte'} 
-{block title} Inicio {/block} 
-{block scripts} {/block} 
-{block content}
+{layout '../layouts/landpage.latte'} {block title} Inicio {/block} {block scripts} {/block} {block
+content}
 <div class="sections-wrapper">
-  {include '../components/hero.latte'}
-  {include '../components/whoami.latte'}
+  {include '../components/hero.latte'} {include '../components/whoami.latte'} {include
+  '../components/services.latte'} {include '../components/contacto.latte'}
 </div>
 {/block}

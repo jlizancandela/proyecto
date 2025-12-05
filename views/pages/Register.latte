@@ -1,118 +1,109 @@
-{layout '../layouts/landpage.latte'}
-
-{block title}
-    Registro
-{/block}
-
-{block scripts}
-    <script type="module" src="public/js/registerForm.js?v=2" defer></script>
-{/block}
-
-{block content}
+{layout '../layouts/landpage.latte'} {block title} Registro {/block} {block scripts}
+<script type="module" src="/public/js/registerForm.js?v=2" defer></script>
+{/block} {block content}
 <div class="container">
-    <div class="row justify-content-center align-items-center min-vh-100">
-        <div class="col-md-6 col-lg-5">
-            <div class="card shadow-lg">
-                <div class="card-body p-4">
-                    <h2 class="text-center mb-4">Crear cuenta</h2>
-                    
-                    <form action="/register" method="post" id="register-form">
-                        <div class="mb-3">
-                            <label for="nombre" class="form-label">Nombre *</label>
-                            <input 
-                                type="text" 
-                                name="nombre" 
-                                id="nombre" 
-                                required 
-                                placeholder="Tu nombre"
-                                autocomplete="given-name"
-                                class="form-control"
-                            >
-                            <div id="nombre-error" class="form-text text-danger"></div>
-                        </div>
+  <div class="row justify-content-center align-items-center min-vh-100">
+    <div class="col-md-6 col-lg-5">
+      <div class="card shadow-lg">
+        <div class="card-body p-4">
+          <h2 class="text-center mb-4">Crear cuenta</h2>
 
-                        <div class="mb-3">
-                            <label for="apellidos" class="form-label">Apellidos *</label>
-                            <input 
-                                type="text" 
-                                name="apellidos" 
-                                id="apellidos" 
-                                required 
-                                placeholder="Tus apellidos"
-                                autocomplete="family-name"
-                                class="form-control"
-                            >
-                            <div id="apellidos-error" class="form-text text-danger"></div>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label for="email" class="form-label">Email *</label>
-                            <input 
-                                type="email" 
-                                name="email" 
-                                id="email" 
-                                required 
-                                placeholder="tu@email.com"
-                                autocomplete="email"
-                                class="form-control"
-                            >
-                            <div id="email-error" class="form-text text-danger"></div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="telefono" class="form-label">Teléfono</label>
-                            <input 
-                                type="tel" 
-                                name="telefono" 
-                                id="telefono" 
-                                placeholder="612345678"
-                                autocomplete="tel"
-                                class="form-control"
-                            >
-                            <div id="telefono-error" class="form-text text-danger"></div>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label for="password" class="form-label">Contraseña *</label>
-                            <input 
-                                type="password" 
-                                name="password" 
-                                id="password" 
-                                required
-                                placeholder="Mínimo 8 caracteres"
-                                autocomplete="new-password"
-                                minlength="8"
-                                class="form-control"
-                            >
-                            <div id="password-error" class="form-text text-danger"></div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="password_confirm" class="form-label">Confirmar contraseña *</label>
-                            <input 
-                                type="password" 
-                                name="password_confirm" 
-                                id="password_confirm" 
-                                required
-                                placeholder="Repite tu contraseña"
-                                autocomplete="new-password"
-                                minlength="8"
-                                class="form-control"
-                            >
-                            <div id="password-confirm-error" class="form-text text-danger"></div>
-                        </div>
-                        
-                        <button type="submit" class="btn btn-primary w-100 mb-3">
-                            Registrarse
-                        </button>
-
-                        <p class="text-center mb-0">
-                            ¿Ya tienes cuenta? <a href="/login">Inicia sesión</a>
-                        </p>
-                    </form>
-                </div>
+          <form action="/register" method="post" id="register-form">
+            <div class="mb-3">
+              <label for="nombre" class="form-label">Nombre *</label>
+              <input
+                type="text"
+                name="nombre"
+                id="nombre"
+                required
+                placeholder="Tu nombre"
+                autocomplete="given-name"
+                class="form-control"
+              />
+              <div id="nombre-error" class="form-text text-danger"></div>
             </div>
+
+            <div class="mb-3">
+              <label for="apellidos" class="form-label">Apellidos *</label>
+              <input
+                type="text"
+                name="apellidos"
+                id="apellidos"
+                required
+                placeholder="Tus apellidos"
+                autocomplete="family-name"
+                class="form-control"
+              />
+              <div id="apellidos-error" class="form-text text-danger"></div>
+            </div>
+
+            <div class="mb-3">
+              <label for="email" class="form-label">Email *</label>
+              <input
+                type="email"
+                name="email"
+                id="email"
+                required
+                placeholder="tu@email.com"
+                autocomplete="email"
+                class="form-control"
+              />
+              <div id="email-error" class="form-text text-danger"></div>
+            </div>
+
+            <div class="mb-3">
+              <label for="telefono" class="form-label">Teléfono</label>
+              <input
+                type="tel"
+                name="telefono"
+                id="telefono"
+                placeholder="612345678"
+                autocomplete="tel"
+                class="form-control"
+              />
+              <div id="telefono-error" class="form-text text-danger"></div>
+            </div>
+
+            <div class="mb-3">
+              <label for="password" class="form-label">Contraseña *</label>
+              <input
+                type="password"
+                name="password"
+                id="password"
+                required
+                placeholder="Mínimo 8 caracteres"
+                autocomplete="new-password"
+                minlength="8"
+                class="form-control"
+              />
+              <div id="password-error" class="form-text text-danger"></div>
+            </div>
+
+            <div class="mb-3">
+              <label for="password-confirm" class="form-label">Confirmar contraseña *</label>
+              <input
+                type="password"
+                name="password-confirm"
+                id="password-confirm"
+                required
+                placeholder="Repite tu contraseña"
+                autocomplete="new-password"
+                minlength="8"
+                class="form-control"
+              />
+              <div id="password-confirm-error" class="form-text text-danger"></div>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100 mb-3">Registrarse</button>
+
+            <p class="text-center mb-0">
+              ¿Ya tienes cuenta?
+              <a href="/login">Inicia sesión</a>
+            </p>
+          </form>
         </div>
+      </div>
     </div>
+  </div>
 </div>
 {/block}

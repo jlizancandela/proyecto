@@ -93,9 +93,9 @@ class AuthController
         }
 
         $password = $_POST['password'] ?? '';
-        $password_confirm = $_POST['password_confirm'] ?? '';
+        $passwordConfirm = $_POST['password-confirm'] ?? '';
 
-        if ($password !== $password_confirm) {
+        if ($password !== $passwordConfirm) {
             $_SESSION['register_error'] = 'Las contraseñas no coinciden';
             header('Location: /register');
             exit;

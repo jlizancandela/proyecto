@@ -1,0 +1,18 @@
+<div class="container d-flex flex-column gap-5">
+  <div class="section-title text-center">
+    <h3>Nuestros servicios</h3>
+    <p>Descubre la gama de servicios que ofrecemos para realzar tu belleza y confianza.</p>
+  </div>
+
+  <div class="container d-flex justify-content-between flex-wrap gap-3">
+    {include 'card.latte', image: '../public/images/corte.avif', title: 'Cortes de pelo',
+    description: 'Estilos modernos y clásicos, adaptados a tu personalidad y tipo de rostro.'}
+    {include 'card.latte', image: '../public/images/coloracion.avif', title: 'Coloración',
+    description: 'Desde tintes completos hasta mechas y balayage con productos profesionales.'}
+    {include 'card.latte', image: '../public/images/tratamientos.avif', title: 'Tratamientos',
+    description: 'Hidratación profunda,keratina y otros tratamientos para un cabello sano y
+    brillante.'}
+    {include 'card.latte', image: '../public/images/peinados.avif', title: 'Peinados',
+    description: 'Looks para eventos especiales,bodas o simplemente para lucir espectacular.'}
+  </div>
+</div>
