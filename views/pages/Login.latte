@@ -1,138 +1,129 @@
-{layout '../layouts/landpage.latte'}
-
-{block title}
-    Iniciar Sesión
-{/block}
-
-{block content}
+{layout '../layouts/landpage.latte'} {block title} Iniciar Sesión {/block} {block content}
 <div class="login-container">
-    <div class="login-card">
-        <h2>Iniciar Sesión</h2>
-        
-        <div n:if="isset($error)" class="alert alert-error">
-            {$error}
-        </div>
-        
-        <form action="/login" method="post" class="login-form">
-            <div class="form-group">
-                <label for="email">Email</label>
-                <input 
-                    type="email" 
-                    name="email" 
-                    id="email" 
-                    required 
-                    placeholder="tu@email.com"
-                    autocomplete="email"
-                >
-            </div>
-            
-            <div class="form-group">
-                <label for="password">Contraseña</label>
-                <input 
-                    type="password" 
-                    name="password" 
-                    id="password" 
-                    required
-                    placeholder="••••••••"
-                    autocomplete="current-password"
-                >
-            </div>
-            
-            <button type="submit" class="btn btn-primary btn-block">
-                Iniciar Sesión
-            </button>
+  <div class="login-card">
+    <h2>Iniciar Sesión</h2>
 
-            <p class="text-center" style="margin-top: var(--spacing-md);">
-                ¿No tienes cuenta? <a href="/register">Regístrate</a>
-            </p>
-        </form>
-    </div>
+    <div n:if="isset($error)" class="alert alert-error">{$error}</div>
+
+    <form action="/login" method="post" class="login-form">
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input
+          type="email"
+          name="email"
+          id="email"
+          required
+          placeholder="tu@email.com"
+          autocomplete="email"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="password">Contraseña</label>
+        <input
+          type="password"
+          name="password"
+          id="password"
+          required
+          placeholder="••••••••"
+          autocomplete="current-password"
+        />
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-block">Iniciar Sesión</button>
+
+      <p class="text-center" style="margin-top: var(--spacing-md)">
+        ¿No tienes cuenta?
+        <a href="/register">Regístrate</a>
+      </p>
+    </form>
+  </div>
 </div>
 
 <style>
-.login-container {
+  .login-container {
     min-height: 80vh;
     display: flex;
     align-items: center;
     justify-content: center;
     padding: var(--spacing-md);
-}
+  }
 
-.login-card {
+  .login-card {
     background: var(--bg-white);
     border-radius: var(--radius-lg);
     padding: var(--spacing-xl);
     box-shadow: var(--shadow-lg);
     width: 100%;
     max-width: 400px;
-}
+  }
 
-.login-card h2 {
+  .login-card h2 {
     text-align: center;
     color: var(--primary-color);
     margin-bottom: var(--spacing-lg);
-}
+  }
 
-.alert {
+  .alert {
     padding: var(--spacing-sm);
     border-radius: var(--radius-md);
     margin-bottom: var(--spacing-md);
-}
+  }
 
-.alert-error {
+  .alert-error {
     background-color: #fee;
     border: 1px solid #fcc;
     color: #c33;
-}
+  }
 
-.login-form {
+  .login-form {
     display: flex;
     flex-direction: column;
     gap: var(--spacing-md);
-}
+  }
 
-.form-group {
+  .form-group {
     display: flex;
     flex-direction: column;
     gap: var(--spacing-xs);
-}
+  }
 
-.form-group label {
+  .form-group label {
     font-weight: 500;
     color: var(--text-primary);
-}
+  }
 
-.form-group input {
+  .form-group input {
     padding: var(--spacing-sm);
     border: 1px solid #ddd;
     border-radius: var(--radius-md);
     font-size: 1rem;
     transition: border-color var(--transition-fast);
-}
+  }
 
-.form-group input:focus {
+  .form-group input:focus {
     outline: none;
     border-color: var(--primary-color);
     box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-}
+  }
 
-.btn-block {
+  .btn-block {
     width: 100%;
     margin-top: var(--spacing-sm);
-}
+  }
 
-.text-center {
+  .text-center {
     text-align: center;
-}
+  }
 
-.text-center a {
+  .text-center a {
     color: var(--primary-color);
     text-decoration: none;
     font-weight: 500;
-}
+  }
 
-.text-center a:hover {
+  .text-center a:hover {
     text-decoration: underline;
-}
+  }
 </style>
 {/block}

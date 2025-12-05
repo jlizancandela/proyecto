@@ -1,6 +1,6 @@
 <?php
 
-namespace Reservas\Infrastructure;
+namespace Servicios\Infrastructure;
 
 use Servicios\Domain\Servicio;
 use PDO;

@@ -30,8 +30,8 @@ function dispatch($dispatcher, $httpMethod, $uri)
 function createController($name)
 {
     $controllers = [
-        'HomeController' => 'Shared\Presentation\HomeController',
-        'AuthController' => 'Usuarios\Presentation\AuthController',
+        'HomeController' => 'Shared\\Presentation\\HomeController',
+        'AuthController' => 'Usuarios\\Presentation\\AuthController',
     ];
 
     $class = $controllers[$name] ?? null;
@@ -41,8 +41,8 @@ function createController($name)
     }
 
     if ($name === 'AuthController') {
-        $db = \Shared\Infrastructure\Database\Database::getInstance();
-        $userRepo = new \Usuarios\Infrastructure\UserRepository($db->getConnection());
+        $db = \Shared\Infrastructure\Database\Database::getInstance()->getConnection();
+        $userRepo = new \Usuarios\Infrastructure\UserRepository($db);
         $userService = new \Usuarios\Application\UserService($userRepo);
         $authService = new \Usuarios\Application\AuthService($userRepo, $userService);
         return new $class($authService);
