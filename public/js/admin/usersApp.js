@@ -16,6 +16,9 @@
       reload,
     } = window.useUsers();
 
+    // Exponer reload globalmente
+    window.reloadUsersTable = reload;
+
     const handleEdit = (user) => {
       if (window.openEditUserModal) {
         window.openEditUserModal(user.id, user);
@@ -77,13 +80,6 @@
       render(h(UsersApp), container);
     }
   }
-
-  window.reloadUsersTable = () => {
-    const container = document.getElementById("users-app");
-    if (container) {
-      render(h(UsersApp), container);
-    }
-  };
 
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", initApp);
