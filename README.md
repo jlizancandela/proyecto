@@ -12,19 +12,28 @@ Aplicación web para la gestión de reservas en una peluquería.
     cd proyecto
     ```
 
-2.  **Iniciar el entorno** (requiere DDEV instalado)
+2.  **Configurar entorno**
+    Copia el archivo de ejemplo para crear tu configuración local:
+
+    ```bash
+    cp .env.example .env
+    ```
+
+    > **Nota:** Para ver las credenciales de la base de datos y otros servicios, ejecuta `ddev describe` una vez iniciado el entorno. Por defecto en DDEV suelen ser `db` / `db` / `db`.
+
+3.  **Iniciar el entorno** (requiere DDEV instalado)
 
     ```bash
     ddev start
     ```
 
-3.  **Instalar dependencias**
+4.  **Instalar dependencias**
 
     ```bash
     ddev composer install
     ```
 
-4.  **Base de Datos**
+5.  **Base de Datos**
     Importar la estructura inicial:
 
     ```bash
@@ -37,5 +46,5 @@ Aplicación web para la gestión de reservas en una peluquería.
     ddev mysql < database/test_users.sql
     ```
 
-5.  **Acceder**
+6.  **Acceder**
     Entra en: https://proyecto.ddev.site
