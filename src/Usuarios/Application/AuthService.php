@@ -19,20 +19,6 @@ class AuthService
         $this->userService = $userService;
     }
 
-    /**
-     * Registra un nuevo usuario en el sistema
-     * 
-     * @param array{
-     *     nombre: string,
-     *     apellidos: string,
-     *     email: string,
-     *     password: string,
-     *     telefono?: string,
-     *     rol?: string
-     * } $userData
-     * @return Usuario
-     * @throws \RuntimeException
-     */
     public function register(array $userData): Usuario
     {
         if (
@@ -71,12 +57,12 @@ class AuthService
         $passwordHash = password_hash($password, PASSWORD_DEFAULT);
 
         $user = new Usuario(
-            rol: $userData['rol'] ?? UserRole::Cliente->value,
-            nombre: $userData['nombre'],
-            apellidos: $userData['apellidos'],
-            email: $userData['email'],
-            password_hash: $passwordHash,
-            telefono: $userData['telefono'] ?? null
+            $userData['rol'] ?? UserRole::Cliente->value,
+            $userData['nombre'],
+            $userData['apellidos'],
+            $userData['email'],
+            $passwordHash,
+            $userData['telefono'] ?? null
         );
 
         $this->userService->setUser($user);
@@ -84,13 +70,6 @@ class AuthService
         return $user;
     }
 
-    /**
-     * Autentica un usuario con email y contraseña
-     * 
-     * @param string $email
-     * @param string $password
-     * @return Usuario|null
-     */
     public function login(string $email, string $password): ?Usuario
     {
         $user = $this->userRepository->getUserByEmail($email);
@@ -102,14 +81,6 @@ class AuthService
         return password_verify($password, $user->getPassword()) ? $user : null;
     }
 
-
-
-    /**
-     * Inicia una sesión para el usuario autenticado
-     * 
-     * @param Usuario $user
-     * @return void
-     */
     public function startSession(Usuario $user): void
     {
         if (session_status() === PHP_SESSION_NONE) {
@@ -118,17 +89,12 @@ class AuthService
 
         $_SESSION['user_id'] = $user->getId();
         $_SESSION['email'] = $user->getEmail();
-        $_SESSION['role'] = $user->getRol();
+        $_SESSION['role'] = $user->getRol()->value;
         $_SESSION['name'] = $user->getNombre();
 
         session_regenerate_id(true);
     }
 
-    /**
-     * Cierra la sesión del usuario actual
-     * 
-     * @return void
-     */
     public function logout(): void
     {
         if (session_status() === PHP_SESSION_NONE) {
@@ -139,11 +105,6 @@ class AuthService
         session_destroy();
     }
 
-    /**
-     * Obtiene el usuario actualmente autenticado
-     * 
-     * @return Usuario|null
-     */
     public function getCurrentUser(): ?Usuario
     {
         if (session_status() === PHP_SESSION_NONE) {
@@ -155,11 +116,6 @@ class AuthService
             : null;
     }
 
-    /**
-     * Verifica si hay un usuario autenticado
-     * 
-     * @return bool
-     */
     public function isAuthenticated(): bool
     {
         if (session_status() === PHP_SESSION_NONE) {
@@ -169,15 +125,6 @@ class AuthService
         return isset($_SESSION['user_id']);
     }
 
-    /**
-     * Cambia la contraseña de un usuario
-     * 
-     * @param int $userId
-     * @param string $oldPassword
-     * @param string $newPassword
-     * @return bool
-     * @throws \RuntimeException
-     */
     public function changePassword(
         int $userId,
         string $oldPassword,
@@ -196,12 +143,6 @@ class AuthService
         return true;
     }
 
-    /**
-     * Verifica si el usuario actual tiene un rol específico
-     * 
-     * @param UserRole $role
-     * @return bool
-     */
     public function hasRole(UserRole $role): bool
     {
         $user = $this->getCurrentUser();

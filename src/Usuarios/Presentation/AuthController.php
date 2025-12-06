@@ -10,20 +10,14 @@ class AuthController
     private Engine $latte;
     private AuthService $authService;
 
-    public function __construct(AuthService $authService)
+    public function __construct(Engine $latte, AuthService $authService)
     {
+        $this->latte = $latte;
         $this->authService = $authService;
-        $this->latte = new Engine();
-        $this->latte->setTempDirectory(__DIR__ . '/../../../temp/cache');
     }
 
     public function showLogin(): string
     {
-        if ($this->authService->isAuthenticated()) {
-            header('Location: /');
-            exit;
-        }
-
         return $this->latte->renderToString(
             __DIR__ . '/../../../views/pages/Login.latte',
             [
@@ -72,11 +66,6 @@ class AuthController
 
     public function showRegister(): string
     {
-        if ($this->authService->isAuthenticated()) {
-            header('Location: /');
-            exit;
-        }
-
         return $this->latte->renderToString(
             __DIR__ . '/../../../views/pages/Register.latte',
             [

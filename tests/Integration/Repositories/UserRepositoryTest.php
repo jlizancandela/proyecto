@@ -10,7 +10,7 @@ describe("UserRepository", function () {
 
     beforeEach(function () use (&$pdo) {
         // Use real database connection
-        $pdo = Database::getInstance()->getConnection();
+        $pdo = (new Database())->getConnection();
         // Start transaction for test isolation
         $pdo->beginTransaction();
     });

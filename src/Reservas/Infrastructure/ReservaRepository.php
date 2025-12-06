@@ -15,11 +15,6 @@ class ReservaRepository
         $this->db = $db;
     }
 
-    /**
-     * @param int $limit
-     * @param int $offset
-     * @return ReservaCompletaDTO[]
-     */
     public function getAllReservasCompletas(
         int $limit = 50,
         int $offset = 0,
@@ -66,10 +61,6 @@ class ReservaRepository
         }
     }
 
-    /**
-     * @param int $id
-     * @return ReservaCompletaDTO|null
-     */
     public function getReservaCompletaById(int $id): ?ReservaCompletaDTO
     {
         try {
@@ -108,10 +99,6 @@ class ReservaRepository
         }
     }
 
-    /**
-     * @param Reserva $reserva
-     * @return int|null
-     */
     public function addReserva(Reserva $reserva): ?int
     {
         try {
@@ -142,10 +129,6 @@ class ReservaRepository
         }
     }
 
-    /**
-     * @param Reserva $reserva
-     * @return bool
-     */
     public function updateReserva(Reserva $reserva): bool
     {
         try {
@@ -179,10 +162,6 @@ class ReservaRepository
         }
     }
 
-    /**
-     * @param int $id
-     * @return bool
-     */
     public function deleteReserva(int $id): bool
     {
         try {
@@ -196,12 +175,6 @@ class ReservaRepository
         }
     }
 
-    /**
-     * @param int $id_cliente
-     * @param int $limit
-     * @param int $offset
-     * @return ReservaCompletaDTO[]
-     */
     public function findByClient(
         int $id_cliente,
         int $limit = 50,
@@ -251,19 +224,6 @@ class ReservaRepository
         }
     }
 
-    /**
-     * @param array{
-     *     cliente?: int,
-     *     especialista?: int,
-     *     servicio?: int,
-     *     estado?: string,
-     *     fecha_desde?: string,
-     *     fecha_hasta?: string
-     * } $filtros
-     * @param int $limit
-     * @param int $offset
-     * @return ReservaCompletaDTO[]
-     */
     public function findAllFiltered(
         array $filtros = [],
         int $limit = 50,
@@ -352,14 +312,6 @@ class ReservaRepository
         }
     }
 
-    /**
-     * @param string $fecha
-     * @param string $hora_inicio
-     * @param string $hora_fin
-     * @param int $id_especialista
-     * @param int|null $exclude_id_reserva
-     * @return bool
-     */
     public function findConflicts(
         string $fecha,
         string $hora_inicio,

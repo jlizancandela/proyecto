@@ -8,10 +8,9 @@ class HomeController
 {
     private Engine $latte;
 
-    public function __construct()
+    public function __construct(Engine $latte)
     {
-        $this->latte = new Engine();
-        $this->latte->setTempDirectory(__DIR__ . '/../../../temp/cache');
+        $this->latte = $latte;
     }
 
     public function index(): string

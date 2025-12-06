@@ -1,0 +1,49 @@
+{layout '../layouts/panel-layout.latte'} {block title}Panel de Administración{/block} {block
+content}
+<h1 class="mb-4">Hola {$userName}</h1>
+<div class="alert alert-info">
+  <h4 class="alert-heading">Bienvenido al Panel de Administración</h4>
+  <p class="mb-0">Utiliza el menú lateral para navegar por las diferentes secciones del sistema.</p>
+</div>
+
+<div class="row mt-4">
+  <div class="col-md-4">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">
+          <i class="bi bi-people me-2"></i>
+          Usuarios
+        </h5>
+        <p class="card-text">Gestiona los usuarios del sistema.</p>
+        <a href="/admin/users" class="btn btn-primary btn-sm">Ir a Usuarios</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-4">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">
+          <i class="bi bi-calendar-check me-2"></i>
+          Reservas
+        </h5>
+        <p class="card-text">Administra las reservas del sistema.</p>
+        <a href="#" class="btn btn-secondary btn-sm disabled">Próximamente</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-4">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">
+          <i class="bi bi-gear me-2"></i>
+          Configuración
+        </h5>
+        <p class="card-text">Configura el sistema.</p>
+        <a href="#" class="btn btn-secondary btn-sm disabled">Próximamente</a>
+      </div>
+    </div>
+  </div>
+</div>
+{/block}

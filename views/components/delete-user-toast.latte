@@ -1,0 +1,42 @@
+<div class="toast-container position-fixed top-0 end-0 p-3">
+  <div id="delete-toast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="toast-body">
+      <p class="mb-2"><strong>¿Eliminar usuario?</strong></p>
+      <p class="text-muted small mb-0" id="user-info"></p>
+      <div class="mt-2 pt-2 border-top">
+        <button
+          type="button"
+          id="confirm-delete-btn"
+          class="btn btn-danger btn-sm"
+          hx-delete=""
+          hx-swap="none"
+        >
+          Eliminar
+        </button>
+        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="toast">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{syntax off}
+<script>
+  function showDeleteConfirmation(userId, userName) {
+    document.getElementById("user-info").textContent = userName;
+    const btn = document.getElementById("confirm-delete-btn");
+    btn.setAttribute("hx-delete", "/admin/api/users/" + userId);
+    htmx.process(btn);
+    const toast = new bootstrap.Toast(document.getElementById("delete-toast"));
+    toast.show();
+  }
+
+  document.body.addEventListener("htmx:afterRequest", function (event) {
+    if (event.detail.elt.id === "confirm-delete-btn" && event.detail.successful) {
+      bootstrap.Toast.getInstance(document.getElementById("delete-toast")).hide();
+      htmx.ajax("GET", "/admin/users/table", "#users-container");
+    }
+  });
+</script>
+{/syntax}

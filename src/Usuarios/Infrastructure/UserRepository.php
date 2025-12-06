@@ -16,9 +16,6 @@ class UserRepository
         $this->db = $db;
     }
 
-    /**
-     * @return Usuario[]
-     */
     public function getAllUsers($limit = 10, $offset = 0): array
     {
         try {
@@ -51,6 +48,61 @@ class UserRepository
         } catch (PDOException $e) {
             throw new PDOException(
                 "Error al contar usuarios: " . $e->getMessage(),
+            );
+        }
+    }
+
+    public function searchUsers(string $search, int $limit = 10, int $offset = 0): array
+    {
+        try {
+            $query = "SELECT * FROM USUARIO 
+                      WHERE nombre LIKE :search1 
+                      OR apellidos LIKE :search2 
+                      OR email LIKE :search3 
+                      OR telefono LIKE :search4 
+                      LIMIT :limit OFFSET :offset";
+            $stmt = $this->db->prepare($query);
+            $searchParam = "%{$search}%";
+            $stmt->bindValue(":search1", $searchParam);
+            $stmt->bindValue(":search2", $searchParam);
+            $stmt->bindValue(":search3", $searchParam);
+            $stmt->bindValue(":search4", $searchParam);
+            $stmt->bindValue(":limit", $limit, PDO::PARAM_INT);
+            $stmt->bindValue(":offset", $offset, PDO::PARAM_INT);
+            $stmt->execute();
+
+            $users = [];
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                $users[] = Usuario::fromDatabase($row);
+            }
+            return $users;
+        } catch (PDOException $e) {
+            throw new PDOException(
+                "Error al buscar usuarios: " . $e->getMessage(),
+            );
+        }
+    }
+
+    public function getTotalSearchResults(string $search): int
+    {
+        try {
+            $query = "SELECT COUNT(*) as total FROM USUARIO 
+                      WHERE nombre LIKE :search1 
+                      OR apellidos LIKE :search2 
+                      OR email LIKE :search3 
+                      OR telefono LIKE :search4";
+            $stmt = $this->db->prepare($query);
+            $searchParam = "%{$search}%";
+            $stmt->bindValue(":search1", $searchParam);
+            $stmt->bindValue(":search2", $searchParam);
+            $stmt->bindValue(":search3", $searchParam);
+            $stmt->bindValue(":search4", $searchParam);
+            $stmt->execute();
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            return (int) $result["total"];
+        } catch (PDOException $e) {
+            throw new PDOException(
+                "Error al contar resultados de búsqueda: " . $e->getMessage(),
             );
         }
     }

@@ -2,9 +2,6 @@
 
 namespace Servicios\Domain;
 
-/**
- * Represents an especialista-servicio relationship in the system.
- */
 class EspecialistaServicio
 {
     private int $id_especialista;
@@ -26,17 +23,11 @@ class EspecialistaServicio
         return $this->id_servicio;
     }
 
-    /**
-     * Creates an EspecialistaServicio instance from database row data
-     *
-     * @param array $data Associative array from database
-     * @return self
-     */
     public static function fromDatabase(array $data): self
     {
         return new self(
-            id_especialista: (int) $data["id_especialista"],
-            id_servicio: (int) $data["id_servicio"],
+            (int) $data["id_especialista"],
+            (int) $data["id_servicio"],
         );
     }
 }

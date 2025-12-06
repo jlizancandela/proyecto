@@ -28,7 +28,7 @@
             <a class="nav-link active" aria-current="page" href="/">Inicio</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="/servicios">Servicios</a>
+            <a class="nav-link" href="#services">Servicios</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="/reservas">Reservas</a>
@@ -52,11 +52,15 @@
 
         <!-- Menú para usuarios logueados -->
         <ul n:if="isset($_SESSION['user_id'])" class="navbar-nav ms-auto">
-          <li class="nav-item">
+          <li n:if="$_SESSION['role'] === 'Cliente'" class="nav-item">
             <a class="nav-link d-lg-none" href="/profile">Perfil</a>
             <a class="btn btn-outline-primary me-2 d-none d-lg-inline-block" href="/profile">
               Perfil
             </a>
+          </li>
+          <li n:if="$_SESSION['role'] === 'Admin'" class="nav-item">
+            <a class="nav-link d-lg-none" href="/admin">Panel</a>
+            <a class="btn btn-outline-primary me-2 d-none d-lg-inline-block" href="/admin">Panel</a>
           </li>
           <li class="nav-item">
             <a class="nav-link d-lg-none" href="/logout">Cerrar Sesión</a>

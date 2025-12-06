@@ -3,7 +3,6 @@
 namespace Usuarios\Domain;
 
 use Usuarios\Domain\UserRole;
-use Respect\Validation\Validator as v;
 
 class Usuario
 {
@@ -99,57 +98,16 @@ class Usuario
     public static function fromDatabase(array $data): self
     {
         $usuario = new self(
-            rol: $data["rol"],
-            nombre: $data["nombre"],
-            apellidos: $data["apellidos"],
-            email: $data["email"],
-            password_hash: $data["password_hash"],
-            telefono: $data["telefono"] ?? null,
-            fecha_registro: $data["fecha_registro"],
-            activo: (bool) ($data["activo"] ?? true),
-            id_usuario: $data["id_usuario"] ?? null,
+            $data["rol"],
+            $data["nombre"],
+            $data["apellidos"],
+            $data["email"],
+            $data["password_hash"],
+            $data["telefono"] ?? null,
+            $data["fecha_registro"],
+            (bool) ($data["activo"] ?? true),
+            $data["id_usuario"] ?? null
         );
         return $usuario;
-    }
-
-    public function getValidation(): \Respect\Validation\Validator
-    {
-        return v::attribute(
-            "nombre",
-            v::stringType()->notEmpty(),
-            "El nombre es obligatorio",
-        )
-            ->attribute(
-                "apellidos",
-                v::stringType()->notEmpty(),
-                "El apellido es obligatorio",
-            )
-            ->attribute(
-                "email",
-                v::stringType()->notEmpty()->email()->length(null, 100),
-                "El email es obligatorio y debe ser válido",
-            )
-            ->attribute(
-                "telefono",
-                v::optional(v::stringType()->regex('/^\+?[0-9]{9,15}$/')),
-                "El telefono no tiene un formato correcto",
-            )
-            ->attribute(
-                "password_hash",
-                v::stringType()->notEmpty(),
-                "La contraseña es obligatoria",
-            )
-            ->attribute(
-                "rol",
-                v::stringType()
-                    ->notEmpty()
-                    ->in(["Admin", "Cliente", "Especialista"]),
-                "El rol es obligatorio",
-            )
-            ->attribute(
-                "activo",
-                v::boolType()->notEmpty(),
-                "El estado es obligatorio",
-            );
     }
 }

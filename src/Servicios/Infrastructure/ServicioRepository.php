@@ -14,9 +14,6 @@ class ServicioRepository
         $this->db = $db;
     }
 
-    /**
-     * @return Servicio[]
-     */
     public function getAllServicios(): array
     {
         try {
@@ -33,10 +30,6 @@ class ServicioRepository
         }
     }
 
-    /**
-     * @param int $id
-     * @return Servicio|null
-     */
     public function getServicioById(int $id): ?Servicio
     {
         try {
@@ -51,10 +44,6 @@ class ServicioRepository
         }
     }
 
-    /**
-     * @param Servicio $servicio
-     * @return int|null
-     */
     public function save(Servicio $servicio): ?int
     {
         try {
@@ -77,10 +66,6 @@ class ServicioRepository
         }
     }
 
-    /**
-     * @param Servicio $servicio
-     * @return bool
-     */
     public function update(Servicio $servicio): bool
     {
         try {
@@ -106,10 +91,6 @@ class ServicioRepository
         }
     }
 
-    /**
-     * @param int $id
-     * @return bool
-     */
     public function delete(int $id): bool
     {
         try {
@@ -121,9 +102,6 @@ class ServicioRepository
         }
     }
 
-    /**
-     * @return int
-     */
     public function getTotalCount(): int
     {
         try {

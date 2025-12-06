@@ -1,0 +1,58 @@
+<aside class="col-md-2 bg-white border-end vh-100 d-flex flex-column">
+  <div class="p-4 border-bottom">
+    <div class="d-flex align-items-center">
+      <i class="bi bi-scissors text-primary fs-4 me-2"></i>
+      <h5 class="mb-0 fw-bold">SR-Peluquería</h5>
+    </div>
+  </div>
+
+  <nav class="nav flex-column flex-grow-1 p-3">
+    <a
+      class="nav-link d-flex align-items-center gap-2 text-dark bg-light rounded mb-1 py-2"
+      href="/admin"
+    >
+      <i class="bi bi-grid-3x3-gap"></i>
+      <span>Dashboard</span>
+    </a>
+    <a
+      class="nav-link d-flex align-items-center gap-2 text-secondary rounded mb-1 py-2"
+      href="/admin/citas"
+    >
+      <i class="bi bi-calendar-check"></i>
+      <span>Gestión de Citas</span>
+    </a>
+    <a
+      class="nav-link d-flex align-items-center gap-2 text-secondary rounded mb-1 py-2"
+      href="/admin/users"
+    >
+      <i class="bi bi-people"></i>
+      <span>Gestión de Usuarios</span>
+    </a>
+    <a
+      class="nav-link d-flex align-items-center gap-2 text-secondary rounded mb-1 py-2"
+      href="/admin/servicios"
+    >
+      <i class="bi bi-scissors"></i>
+      <span>Gestión de Servicios</span>
+    </a>
+    <a
+      class="nav-link d-flex align-items-center gap-2 text-secondary rounded mb-1 py-2"
+      href="/admin/competencias"
+    >
+      <i class="bi bi-award"></i>
+      <span>Gestión de Competencias</span>
+    </a>
+  </nav>
+
+  <div class="p-3 border-top mt-auto">
+    <div class="d-flex align-items-center">
+      <div class="me-3">
+        <i class="bi bi-person-circle fs-2 text-secondary"></i>
+      </div>
+      <div>
+        <div class="fw-semibold small">{$userName}</div>
+        <div class="text-muted small">Administrador</div>
+      </div>
+    </div>
+  </div>
+</aside>

@@ -1,9 +1,9 @@
 /* 
- * Estilos personalizados para la Landing Page
- * Las variables de color y utilidades de Bootstrap están en bootstrap-custom.css
+ * Estilos mínimos personalizados
+ * Solo casos específicos que Bootstrap no puede manejar
  */
 
-/* Navbar - Menú Centrado */
+/* Navbar - Menú Centrado (no se puede hacer solo con Bootstrap) */
 @media (min-width: 992px) {
   .navbar-nav-centered {
     position: absolute;
@@ -12,119 +12,10 @@
   }
 }
 
-/* Landing Page Container */
-.landing-container {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 0 2rem;
-}
-
-/* Main Content */
-.main-content {
-  padding-top: 2rem;
-}
-
-/* Sections Wrapper - Gap entre secciones */
-.sections-wrapper {
-  display: flex;
-  flex-direction: column;
-  gap: 3rem;
-}
-
-/* Hero Section */
+/* Hero - Background Image (no se puede hacer inline) */
 .hero-bg {
-  aspect-ratio: 16 / 9;
-  min-height: 600px;
   background-image: url('../images/hero-salon.avif');
   background-size: cover;
   background-position: center;
 }
 
-.hero-overlay {
-  background-color: rgba(0, 0, 0, 0.4);
-}
-
-.hero-content {
-  max-width: 800px;
-  padding: 2rem;
-}
-
-.hero-title {
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-  font-size: clamp(2rem, 5vw, 3.5rem);
-}
-
-.hero-subtitle {
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-  font-size: clamp(1rem, 2.5vw, 1.25rem);
-}
-
-/* Responsive Hero Section */
-
-/* Móvil pequeño (hasta 576px) */
-@media (max-width: 575.98px) {
-  .hero-bg {
-    min-height: 400px;
-    aspect-ratio: 4 / 5;
-    margin: 0.5rem !important;
-  }
-  
-  .hero-content {
-    padding: 1rem;
-  }
-  
-  .hero-title {
-    margin-bottom: 1rem !important;
-  }
-  
-  .hero-subtitle {
-    margin-bottom: 1.5rem !important;
-  }
-  
-  .btn-lg {
-    padding: 0.75rem 2rem !important;
-    font-size: 1rem !important;
-  }
-}
-
-/* Móvil (576px - 767px) */
-@media (min-width: 576px) and (max-width: 767.98px) {
-  .hero-bg {
-    min-height: 450px;
-    aspect-ratio: 3 / 4;
-  }
-  
-  .hero-content {
-    padding: 1.5rem;
-  }
-}
-
-/* Tablet (768px - 991px) */
-@media (min-width: 768px) and (max-width: 991.98px) {
-  .hero-bg {
-    min-height: 500px;
-    aspect-ratio: 16 / 10;
-  }
-  
-  .hero-content {
-    padding: 2rem;
-  }
-}
-
-/* Desktop pequeño (992px - 1199px) */
-@media (min-width: 992px) and (max-width: 1199.98px) {
-  .hero-bg {
-    min-height: 550px;
-  }
-}
-
-/* Desktop grande (1200px+) */
-@media (min-width: 1200px) {
-  .hero-bg {
-    min-height: 650px;
-  }
-  
-  .hero-content {
-    padding: 3rem;
-  }
-}

@@ -2,11 +2,6 @@
 
 namespace Servicios\Domain;
 
-use Respect\Validation\Validator as v;
-
-/**
- * Represents a servicio in the system.
- */
 class Servicio
 {
     private int $id_servicio;
@@ -20,7 +15,7 @@ class Servicio
         int $duracion_minutos,
         string $descripcion,
         float $precio,
-        ?int $id_servicio = null,
+        ?int $id_servicio = null
     ) {
         $this->nombre_servicio = $nombre_servicio;
         $this->duracion_minutos = $duracion_minutos;
@@ -56,44 +51,14 @@ class Servicio
         return $this->precio;
     }
 
-    /**
-     * Creates a Servicio instance from database row data
-     *
-     * @param array $data Associative array from database
-     * @return self
-     */
     public static function fromDatabase(array $data): self
     {
         return new self(
-            nombre_servicio: $data["nombre_servicio"],
-            duracion_minutos: (int) $data["duracion_minutos"],
-            descripcion: $data["descripcion"],
-            precio: (float) $data["precio"],
-            id_servicio: $data["id_servicio"] ?? null,
+            $data["nombre_servicio"],
+            (int) $data["duracion_minutos"],
+            $data["descripcion"],
+            (float) $data["precio"],
+            $data["id_servicio"] ?? null
         );
-    }
-
-    public function getValidation(): \Respect\Validation\Validator
-    {
-        return v::attribute(
-            "nombre_servicio",
-            v::stringType()->notEmpty()->length(3, 100),
-            "El nombre del servicio es obligatorio",
-        )
-            ->attribute(
-                "duracion_minutos",
-                v::intType()->notEmpty()->positive(),
-                "La duracion del servicio es obligatoria",
-            )
-            ->attribute(
-                "descripcion",
-                v::stringType()->notEmpty()->length(3, 100),
-                "La descripcion del servicio es obligatoria",
-            )
-            ->attribute(
-                "precio",
-                v::floatType()->notEmpty()->positive(),
-                "El precio del servicio es obligatorio",
-            );
     }
 }

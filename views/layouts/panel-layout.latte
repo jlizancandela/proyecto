@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{block title}Panel de Administración{/block} - Peluquería</title>
+    {include 'panelScripts.latte'}
+  </head>
+  <body>
+    <div class="container-fluid">
+      <div class="row">
+        {include '../components/sidebar.latte', userName: $userName}
+        <main class="col-md-10 ms-sm-auto px-5 py-4">{block content}{/block}</main>
+      </div>
+    </div>
+  </body>
+</html>

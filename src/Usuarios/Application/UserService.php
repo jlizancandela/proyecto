@@ -5,8 +5,6 @@ namespace Usuarios\Application;
 use Usuarios\Domain\Usuario;
 use Usuarios\Domain\UserRole;
 use Usuarios\Infrastructure\UserRepository;
-use Shared\Domain\Exceptions\InvalidValidation;
-use Respect\Validation\Exceptions\NestedValidationException;
 
 class UserService
 {
@@ -37,65 +35,32 @@ class UserService
         return $this->userRepository->getUserByRole($role);
     }
 
-    /**
-     * Crea un nuevo usuario con validaciones
-     * NOTA: La contraseña debe venir ya hasheada desde AuthService
-     *
-     * @param Usuario $user Usuario a crear
-     * @throws ValidationException Si los datos no son válidos
-     * @throws \RuntimeException Si el email ya existe
-     */
+    public function searchUsers(string $search, int $limit = 10, int $offset = 0): array
+    {
+        return $this->userRepository->searchUsers($search, $limit, $offset);
+    }
+
+    public function getTotalSearchResults(string $search): int
+    {
+        return $this->userRepository->getTotalSearchResults($search);
+    }
+
     public function setUser(Usuario $user): void
     {
-        try {
-            $validation = $user->getValidation();
-            $validation->assert($user);
-        } catch (NestedValidationException $e) {
-            $errorMessage = $e->getFullMessage();
-            throw new InvalidValidation($errorMessage);
-        }
-
-        $existingUser = $this->userRepository->getUserByEmail(
-            $user->getEmail(),
-        );
+        $existingUser = $this->userRepository->getUserByEmail($user->getEmail());
         if ($existingUser !== null) {
-            throw new \RuntimeException(
-                "El email ya está registrado en el sistema",
-            );
+            throw new \RuntimeException("El email ya está registrado en el sistema");
         }
 
         $id = $this->userRepository->addUser($user);
         $user->setId($id);
     }
 
-    /**
-     * Actualiza un usuario con validaciones
-     * NOTA: Si se actualiza la contraseña, debe venir ya hasheada desde AuthService
-     *
-     * @param Usuario $user Usuario a actualizar
-     * @throws ValidationException Si los datos no son válidos
-     * @throws \RuntimeException Si el email ya existe
-     */
     public function updateUser(Usuario $user): void
     {
-        try {
-            $validation = $user->getValidation();
-            $validation->assert($user);
-        } catch (NestedValidationException $e) {
-            $errorMessage = $e->getFullMessage();
-            throw new InvalidValidation($errorMessage);
-        }
-
-        $existingUser = $this->userRepository->getUserByEmail(
-            $user->getEmail(),
-        );
-        if (
-            $existingUser !== null &&
-            $existingUser->getId() !== $user->getId()
-        ) {
-            throw new \RuntimeException(
-                "El email ya está registrado en el sistema",
-            );
+        $existingUser = $this->userRepository->getUserByEmail($user->getEmail());
+        if ($existingUser !== null && $existingUser->getId() !== $user->getId()) {
+            throw new \RuntimeException("El email ya está registrado en el sistema");
         }
 
         $this->userRepository->updateUser($user);

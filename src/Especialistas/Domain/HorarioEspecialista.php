@@ -2,9 +2,6 @@
 
 namespace Especialistas\Domain;
 
-/**
- * Represents a horario especialista in the system.
- */
 class HorarioEspecialista
 {
     private int $id_horario;
@@ -54,20 +51,14 @@ class HorarioEspecialista
         return $this->hora_fin;
     }
 
-    /**
-     * Creates a HorarioEspecialista instance from database row data
-     *
-     * @param array $data Associative array from database
-     * @return self
-     */
     public static function fromDatabase(array $data): self
     {
         return new self(
-            id_especialista: (int) $data["id_especialista"],
-            dia_semana: (int) $data["dia_semana"],
-            hora_inicio: $data["hora_inicio"],
-            hora_fin: $data["hora_fin"],
-            id_horario: $data["id_horario"] ?? null,
+            (int) $data["id_especialista"],
+            (int) $data["dia_semana"],
+            $data["hora_inicio"],
+            $data["hora_fin"],
+            $data["id_horario"] ?? null,
         );
     }
 }

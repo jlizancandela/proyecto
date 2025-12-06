@@ -5,13 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Layout</title>
     <link rel="stylesheet" href="/public/css/style.css" />
-    {include 'scripts.latte'} {block scripts} {/block}
+    {include 'landing-scripts.latte'} {block scripts} {/block}
   </head>
 
   <body>
     <header>{include '../components/header.latte'}</header>
-    <div class="landing-container">
-      <main class="main-content">{block content}{/block}</main>
+    <div class="container" style="max-width: 1400px">
+      <main class="pt-4">{block content}{/block}</main>
     </div>
     {include '../components/footer.latte'}
   </body>

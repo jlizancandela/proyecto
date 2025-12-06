@@ -1,0 +1,344 @@
+/* 
+ * Bootstrap Panel Theme Customization
+ * Tema para el panel de administración con colores teal/verde azulado
+ */
+
+:root {
+  /* Sobrescribir colores principales de Bootstrap */
+  --bs-primary: #2D9B94;
+  --bs-primary-rgb: 45, 155, 148;
+  
+  --bs-secondary: #6C757D;
+  --bs-secondary-rgb: 108, 117, 125;
+  
+  --bs-success: #2D9B94;
+  --bs-success-rgb: 45, 155, 148;
+  
+  --bs-info: #17A2B8;
+  --bs-info-rgb: 23, 162, 184;
+  
+  --bs-warning: #FFC107;
+  --bs-warning-rgb: 255, 193, 7;
+  
+  --bs-danger: #DC3545;
+  --bs-danger-rgb: 220, 53, 69;
+  
+  --bs-light: #F5F7FA;
+  --bs-light-rgb: 245, 247, 250;
+  
+  --bs-dark: #2C3E50;
+  --bs-dark-rgb: 44, 62, 80;
+  
+  /* Colores de énfasis para primary */
+  --bs-primary-text-emphasis: #1a5c57;
+  --bs-primary-bg-subtle: #d4f1ef;
+  --bs-primary-border-subtle: #a8e3df;
+  
+  /* Colores de énfasis para secondary */
+  --bs-secondary-text-emphasis: #2b2f32;
+  --bs-secondary-bg-subtle: #e2e3e5;
+  --bs-secondary-border-subtle: #d3d6d8;
+  
+  /* Link colors */
+  --bs-link-color: #2D9B94;
+  --bs-link-hover-color: #237a74;
+  --bs-link-color-rgb: 45, 155, 148;
+  --bs-link-hover-color-rgb: 35, 122, 116;
+  
+  /* Body */
+  --bs-body-color: #2C3E50;
+  --bs-body-bg: #F5F7FA;
+  
+  /* Border radius personalizado */
+  --bs-border-radius: 0.5rem;
+  --bs-border-radius-sm: 0.375rem;
+  --bs-border-radius-lg: 0.75rem;
+  --bs-border-radius-xl: 1rem;
+  --bs-border-radius-xxl: 2rem;
+  --bs-border-radius-pill: 50rem;
+}
+
+/* Asegurar que los botones usen los nuevos colores */
+.btn-primary {
+  --bs-btn-bg: var(--bs-primary);
+  --bs-btn-border-color: var(--bs-primary);
+  --bs-btn-hover-bg: #237a74;
+  --bs-btn-hover-border-color: #237a74;
+  --bs-btn-active-bg: #1f6862;
+  --bs-btn-active-border-color: #1f6862;
+  --bs-btn-disabled-bg: var(--bs-primary);
+  --bs-btn-disabled-border-color: var(--bs-primary);
+}
+
+.btn-secondary {
+  --bs-btn-bg: var(--bs-secondary);
+  --bs-btn-border-color: var(--bs-secondary);
+  --bs-btn-hover-bg: #5a6268;
+  --bs-btn-hover-border-color: #545b62;
+  --bs-btn-active-bg: #545b62;
+  --bs-btn-active-border-color: #4e555b;
+}
+
+.btn-success {
+  --bs-btn-bg: var(--bs-success);
+  --bs-btn-border-color: var(--bs-success);
+  --bs-btn-hover-bg: #237a74;
+  --bs-btn-hover-border-color: #1f6862;
+}
+
+.btn-danger {
+  --bs-btn-bg: var(--bs-danger);
+  --bs-btn-border-color: var(--bs-danger);
+  --bs-btn-hover-bg: #c82333;
+  --bs-btn-hover-border-color: #bd2130;
+}
+
+.btn-warning {
+  --bs-btn-bg: var(--bs-warning);
+  --bs-btn-border-color: var(--bs-warning);
+  --bs-btn-hover-bg: #e0a800;
+  --bs-btn-hover-border-color: #d39e00;
+  --bs-btn-color: #212529;
+}
+
+.btn-info {
+  --bs-btn-bg: var(--bs-info);
+  --bs-btn-border-color: var(--bs-info);
+  --bs-btn-hover-bg: #138496;
+  --bs-btn-hover-border-color: #117a8b;
+}
+
+.btn-dark {
+  --bs-btn-bg: var(--bs-dark);
+  --bs-btn-border-color: var(--bs-dark);
+  --bs-btn-hover-bg: #1c2833;
+  --bs-btn-hover-border-color: #151f2a;
+}
+
+.btn-light {
+  --bs-btn-bg: var(--bs-light);
+  --bs-btn-border-color: var(--bs-light);
+  --bs-btn-hover-bg: #e8ecf1;
+  --bs-btn-hover-border-color: #e8ecf1;
+  --bs-btn-color: #212529;
+}
+
+/* Botones Outline */
+.btn-outline-primary {
+  --bs-btn-color: var(--bs-primary);
+  --bs-btn-border-color: var(--bs-primary);
+  --bs-btn-hover-bg: var(--bs-primary);
+  --bs-btn-hover-border-color: var(--bs-primary);
+  --bs-btn-hover-color: #fff;
+  --bs-btn-active-bg: var(--bs-primary);
+  --bs-btn-active-border-color: var(--bs-primary);
+  --bs-btn-active-color: #fff;
+  --bs-btn-disabled-color: var(--bs-primary);
+  --bs-btn-disabled-border-color: var(--bs-primary);
+}
+
+.btn-outline-secondary {
+  --bs-btn-color: var(--bs-secondary);
+  --bs-btn-border-color: var(--bs-secondary);
+  --bs-btn-hover-bg: var(--bs-secondary);
+  --bs-btn-hover-border-color: var(--bs-secondary);
+  --bs-btn-hover-color: #fff;
+  --bs-btn-active-bg: var(--bs-secondary);
+  --bs-btn-active-border-color: var(--bs-secondary);
+  --bs-btn-active-color: #fff;
+  --bs-btn-disabled-color: var(--bs-secondary);
+  --bs-btn-disabled-border-color: var(--bs-secondary);
+}
+
+.btn-outline-success {
+  --bs-btn-color: var(--bs-success);
+  --bs-btn-border-color: var(--bs-success);
+  --bs-btn-hover-bg: var(--bs-success);
+  --bs-btn-hover-border-color: var(--bs-success);
+}
+
+.btn-outline-danger {
+  --bs-btn-color: var(--bs-danger);
+  --bs-btn-border-color: var(--bs-danger);
+  --bs-btn-hover-bg: var(--bs-danger);
+  --bs-btn-hover-border-color: var(--bs-danger);
+}
+
+.btn-outline-warning {
+  --bs-btn-color: var(--bs-warning);
+  --bs-btn-border-color: var(--bs-warning);
+  --bs-btn-hover-bg: var(--bs-warning);
+  --bs-btn-hover-border-color: var(--bs-warning);
+}
+
+.btn-outline-info {
+  --bs-btn-color: var(--bs-info);
+  --bs-btn-border-color: var(--bs-info);
+  --bs-btn-hover-bg: var(--bs-info);
+  --bs-btn-hover-border-color: var(--bs-info);
+}
+
+.btn-outline-dark {
+  --bs-btn-color: var(--bs-dark);
+  --bs-btn-border-color: var(--bs-dark);
+  --bs-btn-hover-bg: var(--bs-dark);
+  --bs-btn-hover-border-color: var(--bs-dark);
+}
+
+.btn-outline-light {
+  --bs-btn-color: var(--bs-light);
+  --bs-btn-border-color: var(--bs-light);
+  --bs-btn-hover-bg: var(--bs-light);
+  --bs-btn-hover-border-color: var(--bs-light);
+  --bs-btn-hover-color: var(--bs-dark);
+}
+
+
+/* Asegurar que los fondos usen los nuevos colores */
+.bg-primary {
+  background-color: var(--bs-primary) !important;
+}
+
+.bg-secondary {
+  background-color: var(--bs-secondary) !important;
+}
+
+.bg-light {
+  background-color: var(--bs-light) !important;
+}
+
+.bg-dark {
+  background-color: var(--bs-dark) !important;
+}
+
+/* Asegurar que los textos usen los nuevos colores */
+.text-primary {
+  color: var(--bs-primary) !important;
+}
+
+.text-secondary {
+  color: var(--bs-secondary) !important;
+}
+
+/* Badges */
+.badge.bg-primary {
+  background-color: var(--bs-primary) !important;
+}
+
+/* Alerts */
+.alert-primary {
+  --bs-alert-color: #1a5c57;
+  --bs-alert-bg: #d4f1ef;
+  --bs-alert-border-color: #a8e3df;
+}
+
+.alert-info {
+  --bs-alert-color: #055160;
+  --bs-alert-bg: #cff4fc;
+  --bs-alert-border-color: #b6effb;
+}
+
+/* Forms */
+.form-check-input:checked {
+  background-color: var(--bs-primary);
+  border-color: var(--bs-primary);
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: #7dc9c4;
+  box-shadow: 0 0 0 0.25rem rgba(45, 155, 148, 0.25);
+}
+
+/* Progress bars */
+.progress-bar {
+  background-color: var(--bs-primary);
+}
+
+/* Pagination */
+.page-link {
+  color: var(--bs-primary);
+}
+
+.page-link:hover {
+  color: #237a74;
+  background-color: var(--bs-light);
+  border-color: #dee2e6;
+}
+
+.page-item.active .page-link {
+  background-color: var(--bs-primary);
+  border-color: var(--bs-primary);
+}
+
+/* Nav pills */
+.nav-pills .nav-link.active {
+  background-color: var(--bs-primary);
+}
+
+/* Spinners */
+.spinner-border-primary {
+  color: var(--bs-primary);
+}
+
+/* Cards con estilo del panel */
+.card {
+  border: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  border-radius: var(--bs-border-radius);
+}
+
+.card-header {
+  background-color: transparent;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* Sidebar styles para el panel */
+.sidebar {
+  background-color: #FFFFFF;
+  border-right: 1px solid #E5E9F0;
+}
+
+.sidebar .nav-link {
+  color: #6C757D;
+  padding: 0.75rem 1.25rem;
+  border-radius: 0.5rem;
+  margin: 0.25rem 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.sidebar .nav-link:hover {
+  background-color: #F5F7FA;
+  color: var(--bs-primary);
+}
+
+.sidebar .nav-link.active {
+  background-color: #E8F5F4;
+  color: var(--bs-primary);
+  font-weight: 500;
+}
+
+/* Status badges */
+.badge-ocupado {
+  background-color: #FFE5E5;
+  color: #DC3545;
+  padding: 0.375rem 0.75rem;
+  border-radius: 1rem;
+  font-weight: 500;
+}
+
+.badge-disponible {
+  background-color: #D4F1EF;
+  color: #2D9B94;
+  padding: 0.375rem 0.75rem;
+  border-radius: 1rem;
+  font-weight: 500;
+}
+
+.badge-ausente {
+  background-color: #F5F7FA;
+  color: #6C757D;
+  padding: 0.375rem 0.75rem;
+  border-radius: 1rem;
+  font-weight: 500;
+}

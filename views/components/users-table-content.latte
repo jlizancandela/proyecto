@@ -1,0 +1,103 @@
+<div class="table-responsive">
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Nombre</th>
+        <th>Email</th>
+        <th>Teléfono</th>
+        <th>Rol</th>
+        <th>Estado</th>
+        <th>Fecha Registro</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      {if $hasUsers} {foreach $users as $user}
+      <tr>
+        <td>{$user['id']}</td>
+        <td>{$user['nombreCompleto']}</td>
+        <td>{$user['email']}</td>
+        <td>{$user['telefono']}</td>
+        <td>
+          <span class="badge bg-{$user['rol']['badge']}">{$user['rol']['nombre']}</span>
+        </td>
+        <td>
+          <span class="badge bg-{$user['activo']['badge']}">{$user['activo']['texto']}</span>
+        </td>
+        <td>{$user['fechaRegistro']}</td>
+        <td>
+          <div class="btn-group btn-group-sm">
+            <button
+              class="btn btn-outline-warning"
+              title="Editar"
+              onclick="openEditUserModal({$user['id']})"
+            >
+              <i class="bi bi-pencil"></i>
+            </button>
+            <button
+              class="btn btn-outline-danger"
+              title="Eliminar"
+              onclick="showDeleteConfirmation({$user['id']}, '{$user['nombreCompleto']}')"
+            >
+              <i class="bi bi-trash"></i>
+            </button>
+          </div>
+        </td>
+      </tr>
+      {/foreach} {else}
+      <tr>
+        <td colspan="8" class="text-center text-muted">No hay usuarios registrados</td>
+      </tr>
+      {/if}
+    </tbody>
+  </table>
+</div>
+
+<!-- Paginación -->
+{if count($pagination['pages']) > 0}
+<nav aria-label="Paginación de usuarios">
+  <ul class="pagination justify-content-center mb-0">
+    <!-- Anterior -->
+    <li class="page-item {if !$pagination['hasPrevious']}disabled{/if}">
+      <a
+        class="page-link"
+        href="#"
+        hx-get="{$pagination['previousUrl']}"
+        hx-target="#users-container"
+        hx-swap="innerHTML"
+      >
+        Anterior
+      </a>
+    </li>
+
+    <!-- Páginas -->
+    {foreach $pagination['pages'] as $page}
+    <li class="page-item {if $page['active']}active{/if}">
+      <a
+        class="page-link"
+        href="#"
+        hx-get="{$page['url']}"
+        hx-target="#users-container"
+        hx-swap="innerHTML"
+      >
+        {$page['number']}
+      </a>
+    </li>
+    {/foreach}
+
+    <!-- Siguiente -->
+    <li class="page-item {if !$pagination['hasNext']}disabled{/if}">
+      <a
+        class="page-link"
+        href="#"
+        hx-get="{$pagination['nextUrl']}"
+        hx-target="#users-container"
+        hx-swap="innerHTML"
+      >
+        Siguiente
+      </a>
+    </li>
+  </ul>
+</nav>
+{/if}
