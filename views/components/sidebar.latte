@@ -1,4 +1,7 @@
-<aside class="col-md-2 bg-white border-end vh-100 d-flex flex-column">
+{* Sidebar visible en desktop, offcanvas en móvil *}
+<aside
+  class="d-none d-md-flex col-md-2 bg-white border-end min-vh-100 flex-column sticky-md-top overflow-auto"
+>
   <div class="p-4 border-bottom">
     <div class="d-flex align-items-center">
       <a href="/" class="text-decoration-none d-flex align-items-center">
@@ -58,3 +61,71 @@
     </div>
   </div>
 </aside>
+
+{* Offcanvas para móvil *}
+<div
+  class="offcanvas offcanvas-start d-md-none"
+  tabindex="-1"
+  id="sidebarOffcanvas"
+  aria-labelledby="sidebarOffcanvasLabel"
+>
+  <div class="offcanvas-header border-bottom">
+    <div class="d-flex align-items-center">
+      <i class="bi bi-scissors text-primary fs-4 me-2"></i>
+      <h5 class="mb-0 fw-bold" id="sidebarOffcanvasLabel">SR-Peluquería</h5>
+    </div>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+
+  <div class="offcanvas-body d-flex flex-column">
+    <nav class="nav flex-column flex-grow-1">
+      <a
+        class="nav-link d-flex align-items-center gap-2 text-dark bg-light rounded mb-1 py-2"
+        href="/admin"
+      >
+        <i class="bi bi-grid-3x3-gap"></i>
+        <span>Dashboard</span>
+      </a>
+      <a
+        class="nav-link d-flex align-items-center gap-2 text-secondary rounded mb-1 py-2"
+        href="/admin/citas"
+      >
+        <i class="bi bi-calendar-check"></i>
+        <span>Gestión de Citas</span>
+      </a>
+      <a
+        class="nav-link d-flex align-items-center gap-2 text-secondary rounded mb-1 py-2"
+        href="/admin/users"
+      >
+        <i class="bi bi-people"></i>
+        <span>Gestión de Usuarios</span>
+      </a>
+      <a
+        class="nav-link d-flex align-items-center gap-2 text-secondary rounded mb-1 py-2"
+        href="/admin/servicios"
+      >
+        <i class="bi bi-scissors"></i>
+        <span>Gestión de Servicios</span>
+      </a>
+      <a
+        class="nav-link d-flex align-items-center gap-2 text-secondary rounded mb-1 py-2"
+        href="/admin/competencias"
+      >
+        <i class="bi bi-award"></i>
+        <span>Gestión de Competencias</span>
+      </a>
+    </nav>
+
+    <div class="border-top pt-3 mt-auto">
+      <div class="d-flex align-items-center">
+        <div class="me-3">
+          <i class="bi bi-person-circle fs-2 text-secondary"></i>
+        </div>
+        <div>
+          <div class="fw-semibold small">{$userName}</div>
+          <div class="text-muted small">Administrador</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
