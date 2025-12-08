@@ -51,8 +51,8 @@ $router->get('/admin', function () use ($latte) {
     echo $controller->index();
 });
 
-$router->get('/admin/users', function () use ($latte) {
-    $controller = new AdminController($latte);
+$router->get('/admin/users', function () use ($latte, $userService) {
+    $controller = new AdminController($latte, $userService);
     echo $controller->usersManagement();
 });
 

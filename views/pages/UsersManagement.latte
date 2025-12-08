@@ -2,6 +2,142 @@
 <div class="mb-4">
   <h1 class="mb-4">Gestión de Usuarios</h1>
 
-  <div id="users-app"></div>
+  {* Barra de búsqueda y botón crear *}
+  <div class="row g-3 mb-3 justify-content-between align-items-center">
+    <div class="col-12 col-md-6 col-lg-5 col-xl-4">
+      <form method="GET" action="/admin/users" class="position-relative">
+        <input
+          type="search"
+          name="search"
+          class="form-control ps-5"
+          placeholder="Buscar usuarios..."
+          value="{$search}"
+        />
+        <i
+          class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"
+        ></i>
+      </form>
+    </div>
+    <div class="col-12 col-md-auto">
+      <button
+        type="button"
+        class="btn btn-primary shadow-sm w-100 w-md-auto px-4"
+        data-bs-toggle="modal"
+        data-bs-target="#createUserModal"
+      >
+        <i class="bi bi-plus-circle me-2"></i>
+        Nuevo Usuario
+      </button>
+    </div>
+  </div>
+
+  {* Tabla de usuarios *} {if count($users) > 0}
+  <div class="table-responsive">
+    <table class="table table-hover align-middle">
+      <thead class="table-light">
+        <tr>
+          <th>ID</th>
+          <th>Nombre</th>
+          <th>Email</th>
+          <th>Rol</th>
+          <th>Teléfono</th>
+          <th>Fecha Registro</th>
+          <th>Estado</th>
+          <th class="text-end">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {foreach $users as $user}
+        <tr id="user-row-{$user['id']}">
+          <td>{$user['id']}</td>
+          <td>{$user['nombreCompleto']}</td>
+          <td>{$user['email']}</td>
+          <td>
+            <span
+              class="badge bg-{$user['rol'] === 'Administrador' ? 'danger' : ($user['rol'] === 'Especialista' ? 'warning' : 'primary')}"
+            >
+              {$user['rol']}
+            </span>
+          </td>
+          <td>{$user['telefono'] ?? '-'}</td>
+          <td>{$user['fechaRegistro']}</td>
+          <td>
+            <span class="badge bg-{$user['activo'] ? 'success' : 'secondary'}">
+              {$user['activo'] ? 'Activo' : 'Inactivo'}
+            </span>
+          </td>
+          <td class="text-end">
+            <button
+              type="button"
+              class="btn btn-sm btn-outline-primary me-1"
+              onclick="editUser({$user['id']})"
+              title="Editar"
+            >
+              <i class="bi bi-pencil"></i>
+            </button>
+            <button
+              type="button"
+              class="btn btn-sm btn-outline-danger"
+              data-user-id="{$user['id']}"
+              data-user-name="{$user['nombreCompleto']}"
+              onclick="deleteUser(this.dataset.userId, this.dataset.userName)"
+              title="Eliminar"
+            >
+              <i class="bi bi-trash"></i>
+            </button>
+          </td>
+        </tr>
+        {/foreach}
+      </tbody>
+    </table>
+  </div>
+
+  {* Paginación *} {if $totalPages > 1}
+  <nav aria-label="Paginación de usuarios" class="mt-4">
+    <ul class="pagination justify-content-center">
+      {* Botón anterior *}
+      <li class="page-item {$page <= 1 ? 'disabled' : ''}">
+        <a
+          class="page-link"
+          href="/admin/users?page={$page - 1}{$search ? '&search=' . $search : ''}"
+          aria-label="Anterior"
+        >
+          <span aria-hidden="true">&laquo;</span>
+        </a>
+      </li>
+
+      {* Páginas *} {for $i = 1; $i <= $totalPages; $i++} {if $i == 1 || $i == $totalPages || ($i >=
+      $page - 2 && $i <= $page + 2)}
+      <li class="page-item {$i == $page ? 'active' : ''}">
+        <a class="page-link" href="/admin/users?page={$i}{$search ? '&search=' . $search : ''}">
+          {$i}
+        </a>
+      </li>
+      {elseif $i == $page - 3 || $i == $page + 3}
+      <li class="page-item disabled">
+        <span class="page-link">...</span>
+      </li>
+      {/if} {/for} {* Botón siguiente *}
+      <li class="page-item {$page >= $totalPages ? 'disabled' : ''}">
+        <a
+          class="page-link"
+          href="/admin/users?page={$page + 1}{$search ? '&search=' . $search : ''}"
+          aria-label="Siguiente"
+        >
+          <span aria-hidden="true">&raquo;</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+  {/if} {else}
+  <div class="alert alert-info">
+    <i class="bi bi-info-circle me-2"></i>
+    {$search ? 'No se encontraron usuarios con ese criterio de búsqueda.' : 'No hay usuarios
+    registrados.'}
+  </div>
+  {/if} {* Modales *} {include '../components/modals/CreateUserModal.latte'} {include
+  '../components/modals/EditUserModal.latte'}
 </div>
+
+<script src="/public/js/admin/usuarios/usersManagement.js"></script>
 {/block}

@@ -1,0 +1,115 @@
+{* Modal para crear usuario *}
+<div
+  class="modal fade"
+  id="createUserModal"
+  tabindex="-1"
+  aria-labelledby="createUserModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="createUserModalLabel">
+          <i class="bi bi-person-plus me-2"></i>
+          Crear Nuevo Usuario
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <form id="createUserForm">
+        <div class="modal-body">
+          {* Nombre *}
+          <div class="mb-3">
+            <label for="createNombre" class="form-label">Nombre *</label>
+            <input
+              type="text"
+              class="form-control"
+              id="createNombre"
+              name="nombre"
+              required
+              minlength="2"
+            />
+            <div class="invalid-feedback"></div>
+          </div>
+
+          {* Apellidos *}
+          <div class="mb-3">
+            <label for="createApellidos" class="form-label">Apellidos *</label>
+            <input
+              type="text"
+              class="form-control"
+              id="createApellidos"
+              name="apellidos"
+              required
+              minlength="2"
+            />
+            <div class="invalid-feedback"></div>
+          </div>
+
+          {* Email *}
+          <div class="mb-3">
+            <label for="createEmail" class="form-label">Email *</label>
+            <input type="email" class="form-control" id="createEmail" name="email" required />
+            <div class="invalid-feedback"></div>
+          </div>
+
+          {* Teléfono *}
+          <div class="mb-3">
+            <label for="createTelefono" class="form-label">Teléfono</label>
+            <input type="tel" class="form-control" id="createTelefono" name="telefono" />
+            <div class="invalid-feedback"></div>
+          </div>
+
+          {* Contraseña *}
+          <div class="mb-3">
+            <label for="createPassword" class="form-label">Contraseña *</label>
+            <input
+              type="password"
+              class="form-control"
+              id="createPassword"
+              name="password"
+              required
+              minlength="6"
+            />
+            <div class="invalid-feedback"></div>
+          </div>
+
+          {* Confirmar contraseña *}
+          <div class="mb-3">
+            <label for="createPasswordConfirm" class="form-label">Confirmar Contraseña *</label>
+            <input
+              type="password"
+              class="form-control"
+              id="createPasswordConfirm"
+              name="password-confirm"
+              required
+              minlength="6"
+            />
+            <div class="invalid-feedback"></div>
+          </div>
+
+          {* Rol *}
+          <div class="mb-3">
+            <label for="createRol" class="form-label">Rol *</label>
+            <select class="form-select" id="createRol" name="rol" required>
+              <option value="Cliente">Cliente</option>
+              <option value="Especialista">Especialista</option>
+              <option value="Admin">Administrador</option>
+            </select>
+            <div class="invalid-feedback"></div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary">
+            <i class="bi bi-save me-1"></i>
+            Crear Usuario
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script src="/public/js/admin/usuarios/createUserModal.js"></script>

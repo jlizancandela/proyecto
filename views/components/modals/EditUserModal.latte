@@ -1,0 +1,117 @@
+{* Modal para editar usuario *}
+<div
+  class="modal fade"
+  id="editUserModal"
+  tabindex="-1"
+  aria-labelledby="editUserModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editUserModalLabel">
+          <i class="bi bi-pencil me-2"></i>
+          Editar Usuario
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <form id="editUserForm">
+        <input type="hidden" id="editUserId" name="id" />
+
+        <div class="modal-body">
+          {* Nombre *}
+          <div class="mb-3">
+            <label for="editNombre" class="form-label">Nombre *</label>
+            <input
+              type="text"
+              class="form-control"
+              id="editNombre"
+              name="nombre"
+              required
+              minlength="2"
+            />
+            <div class="invalid-feedback"></div>
+          </div>
+
+          {* Apellidos *}
+          <div class="mb-3">
+            <label for="editApellidos" class="form-label">Apellidos *</label>
+            <input
+              type="text"
+              class="form-control"
+              id="editApellidos"
+              name="apellidos"
+              required
+              minlength="2"
+            />
+            <div class="invalid-feedback"></div>
+          </div>
+
+          {* Email *}
+          <div class="mb-3">
+            <label for="editEmail" class="form-label">Email *</label>
+            <input type="email" class="form-control" id="editEmail" name="email" required />
+            <div class="invalid-feedback"></div>
+          </div>
+
+          {* Teléfono *}
+          <div class="mb-3">
+            <label for="editTelefono" class="form-label">Teléfono</label>
+            <input type="tel" class="form-control" id="editTelefono" name="telefono" />
+            <div class="invalid-feedback"></div>
+          </div>
+
+          {* Contraseña (opcional en edición) *}
+          <div class="mb-3">
+            <label for="editPassword" class="form-label">
+              Nueva Contraseña (dejar en blanco para no cambiar)
+            </label>
+            <input
+              type="password"
+              class="form-control"
+              id="editPassword"
+              name="password"
+              minlength="6"
+            />
+            <div class="invalid-feedback"></div>
+          </div>
+
+          {* Confirmar contraseña *}
+          <div class="mb-3">
+            <label for="editPasswordConfirm" class="form-label">Confirmar Nueva Contraseña</label>
+            <input
+              type="password"
+              class="form-control"
+              id="editPasswordConfirm"
+              name="password-confirm"
+              minlength="6"
+            />
+            <div class="invalid-feedback"></div>
+          </div>
+
+          {* Rol *}
+          <div class="mb-3">
+            <label for="editRol" class="form-label">Rol *</label>
+            <select class="form-select" id="editRol" name="rol" required>
+              <option value="Cliente">Cliente</option>
+              <option value="Especialista">Especialista</option>
+              <option value="Admin">Administrador</option>
+            </select>
+            <div class="invalid-feedback"></div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary">
+            <i class="bi bi-save me-1"></i>
+            Guardar Cambios
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script src="/public/js/admin/usuarios/editUserModal.js"></script>
