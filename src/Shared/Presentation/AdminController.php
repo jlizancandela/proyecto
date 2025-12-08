@@ -22,4 +22,14 @@ class AdminController
             ]
         );
     }
+
+    public function usersManagement(): string
+    {
+        return $this->latte->renderToString(
+            __DIR__ . '/../../../views/pages/UsersManagement.latte',
+            [
+                'userName' => ucfirst($_SESSION['name'] ?? 'Usuario')
+            ]
+        );
+    }
 }

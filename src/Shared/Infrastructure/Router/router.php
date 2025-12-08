@@ -6,8 +6,7 @@ use Usuarios\Presentation\UserApiController;
 use Usuarios\Presentation\AuthController;
 use Shared\Presentation\HomeController;
 use Shared\Presentation\AdminController;
-
-use Shared\Presentation\UsersManagementController;
+use Reservas\Presentation\BookingController;
 
 require_once __DIR__ . '/../dependencies.php';
 
@@ -53,7 +52,13 @@ $router->get('/admin', function () use ($latte) {
 });
 
 $router->get('/admin/users', function () use ($latte) {
-    $controller = new UsersManagementController($latte);
+    $controller = new AdminController($latte);
+    echo $controller->usersManagement();
+});
+
+
+$router->get('/bookings', function () use ($latte) {
+    $controller = new BookingController($latte);
     echo $controller->index();
 });
 

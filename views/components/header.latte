@@ -62,6 +62,12 @@
             <a class="nav-link d-lg-none" href="/admin">Panel</a>
             <a class="btn btn-outline-primary me-2 d-none d-lg-inline-block" href="/admin">Panel</a>
           </li>
+          <li n:if="$_SESSION['role'] === 'Cliente'" class="nav-item">
+            <a class="nav-link d-lg-none" href="/bookings">Reservas</a>
+            <a class="btn btn-outline-primary me-2 d-none d-lg-inline-block" href="/bookings">
+              Reservas
+            </a>
+          </li>
           <li class="nav-item">
             <a class="nav-link d-lg-none" href="/logout">Cerrar Sesión</a>
             <a class="btn btn-outline-secondary d-none d-lg-inline-block" href="/logout">

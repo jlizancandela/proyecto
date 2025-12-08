@@ -2,7 +2,7 @@ import { h, render } from "https://esm.sh/preact@10.19.3";
 import { useState } from "https://esm.sh/preact@10.19.3/hooks";
 import htm from "https://esm.sh/htm";
 import { useUsers } from "./hooks/useUsers.js";
-import { SearchBar } from "./components/SearchBar.js";
+import { UsersHeader } from "./components/UsersHeader.js";
 import { UsersTable } from "./components/UsersTable.js";
 import { Pagination } from "./components/Pagination.js";
 import { CreateUserModal } from "./components/CreateUserModal.js";
@@ -62,20 +62,7 @@ function UsersApp() {
 
   return html`
     <div>
-      <div className="row g-3 mb-3 justify-content-between align-items-center">
-        <div className="col-12 col-md-6 col-lg-5 col-xl-4">
-          <${SearchBar} value=${search} onChange=${setSearch} />
-        </div>
-        <div className="col-12 col-md-auto">
-          <button
-            className="btn btn-primary shadow-sm w-100 w-md-auto px-4"
-            onClick=${() => window.openCreateUserModal()}
-          >
-            <i className="bi bi-plus-circle me-2"></i>
-            Nuevo Usuario
-          </button>
-        </div>
-      </div>
+      <${UsersHeader} search=${search} onSearchChange=${setSearch} />
 
       <${UsersTable} users=${users} onEdit=${handleEdit} onDelete=${handleDelete} />
 
@@ -92,20 +79,4 @@ function UsersApp() {
   `;
 }
 
-function initApp() {
-  const container = document.getElementById("users-app");
-  if (container) {
-    render(
-      html`
-        <${UsersApp} />
-      `,
-      container
-    );
-  }
-}
-
-if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", initApp);
-} else {
-  initApp();
-}
+render(h(UsersApp), document.getElementById("users-app"));

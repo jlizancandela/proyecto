@@ -1,6 +1,6 @@
-import { h } from 'https://esm.sh/preact@10.19.3';
-import { useMemo } from 'https://esm.sh/preact@10.19.3/hooks';
-import htm from 'https://esm.sh/htm';
+import { h } from "https://esm.sh/preact@10.19.3";
+import { useMemo } from "https://esm.sh/preact@10.19.3/hooks";
+import htm from "https://esm.sh/htm";
 
 const html = htm.bind(h);
 

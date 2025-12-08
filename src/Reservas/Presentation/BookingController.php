@@ -1,10 +1,10 @@
 <?php
 
-namespace Shared\Presentation;
+namespace Reservas\Presentation;
 
 use Latte\Engine;
 
-class UsersManagementController
+class BookingController
 {
     private Engine $latte;
 
@@ -13,10 +13,10 @@ class UsersManagementController
         $this->latte = $latte;
     }
 
-    public function index(): string
+    public function index()
     {
         return $this->latte->renderToString(
-            __DIR__ . '/../../../views/pages/UsersManagement.latte',
+            __DIR__ . '/../../../views/pages/Bookings.latte',
             [
                 'userName' => ucfirst($_SESSION['name'] ?? 'Usuario')
             ]

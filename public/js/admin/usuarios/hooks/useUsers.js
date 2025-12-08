@@ -1,81 +1,69 @@
-import { useState, useEffect } from 'https://esm.sh/preact@10.19.3/hooks';
+import { useState, useEffect, useCallback } from "https://esm.sh/preact@10.19.3/hooks";
 
 export function useUsers() {
-  const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
+  const [state, setState] = useState({
+    users: [],
+    loading: true,
+    error: null,
+    page: 1,
+    totalPages: 1,
+  });
   const [search, setSearch] = useState("");
 
-  const loadUsers = async (searchQuery = "", currentPage = 1) => {
-    setLoading(true);
-    setError(null);
+  const loadUsers = useCallback(async (searchQuery = "", currentPage = 1) => {
+    setState((prev) => ({ ...prev, loading: true, error: null }));
 
     try {
-      const url = searchQuery
-        ? `/admin/api/users?search=${encodeURIComponent(searchQuery)}&page=${currentPage}`
-        : `/admin/api/users?page=${currentPage}`;
+      const params = new URLSearchParams({ page: currentPage });
+      if (searchQuery) params.set("search", searchQuery);
 
-      const response = await fetch(url);
+      const response = await fetch(`/admin/api/users?${params}`);
       const data = await response.json();
 
-      setUsers(data.users || []);
-      setTotalPages(data.totalPages || 1);
-      setPage(currentPage);
+      setState({
+        users: data.users || [],
+        totalPages: data.totalPages || 1,
+        page: currentPage,
+        loading: false,
+        error: null,
+      });
     } catch (err) {
-      setError("Error al cargar usuarios");
+      setState((prev) => ({
+        ...prev,
+        loading: false,
+        error: "Error al cargar usuarios",
+      }));
       console.error(err);
-    } finally {
-      setLoading(false);
     }
-  };
-
-  useEffect(() => {
-    loadUsers();
   }, []);
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      loadUsers(search, 1);
-    }, 500);
+  useEffect(() => loadUsers(), [loadUsers]);
 
+  useEffect(() => {
+    const timer = setTimeout(() => loadUsers(search, 1), 500);
     return () => clearTimeout(timer);
-  }, [search]);
+  }, [search, loadUsers]);
 
   const deleteUser = async (userId) => {
-    try {
-      const response = await fetch(`/admin/api/users/${userId}`, {
-        method: "DELETE",
-      });
+    const response = await fetch(`/admin/api/users/${userId}`, {
+      method: "DELETE",
+    });
 
-      const result = await response.json();
+    const result = await response.json();
 
-      if (result.success) {
-        loadUsers(search, page);
-        return true;
-      } else {
-        throw new Error(result.error || "No se pudo eliminar");
-      }
-    } catch (err) {
-      throw err;
+    if (!result.success) {
+      throw new Error(result.error || "No se pudo eliminar");
     }
-  };
 
-  const changePage = (newPage) => {
-    loadUsers(search, newPage);
+    loadUsers(search, state.page);
   };
 
   return {
-    users,
-    loading,
-    error,
-    page,
-    totalPages,
+    ...state,
     search,
     setSearch,
     deleteUser,
-    changePage,
-    reload: () => loadUsers(search, page),
+    changePage: (newPage) => loadUsers(search, newPage),
+    reload: () => loadUsers(search, state.page),
   };
 }
