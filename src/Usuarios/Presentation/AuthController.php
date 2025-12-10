@@ -21,7 +21,8 @@ class AuthController
         return $this->latte->renderToString(
             __DIR__ . '/../../../views/pages/Login.latte',
             [
-                'error' => $_SESSION['login_error'] ?? null
+                'error' => $_SESSION['login_error'] ?? null,
+                'currentUrl' => $_SERVER['REQUEST_URI'] ?? '/login'
             ]
         );
     }
@@ -69,7 +70,8 @@ class AuthController
         return $this->latte->renderToString(
             __DIR__ . '/../../../views/pages/Register.latte',
             [
-                'error' => $_SESSION['register_error'] ?? null
+                'error' => $_SESSION['register_error'] ?? null,
+                'currentUrl' => $_SERVER['REQUEST_URI'] ?? '/register'
             ]
         );
     }

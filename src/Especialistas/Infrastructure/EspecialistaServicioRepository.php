@@ -2,7 +2,7 @@
 
 namespace Especialistas\Infrastructure;
 
-use Servicios\Domain\EspecialistaServicio;
+use Especialistas\Domain\EspecialistaServicio;
 use Servicios\Domain\Servicio;
 use Especialistas\Domain\Especialista;
 use PDO;

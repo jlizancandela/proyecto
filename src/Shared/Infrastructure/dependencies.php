@@ -14,3 +14,7 @@ $db = (new Database())->getConnection();
 $userRepository = new UserRepository($db);
 $userService = new UserService($userRepository);
 $authService = new AuthService($userRepository, $userService);
+
+$servicioRepository = new \Servicios\Infrastructure\ServicioRepository($db);
+$especialistaRepository = new \Especialistas\Infrastructure\EspecialistaRepository($db);
+$reservaRepository = new \Reservas\Infrastructure\ReservaRepository($db);

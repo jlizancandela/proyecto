@@ -10,6 +10,21 @@
     left: 50%;
     transform: translateX(-50%);
   }
+  
+  /* Estilos para breadcrumb en navbar */
+  .navbar-nav-centered .breadcrumb {
+    background-color: transparent;
+    padding: 0;
+  }
+  
+  .navbar-nav-centered .breadcrumb-item + .breadcrumb-item::before {
+    color: var(--bs-secondary);
+  }
+  
+  /* Hover effect para enlaces del breadcrumb */
+  .navbar-nav-centered .breadcrumb a:hover {
+    font-weight: bold;
+  }
 }
 
 /* Hero - Background Image (no se puede hacer inline) */

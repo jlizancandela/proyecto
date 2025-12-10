@@ -17,7 +17,9 @@ class HomeController
     {
         return $this->latte->renderToString(
             __DIR__ . '/../../../views/pages/Home.latte',
-            []
+            [
+                'currentUrl' => $_SERVER['REQUEST_URI'] ?? '/'
+            ]
         );
     }
 }

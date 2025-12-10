@@ -8,7 +8,7 @@ use Especialistas\Infrastructure\EspecialistaRepository;
 use Especialistas\Infrastructure\HorarioEspecialistaRepository;
 use Especialistas\Infrastructure\EspecialistaServicioRepository;
 use Especialistas\Application\EspecialistaUsuarioDTO;
-use Servicios\Domain\EspecialistaServicio;
+use Especialistas\Domain\EspecialistaServicio;
 
 class EspecialistaService
 {

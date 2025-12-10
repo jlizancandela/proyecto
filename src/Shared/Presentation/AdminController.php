@@ -23,7 +23,8 @@ class AdminController
         return $this->latte->renderToString(
             __DIR__ . '/../../../views/pages/Admin.latte',
             [
-                'userName' => ucfirst($_SESSION['name'] ?? 'admin')
+                'userName' => ucfirst($_SESSION['name'] ?? 'admin'),
+                'currentUrl' => $_SERVER['REQUEST_URI'] ?? '/admin'
             ]
         );
     }
@@ -53,7 +54,8 @@ class AdminController
                 'page' => $page,
                 'totalPages' => $totalPages,
                 'search' => $search,
-                'total' => $total
+                'total' => $total,
+                'currentUrl' => $_SERVER['REQUEST_URI'] ?? '/admin/users'
             ]
         );
     }

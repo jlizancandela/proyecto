@@ -1,17 +1,40 @@
 import { h, render } from "https://esm.sh/preact@10.19.3";
+import { useEffect } from "https://esm.sh/preact@10.19.3/hooks";
+import { useStore } from "https://esm.sh/@nanostores/preact@0.5.1?deps=preact@10.19.3";
 import htm from "https://esm.sh/htm";
-import { useEffect } from "https://esm.sh/preact/hooks";
+import { $estado, loadServices } from "./context/bookingsContext.js";
+import { DateForm } from "./routes/dateForm.js";
+import { ServiceForm } from "./routes/serviceForm.js";
+import { ConfirmationForm } from "./routes/confirmationForm.js";
 
 const html = htm.bind(h);
 
-const bookingsApp = () => {
-  //TODO: fetch especialistas
-  //TODO: fetch calendario
-  //TODO: fetch servicios
+const BookingsApp = () => {
+  const estado = useStore($estado);
+
+  useEffect(() => {
+    loadServices();
+  }, []);
 
   return html`
-    <h1>Bookings</h1>
+    <h1 class="m-5">Nueva Reserva</h1>
+    ${estado === "ConfirmationForm"
+      ? html`
+          <${ConfirmationForm} />
+        `
+      : estado === "DateForm"
+      ? html`
+          <${DateForm} />
+        `
+      : html`
+          <${ServiceForm} />
+        `}
   `;
 };
 
-render(h(bookingsApp), document.getElementById("bookings-app"));
+render(
+  html`
+    <${BookingsApp} />
+  `,
+  document.getElementById("bookings-app")
+);

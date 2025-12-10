@@ -18,7 +18,8 @@ class BookingController
         return $this->latte->renderToString(
             __DIR__ . '/../../../views/pages/Bookings.latte',
             [
-                'userName' => ucfirst($_SESSION['name'] ?? 'Usuario')
+                'userName' => ucfirst($_SESSION['name'] ?? 'Usuario'),
+                'currentUrl' => $_SERVER['REQUEST_URI'] ?? '/bookings'
             ]
         );
     }

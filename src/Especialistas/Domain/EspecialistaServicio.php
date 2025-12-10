@@ -1,6 +1,6 @@
 <?php
 
-namespace Servicios\Domain;
+namespace Especialistas\Domain;
 
 class EspecialistaServicio
 {

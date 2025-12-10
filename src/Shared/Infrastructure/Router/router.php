@@ -7,6 +7,9 @@ use Usuarios\Presentation\AuthController;
 use Shared\Presentation\HomeController;
 use Shared\Presentation\AdminController;
 use Reservas\Presentation\BookingController;
+use Reservas\Presentation\BookingApiController;
+use Servicios\Presentation\ServiceApiController;
+use Especialistas\Presentation\EspecialistaApiController;
 
 require_once __DIR__ . '/../dependencies.php';
 
@@ -85,6 +88,21 @@ $router->put('/admin/api/users/(\d+)', function ($id) use ($latte, $userService)
 $router->delete('/admin/api/users/(\d+)', function ($id) use ($latte, $userService) {
     $controller = new UserApiController($latte, $userService);
     $controller->deleteUser((int)$id);
+});
+
+$router->get('/api/services', function () use ($servicioRepository) {
+    $controller = new ServiceApiController($servicioRepository);
+    $controller->getAll();
+});
+
+$router->get('/api/especialistas/disponibles', function () use ($especialistaRepository) {
+    $controller = new EspecialistaApiController($especialistaRepository);
+    $controller->getDisponibles();
+});
+
+$router->post('/api/reservas', function () use ($reservaRepository) {
+    $controller = new BookingApiController($reservaRepository);
+    $controller->createReserva();
 });
 
 $router->run();
