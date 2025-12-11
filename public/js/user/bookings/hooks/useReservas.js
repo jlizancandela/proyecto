@@ -24,27 +24,37 @@ export const useReservas = () => {
   const [error, setError] = useState(null);
 
   const confirmarReserva = async () => {
+    if (!selectedService?.id || !selectedEspecialista?.id_especialista || !dia || !selectedHora) {
+      setError("Faltan datos requeridos para completar la reserva");
+      return;
+    }
+
     setLoading(true);
     setError(null);
+    let reservaExitosa = false;
 
     try {
       const reservaData = {
-        servicio_id: selectedService?.id,
-        especialista_id: selectedEspecialista?.id_especialista,
+        servicio_id: selectedService.id,
+        especialista_id: selectedEspecialista.id_especialista,
         fecha: formatearFechaISO(dia),
         hora: selectedHora,
-        duracion: selectedService?.duracion,
+        duracion: selectedService.duracion,
       };
 
       await createReserva(reservaData);
+      reservaExitosa = true;
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false); // CORRECCIÓN CLAVE: Siempre se ejecuta
+    }
 
-      // Éxito - resetear y volver al inicio después de 1.5s
+    // Éxito diferido - resetear después de 1.5s solo si no hubo error
+    if (reservaExitosa) {
       setTimeout(() => {
         resetBooking();
       }, 1500);
-    } catch (err) {
-      setError(err.message);
-      setLoading(false);
     }
   };
 

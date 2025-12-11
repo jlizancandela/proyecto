@@ -19,11 +19,15 @@ export const formatearFechaLarga = (fecha, capitalizar = true) => {
 
 /**
  * Formatea una fecha en formato ISO (YYYY-MM-DD)
+ * Usa componentes locales para evitar problemas de zona horaria
  * @param {Date} fecha - Fecha a formatear
  * @returns {string} Fecha en formato ISO
  */
 export const formatearFechaISO = (fecha) => {
-  return fecha.toISOString().split("T")[0];
+  const year = fecha.getFullYear();
+  const month = String(fecha.getMonth() + 1).padStart(2, "0");
+  const day = String(fecha.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
 };
 
 /**

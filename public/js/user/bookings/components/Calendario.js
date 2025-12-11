@@ -32,15 +32,16 @@ export function Calendario({
     calendarioCompleto.push(i);
   }
 
-  // Función para verificar si un día ya pasó
   const esDiaPasado = (dia) => {
-    if (!dia) return false;
+    if (!dia) {
+      return false;
+    }
+
     const fechaDia = new Date(year, month, dia);
     const hoy = new Date();
     hoy.setHours(0, 0, 0, 0);
     return fechaDia < hoy;
   };
-
   return html`
     <div class="card border-0 shadow rounded-4 p-4" style="width: 380px;">
       <h5 class="fw-bold mb-4">Selecciona una fecha</h5>
@@ -83,11 +84,11 @@ export function Calendario({
             `;
           }
 
-          const esDiaSeleccionado =
-            dia === diaSeleccionado.getDate() &&
-            month === diaSeleccionado.getMonth() &&
-            year === diaSeleccionado.getFullYear();
+          const diaEsSeleccionado = dia === diaSeleccionado.getDate();
+          const mesEsSeleccionado = month === diaSeleccionado.getMonth();
+          const añoEsSeleccionado = year === diaSeleccionado.getFullYear();
 
+          const esDiaSeleccionado = diaEsSeleccionado && mesEsSeleccionado && añoEsSeleccionado;
           const pasado = esDiaPasado(dia);
 
           if (esDiaSeleccionado) {

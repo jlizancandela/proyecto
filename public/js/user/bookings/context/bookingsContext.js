@@ -26,8 +26,19 @@ export const loadEspecialistasDisponibles = async () => {
   const selectedService = $selectedService.get();
   const dia = $dia.get();
 
+  // Guard clauses mejoradas
   if (!selectedService) {
     console.log("No hay servicio seleccionado");
+    return;
+  }
+
+  if (!selectedService.id) {
+    console.warn("El servicio seleccionado no tiene ID");
+    return;
+  }
+
+  if (!dia) {
+    console.warn("No hay fecha seleccionada");
     return;
   }
 

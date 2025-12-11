@@ -16,19 +16,25 @@ const BookingsApp = () => {
     loadServices();
   }, []);
 
+  let componenteActual;
+
+  if (estado === "ConfirmationForm") {
+    componenteActual = html`
+      <${ConfirmationForm} />
+    `;
+  } else if (estado === "DateForm") {
+    componenteActual = html`
+      <${DateForm} />
+    `;
+  } else {
+    componenteActual = html`
+      <${ServiceForm} />
+    `;
+  }
+
   return html`
     <h1 class="m-5">Nueva Reserva</h1>
-    ${estado === "ConfirmationForm"
-      ? html`
-          <${ConfirmationForm} />
-        `
-      : estado === "DateForm"
-      ? html`
-          <${DateForm} />
-        `
-      : html`
-          <${ServiceForm} />
-        `}
+    ${componenteActual}
   `;
 };
 
