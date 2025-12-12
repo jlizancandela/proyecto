@@ -12,7 +12,7 @@ export const $selectedEspecialista = atom(null);
 export const $selectedHora = atom(null);
 export const $currentPage = atom(1);
 export const $totalEspecialistas = atom(0);
-export const $pageSize = atom(3);
+export const $pageSize = atom(2);
 
 export const loadServices = async () => {
   const servicesData = await getServices();
