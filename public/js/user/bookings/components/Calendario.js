@@ -3,119 +3,147 @@ import htm from "https://esm.sh/htm";
 
 const html = htm.bind(h);
 
-export function Calendario({
-  fecha = new Date(),
-  diaSeleccionado = new Date(),
-  handleDiaChange,
-  handleMesChange,
-}) {
-  const diasSemana = ["L", "M", "X", "J", "V", "S", "D"];
+export function Calendario({ fecha, diaSeleccionado, handleDiaChange, handleMesChange }) {
+  if (!fecha || !handleDiaChange || !handleMesChange) return null;
 
+  const diasSemana = ["L", "M", "X", "J", "V", "S", "D"];
   const year = fecha.getFullYear();
   const month = fecha.getMonth();
-
   const textMonth = fecha.toLocaleString("es-ES", { month: "long" });
   const textYear = year;
-
   const diasTotalesMes = new Date(year, month + 1, 0).getDate();
   const primerDiaMes = (new Date(year, month, 1).getDay() || 7) - 1;
 
-  const calendarioCompleto = [];
+  const calendarioCompleto = buildCalendarDays(primerDiaMes, diasTotalesMes);
 
-  // Espacios vacíos antes del primer día (Lunes = 0, Domingo = 6)
-  for (let i = 0; i < primerDiaMes; i++) {
-    calendarioCompleto.push(null);
-  }
-
-  // Días del mes
-  for (let i = 1; i <= diasTotalesMes; i++) {
-    calendarioCompleto.push(i);
-  }
-
-  const esDiaPasado = (dia) => {
-    if (!dia) {
-      return false;
-    }
-
-    const fechaDia = new Date(year, month, dia);
-    const hoy = new Date();
-    hoy.setHours(0, 0, 0, 0);
-    return fechaDia < hoy;
-  };
   return html`
-    <div class="card border-0 shadow rounded-4 p-4" style="width: 380px;">
-      <h5 class="fw-bold mb-4">Selecciona una fecha</h5>
-
-      <!-- Navegación de mes -->
-      <div class="d-flex justify-content-between align-items-center mb-4 px-2">
-        <button
-          class="btn btn-sm border-0"
-          disabled=${year < new Date().getFullYear() ||
-          (year === new Date().getFullYear() && month <= new Date().getMonth())}
-          onClick=${() => handleMesChange(new Date(year, month - 1))}
-        >
-          <i class="bi bi-chevron-left fw-bold"></i>
-        </button>
-        <span class="fw-bold text-capitalize">${textMonth} ${textYear}</span>
-        <button
-          class="btn btn-sm border-0"
-          onClick=${() => handleMesChange(new Date(year, month + 1))}
-        >
-          <i class="bi bi-chevron-right fw-bold"></i>
-        </button>
-      </div>
-
-      <!-- Grid del calendario -->
-      <div class="d-grid gap-2 text-center" style="grid-template-columns: repeat(7, 1fr);">
-        <!-- Encabezados de días -->
+    <div class="card calendario border-0 shadow-sm rounded-4 p-4 calendario-container bg-white">
+      ${renderNavigationButtons(year, month, textMonth, textYear, handleMesChange)}
+      <div class="row g-0 text-center small text-primary fw-bold mb-2">
         ${diasSemana.map(
-          (dia, index) => html`
-            <div class="${index === 5 || index === 6 ? "text-danger" : ""} small fw-normal">
-              ${dia}
-            </div>
-          `
+          (d) =>
+            html`
+              <div class="col">${d}</div>
+            `
         )}
-
-        <!-- Días del mes -->
-        ${calendarioCompleto.map((dia) => {
-          if (!dia) {
-            return html`
-              <div></div>
-            `;
-          }
-
-          const diaEsSeleccionado = dia === diaSeleccionado.getDate();
-          const mesEsSeleccionado = month === diaSeleccionado.getMonth();
-          const añoEsSeleccionado = year === diaSeleccionado.getFullYear();
-
-          const esDiaSeleccionado = diaEsSeleccionado && mesEsSeleccionado && añoEsSeleccionado;
-          const pasado = esDiaPasado(dia);
-
-          if (esDiaSeleccionado) {
-            return html`
-              <div class="d-flex justify-content-center align-items-center">
-                <div
-                  class="rounded-circle bg-primary text-white d-flex justify-content-center align-items-center shadow-sm"
-                  style="width: 36px; height: 36px; cursor: pointer;"
-                  onClick=${() => handleDiaChange(new Date(year, month, dia))}
-                >
-                  ${dia}
-                </div>
-              </div>
-            `;
-          }
-
-          return html`
-            <div
-              class="${pasado ? "text-secondary opacity-50" : ""} py-2"
-              style="${pasado ? "cursor: not-allowed;" : "cursor: pointer;"}"
-              onClick=${() => !pasado && handleDiaChange(new Date(year, month, dia))}
-            >
-              ${dia}
-            </div>
-          `;
-        })}
       </div>
+      ${renderWeeks(calendarioCompleto, year, month, diaSeleccionado, handleDiaChange)}
     </div>
   `;
+}
+
+function buildCalendarDays(primerDiaMes, diasTotalesMes) {
+  const out = [];
+  for (let i = 0; i < primerDiaMes; i++) out.push(null);
+  for (let i = 1; i <= diasTotalesMes; i++) out.push(i);
+  while (out.length % 7 !== 0) out.push(null);
+  return out;
+}
+
+function renderNavigationButtons(year, month, textMonth, textYear, handleMesChange) {
+  const today = new Date();
+  const isPreviousDisabled = isPreviousMonthDisabled(year, month, today);
+  const prev = () => handleMesChange(new Date(year, month - 1));
+  const next = () => handleMesChange(new Date(year, month + 1));
+
+  return html`
+    <div class="d-flex justify-content-between align-items-center mb-4 px-2">
+      <button
+        class="btn btn-sm btn-link text-decoration-none text-dark p-0"
+        disabled=${isPreviousDisabled}
+        onClick=${prev}
+      >
+        <i class="bi bi-chevron-left"></i>
+      </button>
+      <div class="fw-bold text-capitalize fs-5">${textMonth} ${textYear}</div>
+      <button class="btn btn-sm btn-link text-decoration-none text-dark p-0" onClick=${next}>
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  `;
+}
+
+function isPreviousMonthDisabled(year, month, today) {
+  if (year < today.getFullYear()) return true;
+  if (year === today.getFullYear() && month <= today.getMonth()) return true;
+  return false;
+}
+
+function renderWeeks(calendarioCompleto, year, month, diaSeleccionado, handleDiaChange) {
+  const weeks = [];
+  for (let i = 0; i < calendarioCompleto.length; i += 7) {
+    weeks.push(calendarioCompleto.slice(i, i + 7));
+  }
+
+  return weeks.map(
+    (week) => html`
+      <div class="row g-0 text-center mb-2">
+        ${week.map(
+          (d) =>
+            html`
+              <div class="col d-flex justify-content-center">
+                ${renderCell(d, year, month, diaSeleccionado, handleDiaChange)}
+              </div>
+            `
+        )}
+      </div>
+    `
+  );
+}
+
+function renderCell(dia, year, month, diaSeleccionado, handleDiaChange) {
+  if (!dia)
+    return html`
+      <div style="width: 40px; height: 40px;"></div>
+    `;
+  const isSelected = isDaySelected(dia, month, year, diaSeleccionado);
+  const isPast = isDayInPast(dia, month, year);
+  const isSunday = new Date(year, month, dia).getDay() === 0;
+
+  // Deshabilitar días pasados y domingos
+  if (isPast || isSunday) {
+    return html`
+      <span class="d-flex align-items-center justify-content-center text-secondary calendario-day">
+        ${dia}
+      </span>
+    `;
+  }
+
+  if (isSelected) {
+    return html`
+      <button
+        type="button"
+        class="btn calendario-day active rounded-circle d-flex align-items-center justify-content-center bg-primary text-white"
+        onClick=${() => handleDiaChange(new Date(year, month, dia))}
+      >
+        ${dia}
+      </button>
+    `;
+  }
+
+  return html`
+    <button
+      type="button"
+      class="btn calendario-day rounded-circle d-flex align-items-center justify-content-center text-black"
+      onClick=${() => handleDiaChange(new Date(year, month, dia))}
+    >
+      ${dia}
+    </button>
+  `;
+}
+
+function isDaySelected(dia, month, year, diaSeleccionado) {
+  if (!diaSeleccionado) return false;
+  return (
+    dia === diaSeleccionado.getDate() &&
+    month === diaSeleccionado.getMonth() &&
+    year === diaSeleccionado.getFullYear()
+  );
+}
+
+function isDayInPast(dia, month, year) {
+  const fecha = new Date(year, month, dia);
+  const hoy = new Date();
+  hoy.setHours(0, 0, 0, 0);
+  return fecha < hoy;
 }

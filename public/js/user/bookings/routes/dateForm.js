@@ -70,7 +70,12 @@ export const DateForm = () => {
       <div class="col-12 col-lg-7">
         <div>
           <div>
-            <${EspecialistasList} especialistas=${especialistas} onSelectHora=${handleSelectHora} />
+            <${EspecialistasList}
+              especialistas=${especialistas}
+              onSelectHora=${handleSelectHora}
+              selectedEspecialista=${selectedEspecialista}
+              selectedHora=${selectedHora}
+            />
           </div>
           <div class="d-flex justify-content-center mt-4">
             <button

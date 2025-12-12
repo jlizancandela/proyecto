@@ -1,10 +1,10 @@
 <?php
 
-namespace Reservas\Presentation;
+namespace Usuarios\Presentation;
 
 use Latte\Engine;
 
-class BookingController
+class ProfileController
 {
     private Engine $latte;
 
@@ -16,10 +16,10 @@ class BookingController
     public function index()
     {
         return $this->latte->renderToString(
-            __DIR__ . '/../../../views/pages/NewBooking.latte',
+            __DIR__ . '/../../../views/pages/Profile.latte',
             [
                 'userName' => ucfirst($_SESSION['name'] ?? 'Usuario'),
-                'currentUrl' => $_SERVER['REQUEST_URI'] ?? '/user/reservas/nueva'
+                'currentUrl' => $_SERVER['REQUEST_URI'] ?? '/user/profile'
             ]
         );
     }

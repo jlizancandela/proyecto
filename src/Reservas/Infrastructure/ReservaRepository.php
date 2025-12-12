@@ -355,4 +355,163 @@ class ReservaRepository
             return true;
         }
     }
+
+    public function findClientConflicts(
+        string $fecha,
+        string $hora_inicio,
+        string $hora_fin,
+        int $id_cliente,
+        ?int $exclude_id_reserva = null
+    ): bool {
+        try {
+            $sql = "
+                SELECT COUNT(*) as count
+                FROM RESERVA
+                WHERE id_cliente = :id_cliente
+                AND fecha_reserva = :fecha_reserva
+                AND estado != 'Cancelada'
+                AND (hora_inicio < :hora_fin AND hora_fin > :hora_inicio)
+            ";
+
+            if ($exclude_id_reserva !== null) {
+                $sql .= " AND id_reserva != :exclude_id";
+            }
+
+            $stmt = $this->db->prepare($sql);
+
+            $params = [
+                'id_cliente' => $id_cliente,
+                'fecha_reserva' => $fecha,
+                'hora_inicio' => $hora_inicio,
+                'hora_fin' => $hora_fin,
+            ];
+
+            if ($exclude_id_reserva !== null) {
+                $params['exclude_id'] = $exclude_id_reserva;
+            }
+
+            $stmt->execute($params);
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            return $result['count'] > 0;
+        } catch (\Exception $e) {
+            error_log("Error al verificar conflictos del cliente: " . $e->getMessage());
+            return true;
+        }
+    }
+
+    public function findByUserId(int $userId, int $limit = 50, int $offset = 0): array
+    {
+        try {
+            $stmt = $this->db->prepare("
+                SELECT 
+                    r.*,
+                    u.nombre as especialista_nombre, 
+                    u.apellidos as especialista_apellidos,
+                    e.descripcion as especialista_descripcion, 
+                    e.foto_url as especialista_foto_url,
+                    s.nombre_servicio, 
+                    s.duracion_minutos, 
+                    s.precio, 
+                    s.descripcion as servicio_descripcion
+                FROM RESERVA r
+                INNER JOIN ESPECIALISTA e ON r.id_especialista = e.id_especialista
+                INNER JOIN USUARIO u ON e.id_usuario = u.id_usuario
+                INNER JOIN SERVICIO s ON r.id_servicio = s.id_servicio
+                WHERE r.id_cliente = :userId
+                ORDER BY r.fecha_reserva DESC, r.hora_inicio DESC
+                LIMIT :limit OFFSET :offset
+            ");
+
+            $stmt->bindValue(':userId', $userId, PDO::PARAM_INT);
+            $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+            $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+            $stmt->execute();
+
+            $reservas = [];
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                $reservas[] = ReservaCompletaDTO::fromDatabase($row);
+            }
+
+            return $reservas;
+        } catch (\Exception $e) {
+            error_log("Error al obtener reservas del usuario: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    public function countByUserId(int $userId): int
+    {
+        try {
+            $stmt = $this->db->prepare("
+                SELECT COUNT(*) as total
+                FROM RESERVA r
+                WHERE r.id_cliente = :userId
+            ");
+
+            $stmt->bindValue(':userId', $userId, PDO::PARAM_INT);
+            $stmt->execute();
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            return (int)$result['total'];
+        } catch (\Exception $e) {
+            error_log("Error al contar reservas del usuario: " . $e->getMessage());
+            return 0;
+        }
+    }
+
+    public function findById(int $reservaId): ?ReservaCompletaDTO
+    {
+        try {
+            $stmt = $this->db->prepare("
+                SELECT 
+                    r.*,
+                    u.nombre as especialista_nombre, 
+                    u.apellidos as especialista_apellidos,
+                    e.descripcion as especialista_descripcion, 
+                    e.foto_url as especialista_foto_url,
+                    s.nombre_servicio, 
+                    s.duracion_minutos, 
+                    s.precio, 
+                    s.descripcion as servicio_descripcion
+                FROM RESERVA r
+                INNER JOIN ESPECIALISTA e ON r.id_especialista = e.id_especialista
+                INNER JOIN USUARIO u ON e.id_usuario = u.id_usuario
+                INNER JOIN SERVICIO s ON r.id_servicio = s.id_servicio
+                WHERE r.id_reserva = :reservaId
+            ");
+
+            $stmt->bindValue(':reservaId', $reservaId, PDO::PARAM_INT);
+            $stmt->execute();
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if (!$row) {
+                return null;
+            }
+
+            return ReservaCompletaDTO::fromDatabase($row);
+        } catch (\Exception $e) {
+            error_log("Error al buscar reserva por ID: " . $e->getMessage());
+            return null;
+        }
+    }
+
+    public function updateStatus(int $reservaId, string $newStatus): bool
+    {
+        try {
+            $stmt = $this->db->prepare("
+                UPDATE RESERVA 
+                SET estado = :status 
+                WHERE id_reserva = :reservaId
+            ");
+
+            $stmt->bindValue(':status', $newStatus, PDO::PARAM_STR);
+            $stmt->bindValue(':reservaId', $reservaId, PDO::PARAM_INT);
+            
+            return $stmt->execute() && $stmt->rowCount() > 0;
+        } catch (\Exception $e) {
+            error_log("Error al actualizar estado de reserva: " . $e->getMessage());
+            return false;
+        }
+    }
 }

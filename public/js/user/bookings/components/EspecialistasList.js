@@ -3,7 +3,12 @@ import htm from "https://esm.sh/htm";
 
 const html = htm.bind(h);
 
-export const EspecialistasList = ({ especialistas, onSelectHora }) => {
+export const EspecialistasList = ({
+  especialistas,
+  onSelectHora,
+  selectedEspecialista,
+  selectedHora,
+}) => {
   if (especialistas.length === 0) {
     return html`
       <div class="text-center py-5">
@@ -25,17 +30,25 @@ export const EspecialistasList = ({ especialistas, onSelectHora }) => {
               <div>
                 <strong class="small">Horas disponibles:</strong>
                 <div class="d-flex flex-wrap gap-2 mt-2">
-                  ${especialista.horas_disponibles.map(
-                    (hora) => html`
+                  ${especialista.horas_disponibles.map((hora) => {
+                    const isSelected =
+                      selectedEspecialista &&
+                      selectedHora &&
+                      selectedEspecialista.id_especialista === especialista.id_especialista &&
+                      selectedHora === hora;
+
+                    return html`
                       <button
-                        class="btn btn-outline-primary btn-sm"
-                        onClick=${() => onSelectHora && onSelectHora(especialista, hora)}
+                        class="${isSelected
+                          ? "btn btn-primary btn-sm"
+                          : "btn btn-outline-primary btn-sm"}"
+                        onClick=${() => onSelectHora(especialista, hora)}
                       >
                         <i class="bi bi-clock me-1"></i>
                         ${hora}
                       </button>
-                    `
-                  )}
+                    `;
+                  })}
                 </div>
               </div>
             </div>

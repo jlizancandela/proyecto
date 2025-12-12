@@ -1,6 +1,6 @@
 {* Sidebar visible en desktop, offcanvas en móvil *}
 <aside
-  class="d-none d-md-flex col-md-2 bg-white border-end min-vh-100 flex-column sticky-md-top overflow-auto"
+  class="d-none d-lg-flex col-lg-2 bg-white border-end min-vh-100 flex-column sticky-lg-top overflow-auto"
 >
   <div class="p-4 border-bottom">
     <div class="d-flex align-items-center">
@@ -13,39 +13,32 @@
 
   <nav class="nav flex-column flex-grow-1 p-3">
     <a
-      class="nav-link d-flex align-items-center gap-2 text-dark bg-light rounded mb-1 py-2"
+      class="nav-link d-flex align-items-center gap-2 {if $currentUrl === '/user'}text-dark bg-light{else}text-secondary{/if} rounded mb-1 py-2"
       href="/user"
     >
       <i class="bi bi-house"></i>
       <span>Inicio</span>
     </a>
     <a
-      class="nav-link d-flex align-items-center gap-2 text-secondary rounded mb-1 py-2"
-      href="/bookings"
+      class="nav-link d-flex align-items-center gap-2 {if $currentUrl === '/user/reservas'}text-dark bg-light{else}text-secondary{/if} rounded mb-1 py-2"
+      href="/user/reservas"
     >
       <i class="bi bi-calendar-check"></i>
       <span>Mis Reservas</span>
     </a>
     <a
-      class="nav-link d-flex align-items-center gap-2 text-secondary rounded mb-1 py-2"
-      href="/bookings/nueva"
+      class="nav-link d-flex align-items-center gap-2 {if $currentUrl === '/user/reservas/nueva'}text-dark bg-light{else}text-secondary{/if} rounded mb-1 py-2"
+      href="/user/reservas/nueva"
     >
       <i class="bi bi-plus-circle"></i>
       <span>Nueva Reserva</span>
     </a>
     <a
-      class="nav-link d-flex align-items-center gap-2 text-secondary rounded mb-1 py-2"
-      href="/perfil"
+      class="nav-link d-flex align-items-center gap-2 {if $currentUrl === '/user/profile'}text-dark bg-light{else}text-secondary{/if} rounded mb-1 py-2"
+      href="/user/profile"
     >
       <i class="bi bi-person"></i>
       <span>Mi Perfil</span>
-    </a>
-    <a
-      class="nav-link d-flex align-items-center gap-2 text-secondary rounded mb-1 py-2"
-      href="/historial"
-    >
-      <i class="bi bi-clock-history"></i>
-      <span>Historial</span>
     </a>
   </nav>
 
@@ -68,7 +61,7 @@
 
 {* Offcanvas para móvil *}
 <div
-  class="offcanvas offcanvas-start d-md-none"
+  class="offcanvas offcanvas-start d-lg-none"
   tabindex="-1"
   id="sidebarOffcanvas"
   aria-labelledby="sidebarOffcanvasLabel"
@@ -84,39 +77,32 @@
   <div class="offcanvas-body d-flex flex-column">
     <nav class="nav flex-column flex-grow-1">
       <a
-        class="nav-link d-flex align-items-center gap-2 text-dark bg-light rounded mb-1 py-2"
+        class="nav-link d-flex align-items-center gap-2 {if $currentUrl === '/user'}text-dark bg-light{else}text-secondary{/if} rounded mb-1 py-2"
         href="/user"
       >
         <i class="bi bi-house"></i>
         <span>Inicio</span>
       </a>
       <a
-        class="nav-link d-flex align-items-center gap-2 text-secondary rounded mb-1 py-2"
-        href="/bookings"
+        class="nav-link d-flex align-items-center gap-2 {if $currentUrl === '/user/reservas'}text-dark bg-light{else}text-secondary{/if} rounded mb-1 py-2"
+        href="/user/reservas"
       >
         <i class="bi bi-calendar-check"></i>
         <span>Mis Reservas</span>
       </a>
       <a
-        class="nav-link d-flex align-items-center gap-2 text-secondary rounded mb-1 py-2"
-        href="/bookings/nueva"
+        class="nav-link d-flex align-items-center gap-2 {if $currentUrl === '/user/reservas/nueva'}text-dark bg-light{else}text-secondary{/if} rounded mb-1 py-2"
+        href="/user/reservas/nueva"
       >
         <i class="bi bi-plus-circle"></i>
         <span>Nueva Reserva</span>
       </a>
       <a
-        class="nav-link d-flex align-items-center gap-2 text-secondary rounded mb-1 py-2"
-        href="/perfil"
+        class="nav-link d-flex align-items-center gap-2 {if $currentUrl === '/user/profile'}text-dark bg-light{else}text-secondary{/if} rounded mb-1 py-2"
+        href="/user/profile"
       >
         <i class="bi bi-person"></i>
         <span>Mi Perfil</span>
-      </a>
-      <a
-        class="nav-link d-flex align-items-center gap-2 text-secondary rounded mb-1 py-2"
-        href="/historial"
-      >
-        <i class="bi bi-clock-history"></i>
-        <span>Historial</span>
       </a>
     </nav>
 

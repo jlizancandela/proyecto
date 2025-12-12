@@ -20,67 +20,68 @@ class BookingApiController
         header('Content-Type: application/json');
 
         try {
-            // Verificar que el usuario esté autenticado
-            if (!isset($_SESSION['user_id'])) {
-                http_response_code(401);
-                echo json_encode(['error' => 'Usuario no autenticado']);
-                return;
-            }
-
-            // Obtener datos del request
             $data = json_decode(file_get_contents('php://input'), true);
 
-            // Validar datos requeridos
             if (!isset($data['servicio_id'], $data['especialista_id'], $data['fecha'], $data['hora'])) {
                 http_response_code(400);
                 echo json_encode(['error' => 'Faltan datos requeridos']);
                 return;
             }
 
-            $idCliente = (int) $_SESSION['user_id'];
-            $idEspecialista = (int) $data['especialista_id'];
-            $idServicio = (int) $data['servicio_id'];
-            $fecha = $data['fecha'];
-            $horaInicio = $data['hora'];
+            $clientId = (int) $_SESSION['user_id'];
+            $specialistId = (int) $data['especialista_id'];
+            $serviceId = (int) $data['servicio_id'];
+            $date = $data['fecha'];
+            $startTime = $data['hora'];
             
-            // Calcular hora fin basada en la duración del servicio
-            // Necesitamos obtener la duración del servicio
-            $duracion = $data['duracion'] ?? 60; // Por defecto 60 minutos
-            $horaFin = date('H:i:s', strtotime($horaInicio) + ($duracion * 60));
+            $duration = $data['duracion'] ?? 60;
+            $endTime = date('H:i:s', strtotime($startTime) + ($duration * 60));
 
-            // Verificar conflictos de horario
-            $hayConflicto = $this->reservaRepository->findConflicts(
-                $fecha,
-                $horaInicio,
-                $horaFin,
-                $idEspecialista
+            $hasConflict = $this->reservaRepository->findConflicts(
+                $date,
+                $startTime,
+                $endTime,
+                $specialistId
             );
 
-            if ($hayConflicto) {
+            if ($hasConflict) {
                 http_response_code(409);
                 echo json_encode(['error' => 'El horario seleccionado ya no está disponible']);
                 return;
             }
 
-            // Crear la reserva
-            $reserva = new Reserva(
-                $idCliente,
-                $idEspecialista,
-                $idServicio,
-                $fecha,
-                $horaInicio,
-                $horaFin,
-                'Pendiente', // Estado inicial
+            // Evitar que el mismo cliente tenga dos reservas al mismo tiempo
+            $clientConflict = $this->reservaRepository->findClientConflicts(
+                $date,
+                $startTime,
+                $endTime,
+                $clientId
+            );
+
+            if ($clientConflict) {
+                http_response_code(409);
+                echo json_encode(['error' => 'Ya tienes otra reserva en ese horario']);
+                return;
+            }
+
+            $booking = new Reserva(
+                $clientId,
+                $specialistId,
+                $serviceId,
+                $date,
+                $startTime,
+                $endTime,
+                'Pendiente',
                 $data['observaciones'] ?? null
             );
 
-            $idReserva = $this->reservaRepository->addReserva($reserva);
+            $bookingId = $this->reservaRepository->addReserva($booking);
 
-            if ($idReserva) {
+            if ($bookingId) {
                 http_response_code(201);
                 echo json_encode([
                     'success' => true,
-                    'id_reserva' => $idReserva,
+                    'id_reserva' => $bookingId,
                     'message' => 'Reserva creada exitosamente'
                 ]);
             } else {
@@ -89,6 +90,39 @@ class BookingApiController
             }
         } catch (\Exception $e) {
             error_log("Error en createReserva: " . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(['error' => 'Error interno del servidor']);
+        }
+    }
+
+    public function getReservas(): void
+    {
+        header('Content-Type: application/json');
+
+        try {
+            $clientId = (int) $_SESSION['user_id'];
+            $limit = (int) ($_GET['limit'] ?? 50);
+            $offset = (int) ($_GET['offset'] ?? 0);
+            
+            $bookings = $this->reservaRepository->findByClient($clientId, $limit, $offset);
+
+            $bookingsData = [];
+            foreach ($bookings as $booking) {
+                if (method_exists($booking, 'toArray')) {
+                    $bookingsData[] = $booking->toArray();
+                } else {
+                    $bookingsData[] = $booking;
+                }
+            }
+
+            http_response_code(200);
+            echo json_encode([
+                'success' => true,
+                'reservas' => $bookingsData,
+                'total' => count($bookingsData)
+            ]);
+        } catch (\Exception $e) {
+            error_log("Error en getReservas: " . $e->getMessage());
             http_response_code(500);
             echo json_encode(['error' => 'Error interno del servidor']);
         }

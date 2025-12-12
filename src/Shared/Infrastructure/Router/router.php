@@ -3,11 +3,14 @@
 use Bramus\Router\Router;
 use Shared\Infrastructure\Middleware\AuthMiddleware;
 use Usuarios\Presentation\UserApiController;
+use Usuarios\Presentation\UserController;
+use Usuarios\Presentation\ProfileController;
 use Usuarios\Presentation\AuthController;
 use Shared\Presentation\HomeController;
 use Shared\Presentation\AdminController;
 use Reservas\Presentation\BookingController;
 use Reservas\Presentation\BookingApiController;
+use Reservas\Presentation\MyBookingsController;
 use Servicios\Presentation\ServiceApiController;
 use Especialistas\Presentation\EspecialistaApiController;
 
@@ -17,6 +20,10 @@ $router = new Router();
 
 $router->before('GET|POST|PUT|DELETE', '/admin/.*', function () {
     AuthMiddleware::requireAdmin();
+});
+
+$router->before('GET|POST|PUT|DELETE', '/user/.*', function () {
+    AuthMiddleware::requireAuth();
 });
 
 $router->get('/', function () use ($latte) {
@@ -59,10 +66,34 @@ $router->get('/admin/users', function () use ($latte, $userService) {
     echo $controller->usersManagement();
 });
 
+$router->get('/user', function () use ($latte) {
+    $controller = new UserController($latte);
+    echo $controller->index();
+});
 
-$router->get('/bookings', function () use ($latte) {
+$router->get('/user/profile', function () use ($latte) {
+    $controller = new ProfileController($latte);
+    echo $controller->index();
+});
+
+$router->get('/user/reservas', function () use ($latte, $reservaRepository) {
+    $controller = new MyBookingsController($latte, $reservaRepository);
+    echo $controller->index();
+});
+
+$router->get('/user/reservas/nueva', function () use ($latte) {
     $controller = new BookingController($latte);
     echo $controller->index();
+});
+
+$router->post('/user/reservas/cancel/(\d+)', function ($bookingId) use ($latte, $reservaRepository) {
+    $controller = new MyBookingsController($latte, $reservaRepository);
+    $controller->cancel((int)$bookingId);
+});
+
+$router->get('/user/reservas/modify/(\d+)', function ($bookingId) use ($latte, $reservaRepository) {
+    $controller = new MyBookingsController($latte, $reservaRepository);
+    $controller->modify((int)$bookingId);
 });
 
 $router->get('/admin/api/users', function () use ($latte, $userService) {
@@ -98,6 +129,11 @@ $router->get('/api/services', function () use ($servicioRepository) {
 $router->get('/api/especialistas/disponibles', function () use ($especialistaRepository) {
     $controller = new EspecialistaApiController($especialistaRepository);
     $controller->getDisponibles();
+});
+
+$router->get('/api/reservas', function () use ($reservaRepository) {
+    $controller = new BookingApiController($reservaRepository);
+    $controller->getReservas();
 });
 
 $router->post('/api/reservas', function () use ($reservaRepository) {

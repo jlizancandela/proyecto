@@ -1,16 +1,72 @@
-{layout '../layouts/user-panel-layout.latte'} {block title}Nueva Reserva{/block} {block styles}
-<link rel="stylesheet" href="/public/css/calendario.css" />
-{/block} {block content}
-<div class="container-fluid">
-  <div id="bookings-app">
-    <div class="text-center py-5">
-      <div class="spinner-border text-primary" role="status">
-        <span class="visually-hidden">Cargando...</span>
+{layout '../layouts/user-panel-layout.latte'} {block title}Mis Reservas{/block} {block content}
+<div class="container-fluid bg-light min-vh-100 py-3 rounded-3">
+  <div class="row mb-4">
+    <div class="col">
+      <h1 class="h2 text-dark mb-2">Mis Reservas</h1>
+      <p class="text-muted mb-0">Gestiona todas tus citas activas, pasadas y canceladas</p>
+    </div>
+  </div>
+
+  <div n:if="!isset($bookings) || count($bookings) === 0">
+    {include '../components/empty-state.latte', title: 'No hay reservas', message: 'No tienes
+    reservas en este momento.
+    <br />
+    ¡Anímate a reservar tu próxima cita!', buttonText: 'Nueva Reserva', buttonUrl:
+    '/user/reservas/nueva', iconClass: 'bi bi-calendar-x' }
+  </div>
+  <div class="row mb-4" n:if="isset($bookings) && count($bookings) > 0">
+    <div class="col-12">
+      <div n:foreach="$bookings as $booking">
+        {include '../components/booking-card.latte', booking: $booking, showActions: true}
       </div>
-      <p class="mt-3 text-muted">Cargando formulario de reservas...</p>
+    </div>
+  </div>
+
+  {include '../components/paginator.latte', currentPage: $currentPage ?? 1, totalPages: $totalPages
+  ?? 1, baseUrl: '/user/reservas', ariaLabel: 'Paginación de reservas' }
+</div>
+
+<div
+  class="modal fade"
+  id="actionModal"
+  tabindex="-1"
+  aria-labelledby="actionModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header border-0">
+        <h5 class="modal-title" id="actionModalLabel">
+          <i class="bi bi-exclamation-triangle text-warning me-2"></i>
+          <span id="modalTitle">Acción</span>
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p class="mb-3" id="modalMessage">¿Estás seguro de realizar esta acción?</p>
+        <p class="text-muted small mb-0">
+          <i class="bi bi-info-circle me-1"></i>
+          <span id="modalSubMessage">Esta acción no se puede deshacer.</span>
+        </p>
+      </div>
+      <div class="modal-footer border-0">
+        <button
+          type="button"
+          class="btn btn-outline-secondary rounded-pill"
+          data-bs-dismiss="modal"
+          id="modalCancelBtn"
+        >
+          Cancelar
+        </button>
+        <button type="button" class="btn btn-danger rounded-pill" id="confirmActionBtn">
+          Confirmar
+        </button>
+      </div>
     </div>
   </div>
 </div>
+{/block} {block styles}
+<link rel="stylesheet" href="/public/css/bookings.css" />
 {/block} {block scripts}
-<script type="module" src="/public/js/user/bookings/bookingsApp.js"></script>
+<script src="/public/js/bookings.js"></script>
 {/block}

@@ -16,27 +16,35 @@ const BookingsApp = () => {
     loadServices();
   }, []);
 
-  let componenteActual;
+  return html`
+    <h1 class="reserva-titulo">Nueva Reserva</h1>
+    ${renderCurrentStep(estado)}
+  `;
+};
+
+function renderCurrentStep(estado) {
+  if (!estado) {
+    return html`
+      <div class="alert alert-warning">Cargando...</div>
+    `;
+  }
 
   if (estado === "ConfirmationForm") {
-    componenteActual = html`
+    return html`
       <${ConfirmationForm} />
     `;
-  } else if (estado === "DateForm") {
-    componenteActual = html`
+  }
+
+  if (estado === "DateForm") {
+    return html`
       <${DateForm} />
-    `;
-  } else {
-    componenteActual = html`
-      <${ServiceForm} />
     `;
   }
 
   return html`
-    <h1 class="m-5">Nueva Reserva</h1>
-    ${componenteActual}
+    <${ServiceForm} />
   `;
-};
+}
 
 render(
   html`

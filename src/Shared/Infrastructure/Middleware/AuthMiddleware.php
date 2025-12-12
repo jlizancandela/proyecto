@@ -27,4 +27,42 @@ class AuthMiddleware
             exit;
         }
     }
+
+
+    public static function apiRequireAuth(): void
+    {
+        if (!isset($_SESSION['user_id'])) {
+            http_response_code(401);
+            echo json_encode(['error' => 'No autorizado']);
+            exit;
+        }
+    }
+
+
+    public static function apiRequireAdmin(): void
+    {
+        if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'Admin') {
+            http_response_code(403);
+            echo json_encode(['error' => 'Prohibido']);
+            exit;
+        }
+    }
+ 
+ 
+ 
+    public static function requireClient(): void
+    {
+        if (!isset($_SESSION['user_id'])) {
+            $_SESSION['error'] = 'Debes iniciar sesión para acceder a esta página';
+            header('Location: /login');
+            exit;
+        }
+
+        if ($_SESSION['role'] !== 'Cliente') {
+            $_SESSION['error'] = 'No tienes permisos para acceder a esta página';
+            header('Location: /');
+            exit;
+        }
+    }
+
 }

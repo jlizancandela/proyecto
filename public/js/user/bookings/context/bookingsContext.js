@@ -49,7 +49,6 @@ export const loadEspecialistasDisponibles = async () => {
   });
 
   const especialistasData = await getEspecialistasDisponibles(selectedService.id, fechaFormateada);
-  console.log("Especialistas recibidos:", especialistasData);
   $especialistas.set(especialistasData);
 };
 

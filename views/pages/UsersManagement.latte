@@ -69,18 +69,17 @@
           <td class="text-end">
             <button
               type="button"
-              class="btn btn-sm btn-outline-primary me-1"
-              onclick="editUser({$user['id']})"
+              class="btn btn-sm btn-outline-primary me-1 btn-edit-user"
+              data-user-id="{$user['id']}"
               title="Editar"
             >
               <i class="bi bi-pencil"></i>
             </button>
             <button
               type="button"
-              class="btn btn-sm btn-outline-danger"
+              class="btn btn-sm btn-outline-danger btn-delete-user"
               data-user-id="{$user['id']}"
               data-user-name="{$user['nombreCompleto']}"
-              onclick="deleteUser(this.dataset.userId, this.dataset.userName)"
               title="Eliminar"
             >
               <i class="bi bi-trash"></i>
@@ -139,5 +138,5 @@
   '../components/modals/EditUserModal.latte'}
 </div>
 
-<script src="/public/js/admin/usuarios/usersManagement.js"></script>
+<script src="/public/js/admin/usuarios/usersManager.js"></script>
 {/block}

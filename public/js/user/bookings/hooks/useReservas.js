@@ -50,11 +50,12 @@ export const useReservas = () => {
       setLoading(false); // CORRECCIÓN CLAVE: Siempre se ejecuta
     }
 
-    // Éxito diferido - resetear después de 1.5s solo si no hubo error
+    // Éxito: resetear estado y redirigir al listado de reservas
     if (reservaExitosa) {
       setTimeout(() => {
         resetBooking();
-      }, 1500);
+        window.location.href = "/user/reservas";
+      }, 800);
     }
   };
 

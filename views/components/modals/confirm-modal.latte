@@ -1,0 +1,48 @@
+{* Modal de Confirmación - Parámetros: - $modalId: string - ID único del modal - $title: string -
+título del modal - $message: string - mensaje principal - $subMessage: string (opcional) - mensaje
+secundario/advertencia - $iconClass: string (opcional) - clase del icono (default:
+bi-exclamation-triangle) - $iconColor: string (opcional) - color del icono (default: text-warning) -
+$cancelText: string (opcional) - texto botón cancelar (default: 'Cancelar') - $confirmText: string
+(opcional) - texto botón confirmar (default: 'Confirmar') - $confirmAction: string (opcional) -
+función JavaScript a ejecutar *}
+
+<div
+  class="modal fade"
+  id="{$modalId}"
+  tabindex="-1"
+  aria-labelledby="{$modalId}Label"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header border-0">
+        <h5 class="modal-title" id="{$modalId}Label">
+          <i
+            class="{$iconClass ?? 'bi bi-exclamation-triangle'} {$iconColor ?? 'text-warning'} me-2"
+          ></i>
+          {$title}
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p class="mb-3">{$message}</p>
+        <p class="text-muted small mb-0" n:if="isset($subMessage)">
+          <i class="bi bi-info-circle me-1"></i>
+          {$subMessage}
+        </p>
+      </div>
+      <div class="modal-footer border-0">
+        <button
+          type="button"
+          class="btn btn-outline-secondary rounded-pill"
+          data-bs-dismiss="modal"
+        >
+          {$cancelText ?? 'Cancelar'}
+        </button>
+        <button type="button" class="btn btn-danger rounded-pill" id="confirmCancelBtn">
+          {$confirmText ?? 'Confirmar'}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

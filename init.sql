@@ -171,3 +171,4 @@ INSERT INTO RESERVA (id_cliente, id_especialista, id_servicio, fecha_reserva, ho
 (7, 2, 4, '2024-11-22', '17:00:00', '18:30:00', 'Cancelada', 'Cliente canceló por motivos personales'),
 (8, 3, 9, '2024-11-23', '11:00:00', '12:30:00', 'Confirmada', 'Diseño especial solicitado');
 
+

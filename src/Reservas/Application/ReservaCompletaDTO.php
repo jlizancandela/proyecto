@@ -15,19 +15,19 @@ class ReservaCompletaDTO
     public ?string $observaciones;
     public string $fecha_creacion;
 
-    public string $cliente_nombre;
-    public string $cliente_apellidos;
-    public string $cliente_email;
+    public ?string $cliente_nombre;
+    public ?string $cliente_apellidos;
+    public ?string $cliente_email;
     public ?string $cliente_telefono;
 
-    public string $especialista_nombre;
-    public string $especialista_apellidos;
-    public string $especialista_email;
+    public ?string $especialista_nombre;
+    public ?string $especialista_apellidos;
+    public ?string $especialista_email;
     public ?string $especialista_telefono;
     public ?string $especialista_descripcion;
     public ?string $especialista_foto_url;
 
-    public string $servicio_nombre;
+    public ?string $servicio_nombre;
     public int $servicio_duracion_minutos;
     public float $servicio_precio;
     public ?string $servicio_descripcion;
@@ -47,19 +47,19 @@ class ReservaCompletaDTO
         $dto->observaciones = $data['observaciones'] ?? null;
         $dto->fecha_creacion = $data['fecha_creacion'];
 
-        $dto->cliente_nombre = $data['cliente_nombre'];
-        $dto->cliente_apellidos = $data['cliente_apellidos'];
-        $dto->cliente_email = $data['cliente_email'];
+        $dto->cliente_nombre = $data['cliente_nombre'] ?? null;
+        $dto->cliente_apellidos = $data['cliente_apellidos'] ?? null;
+        $dto->cliente_email = $data['cliente_email'] ?? null;
         $dto->cliente_telefono = $data['cliente_telefono'] ?? null;
 
-        $dto->especialista_nombre = $data['especialista_nombre'];
-        $dto->especialista_apellidos = $data['especialista_apellidos'];
-        $dto->especialista_email = $data['especialista_email'];
+        $dto->especialista_nombre = $data['especialista_nombre'] ?? null;
+        $dto->especialista_apellidos = $data['especialista_apellidos'] ?? null;
+        $dto->especialista_email = $data['especialista_email'] ?? null;
         $dto->especialista_telefono = $data['especialista_telefono'] ?? null;
         $dto->especialista_descripcion = $data['especialista_descripcion'] ?? null;
         $dto->especialista_foto_url = $data['especialista_foto_url'] ?? null;
 
-        $dto->servicio_nombre = $data['nombre_servicio'];
+        $dto->servicio_nombre = $data['nombre_servicio'] ?? null;
         $dto->servicio_duracion_minutos = (int) $data['duracion_minutos'];
         $dto->servicio_precio = (float) $data['precio'];
         $dto->servicio_descripcion = $data['servicio_descripcion'] ?? null;

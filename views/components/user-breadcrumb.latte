@@ -9,14 +9,18 @@
         </a>
       </li>
 
-      {* Breadcrumb para Nueva Reserva (página /bookings) *}
-      <li n:if="$currentUrl === '/bookings'" class="breadcrumb-item">
+      {* Breadcrumb para Nueva Reserva (página /user/reservas/nueva) *}
+      <li n:if="$currentUrl === '/user/reservas/nueva'" class="breadcrumb-item">
         <a href="/user/reservas" class="text-decoration-none">
           <i class="bi bi-calendar-check me-1"></i>
           Mis Reservas
         </a>
       </li>
-      <li n:if="$currentUrl === '/bookings'" class="breadcrumb-item active" aria-current="page">
+      <li
+        n:if="$currentUrl === '/user/reservas/nueva'"
+        class="breadcrumb-item active"
+        aria-current="page"
+      >
         <i class="bi bi-plus-circle me-1"></i>
         Nueva Reserva
       </li>
