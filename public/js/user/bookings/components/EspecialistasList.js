@@ -1,5 +1,6 @@
 import { h } from "https://esm.sh/preact@10.19.3";
 import htm from "https://esm.sh/htm";
+import { Pagination } from "./Pagination.js";
 
 const html = htm.bind(h);
 
@@ -8,6 +9,9 @@ export const EspecialistasList = ({
   onSelectHora,
   selectedEspecialista,
   selectedHora,
+  currentPage,
+  totalPages,
+  onPageChange,
 }) => {
   if (especialistas.length === 0) {
     return html`
@@ -55,6 +59,12 @@ export const EspecialistasList = ({
           </div>
         `
       )}
+
+      <${Pagination}
+        currentPage=${currentPage}
+        totalPages=${totalPages}
+        onPageChange=${onPageChange}
+      />
     </div>
   `;
 };

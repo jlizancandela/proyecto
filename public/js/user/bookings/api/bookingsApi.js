@@ -14,22 +14,35 @@ export const getServices = async () => {
   }
 };
 
-export const getEspecialistasDisponibles = async (idServicio, fecha) => {
+export const getEspecialistasDisponibles = async (
+  idServicio,
+  fecha,
+  limit = null,
+  offset = null
+) => {
   // Validación simple de parámetros requeridos
   if (!idServicio) {
     console.warn("getEspecialistasDisponibles: Se necesita un ID de servicio");
-    return [];
+    return { data: [], total: 0 };
   }
 
   if (!fecha) {
     console.warn("getEspecialistasDisponibles: Se necesita una fecha");
-    return [];
+    return { data: [], total: 0 };
   }
 
   try {
-    const response = await fetch(
-      `/api/especialistas/disponibles?servicio=${idServicio}&fecha=${fecha}`
-    );
+    let url = `/api/especialistas/disponibles?servicio=${idServicio}&fecha=${fecha}`;
+
+    if (limit !== null) {
+      url += `&limit=${limit}`;
+    }
+
+    if (offset !== null) {
+      url += `&offset=${offset}`;
+    }
+
+    const response = await fetch(url);
 
     if (!response.ok) {
       throw new Error("Error al obtener especialistas disponibles");
@@ -39,7 +52,7 @@ export const getEspecialistasDisponibles = async (idServicio, fecha) => {
     return data;
   } catch (error) {
     console.error("Error al cargar especialistas:", error);
-    return [];
+    return { data: [], total: 0 };
   }
 };
 

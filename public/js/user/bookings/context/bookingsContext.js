@@ -10,6 +10,9 @@ export const $mes = atom(new Date());
 export const $especialistas = atom([]);
 export const $selectedEspecialista = atom(null);
 export const $selectedHora = atom(null);
+export const $currentPage = atom(1);
+export const $totalEspecialistas = atom(0);
+export const $pageSize = atom(3);
 
 export const loadServices = async () => {
   const servicesData = await getServices();
@@ -22,9 +25,11 @@ export const selectService = (service) => {
   $estado.set("DateForm");
 };
 
-export const loadEspecialistasDisponibles = async () => {
+export const loadEspecialistasDisponibles = async (page = null) => {
   const selectedService = $selectedService.get();
   const dia = $dia.get();
+  const pageSize = $pageSize.get();
+  const currentPage = page !== null ? page : $currentPage.get();
 
   // Guard clauses mejoradas
   if (!selectedService) {
@@ -43,13 +48,26 @@ export const loadEspecialistasDisponibles = async () => {
   }
 
   const fechaFormateada = formatearFechaISO(dia);
+  const offset = (currentPage - 1) * pageSize;
+
   console.log("Cargando especialistas para:", {
     servicio: selectedService.id,
     fecha: fechaFormateada,
+    page: currentPage,
+    limit: pageSize,
+    offset: offset,
   });
 
-  const especialistasData = await getEspecialistasDisponibles(selectedService.id, fechaFormateada);
-  $especialistas.set(especialistasData);
+  const response = await getEspecialistasDisponibles(
+    selectedService.id,
+    fechaFormateada,
+    pageSize,
+    offset
+  );
+
+  $especialistas.set(response.data || []);
+  $totalEspecialistas.set(response.total || 0);
+  $currentPage.set(currentPage);
 };
 
 export const selectEspecialistaYHora = (especialista, hora) => {
@@ -68,4 +86,6 @@ export const resetBooking = () => {
   $selectedEspecialista.set(null);
   $selectedHora.set(null);
   $services.set(services);
+  $currentPage.set(1);
+  $totalEspecialistas.set(0);
 };
