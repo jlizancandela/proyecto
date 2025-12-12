@@ -12,6 +12,9 @@ import {
   $selectedEspecialista,
   $selectedHora,
   $estado,
+  $currentPage,
+  $totalEspecialistas,
+  $pageSize,
   loadEspecialistasDisponibles,
   selectEspecialistaYHora,
 } from "../context/bookingsContext.js";
@@ -25,6 +28,11 @@ export const DateForm = () => {
   const selectedService = useStore($selectedService);
   const selectedEspecialista = useStore($selectedEspecialista);
   const selectedHora = useStore($selectedHora);
+  const currentPage = useStore($currentPage);
+  const totalEspecialistas = useStore($totalEspecialistas);
+  const pageSize = useStore($pageSize);
+
+  const totalPages = Math.ceil(totalEspecialistas / pageSize);
 
   useEffect(() => {
     if (selectedService && dia) {
@@ -42,6 +50,10 @@ export const DateForm = () => {
 
   const handleSelectHora = (especialista, hora) => {
     selectEspecialistaYHora(especialista, hora);
+  };
+
+  const handlePageChange = (page) => {
+    loadEspecialistasDisponibles(page);
   };
 
   const handleConfirmar = () => {
@@ -75,6 +87,9 @@ export const DateForm = () => {
               onSelectHora=${handleSelectHora}
               selectedEspecialista=${selectedEspecialista}
               selectedHora=${selectedHora}
+              currentPage=${currentPage}
+              totalPages=${totalPages}
+              onPageChange=${handlePageChange}
             />
           </div>
           <div class="d-flex justify-content-center mt-4">

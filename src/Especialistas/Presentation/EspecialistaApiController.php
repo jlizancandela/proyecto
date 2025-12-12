@@ -21,6 +21,8 @@ class EspecialistaApiController
             // Obtener parámetros de la query string
             $idServicio = $_GET['servicio'] ?? null;
             $fecha = $_GET['fecha'] ?? null;
+            $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : null;
+            $offset = isset($_GET['offset']) ? (int)$_GET['offset'] : null;
 
             // Validar parámetros requeridos
             if (!$idServicio || !$fecha) {
@@ -41,13 +43,26 @@ class EspecialistaApiController
                 return;
             }
 
-            // Obtener especialistas disponibles
-            $especialistas = $this->repository->getEspecialistasDisponibles(
+            // Obtener total de especialistas disponibles
+            $total = $this->repository->countEspecialistasDisponibles(
                 (int)$idServicio,
                 $fecha
             );
 
-            echo json_encode($especialistas);
+            // Obtener especialistas disponibles con paginación
+            $especialistas = $this->repository->getEspecialistasDisponibles(
+                (int)$idServicio,
+                $fecha,
+                $limit,
+                $offset
+            );
+
+            echo json_encode([
+                'data' => $especialistas,
+                'total' => $total,
+                'limit' => $limit,
+                'offset' => $offset
+            ]);
         } catch (\Exception $e) {
             error_log("Error en getDisponibles: " . $e->getMessage());
             http_response_code(500);

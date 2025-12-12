@@ -112,11 +112,11 @@ class EspecialistaRepository
         }
     }
 
-    public function getEspecialistasDisponibles(int $idServicio, string $fecha): array
+    public function getEspecialistasDisponibles(int $idServicio, string $fecha, ?int $limit = null, ?int $offset = null): array
     {
         try {
             // Obtener especialistas que ofrecen este servicio
-            $stmt = $this->db->prepare("
+            $query = "
                 SELECT DISTINCT
                     e.id_especialista,
                     e.id_usuario,
@@ -131,8 +131,27 @@ class EspecialistaRepository
                 INNER JOIN ESPECIALISTA_SERVICIO es ON e.id_especialista = es.id_especialista
                 WHERE es.id_servicio = :id_servicio
                 AND u.activo = 1
-            ");
-            $stmt->execute(['id_servicio' => $idServicio]);
+            ";
+
+            // Add pagination if limit is provided
+            if ($limit !== null) {
+                $query .= " LIMIT :limit";
+                if ($offset !== null) {
+                    $query .= " OFFSET :offset";
+                }
+            }
+
+            $stmt = $this->db->prepare($query);
+            $stmt->bindValue(':id_servicio', $idServicio, PDO::PARAM_INT);
+
+            if ($limit !== null) {
+                $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+                if ($offset !== null) {
+                    $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+                }
+            }
+
+            $stmt->execute();
 
             $especialistas = [];
             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
@@ -219,6 +238,27 @@ class EspecialistaRepository
         }
 
         return $horasDisponibles;
+    }
+
+    public function countEspecialistasDisponibles(int $idServicio, string $fecha): int
+    {
+        try {
+            $stmt = $this->db->prepare("
+                SELECT COUNT(DISTINCT e.id_especialista) as total
+                FROM ESPECIALISTA e
+                INNER JOIN USUARIO u ON e.id_usuario = u.id_usuario
+                INNER JOIN ESPECIALISTA_SERVICIO es ON e.id_especialista = es.id_especialista
+                WHERE es.id_servicio = :id_servicio
+                AND u.activo = 1
+            ");
+            $stmt->execute(['id_servicio' => $idServicio]);
+
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            return (int)$result['total'];
+        } catch (\Exception $e) {
+            error_log("Error al contar especialistas disponibles: " . $e->getMessage());
+            return 0;
+        }
     }
 
     public function deleteEspecialista(int $id): void
