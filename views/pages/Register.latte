@@ -65,16 +65,27 @@
 
             <div class="mb-3">
               <label for="password" class="form-label">Contraseña *</label>
-              <input
-                type="password"
-                name="password"
-                id="password"
-                required
-                placeholder="Mínimo 8 caracteres"
-                autocomplete="new-password"
-                minlength="8"
-                class="form-control"
-              />
+              <div class="input-group">
+                <input
+                  type="password"
+                  name="password"
+                  id="password"
+                  required
+                  placeholder="Mínimo 8 caracteres"
+                  autocomplete="new-password"
+                  minlength="8"
+                  class="form-control"
+                  aria-describedby="toggle-password"
+                />
+                <button
+                  class="btn btn-outline-secondary"
+                  type="button"
+                  id="toggle-password"
+                  aria-label="Mostrar contraseña"
+                >
+                  <i class="bi bi-eye"></i>
+                </button>
+              </div>
               <div id="password-error" class="form-text text-danger"></div>
             </div>
 

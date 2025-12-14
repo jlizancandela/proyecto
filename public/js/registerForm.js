@@ -77,4 +77,28 @@ const clearErrors = () => {
   invalidInputs.forEach((input) => input.classList.remove("is-invalid"));
 };
 
-document.addEventListener("DOMContentLoaded", validateRegisterForm);
+const togglePasswordVisibility = () => {
+  const button = document.getElementById("toggle-password");
+  const passwordInput = document.getElementById("password");
+  const confirmInput = document.getElementById("password-confirm");
+
+  if (!button || !passwordInput || !confirmInput) return;
+
+  button.addEventListener("click", () => {
+    const icon = button.querySelector("i");
+    const isPassword = passwordInput.type === "password";
+
+    // Cambiar tipo de ambos inputs
+    passwordInput.type = isPassword ? "text" : "password";
+    confirmInput.type = isPassword ? "text" : "password";
+
+    // Cambiar icono y aria-label
+    icon.className = isPassword ? "bi bi-eye-slash" : "bi bi-eye";
+    button.setAttribute("aria-label", isPassword ? "Ocultar contraseña" : "Mostrar contraseña");
+  });
+};
+
+document.addEventListener("DOMContentLoaded", () => {
+  validateRegisterForm();
+  togglePasswordVisibility();
+});
