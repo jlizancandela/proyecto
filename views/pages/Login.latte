@@ -1,4 +1,6 @@
-{layout '../layouts/landpage.latte'} {block title} Iniciar Sesión {/block} {block content}
+{layout '../layouts/landpage.latte'} {block title} Iniciar Sesión {/block} {block scripts}
+<script type="module" src="/public/js/loginForm.js" defer></script>
+{/block} {block content}
 <div class="container">
   <div class="row justify-content-center align-items-center min-vh-100">
     <div class="col-md-6 col-lg-5">
@@ -23,15 +25,26 @@
 
           <div class="mb-3">
             <label for="password" class="form-label">Contraseña</label>
-            <input
-              type="password"
-              name="password"
-              id="password"
-              required
-              placeholder="••••••••"
-              autocomplete="current-password"
-              class="form-control"
-            />
+            <div class="input-group">
+              <input
+                type="password"
+                name="password"
+                id="password"
+                required
+                placeholder="••••••••"
+                autocomplete="current-password"
+                class="form-control"
+                aria-describedby="toggle-password"
+              />
+              <button
+                class="btn btn-outline-secondary"
+                type="button"
+                id="toggle-password"
+                aria-label="Mostrar contraseña"
+              >
+                <i class="bi bi-eye"></i>
+              </button>
+            </div>
           </div>
 
           <button type="submit" class="btn btn-primary w-100 mb-3">Iniciar Sesión</button>
