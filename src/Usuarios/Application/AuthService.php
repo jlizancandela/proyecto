@@ -76,23 +76,11 @@ class AuthService
         try {
             $passwordValidator->assert($password);
         } catch (\Respect\Validation\Exceptions\ValidationException $e) {
-            $errors = [];
-            if (strlen($password) < 8) {
-                $errors[] = "La contraseña debe tener al menos 8 caracteres";
-            }
-            if (!preg_match('/[A-Z]/', $password)) {
-                $errors[] = "La contraseña debe contener al menos una letra mayúscula";
-            }
-            if (!preg_match('/[a-z]/', $password)) {
-                $errors[] = "La contraseña debe contener al menos una letra minúscula";
-            }
-            if (!preg_match('/[0-9]/', $password)) {
-                $errors[] = "La contraseña debe contener al menos un número";
-            }
-            if (!preg_match('/[@$!%*?&#.,;:\-_+]/', $password)) {
-                $errors[] = "La contraseña debe contener al menos un carácter especial (@$!%*?&#.,;:-_+)";
-            }
-            throw new \RuntimeException(implode('. ', $errors));
+            throw new \RuntimeException(
+                "La contraseña debe tener al menos 8 caracteres, " .
+                    "una letra mayúscula, una letra minúscula, un número " .
+                    "y un carácter especial (@$!%*?&#.,;:-_+)"
+            );
         }
     }
 
