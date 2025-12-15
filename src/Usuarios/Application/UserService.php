@@ -5,6 +5,7 @@ namespace Usuarios\Application;
 use Usuarios\Domain\Usuario;
 use Usuarios\Domain\UserRole;
 use Usuarios\Infrastructure\UserRepository;
+use Respect\Validation\Validator as v;
 
 class UserService
 {
@@ -47,6 +48,8 @@ class UserService
 
     public function setUser(Usuario $user): void
     {
+        $this->validateUser($user);
+
         $existingUser = $this->userRepository->getUserByEmail($user->getEmail());
         if ($existingUser !== null) {
             throw new \RuntimeException("El email ya está registrado en el sistema");
@@ -58,12 +61,34 @@ class UserService
 
     public function updateUser(Usuario $user): void
     {
+        $this->validateUser($user);
+
         $existingUser = $this->userRepository->getUserByEmail($user->getEmail());
         if ($existingUser !== null && $existingUser->getId() !== $user->getId()) {
             throw new \RuntimeException("El email ya está registrado en el sistema");
         }
 
         $this->userRepository->updateUser($user);
+    }
+
+    private function validateUser(Usuario $user): void
+    {
+        $emailValidator = v::email();
+        $nombreValidator = v::stringType()->notEmpty()->length(2, 50);
+        $apellidosValidator = v::stringType()->notEmpty()->length(2, 100);
+        $telefonoValidator = v::optional(v::phone());
+
+        try {
+            $emailValidator->assert($user->getEmail());
+            $nombreValidator->assert($user->getNombre());
+            $apellidosValidator->assert($user->getApellidos());
+
+            if ($user->getTelefono() !== null) {
+                $telefonoValidator->assert($user->getTelefono());
+            }
+        } catch (\Respect\Validation\Exceptions\ValidationException $e) {
+            throw new \RuntimeException('Datos de usuario inválidos: ' . $e->getMessage());
+        }
     }
 
     public function deleteUser(int $id): void
