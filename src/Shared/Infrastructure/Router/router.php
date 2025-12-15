@@ -131,13 +131,13 @@ $router->get('/api/especialistas/disponibles', function () use ($especialistaRep
     $controller->getDisponibles();
 });
 
-$router->get('/api/reservas', function () use ($reservaRepository) {
-    $controller = new BookingApiController($reservaRepository);
+$router->get('/api/reservas', function () use ($reservaService) {
+    $controller = new BookingApiController($reservaService);
     $controller->getReservas();
 });
 
-$router->post('/api/reservas', function () use ($reservaRepository) {
-    $controller = new BookingApiController($reservaRepository);
+$router->post('/api/reservas', function () use ($reservaService) {
+    $controller = new BookingApiController($reservaService);
     $controller->createReserva();
 });
 

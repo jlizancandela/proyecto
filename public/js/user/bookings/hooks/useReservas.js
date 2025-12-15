@@ -7,8 +7,9 @@ import {
   $selectedHora,
   resetBooking,
 } from "../context/bookingsContext.js";
-import { createReserva } from "../api/bookingsApi.js";
+import { createReserva, getUserBookings } from "../api/bookingsApi.js";
 import { formatearFechaISO } from "../tools/formatters.js";
+import { hasWeeklyBookingForService } from "../tools/validators.js";
 
 /**
  * Hook personalizado para manejar la lógica de confirmación de reservas
@@ -34,10 +35,17 @@ export const useReservas = () => {
     let reservaExitosa = false;
 
     try {
+      const userBookings = await getUserBookings();
+      const targetDate = formatearFechaISO(dia);
+
+      if (hasWeeklyBookingForService(userBookings, selectedService.id, targetDate)) {
+        throw new Error("Ya tienes una reserva de este servicio en esta semana");
+      }
+
       const reservaData = {
         servicio_id: selectedService.id,
         especialista_id: selectedEspecialista.id_especialista,
-        fecha: formatearFechaISO(dia),
+        fecha: targetDate,
         hora: selectedHora,
         duracion: selectedService.duracion,
       };
@@ -47,10 +55,9 @@ export const useReservas = () => {
     } catch (err) {
       setError(err.message);
     } finally {
-      setLoading(false); // CORRECCIÓN CLAVE: Siempre se ejecuta
+      setLoading(false);
     }
 
-    // Éxito: resetear estado y redirigir al listado de reservas
     if (reservaExitosa) {
       setTimeout(() => {
         resetBooking();

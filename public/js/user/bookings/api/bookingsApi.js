@@ -56,16 +56,29 @@ export const getEspecialistasDisponibles = async (
   }
 };
 
+export const getUserBookings = async () => {
+  try {
+    const response = await fetch("/api/reservas");
+
+    if (!response.ok) {
+      throw new Error("Error al obtener reservas");
+    }
+
+    const data = await response.json();
+    return data.reservas || [];
+  } catch (error) {
+    console.error("Error al cargar reservas:", error);
+    return [];
+  }
+};
+
 export const createReserva = async (reservaData) => {
-  // Validar que tengamos datos de reserva
   if (!reservaData || typeof reservaData !== "object") {
     throw new Error("Los datos de la reserva son obligatorios");
   }
 
-  // Extraer los campos que necesitamos
   const { servicio_id, especialista_id, fecha, hora } = reservaData;
 
-  // Verificar que todos los campos estén presentes
   if (!servicio_id) {
     throw new Error("Debes seleccionar un servicio");
   }

@@ -5,6 +5,7 @@ namespace Usuarios\Application;
 use Usuarios\Domain\Usuario;
 use Usuarios\Domain\UserRole;
 use Usuarios\Infrastructure\UserRepository;
+use Respect\Validation\Validator as v;
 
 class AuthService
 {
@@ -21,40 +22,14 @@ class AuthService
 
     public function register(array $userData): Usuario
     {
-        if (
-            empty($userData['nombre']) || empty($userData['apellidos']) ||
-            empty($userData['email']) || empty($userData['password'])
-        ) {
-            throw new \RuntimeException("Todos los campos obligatorios deben estar completos");
-        }
-
-        if (!filter_var($userData['email'], FILTER_VALIDATE_EMAIL)) {
-            throw new \RuntimeException("El email no tiene un formato válido");
-        }
+        $this->validateUserData($userData);
 
         $result = $this->userRepository->getUserByEmail($userData['email']);
         if ($result) {
             throw new \RuntimeException("El email ya está registrado");
         }
 
-        $password = $userData['password'];
-        if (strlen($password) < 8) {
-            throw new \RuntimeException("La contraseña debe tener al menos 8 caracteres");
-        }
-        if (!preg_match('/[A-Z]/', $password)) {
-            throw new \RuntimeException("La contraseña debe contener al menos una letra mayúscula");
-        }
-        if (!preg_match('/[a-z]/', $password)) {
-            throw new \RuntimeException("La contraseña debe contener al menos una letra minúscula");
-        }
-        if (!preg_match('/[0-9]/', $password)) {
-            throw new \RuntimeException("La contraseña debe contener al menos un número");
-        }
-        if (!preg_match('/[@$!%*?&#.,;:\-_+]/', $password)) {
-            throw new \RuntimeException("La contraseña debe contener al menos un carácter especial (@$!%*?&#.,;:-_+)");
-        }
-
-        $passwordHash = password_hash($password, PASSWORD_DEFAULT);
+        $passwordHash = password_hash($userData['password'], PASSWORD_DEFAULT);
 
         $user = new Usuario(
             $userData['rol'] ?? UserRole::Cliente->value,
@@ -68,6 +43,57 @@ class AuthService
         $this->userService->setUser($user);
 
         return $user;
+    }
+
+    private function validateUserData(array $userData): void
+    {
+        $validator = v::key('nombre', v::stringType()->notEmpty()->length(2, 50))
+            ->key('apellidos', v::stringType()->notEmpty()->length(2, 100))
+            ->key('email', v::email())
+            ->key('password', v::stringType()->notEmpty())
+            ->key('telefono', v::optional(v::phone()), false)
+            ->key('rol', v::optional(v::in(['ADMIN', 'ESPECIALISTA', 'CLIENTE'])), false);
+
+        try {
+            $validator->assert($userData);
+        } catch (\Respect\Validation\Exceptions\ValidationException $e) {
+            throw new \RuntimeException($e->getMessage());
+        }
+
+        $this->validatePassword($userData['password']);
+    }
+
+    private function validatePassword(string $password): void
+    {
+        $passwordValidator = v::allOf(
+            v::length(8, null),
+            v::regex('/[A-Z]/'),
+            v::regex('/[a-z]/'),
+            v::regex('/[0-9]/'),
+            v::regex('/[@$!%*?&#.,;:\-_+]/')
+        );
+
+        try {
+            $passwordValidator->assert($password);
+        } catch (\Respect\Validation\Exceptions\ValidationException $e) {
+            $errors = [];
+            if (strlen($password) < 8) {
+                $errors[] = "La contraseña debe tener al menos 8 caracteres";
+            }
+            if (!preg_match('/[A-Z]/', $password)) {
+                $errors[] = "La contraseña debe contener al menos una letra mayúscula";
+            }
+            if (!preg_match('/[a-z]/', $password)) {
+                $errors[] = "La contraseña debe contener al menos una letra minúscula";
+            }
+            if (!preg_match('/[0-9]/', $password)) {
+                $errors[] = "La contraseña debe contener al menos un número";
+            }
+            if (!preg_match('/[@$!%*?&#.,;:\-_+]/', $password)) {
+                $errors[] = "La contraseña debe contener al menos un carácter especial (@$!%*?&#.,;:-_+)";
+            }
+            throw new \RuntimeException(implode('. ', $errors));
+        }
     }
 
     public function login(string $email, string $password): ?Usuario

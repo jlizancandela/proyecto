@@ -3,16 +3,15 @@
 namespace Reservas\Presentation;
 
 use Latte\Engine;
-use Reservas\Infrastructure\ReservaRepository;
-use Reservas\Domain\Reserva;
+use Reservas\Application\ReservaService;
 
 class BookingApiController
 {
-    private ReservaRepository $reservaRepository;
+    private ReservaService $reservaService;
 
-    public function __construct(ReservaRepository $reservaRepository)
+    public function __construct(ReservaService $reservaService)
     {
-        $this->reservaRepository = $reservaRepository;
+        $this->reservaService = $reservaService;
     }
 
     public function createReserva(): void
@@ -22,72 +21,25 @@ class BookingApiController
         try {
             $data = json_decode(file_get_contents('php://input'), true);
 
-            if (!isset($data['servicio_id'], $data['especialista_id'], $data['fecha'], $data['hora'])) {
+            if (!$data) {
                 http_response_code(400);
-                echo json_encode(['error' => 'Faltan datos requeridos']);
+                echo json_encode(['error' => 'Datos inválidos']);
                 return;
             }
 
-            $clientId = (int) $_SESSION['user_id'];
-            $specialistId = (int) $data['especialista_id'];
-            $serviceId = (int) $data['servicio_id'];
-            $date = $data['fecha'];
-            $startTime = $data['hora'];
-            
-            $duration = $data['duracion'] ?? 60;
-            $endTime = date('H:i:s', strtotime($startTime) + ($duration * 60));
+            $data['id_cliente'] = (int) $_SESSION['user_id'];
 
-            $hasConflict = $this->reservaRepository->findConflicts(
-                $date,
-                $startTime,
-                $endTime,
-                $specialistId
-            );
+            $bookingId = $this->reservaService->createReserva($data);
 
-            if ($hasConflict) {
-                http_response_code(409);
-                echo json_encode(['error' => 'El horario seleccionado ya no está disponible']);
-                return;
-            }
-
-            // Evitar que el mismo cliente tenga dos reservas al mismo tiempo
-            $clientConflict = $this->reservaRepository->findClientConflicts(
-                $date,
-                $startTime,
-                $endTime,
-                $clientId
-            );
-
-            if ($clientConflict) {
-                http_response_code(409);
-                echo json_encode(['error' => 'Ya tienes otra reserva en ese horario']);
-                return;
-            }
-
-            $booking = new Reserva(
-                $clientId,
-                $specialistId,
-                $serviceId,
-                $date,
-                $startTime,
-                $endTime,
-                'Pendiente',
-                $data['observaciones'] ?? null
-            );
-
-            $bookingId = $this->reservaRepository->addReserva($booking);
-
-            if ($bookingId) {
-                http_response_code(201);
-                echo json_encode([
-                    'success' => true,
-                    'id_reserva' => $bookingId,
-                    'message' => 'Reserva creada exitosamente'
-                ]);
-            } else {
-                http_response_code(500);
-                echo json_encode(['error' => 'Error al crear la reserva']);
-            }
+            http_response_code(201);
+            echo json_encode([
+                'success' => true,
+                'id_reserva' => $bookingId,
+                'message' => 'Reserva creada exitosamente'
+            ]);
+        } catch (\RuntimeException $e) {
+            http_response_code(400);
+            echo json_encode(['error' => $e->getMessage()]);
         } catch (\Exception $e) {
             error_log("Error en createReserva: " . $e->getMessage());
             http_response_code(500);
@@ -103,8 +55,8 @@ class BookingApiController
             $clientId = (int) $_SESSION['user_id'];
             $limit = (int) ($_GET['limit'] ?? 50);
             $offset = (int) ($_GET['offset'] ?? 0);
-            
-            $bookings = $this->reservaRepository->findByClient($clientId, $limit, $offset);
+
+            $bookings = $this->reservaService->getReservasByClient($clientId, $limit, $offset);
 
             $bookingsData = [];
             foreach ($bookings as $booking) {
