@@ -7,6 +7,12 @@ use Usuarios\Domain\UserRole;
 use Usuarios\Infrastructure\UserRepository;
 use Respect\Validation\Validator as v;
 
+/**
+ * Servicio de autenticación y gestión de sesiones
+ * 
+ * Maneja el registro de usuarios, login, logout y validación de credenciales.
+ * Implementa reglas de validación de contraseñas y gestión de sesiones PHP.
+ */
 class AuthService
 {
     private UserRepository $userRepository;
@@ -20,6 +26,16 @@ class AuthService
         $this->userService = $userService;
     }
 
+    /**
+     * Registra un nuevo usuario validando datos y verificando email único
+     * 
+     * Valida formato de datos, verifica que el email no esté registrado,
+     * hashea la contraseña y crea el usuario en la base de datos.
+     * 
+     * @param array $userData Datos del usuario (nombre, apellidos, email, password, telefono, rol)
+     * @return Usuario Usuario creado
+     * @throws \RuntimeException Si los datos son inválidos o el email ya existe
+     */
     public function register(array $userData): Usuario
     {
         $this->validateUserData($userData);
@@ -45,6 +61,16 @@ class AuthService
         return $user;
     }
 
+    /**
+     * Valida el formato y contenido de los datos del usuario
+     * 
+     * Verifica que nombre, apellidos, email y contraseña cumplan con los requisitos.
+     * Delega la validación de contraseña a validatePassword().
+     * 
+     * @param array $userData Datos a validar
+     * @return void
+     * @throws \RuntimeException Si algún dato no cumple las reglas de validación
+     */
     private function validateUserData(array $userData): void
     {
         $validator = v::key('nombre', v::stringType()->notEmpty()->length(2, 50))
@@ -63,6 +89,16 @@ class AuthService
         $this->validatePassword($userData['password']);
     }
 
+    /**
+     * Valida que la contraseña cumpla con los requisitos de seguridad
+     * 
+     * Requisitos: mínimo 8 caracteres, una mayúscula, una minúscula,
+     * un número y un carácter especial.
+     * 
+     * @param string $password Contraseña a validar
+     * @return void
+     * @throws \RuntimeException Si la contraseña no cumple los requisitos
+     */
     private function validatePassword(string $password): void
     {
         $passwordValidator = v::allOf(
@@ -84,6 +120,16 @@ class AuthService
         }
     }
 
+    /**
+     * Autentica un usuario verificando email y contraseña
+     * 
+     * Busca el usuario por email y verifica que la contraseña coincida
+     * usando password_verify().
+     * 
+     * @param string $email Email del usuario
+     * @param string $password Contraseña en texto plano
+     * @return Usuario|null Usuario si las credenciales son correctas, null si no
+     */
     public function login(string $email, string $password): ?Usuario
     {
         $user = $this->userRepository->getUserByEmail($email);
@@ -95,6 +141,15 @@ class AuthService
         return password_verify($password, $user->getPassword()) ? $user : null;
     }
 
+    /**
+     * Inicia una sesión PHP para el usuario autenticado
+     * 
+     * Guarda datos del usuario en $_SESSION y regenera el ID de sesión
+     * por seguridad.
+     * 
+     * @param Usuario $user Usuario autenticado
+     * @return void
+     */
     public function startSession(Usuario $user): void
     {
         if (session_status() === PHP_SESSION_NONE) {
@@ -109,6 +164,13 @@ class AuthService
         session_regenerate_id(true);
     }
 
+    /**
+     * Cierra la sesión del usuario actual
+     * 
+     * Limpia todas las variables de sesión y destruye la sesión PHP.
+     * 
+     * @return void
+     */
     public function logout(): void
     {
         if (session_status() === PHP_SESSION_NONE) {
@@ -119,6 +181,13 @@ class AuthService
         session_destroy();
     }
 
+    /**
+     * Obtiene el usuario actualmente autenticado
+     * 
+     * Busca el usuario en la base de datos usando el ID almacenado en sesión.
+     * 
+     * @return Usuario|null Usuario actual o null si no hay sesión activa
+     */
     public function getCurrentUser(): ?Usuario
     {
         if (session_status() === PHP_SESSION_NONE) {
@@ -130,6 +199,11 @@ class AuthService
             : null;
     }
 
+    /**
+     * Verifica si hay un usuario autenticado
+     * 
+     * @return bool True si existe una sesión activa con user_id
+     */
     public function isAuthenticated(): bool
     {
         if (session_status() === PHP_SESSION_NONE) {
@@ -139,6 +213,17 @@ class AuthService
         return isset($_SESSION['user_id']);
     }
 
+    /**
+     * Cambia la contraseña de un usuario verificando la contraseña actual
+     * 
+     * Valida que la contraseña actual sea correcta antes de actualizar.
+     * La nueva contraseña se hashea antes de guardar.
+     * 
+     * @param int $userId ID del usuario
+     * @param string $oldPassword Contraseña actual en texto plano
+     * @param string $newPassword Nueva contraseña en texto plano
+     * @return bool True si se cambió correctamente, false si la contraseña actual es incorrecta
+     */
     public function changePassword(
         int $userId,
         string $oldPassword,
@@ -157,6 +242,12 @@ class AuthService
         return true;
     }
 
+    /**
+     * Verifica si el usuario actual tiene un rol específico
+     * 
+     * @param UserRole $role Rol a verificar
+     * @return bool True si el usuario tiene el rol especificado
+     */
     public function hasRole(UserRole $role): bool
     {
         $user = $this->getCurrentUser();
