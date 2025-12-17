@@ -1,0 +1,128 @@
+# Implementar PHPDoc en el Proyecto
+
+## Objetivo
+
+Agregar documentación PHPDoc profesional siguiendo estándares PSR, evitando comentarios genéricos.
+
+## Reglas de Documentación
+
+### ✅ Documentar:
+
+- Clases (responsabilidad en arquitectura)
+- Métodos públicos complejos
+- Parámetros no obvios
+- Excepciones lanzadas
+
+### ❌ NO Documentar:
+
+- Getters/setters simples
+- Métodos con nombres auto-explicativos
+- Parámetros evidentes
+
+## Formato Estándar
+
+```php
+/**
+ * Descripción breve (una línea)
+ *
+ * Detalles de lógica de negocio si es necesario.
+ *
+ * @param tipo $nombre Contexto específico del parámetro
+ * @return tipo Qué retorna y cuándo
+ * @throws Exception Cuándo y por qué
+ */
+```
+
+## Ejemplos
+
+### ✅ Bueno (Aporta valor)
+
+```php
+/**
+ * Busca reservas aplicando filtros opcionales de fecha y estado
+ *
+ * Construye dinámicamente la consulta SQL según filtros.
+ * Sin filtros, retorna todas las reservas del usuario.
+ *
+ * @param int $userId ID del cliente
+ * @param string|null $fechaDesde Inicio del rango (Y-m-d)
+ * @param string|null $estado Pendiente, Confirmada, Completada, Cancelada
+ * @return array ReservaCompletaDTO ordenados por fecha DESC
+ */
+public function findByUserIdWithFilters(...)
+```
+
+### ❌ Malo (Redundante/Genérico)
+
+```php
+/**
+ * Obtiene una reserva por ID
+ * @param int $id El ID
+ * @return Reserva|null La reserva
+ */
+public function findById(int $id): ?Reserva
+```
+
+### ✅ Mejor versión
+
+```php
+/**
+ * Busca una reserva específica con todos sus datos relacionados
+ *
+ * Incluye información del cliente, especialista y servicio mediante JOINs.
+ *
+ * @param int $id ID de la reserva
+ * @return ReservaCompletaDTO|null Null si no existe la reserva
+ */
+public function findById(int $id): ?ReservaCompletaDTO
+```
+
+## Instrucciones de Implementación
+
+1. **Prioridad**: Controllers → Services → Repositories
+2. **Idioma**: Español (consistente en todo el proyecto)
+3. **Contexto**: Incluir lógica de negocio específica
+4. **Type Hints**: Usar en código, PHPDoc solo para aclarar
+
+## Archivos a Documentar
+
+- [ ] `src/Reservas/Presentation/*Controller.php`
+- [ ] `src/Reservas/Application/ReservaService.php`
+- [ ] `src/Reservas/Infrastructure/ReservaRepository.php`
+- [ ] `src/Usuarios/Application/AuthService.php`
+- [ ] `src/Usuarios/Application/UserService.php`
+
+## Plantilla para Clases
+
+```php
+/**
+ * [Nombre de la clase]
+ *
+ * [Responsabilidad en la arquitectura - qué hace esta clase]
+ * [Patrón que implementa si aplica - Repository, Service, Controller, etc.]
+ * [Detalles adicionales si son relevantes]
+ */
+class NombreClase
+```
+
+## Plantilla para Métodos Complejos
+
+```php
+/**
+ * [Qué hace el método - acción principal]
+ *
+ * [Cómo lo hace - lógica interna si no es obvia]
+ * [Casos especiales o comportamiento importante]
+ *
+ * @param tipo $param Descripción del contexto del parámetro
+ * @return tipo Qué retorna y en qué casos
+ * @throws ExceptionType Cuándo se lanza y por qué
+ */
+```
+
+## Notas Importantes
+
+- **No redundar**: Si el nombre del método lo dice todo, no hace falta PHPDoc
+- **Aportar valor**: Explicar la lógica de negocio, no repetir el código
+- **Ser específico**: "Valida formato de email" mejor que "Valida datos"
+- **Incluir contexto**: De dónde vienen los datos, qué validaciones se aplican

@@ -50,7 +50,8 @@ Thumbs.db
 .DS_Store
 
 # Documentos y pruebas
-/documentos
+/documentos/*
+!/documentos/ia/
 /test
 /tests/
 /open-spec

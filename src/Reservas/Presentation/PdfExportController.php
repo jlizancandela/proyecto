@@ -6,6 +6,13 @@ use Dompdf\Dompdf;
 use Latte\Engine;
 use Reservas\Application\ReservaService;
 
+/**
+ * Controlador para exportar reservas a formato PDF
+ * 
+ * Genera documentos PDF de las reservas del usuario usando Dompdf.
+ * Respeta los filtros aplicados (fecha y estado) para exportar solo
+ * las reservas seleccionadas.
+ */
 class PdfExportController
 {
     private Engine $latte;
@@ -17,6 +24,15 @@ class PdfExportController
         $this->reservaService = $reservaService;
     }
 
+    /**
+     * Exporta las reservas del usuario a PDF aplicando filtros opcionales
+     * 
+     * Genera un documento PDF con todas las reservas que cumplan los filtros.
+     * El PDF se muestra en el navegador (no se descarga automáticamente).
+     * Limita a 1000 reservas máximo para evitar problemas de memoria.
+     * 
+     * @return void Envía el PDF directamente al navegador
+     */
     public function exportReservas(): void
     {
         // Get filter parameters

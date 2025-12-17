@@ -664,4 +664,55 @@ class ReservaRepository
             return 0;
         }
     }
+
+    /**
+     * Obtiene la última reserva de un usuario
+     * 
+     * @param int $userId ID del usuario/cliente
+     * @return ReservaCompletaDTO|null La última reserva o null si no tiene reservas
+     */
+    public function findLatestByUserId(int $userId): ?ReservaCompletaDTO
+    {
+        try {
+            $sql = "
+                SELECT 
+                    r.*,
+                    uc.nombre as cliente_nombre,
+                    uc.apellidos as cliente_apellidos,
+                    uc.email as cliente_email,
+                    uc.telefono as cliente_telefono,
+                    ue.nombre as especialista_nombre, 
+                    ue.apellidos as especialista_apellidos,
+                    e.descripcion as especialista_descripcion, 
+                    e.foto_url as especialista_foto_url,
+                    s.nombre_servicio, 
+                    s.duracion_minutos, 
+                    s.precio, 
+                    s.descripcion as servicio_descripcion
+                FROM RESERVA r
+                INNER JOIN USUARIO uc ON r.id_cliente = uc.id_usuario
+                INNER JOIN ESPECIALISTA e ON r.id_especialista = e.id_especialista
+                INNER JOIN USUARIO ue ON e.id_usuario = ue.id_usuario
+                INNER JOIN SERVICIO s ON r.id_servicio = s.id_servicio
+                WHERE r.id_cliente = :userId
+                ORDER BY r.fecha_reserva DESC, r.hora_inicio DESC
+                LIMIT 1
+            ";
+
+            $stmt = $this->db->prepare($sql);
+            $stmt->bindValue(':userId', $userId, PDO::PARAM_INT);
+            $stmt->execute();
+
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if (!$result) {
+                return null;
+            }
+
+            return ReservaCompletaDTO::fromDatabase($result);
+        } catch (\Exception $e) {
+            error_log("Error al obtener última reserva del usuario: " . $e->getMessage());
+            return null;
+        }
+    }
 }
