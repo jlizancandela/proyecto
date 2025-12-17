@@ -11,6 +11,7 @@ use Shared\Presentation\AdminController;
 use Reservas\Presentation\BookingController;
 use Reservas\Presentation\BookingApiController;
 use Reservas\Presentation\MyBookingsController;
+use Reservas\Presentation\PdfExportController;
 use Servicios\Presentation\ServiceApiController;
 use Especialistas\Presentation\EspecialistaApiController;
 
@@ -76,8 +77,8 @@ $router->get('/user/profile', function () use ($latte) {
     echo $controller->index();
 });
 
-$router->get('/user/reservas', function () use ($latte, $reservaRepository) {
-    $controller = new MyBookingsController($latte, $reservaRepository);
+$router->get('/user/reservas', function () use ($latte, $reservaService) {
+    $controller = new MyBookingsController($latte, $reservaService);
     echo $controller->index();
 });
 
@@ -86,14 +87,19 @@ $router->get('/user/reservas/nueva', function () use ($latte) {
     echo $controller->index();
 });
 
-$router->post('/user/reservas/cancel/(\d+)', function ($bookingId) use ($latte, $reservaRepository) {
-    $controller = new MyBookingsController($latte, $reservaRepository);
+$router->post('/user/reservas/cancel/(\d+)', function ($bookingId) use ($latte, $reservaService) {
+    $controller = new MyBookingsController($latte, $reservaService);
     $controller->cancel((int)$bookingId);
 });
 
-$router->get('/user/reservas/modify/(\d+)', function ($bookingId) use ($latte, $reservaRepository) {
-    $controller = new MyBookingsController($latte, $reservaRepository);
+$router->get('/user/reservas/modify/(\d+)', function ($bookingId) use ($latte, $reservaService) {
+    $controller = new MyBookingsController($latte, $reservaService);
     $controller->modify((int)$bookingId);
+});
+
+$router->get('/user/reservas/pdf', function () use ($latte, $reservaService) {
+    $controller = new PdfExportController($latte, $reservaService);
+    $controller->exportReservas();
 });
 
 $router->get('/admin/api/users', function () use ($latte, $userService) {

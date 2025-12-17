@@ -146,4 +146,56 @@ class ReservaService
 
         return $this->reservaRepository->updateStatus($reservaId, $newStatus);
     }
+
+    /**
+     * Obtiene reservas de un usuario con filtros opcionales
+     * 
+     * @param int $userId ID del usuario
+     * @param int $limit Límite de resultados
+     * @param int $offset Desplazamiento para paginación
+     * @param string|null $fechaDesde Filtro opcional por fecha desde
+     * @param string|null $fechaHasta Filtro opcional por fecha hasta
+     * @param string|null $estado Filtro opcional por estado
+     * @return array Array de ReservaCompletaDTO
+     */
+    public function getAllReservasByFilter(
+        int $userId,
+        int $limit = 50,
+        int $offset = 0,
+        ?string $fechaDesde = null,
+        ?string $fechaHasta = null,
+        ?string $estado = null
+    ): array {
+        return $this->reservaRepository->findByUserIdWithFilters(
+            $userId,
+            $limit,
+            $offset,
+            $fechaDesde,
+            $fechaHasta,
+            $estado
+        );
+    }
+
+    /**
+     * Cuenta las reservas de un usuario con filtros opcionales
+     * 
+     * @param int $userId ID del usuario
+     * @param string|null $fechaDesde Filtro opcional por fecha desde
+     * @param string|null $fechaHasta Filtro opcional por fecha hasta
+     * @param string|null $estado Filtro opcional por estado
+     * @return int Número total de reservas
+     */
+    public function countReservasByFilter(
+        int $userId,
+        ?string $fechaDesde = null,
+        ?string $fechaHasta = null,
+        ?string $estado = null
+    ): int {
+        return $this->reservaRepository->countByUserIdWithFilters(
+            $userId,
+            $fechaDesde,
+            $fechaHasta,
+            $estado
+        );
+    }
 }
