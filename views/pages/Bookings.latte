@@ -2,10 +2,25 @@
 <div class="container-fluid bg-light min-vh-100 py-3 rounded-3">
   <div class="row mb-4">
     <div class="col">
-      <h1 class="h2 text-dark mb-2">Mis Reservas</h1>
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <h1 class="h2 text-dark mb-0">Mis Reservas</h1>
+        {if isset($bookings) && count($bookings) > 0}
+        <a
+          href="/user/reservas/pdf{if isset($filters['fecha_desde']) || isset($filters['fecha_hasta']) || isset($filters['estado'])}?{if isset($filters['fecha_desde'])}fecha_desde={$filters['fecha_desde']}&{/if}{if isset($filters['fecha_hasta'])}fecha_hasta={$filters['fecha_hasta']}&{/if}{if isset($filters['estado'])}estado={$filters['estado']}{/if}{/if}"
+          class="btn btn-danger"
+          target="_blank"
+        >
+          <i class="bi bi-file-pdf me-2"></i>
+          Exportar PDF
+        </a>
+        {/if}
+      </div>
       <p class="text-muted mb-0">Gestiona todas tus citas activas, pasadas y canceladas</p>
     </div>
   </div>
+
+  {* Componente de filtros *} {include '../components/booking-filters.latte', filters: $filters ??
+  []}
 
   <div n:if="!isset($bookings) || count($bookings) === 0">
     {include '../components/empty-state.latte', title: 'No hay reservas', message: 'No tienes
@@ -23,7 +38,7 @@
   </div>
 
   {include '../components/paginator.latte', currentPage: $currentPage ?? 1, totalPages: $totalPages
-  ?? 1, baseUrl: '/user/reservas', ariaLabel: 'Paginación de reservas' }
+  ?? 1, baseUrl: '/user/reservas', ariaLabel: 'Paginación de reservas', filters: $filters ?? [] }
 </div>
 
 <div
@@ -68,5 +83,6 @@
 {/block} {block styles}
 <link rel="stylesheet" href="/public/css/bookings.css" />
 {/block} {block scripts}
+<script src="/public/js/booking-filters.js"></script>
 <script src="/public/js/bookings.js"></script>
 {/block}

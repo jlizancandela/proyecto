@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Mis Reservas</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        font-size: 12px;
+        color: #333;
+      }
+      h1 {
+        color: #e83e8c;
+        text-align: center;
+        margin-bottom: 20px;
+      }
+      .header {
+        text-align: center;
+        margin-bottom: 30px;
+        border-bottom: 2px solid #e83e8c;
+        padding-bottom: 10px;
+      }
+      .filters {
+        background-color: #f8f9fa;
+        padding: 10px;
+        margin-bottom: 20px;
+        border-radius: 5px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+      }
+      th {
+        background-color: #e83e8c;
+        color: white;
+        padding: 10px;
+        text-align: left;
+      }
+      td {
+        padding: 8px;
+        border-bottom: 1px solid #ddd;
+      }
+      tr:nth-child(even) {
+        background-color: #f8f9fa;
+      }
+      .badge {
+        padding: 3px 8px;
+        border-radius: 3px;
+        font-size: 10px;
+        font-weight: bold;
+      }
+      .badge-warning {
+        background-color: #ffc107;
+        color: #000;
+      }
+      .badge-success {
+        background-color: #28a745;
+        color: #fff;
+      }
+      .badge-info {
+        background-color: #17a2b8;
+        color: #fff;
+      }
+      .badge-danger {
+        background-color: #dc3545;
+        color: #fff;
+      }
+      .footer {
+        text-align: center;
+        margin-top: 30px;
+        font-size: 10px;
+        color: #666;
+      }
+      .empty-state {
+        text-align: center;
+        padding: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <h1>Mis Reservas</h1>
+      <p>
+        <strong>Usuario:</strong>
+        {$userName}
+      </p>
+      <p>
+        <strong>Fecha de generación:</strong>
+        {=date('d/m/Y H:i')}
+      </p>
+    </div>
+
+    <div class="filters" n:if="$fechaDesde || $fechaHasta || $estado">
+      <strong>Filtros aplicados:</strong>
+      <span n:if="$fechaDesde">Desde: {=date('d/m/Y', strtotime($fechaDesde))}</span>
+      <span n:if="$fechaHasta">Hasta: {=date('d/m/Y', strtotime($fechaHasta))}</span>
+      <span n:if="$estado">Estado: {$estado}</span>
+    </div>
+
+    <p class="empty-state" n:if="empty($bookings)">No hay reservas para mostrar.</p>
+
+    <div n:if="!empty($bookings)">
+      <table>
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Hora</th>
+            <th>Servicio</th>
+            <th>Especialista</th>
+            <th>Estado</th>
+            <th>Precio</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr n:foreach="$bookings as $booking">
+            <td>{=date('d/m/Y', strtotime($booking->fecha_reserva))}</td>
+            <td>{=substr($booking->hora_inicio, 0, 5)}</td>
+            <td>{$booking->servicio_nombre}</td>
+            <td>{$booking->especialista_nombre} {$booking->especialista_apellidos}</td>
+            <td>
+              <span
+                n:class="'badge', 
+                            $booking->estado === 'Pendiente' ? 'badge-warning',
+                            $booking->estado === 'Confirmada' ? 'badge-success',
+                            $booking->estado === 'Completada' ? 'badge-info',
+                            $booking->estado === 'Cancelada' ? 'badge-danger'"
+              >
+                {$booking->estado}
+              </span>
+            </td>
+            <td>€{=number_format($booking->servicio_precio, 2)}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>
+        <strong>Total de reservas:</strong>
+        {count($bookings)}
+      </p>
+    </div>
+
+    <div class="footer">
+      <p>Documento generado automáticamente - {=date('d/m/Y H:i:s')}</p>
+    </div>
+  </body>
+</html>

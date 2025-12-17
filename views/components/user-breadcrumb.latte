@@ -27,7 +27,7 @@
 
       {* Breadcrumb para lista de Mis Reservas *}
       <li
-        n:if="$currentUrl === '/user/reservas'"
+        n:if="str_starts_with($currentUrl, '/user/reservas') && $currentUrl !== '/user/reservas/nueva'"
         class="breadcrumb-item active"
         aria-current="page"
       >

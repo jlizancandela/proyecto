@@ -1,0 +1,140 @@
+{* Componente de filtros para reservas Parámetros: - $filters: array con 'fecha_desde',
+'fecha_hasta' y 'estado' actuales *} {var $hasActiveFilters = isset($filters['fecha_desde']) ||
+isset($filters['fecha_hasta']) || isset($filters['estado'])}
+
+<div class="accordion mb-4" id="accordionFilters">
+  <div class="accordion-item border-0 shadow-sm">
+    <h2 class="accordion-header">
+      <button
+        class="accordion-button {if !$hasActiveFilters}collapsed{/if}"
+        type="button"
+        data-bs-toggle="collapse"
+        data-bs-target="#collapseFilters"
+        aria-expanded="{if $hasActiveFilters}true{else}false{/if}"
+        aria-controls="collapseFilters"
+      >
+        <i class="bi bi-funnel text-primary me-2"></i>
+        <strong>Filtrar Reservas</strong>
+        {if $hasActiveFilters}
+        <span class="badge bg-primary ms-2">Activos</span>
+        {/if}
+      </button>
+    </h2>
+    <div
+      id="collapseFilters"
+      class="accordion-collapse collapse {if $hasActiveFilters}show{/if}"
+      data-bs-parent="#accordionFilters"
+    >
+      <div class="accordion-body">
+        <div class="d-flex justify-content-end mb-3">
+          {if $hasActiveFilters}
+          <a href="/user/reservas" class="btn btn-sm btn-outline-secondary" title="Limpiar filtros">
+            <i class="bi bi-x-circle me-1"></i>
+            Limpiar Filtros
+          </a>
+          {/if}
+        </div>
+
+        <form method="GET" action="/user/reservas" id="filterForm">
+          <!-- Filtro por rango de fechas -->
+          <div class="row mb-3">
+            <div class="col-md-6 mb-3 mb-md-0">
+              <label for="fecha_desde" class="form-label fw-semibold">
+                <i class="bi bi-calendar3 text-primary me-1"></i>
+                Desde
+              </label>
+              <input
+                type="date"
+                class="form-control"
+                id="fecha_desde"
+                name="fecha_desde"
+                value="{$filters['fecha_desde'] ?? ''}"
+                onchange="this.form.submit()"
+              />
+            </div>
+            <div class="col-md-6">
+              <label for="fecha_hasta" class="form-label fw-semibold">
+                <i class="bi bi-calendar3 text-primary me-1"></i>
+                Hasta
+              </label>
+              <input
+                type="date"
+                class="form-control"
+                id="fecha_hasta"
+                name="fecha_hasta"
+                value="{$filters['fecha_hasta'] ?? ''}"
+                onchange="this.form.submit()"
+              />
+            </div>
+          </div>
+
+          <!-- Filtro por estado con badges -->
+          <div class="mb-0">
+            <label class="form-label fw-semibold d-block mb-2">
+              <i class="bi bi-tags text-primary me-1"></i>
+              Estado
+            </label>
+            <div class="d-flex flex-wrap gap-2">
+              <input
+                type="hidden"
+                name="estado"
+                id="estadoInput"
+                value="{$filters['estado'] ?? ''}"
+              />
+
+              <button
+                type="button"
+                class="btn btn-sm {if !isset($filters['estado'])}btn-primary{else}btn-outline-secondary{/if}"
+                data-estado=""
+                onclick="selectEstado('')"
+              >
+                <i class="bi bi-list-ul me-1"></i>
+                Todas
+              </button>
+
+              <button
+                type="button"
+                class="btn btn-sm {if isset($filters['estado']) && $filters['estado'] === 'Pendiente'}btn-warning text-dark{else}btn-outline-warning{/if}"
+                data-estado="Pendiente"
+                onclick="selectEstado('Pendiente')"
+              >
+                <i class="bi bi-clock-history me-1"></i>
+                Pendiente
+              </button>
+
+              <button
+                type="button"
+                class="btn btn-sm {if isset($filters['estado']) && $filters['estado'] === 'Confirmada'}btn-success{else}btn-outline-success{/if}"
+                data-estado="Confirmada"
+                onclick="selectEstado('Confirmada')"
+              >
+                <i class="bi bi-check-circle me-1"></i>
+                Confirmada
+              </button>
+
+              <button
+                type="button"
+                class="btn btn-sm {if isset($filters['estado']) && $filters['estado'] === 'Completada'}btn-info{else}btn-outline-info{/if}"
+                data-estado="Completada"
+                onclick="selectEstado('Completada')"
+              >
+                <i class="bi bi-check-all me-1"></i>
+                Completada
+              </button>
+
+              <button
+                type="button"
+                class="btn btn-sm {if isset($filters['estado']) && $filters['estado'] === 'Cancelada'}btn-danger{else}btn-outline-danger{/if}"
+                data-estado="Cancelada"
+                onclick="selectEstado('Cancelada')"
+              >
+                <i class="bi bi-x-circle me-1"></i>
+                Cancelada
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

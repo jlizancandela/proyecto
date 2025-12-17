@@ -1,0 +1,87 @@
+/* Estilos para PDF de reservas */
+body {
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    color: #333;
+}
+
+h1 {
+    color: #E83E8C;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 30px;
+    border-bottom: 2px solid #E83E8C;
+    padding-bottom: 10px;
+}
+
+.filters {
+    background-color: #f8f9fa;
+    padding: 10px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+th {
+    background-color: #E83E8C;
+    color: white;
+    padding: 10px;
+    text-align: left;
+}
+
+td {
+    padding: 8px;
+    border-bottom: 1px solid #ddd;
+}
+
+tr:nth-child(even) {
+    background-color: #f8f9fa;
+}
+
+.badge {
+    padding: 3px 8px;
+    border-radius: 3px;
+    font-size: 10px;
+    font-weight: bold;
+}
+
+.badge-warning {
+    background-color: #ffc107;
+    color: #000;
+}
+
+.badge-success {
+    background-color: #28a745;
+    color: #fff;
+}
+
+.badge-info {
+    background-color: #17a2b8;
+    color: #fff;
+}
+
+.badge-danger {
+    background-color: #dc3545;
+    color: #fff;
+}
+
+.footer {
+    text-align: center;
+    margin-top: 30px;
+    font-size: 10px;
+    color: #666;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 20px;
+}

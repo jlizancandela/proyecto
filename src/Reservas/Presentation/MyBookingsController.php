@@ -3,38 +3,81 @@
 namespace Reservas\Presentation;
 
 use Latte\Engine;
-use Reservas\Infrastructure\ReservaRepository;
+use Reservas\Application\ReservaService;
 
 class MyBookingsController
 {
     private Engine $latte;
-    private ReservaRepository $reservaRepository;
+    private ReservaService $reservaService;
 
-    public function __construct(Engine $latte, ReservaRepository $reservaRepository)
+    public function __construct(Engine $latte, ReservaService $reservaService)
     {
         $this->latte = $latte;
-        $this->reservaRepository = $reservaRepository;
+        $this->reservaService = $reservaService;
     }
 
     public function index()
     {
-        // Get pagination parameters
         $page = (int)($_GET['page'] ?? 1);
-        $limit = 6; // Bookings per page
+        $limit = 6;
         $offset = ($page - 1) * $limit;
 
-        // Get user ID from session
+        // Get optional filter parameters
+        $fechaDesde = $_GET['fecha_desde'] ?? null;
+        $fechaHasta = $_GET['fecha_hasta'] ?? null;
+        $estado = $_GET['estado'] ?? null;
+
+        // Convert empty strings to null
+        if ($fechaDesde === '') {
+            $fechaDesde = null;
+        }
+        if ($fechaHasta === '') {
+            $fechaHasta = null;
+        }
+        if ($estado === '') {
+            $estado = null;
+        }
+
+        // Validate fecha_desde format if provided
+        if ($fechaDesde && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $fechaDesde)) {
+            $fechaDesde = null; // Invalid format, ignore
+        }
+
+        // Validate fecha_hasta format if provided
+        if ($fechaHasta && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $fechaHasta)) {
+            $fechaHasta = null; // Invalid format, ignore
+        }
+
+        // Validate estado if provided
+        $validEstados = ['Pendiente', 'Confirmada', 'Completada', 'Cancelada'];
+        if ($estado && !in_array($estado, $validEstados)) {
+            $estado = null; // Invalid status, ignore
+        }
+
         $userId = $_SESSION['user_id'] ?? null;
-        
+
         if (!$userId) {
-            // Redirect to login if no user in session
             header('Location: /login');
             exit;
         }
 
-        // Get user bookings with pagination
-        $bookings = $this->reservaRepository->findByUserId($userId, $limit, $offset);
-        $totalBookings = $this->reservaRepository->countByUserId($userId);
+        // Get user bookings with pagination and filters
+        $bookings = $this->reservaService->getAllReservasByFilter(
+            $userId,
+            $limit,
+            $offset,
+            $fechaDesde,
+            $fechaHasta,
+            $estado
+        );
+
+        $totalBookings = $this->reservaService->countReservasByFilter(
+            $userId,
+            $fechaDesde,
+            $fechaHasta,
+            $estado
+        );
+
         $totalPages = ceil($totalBookings / $limit);
 
         return $this->latte->renderToString(
@@ -45,7 +88,12 @@ class MyBookingsController
                 'bookings' => $bookings,
                 'currentPage' => $page,
                 'totalPages' => $totalPages,
-                'totalBookings' => $totalBookings
+                'totalBookings' => $totalBookings,
+                'filters' => [
+                    'fecha_desde' => $fechaDesde,
+                    'fecha_hasta' => $fechaHasta,
+                    'estado' => $estado
+                ]
             ]
         );
     }
@@ -53,7 +101,7 @@ class MyBookingsController
     public function cancel(int $bookingId): void
     {
         $userId = $_SESSION['user_id'] ?? null;
-        
+
         if (!$userId) {
             header('Location: /login');
             exit;
@@ -61,7 +109,7 @@ class MyBookingsController
 
         try {
             // Verificar que la reserva pertenece al usuario
-            $booking = $this->reservaRepository->findById($bookingId);
+            $booking = $this->reservaService->getReservaById($bookingId);
             if (!$booking || $booking->id_cliente !== $userId) {
                 $_SESSION['error'] = 'No tienes permisos para cancelar esta reserva';
                 header('Location: /user/reservas');
@@ -69,8 +117,8 @@ class MyBookingsController
             }
 
             // Cancelar la reserva
-            $success = $this->reservaRepository->updateStatus($bookingId, 'Cancelada');
-            
+            $success = $this->reservaService->updateReservaStatus($bookingId, 'Cancelada');
+
             if ($success) {
                 $_SESSION['success'] = 'Reserva cancelada exitosamente';
             } else {
@@ -88,7 +136,7 @@ class MyBookingsController
     public function modify(int $bookingId): void
     {
         $userId = $_SESSION['user_id'] ?? null;
-        
+
         if (!$userId) {
             header('Location: /login');
             exit;
@@ -96,7 +144,7 @@ class MyBookingsController
 
         try {
             // Verificar que la reserva pertenece al usuario
-            $booking = $this->reservaRepository->findById($bookingId);
+            $booking = $this->reservaService->getReservaById($bookingId);
             if (!$booking || $booking->id_cliente !== $userId) {
                 $_SESSION['error'] = 'No tienes permisos para modificar esta reserva';
                 header('Location: /user/reservas');
@@ -104,8 +152,8 @@ class MyBookingsController
             }
 
             // Cancelar la reserva actual
-            $success = $this->reservaRepository->updateStatus($bookingId, 'Cancelada');
-            
+            $success = $this->reservaService->updateReservaStatus($bookingId, 'Cancelada');
+
             if ($success) {
                 $_SESSION['info'] = 'Reserva anterior cancelada. Puedes crear una nueva reserva.';
                 header('Location: /user/reservas/nueva');

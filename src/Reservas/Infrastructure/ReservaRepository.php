@@ -406,8 +406,14 @@ class ReservaRepository
             $stmt = $this->db->prepare("
                 SELECT 
                     r.*,
+                    c.nombre as cliente_nombre, 
+                    c.apellidos as cliente_apellidos, 
+                    c.email as cliente_email, 
+                    c.telefono as cliente_telefono,
                     u.nombre as especialista_nombre, 
                     u.apellidos as especialista_apellidos,
+                    u.email as especialista_email, 
+                    u.telefono as especialista_telefono,
                     e.descripcion as especialista_descripcion, 
                     e.foto_url as especialista_foto_url,
                     s.nombre_servicio, 
@@ -415,6 +421,7 @@ class ReservaRepository
                     s.precio, 
                     s.descripcion as servicio_descripcion
                 FROM RESERVA r
+                INNER JOIN USUARIO c ON r.id_cliente = c.id_usuario
                 INNER JOIN ESPECIALISTA e ON r.id_especialista = e.id_especialista
                 INNER JOIN USUARIO u ON e.id_usuario = u.id_usuario
                 INNER JOIN SERVICIO s ON r.id_servicio = s.id_servicio
@@ -466,8 +473,14 @@ class ReservaRepository
             $stmt = $this->db->prepare("
                 SELECT 
                     r.*,
+                    c.nombre as cliente_nombre, 
+                    c.apellidos as cliente_apellidos, 
+                    c.email as cliente_email, 
+                    c.telefono as cliente_telefono,
                     u.nombre as especialista_nombre, 
                     u.apellidos as especialista_apellidos,
+                    u.email as especialista_email, 
+                    u.telefono as especialista_telefono,
                     e.descripcion as especialista_descripcion, 
                     e.foto_url as especialista_foto_url,
                     s.nombre_servicio, 
@@ -475,6 +488,7 @@ class ReservaRepository
                     s.precio, 
                     s.descripcion as servicio_descripcion
                 FROM RESERVA r
+                INNER JOIN USUARIO c ON r.id_cliente = c.id_usuario
                 INNER JOIN ESPECIALISTA e ON r.id_especialista = e.id_especialista
                 INNER JOIN USUARIO u ON e.id_usuario = u.id_usuario
                 INNER JOIN SERVICIO s ON r.id_servicio = s.id_servicio
@@ -507,11 +521,147 @@ class ReservaRepository
 
             $stmt->bindValue(':status', $newStatus, PDO::PARAM_STR);
             $stmt->bindValue(':reservaId', $reservaId, PDO::PARAM_INT);
-            
+
             return $stmt->execute() && $stmt->rowCount() > 0;
         } catch (\Exception $e) {
             error_log("Error al actualizar estado de reserva: " . $e->getMessage());
             return false;
+        }
+    }
+
+    /**
+     * Busca reservas de un usuario con filtros opcionales
+     * 
+     * @param int $userId ID del usuario/cliente
+     * @param int $limit Número máximo de resultados
+     * @param int $offset Desplazamiento para paginación
+     * @param string|null $fechaDesde Fecha desde (formato Y-m-d)
+     * @param string|null $fechaHasta Fecha hasta (formato Y-m-d)
+     * @param string|null $estado Estado de la reserva
+     * @return array Array de ReservaCompletaDTO
+     */
+    public function findByUserIdWithFilters(
+        int $userId,
+        int $limit = 50,
+        int $offset = 0,
+        ?string $fechaDesde = null,
+        ?string $fechaHasta = null,
+        ?string $estado = null
+    ): array {
+        try {
+            $sql = "
+                SELECT 
+                    r.*,
+                    u.nombre as especialista_nombre, 
+                    u.apellidos as especialista_apellidos,
+                    e.descripcion as especialista_descripcion, 
+                    e.foto_url as especialista_foto_url,
+                    s.nombre_servicio, 
+                    s.duracion_minutos, 
+                    s.precio, 
+                    s.descripcion as servicio_descripcion
+                FROM RESERVA r
+                INNER JOIN ESPECIALISTA e ON r.id_especialista = e.id_especialista
+                INNER JOIN USUARIO u ON e.id_usuario = u.id_usuario
+                INNER JOIN SERVICIO s ON r.id_servicio = s.id_servicio
+                WHERE r.id_cliente = :userId
+            ";
+
+            $params = ['userId' => $userId];
+
+            if ($fechaDesde !== null) {
+                $sql .= " AND r.fecha_reserva >= :fecha_desde";
+                $params['fecha_desde'] = $fechaDesde;
+            }
+
+            if ($fechaHasta !== null) {
+                $sql .= " AND r.fecha_reserva <= :fecha_hasta";
+                $params['fecha_hasta'] = $fechaHasta;
+            }
+
+            if ($estado !== null) {
+                $sql .= " AND r.estado = :estado";
+                $params['estado'] = $estado;
+            }
+
+            $sql .= " ORDER BY r.fecha_reserva DESC, r.hora_inicio DESC";
+            $sql .= " LIMIT :limit OFFSET :offset";
+
+            $stmt = $this->db->prepare($sql);
+
+            foreach ($params as $key => $value) {
+                $stmt->bindValue(":$key", $value);
+            }
+
+            $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+            $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+
+            $stmt->execute();
+
+            $reservas = [];
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                $reservas[] = ReservaCompletaDTO::fromDatabase($row);
+            }
+
+            return $reservas;
+        } catch (\Exception $e) {
+            error_log("Error al obtener reservas del usuario con filtros: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Cuenta las reservas de un usuario con filtros opcionales
+     * 
+     * @param int $userId ID del usuario/cliente
+     * @param string|null $fechaDesde Fecha desde (formato Y-m-d)
+     * @param string|null $fechaHasta Fecha hasta (formato Y-m-d)
+     * @param string|null $estado Estado de la reserva
+     * @return int Número total de reservas que cumplen los criterios
+     */
+    public function countByUserIdWithFilters(
+        int $userId,
+        ?string $fechaDesde = null,
+        ?string $fechaHasta = null,
+        ?string $estado = null
+    ): int {
+        try {
+            $sql = "
+                SELECT COUNT(*) as total
+                FROM RESERVA r
+                WHERE r.id_cliente = :userId
+            ";
+
+            $params = ['userId' => $userId];
+
+            if ($fechaDesde !== null) {
+                $sql .= " AND r.fecha_reserva >= :fecha_desde";
+                $params['fecha_desde'] = $fechaDesde;
+            }
+
+            if ($fechaHasta !== null) {
+                $sql .= " AND r.fecha_reserva <= :fecha_hasta";
+                $params['fecha_hasta'] = $fechaHasta;
+            }
+
+            if ($estado !== null) {
+                $sql .= " AND r.estado = :estado";
+                $params['estado'] = $estado;
+            }
+
+            $stmt = $this->db->prepare($sql);
+
+            foreach ($params as $key => $value) {
+                $stmt->bindValue(":$key", $value);
+            }
+
+            $stmt->execute();
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            return (int)$result['total'];
+        } catch (\Exception $e) {
+            error_log("Error al contar reservas del usuario con filtros: " . $e->getMessage());
+            return 0;
         }
     }
 }
