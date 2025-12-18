@@ -78,7 +78,7 @@ class AuthService
             ->key('email', v::email())
             ->key('password', v::stringType()->notEmpty())
             ->key('telefono', v::optional(v::phone()), false)
-            ->key('rol', v::optional(v::in(['ADMIN', 'ESPECIALISTA', 'CLIENTE'])), false);
+            ->key('rol', v::optional(v::in(['Admin', 'Especialista', 'Cliente'])), false);
 
         try {
             $validator->assert($userData);

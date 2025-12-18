@@ -78,21 +78,29 @@ class AuthController
 
     public function register(): void
     {
+        error_log("=== REGISTRO: Método llamado ===");
+        error_log("REQUEST_METHOD: " . $_SERVER['REQUEST_METHOD']);
+
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            error_log("No es POST, redirigiendo...");
             header('Location: /register');
             exit;
         }
+
+        error_log("POST recibido: " . print_r($_POST, true));
 
         $password = $_POST['password'] ?? '';
         $passwordConfirm = $_POST['password-confirm'] ?? '';
 
         if ($password !== $passwordConfirm) {
+            error_log("Contraseñas no coinciden");
             $_SESSION['register_error'] = 'Las contraseñas no coinciden';
             header('Location: /register');
             exit;
         }
 
         try {
+            error_log("Intentando registrar usuario...");
             $user = $this->authService->register([
                 'nombre' => $_POST['nombre'] ?? '',
                 'apellidos' => $_POST['apellidos'] ?? '',
@@ -102,12 +110,15 @@ class AuthController
                 'rol' => 'Cliente'
             ]);
 
+            error_log("Usuario registrado exitosamente: " . $user->getEmail());
             $this->authService->startSession($user);
             unset($_SESSION['register_error']);
 
+            error_log("Redirigiendo a /");
             header('Location: /');
             exit;
         } catch (\Exception $e) {
+            error_log("Error en registro: " . $e->getMessage());
             $_SESSION['register_error'] = $e->getMessage();
             header('Location: /register');
             exit;

@@ -2,11 +2,15 @@ const validateRegisterForm = () => {
   const form = document.getElementById("register-form");
 
   if (!form) {
+    console.log("Formulario de registro no encontrado");
     return;
   }
 
+  console.log("Formulario de registro encontrado, agregando listener");
+
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
+    console.log("Submit interceptado");
     clearErrors();
 
     const formData = {
@@ -18,13 +22,17 @@ const validateRegisterForm = () => {
       "password-confirm": form.querySelector('[name="password-confirm"]').value,
     };
 
+    console.log("Datos del formulario:", formData);
+
     const errors = validateForm(formData);
 
     if (Object.keys(errors).length > 0) {
+      console.log("Errores de validación encontrados:", errors);
       displayErrors(errors);
       return;
     }
 
+    console.log("Validación pasada, enviando formulario...");
     form.submit();
   });
 };

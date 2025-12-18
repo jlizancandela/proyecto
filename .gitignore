@@ -51,7 +51,7 @@ Thumbs.db
 
 # Documentos y pruebas
 /documentos/*
-!/documentos/ia/
+
 /test
 /tests/
 /open-spec

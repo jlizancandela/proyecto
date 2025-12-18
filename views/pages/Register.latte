@@ -7,6 +7,14 @@
       <div class="bg-white rounded shadow-lg p-4">
           <h2 class="text-center mb-4">Crear cuenta</h2>
 
+          {if $error}
+          <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            {$error}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+          {/if}
+
           <form action="/register" method="post" id="register-form">
             <div class="mb-3">
               <label for="nombre" class="form-label">Nombre *</label>
