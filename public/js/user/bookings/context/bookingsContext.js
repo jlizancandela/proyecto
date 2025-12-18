@@ -1,5 +1,5 @@
 import { atom } from "https://esm.sh/nanostores@0.9.5";
-import { getServices, getEspecialistasDisponibles } from "../api/bookingsApi.js";
+import { getServices, getEspecialistasDisponibles, getCurrentUser } from "../api/bookingsApi.js";
 import { formatearFechaISO } from "../tools/formatters.js";
 
 export const $estado = atom("ServiceForm");
@@ -13,8 +13,18 @@ export const $selectedHora = atom(null);
 export const $currentPage = atom(1);
 export const $totalEspecialistas = atom(0);
 export const $pageSize = atom(2);
+export const $userName = atom("Usuario");
+
+export const loadUser = async () => {
+  const user = await getCurrentUser();
+  if (user && user.nombre) {
+    $userName.set(user.nombre);
+  }
+};
 
 export const loadServices = async () => {
+  // Cargar usuario y servicios en paralelo
+  loadUser();
   const servicesData = await getServices();
   console.log("Servicios cargados:", servicesData);
   $services.set(servicesData);

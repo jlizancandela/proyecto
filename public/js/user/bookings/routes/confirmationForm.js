@@ -1,6 +1,7 @@
 import { h } from "https://esm.sh/preact@10.19.3";
 import htm from "https://esm.sh/htm";
-import { $estado } from "../context/bookingsContext.js";
+import { $estado, $userName } from "../context/bookingsContext.js";
+import { useStore } from "https://esm.sh/@nanostores/preact?deps=preact@10.19.3";
 import { useReservas } from "../hooks/useReservas.js";
 import { ResumenCita } from "../components/ResumenCita.js";
 import { StatusAlert } from "../components/StatusAlert.js";
@@ -9,6 +10,7 @@ import { ConfirmationActions } from "../components/ConfirmationActions.js";
 const html = htm.bind(h);
 
 export const ConfirmationForm = () => {
+  const userName = useStore($userName);
   const {
     selectedService,
     dia,
@@ -45,7 +47,7 @@ export const ConfirmationForm = () => {
             class="card border-0 shadow-sm rounded-4 p-4 h-100 d-flex flex-column justify-content-between"
           >
             <div>
-              <h5 class="fw-bold mb-3" style="color: #2d3748;">Todo listo, Juan</h5>
+              <h5 class="fw-bold mb-3" style="color: #2d3748;">Todo listo, ${userName}</h5>
               <p class="text-muted mb-4">
                 Solo falta un paso para confirmar tu cita. Tus datos se rellenarán automáticamente.
               </p>

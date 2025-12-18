@@ -22,13 +22,13 @@ export const ServiceForm = () => {
             `
         )}
       </div>
-      <button
+      <!-- <button
         class="btn btn-primary btn-lg col-3 rounded-pill my-5"
         onclick=${() => $estado.set("DateForm")}
         disabled=${!selectedService}
       >
         Siguiente
-      </button>
+      </button> -->
     </div>
   `;
 };

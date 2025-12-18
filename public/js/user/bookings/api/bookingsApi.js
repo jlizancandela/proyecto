@@ -115,3 +115,15 @@ export const createReserva = async (reservaData) => {
     throw error;
   }
 };
+
+export const getCurrentUser = async () => {
+  try {
+    const response = await fetch("/api/me");
+    if (!response.ok) return null;
+    const data = await response.json();
+    return data.success ? data.data : null;
+  } catch (error) {
+    console.error("Error al obtener usuario:", error);
+    return null;
+  }
+};

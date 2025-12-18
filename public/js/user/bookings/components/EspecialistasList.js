@@ -25,40 +25,69 @@ export const EspecialistasList = ({
   return html`
     <div>
       <h5 class="card-title mb-3">Especialistas disponibles</h5>
-      ${especialistas.map(
-        (especialista) => html`
-          <div class="card mb-3 border">
-            <div class="card-body">
-              <h6 class="mb-1">${especialista.nombre} ${especialista.apellidos}</h6>
-              <p class="text-muted small mb-3">${especialista.descripcion}</p>
-              <div>
-                <strong class="small">Horas disponibles:</strong>
-                <div class="d-flex flex-wrap gap-2 mt-2">
-                  ${especialista.horas_disponibles.map((hora) => {
-                    const isSelected =
-                      selectedEspecialista &&
-                      selectedHora &&
-                      selectedEspecialista.id_especialista === especialista.id_especialista &&
-                      selectedHora === hora;
+      <div class="d-flex flex-column gap-3 mb-4">
+        ${especialistas.map(
+          (especialista) => html`
+            <div class="card border border-0 shadow-sm overflow-hidden">
+              <div class="row g-0">
+                <div class="col-4 col-sm-3 col-md-2 p-0 position-relative">
+                  ${especialista.foto_url
+                    ? html`
+                        <img
+                          src="${especialista.foto_url}"
+                          alt="${especialista.nombre}"
+                          class="img-fluid w-100 h-100"
+                          style="object-fit: cover; object-position: top center; min-height: 150px;"
+                        />
+                      `
+                    : html`
+                        <div
+                          class="w-100 h-100 bg-light d-flex align-items-center justify-content-center text-secondary"
+                          style="min-height: 150px;"
+                        >
+                          <i class="bi bi-person-fill fs-1"></i>
+                        </div>
+                      `}
+                </div>
+                <div class="col-8 col-sm-9 col-md-10">
+                  <div class="card-body">
+                    <h5 class="card-title fw-bold">
+                      ${especialista.nombre} ${especialista.apellidos}
+                    </h5>
+                    <p class="card-text text-muted small mb-3">${especialista.descripcion}</p>
 
-                    return html`
-                      <button
-                        class="${isSelected
-                          ? "btn btn-primary btn-sm"
-                          : "btn btn-outline-primary btn-sm"}"
-                        onClick=${() => onSelectHora(especialista, hora)}
-                      >
-                        <i class="bi bi-clock me-1"></i>
-                        ${hora}
-                      </button>
-                    `;
-                  })}
+                    <div>
+                      <strong class="d-block small text-secondary mb-2">
+                        Horarios disponibles:
+                      </strong>
+                      <div class="d-flex flex-wrap gap-2">
+                        ${especialista.horas_disponibles.map((hora) => {
+                          const isSelected =
+                            selectedEspecialista &&
+                            selectedHora &&
+                            selectedEspecialista.id_especialista === especialista.id_especialista &&
+                            selectedHora === hora;
+
+                          return html`
+                            <button
+                              class="${isSelected
+                                ? "btn btn-primary btn-sm px-3"
+                                : "btn btn-outline-primary btn-sm px-3"}"
+                              onClick=${() => onSelectHora(especialista, hora)}
+                            >
+                              ${hora}
+                            </button>
+                          `;
+                        })}
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        `
-      )}
+          `
+        )}
+      </div>
 
       <${Pagination}
         currentPage=${currentPage}

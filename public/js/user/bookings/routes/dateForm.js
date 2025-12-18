@@ -92,7 +92,7 @@ export const DateForm = () => {
               onPageChange=${handlePageChange}
             />
           </div>
-          <div class="d-flex justify-content-center mt-4">
+          <!-- <div class="d-flex justify-content-center mt-4">
             <button
               class="btn btn-primary btn-lg rounded-pill px-5"
               onclick=${handleConfirmar}
@@ -100,7 +100,7 @@ export const DateForm = () => {
             >
               Confirmar Reserva
             </button>
-          </div>
+          </div> -->
         </div>
       </div>
     </div>

@@ -1,9 +1,46 @@
-{layout '../layouts/user-panel-layout.latte'}
-{block title}Panel de Usuario{/block}
-{block content}
-<h1 class="mb-4">Hola {$userName}</h1>
-<div class="alert alert-info">
-  <h4 class="alert-heading">Bienvenido al Panel de Usuario</h4>
-  <p class="mb-0">Utiliza el menú lateral para navegar por las diferentes secciones disponibles para ti.</p>
+{layout '../layouts/user-panel-layout.latte'} {block title}Panel de Usuario{/block} {block head}
+<link rel="stylesheet" href="/public/css/user-dashboard.css" />
+{/block} {block content}
+<div class="container-fluid p-0">
+  <div class="row mb-4">
+    <div class="col-12">
+      <h1 class="h2 mb-2 text-dark fw-bold">
+        Hola, {$userName}
+        <span class="wave">👋</span>
+      </h1>
+      <p class="text-muted">Bienvenido de nuevo a tu panel de control.</p>
+    </div>
+  </div>
+
+  {* Tarjeta de Próxima Cita *} {if isset($latestReserva) && $latestReserva}
+  <div class="row mb-4">
+    <div class="col-12">
+      {include '../components/booking-last-card.latte', latestReserva: $latestReserva}
+    </div>
+  </div>
+  {/if} {* Si no hay cita próxima, mostrar información general *} {if !isset($latestReserva) ||
+  !$latestReserva}
+  <div class="alert alert-light border shadow-sm rounded-4 p-4 mb-4">
+    <div class="d-flex align-items-center">
+      <div class="rounded-circle bg-primary-subtle p-3 me-3 text-primary">
+        <i class="fas fa-calendar-plus fa-2x"></i>
+      </div>
+      <div>
+        <h4 class="alert-heading fw-bold mb-1">¡Agenda tu próxima visita!</h4>
+        <p class="mb-0 text-muted">
+          Aún no tienes citas próximas. Explora nuestros servicios y reserva hoy mismo.
+        </p>
+      </div>
+      <a href="/user/reservas/nueva" class="btn btn-primary ms-auto px-4 rounded-pill">
+        Nueva Reserva
+      </a>
+    </div>
+  </div>
+  {/if} {* Sección de Accesos Rápidos *}
+  <h4 class="h5 fw-bold text-dark mb-3">Accesos Rápidos</h4>
+  {include '../components/user-quick-actions.latte'} {* Sección de Ofertas (Estática por ahora) *}
+  <h4 class="h5 fw-bold text-dark mb-3">Ofertas para ti</h4>
+  {include '../components/user-offers.latte'}
 </div>
+
 {/block}
