@@ -1,20 +1,13 @@
 import { h } from "https://esm.sh/preact@10.19.3";
 import htm from "https://esm.sh/htm";
 import { useStore } from "https://esm.sh/@nanostores/preact@0.5.1?deps=preact@10.19.3";
-import {
-  $estado,
-  $selectedService,
-  $selectedEspecialista,
-  $selectedHora,
-} from "../context/bookingsContext.js";
+import { $estado, $bookingDraft } from "../context/bookingsStore.js";
 
 const html = htm.bind(h);
 
 export const BookingNavigation = () => {
   const estado = useStore($estado);
-  const selectedService = useStore($selectedService);
-  const selectedEspecialista = useStore($selectedEspecialista);
-  const selectedHora = useStore($selectedHora);
+  const booking = useStore($bookingDraft);
 
   const getStepInfo = (currentState) => {
     switch (currentState) {
@@ -41,8 +34,8 @@ export const BookingNavigation = () => {
 
   const canPrev = estado !== "ServiceForm";
   const canNext =
-    (estado === "ServiceForm" && selectedService) ||
-    (estado === "DateForm" && selectedEspecialista && selectedHora);
+    (estado === "ServiceForm" && booking.service) ||
+    (estado === "DateForm" && booking.especialista && booking.hora);
 
   const stepInfo = getStepInfo(estado);
 

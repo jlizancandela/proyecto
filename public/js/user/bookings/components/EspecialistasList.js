@@ -1,6 +1,7 @@
 import { h } from "https://esm.sh/preact@10.19.3";
 import htm from "https://esm.sh/htm";
 import { Pagination } from "./Pagination.js";
+import { horaYaPaso } from "../tools/formatters.js";
 
 const html = htm.bind(h);
 
@@ -12,6 +13,7 @@ export const EspecialistasList = ({
   currentPage,
   totalPages,
   onPageChange,
+  diaSeleccionado, // Nueva prop para validar horas pasadas
 }) => {
   if (especialistas.length === 0) {
     return html`
@@ -68,14 +70,27 @@ export const EspecialistasList = ({
                             selectedEspecialista.id_especialista === especialista.id_especialista &&
                             selectedHora === hora;
 
+                          // Verificar si la hora ya pasó
+                          const yaPaso = diaSeleccionado && horaYaPaso(diaSeleccionado, hora);
+
                           return html`
                             <button
                               class="${isSelected
                                 ? "btn btn-primary btn-sm px-3"
+                                : yaPaso
+                                ? "btn btn-outline-secondary btn-sm px-3 text-muted"
                                 : "btn btn-outline-primary btn-sm px-3"}"
-                              onClick=${() => onSelectHora(especialista, hora)}
+                              onClick=${() => !yaPaso && onSelectHora(especialista, hora)}
+                              disabled=${yaPaso}
+                              title=${yaPaso ? "Esta hora ya ha pasado" : ""}
+                              style="${yaPaso ? "cursor: not-allowed; opacity: 0.5;" : ""}"
                             >
                               ${hora}
+                              ${yaPaso
+                                ? html`
+                                    <i class="bi bi-lock-fill ms-1 small"></i>
+                                  `
+                                : ""}
                             </button>
                           `;
                         })}

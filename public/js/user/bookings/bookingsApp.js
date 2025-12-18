@@ -2,7 +2,7 @@ import { h, render } from "https://esm.sh/preact@10.19.3";
 import { useEffect } from "https://esm.sh/preact@10.19.3/hooks";
 import { useStore } from "https://esm.sh/@nanostores/preact@0.5.1?deps=preact@10.19.3";
 import htm from "https://esm.sh/htm";
-import { $estado, loadServices } from "./context/bookingsContext.js";
+import { $estado, loadServicesAction } from "./context/bookingsStore.js";
 import { DateForm } from "./routes/dateForm.js";
 import { ServiceForm } from "./routes/serviceForm.js";
 import { ConfirmationForm } from "./routes/confirmationForm.js";
@@ -14,7 +14,7 @@ const BookingsApp = () => {
   const estado = useStore($estado);
 
   useEffect(() => {
-    loadServices();
+    loadServicesAction();
   }, []);
 
   return html`

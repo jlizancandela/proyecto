@@ -39,3 +39,43 @@ export const capitalizarPrimeraLetra = (texto) => {
   if (!texto) return "";
   return texto.charAt(0).toUpperCase() + texto.slice(1);
 };
+
+/**
+ * Verifica si una fecha es hoy
+ * @param {Date} fecha - Fecha a verificar
+ * @returns {boolean} True si la fecha es hoy
+ */
+export const esHoy = (fecha) => {
+  const hoy = new Date();
+  return (
+    fecha.getDate() === hoy.getDate() &&
+    fecha.getMonth() === hoy.getMonth() &&
+    fecha.getFullYear() === hoy.getFullYear()
+  );
+};
+
+/**
+ * Verifica si una hora ya ha pasado en el día actual
+ * Si la fecha no es hoy, retorna false (todas las horas son válidas)
+ * @param {Date} fecha - Fecha seleccionada
+ * @param {string} hora - Hora en formato "HH:MM"
+ * @returns {boolean} True si la hora ya pasó
+ */
+export const horaYaPaso = (fecha, hora) => {
+  // Si no es hoy, todas las horas son válidas
+  if (!esHoy(fecha)) {
+    return false;
+  }
+
+  // Parsear la hora
+  const [horas, minutos] = hora.split(":").map(Number);
+
+  // Crear fecha con la hora especificada
+  const horaSeleccionada = new Date();
+  horaSeleccionada.setHours(horas, minutos, 0, 0);
+
+  // Comparar con la hora actual
+  const ahora = new Date();
+
+  return horaSeleccionada <= ahora;
+};

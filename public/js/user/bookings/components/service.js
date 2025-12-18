@@ -1,19 +1,35 @@
+/**
+ * ========================================
+ * SERVICE COMPONENT - Componente Presentacional
+ * ========================================
+ *
+ * Componente para mostrar un servicio individual.
+ * Acepta un callback para manejar la selección.
+ */
+
 import { h } from "https://esm.sh/preact@10.19.3";
-import { useStore } from "https://esm.sh/@nanostores/preact@0.5.1?deps=preact@10.19.3";
 import htm from "https://esm.sh/htm";
-import { $selectedService } from "../context/bookingsContext.js";
 
 const html = htm.bind(h);
 
-export const Service = ({ service }) => {
-  const selectedService = useStore($selectedService);
-
-  const isSelected = selectedService?.id === service.id;
+/**
+ * Componente de servicio
+ * @param {Object} props
+ * @param {Object} props.service - Datos del servicio
+ * @param {Function} props.onSelect - Callback cuando se selecciona el servicio
+ * @param {boolean} props.isSelected - Si el servicio está seleccionado
+ */
+export const Service = ({ service, onSelect, isSelected = false }) => {
+  const handleClick = () => {
+    if (onSelect) {
+      onSelect(service);
+    }
+  };
 
   return html`
     <div
       class="card ${isSelected ? "border-primary border-3" : ""}"
-      onclick=${() => $selectedService.set(service)}
+      onclick=${handleClick}
       style="cursor: pointer; min-height: 120px; ${isSelected
         ? "box-shadow: 0 0 10px rgba(13, 110, 253, 0.5);"
         : ""}"

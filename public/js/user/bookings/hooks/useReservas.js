@@ -1,78 +1,51 @@
-import { useState } from "https://esm.sh/preact@10.19.3/hooks";
+/**
+ * ========================================
+ * USE RESERVAS HOOK - Puente a la Store
+ * ========================================
+ *
+ * Hook simplificado que actúa como puente entre los componentes
+ * y la store centralizada. NO contiene lógica de negocio.
+ *
+ * Responsabilidades:
+ * - Suscribirse a los átomos y maps de la store
+ * - Exponer datos y acciones a los componentes
+ * - Mantener una interfaz limpia y consistente
+ */
+
 import { useStore } from "https://esm.sh/@nanostores/preact@0.5.1?deps=preact@10.19.3";
-import {
-  $selectedService,
-  $dia,
-  $selectedEspecialista,
-  $selectedHora,
-  resetBooking,
-} from "../context/bookingsContext.js";
-import { createReserva, getUserBookings } from "../api/bookingsApi.js";
-import { formatearFechaISO } from "../tools/formatters.js";
-import { hasWeeklyBookingForService } from "../tools/validators.js";
+import { $bookingDraft, $uiState, confirmReservaAction } from "../context/bookingsStore.js";
 
 /**
- * Hook personalizado para manejar la lógica de confirmación de reservas
+ * Hook personalizado para manejar reservas
+ *
  * @returns {Object} Estado y funciones para confirmar reservas
+ * @returns {Object} booking - Draft de la reserva actual
+ * @returns {Object} booking.service - Servicio seleccionado
+ * @returns {Date} booking.dia - Día seleccionado
+ * @returns {Object} booking.especialista - Especialista seleccionado
+ * @returns {string} booking.hora - Hora seleccionada
+ * @returns {boolean} loading - Estado de carga global
+ * @returns {string|null} error - Error global (si existe)
+ * @returns {Function} confirmarReserva - Acción para confirmar la reserva
  */
 export const useReservas = () => {
-  const selectedService = useStore($selectedService);
-  const dia = useStore($dia);
-  const selectedEspecialista = useStore($selectedEspecialista);
-  const selectedHora = useStore($selectedHora);
+  // Suscribirse a los stores
+  const booking = useStore($bookingDraft);
+  const uiState = useStore($uiState);
 
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-
-  const confirmarReserva = async () => {
-    if (!selectedService?.id || !selectedEspecialista?.id_especialista || !dia || !selectedHora) {
-      setError("Faltan datos requeridos para completar la reserva");
-      return;
-    }
-
-    setLoading(true);
-    setError(null);
-    let reservaExitosa = false;
-
-    try {
-      const userBookings = await getUserBookings();
-      const targetDate = formatearFechaISO(dia);
-
-      if (hasWeeklyBookingForService(userBookings, selectedService.id, targetDate)) {
-        throw new Error("Ya tienes una reserva de este servicio en esta semana");
-      }
-
-      const reservaData = {
-        servicio_id: selectedService.id,
-        especialista_id: selectedEspecialista.id_especialista,
-        fecha: targetDate,
-        hora: selectedHora,
-        duracion: selectedService.duracion,
-      };
-
-      await createReserva(reservaData);
-      reservaExitosa = true;
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-
-    if (reservaExitosa) {
-      setTimeout(() => {
-        resetBooking();
-        window.location.href = "/user/reservas";
-      }, 800);
-    }
-  };
-
+  // Exponer interfaz simplificada
   return {
-    selectedService,
-    dia,
-    selectedEspecialista,
-    selectedHora,
-    loading,
-    error,
-    confirmarReserva,
+    // Datos de la reserva (desde el draft)
+    selectedService: booking.service,
+    dia: booking.dia,
+    selectedEspecialista: booking.especialista,
+    selectedHora: booking.hora,
+
+    // Estados de UI
+    loading: uiState.loading,
+    error: uiState.error,
+
+    // Acción de confirmación (importada desde la store)
+    confirmarReserva: confirmReservaAction,
   };
 };
