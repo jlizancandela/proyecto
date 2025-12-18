@@ -67,8 +67,8 @@ $router->get('/admin/users', function () use ($latte, $userService) {
     echo $controller->usersManagement();
 });
 
-$router->get('/user', function () use ($latte) {
-    $controller = new UserController($latte);
+$router->get('/user', function () use ($latte, $reservaService) {
+    $controller = new UserController($latte, $reservaService);
     echo $controller->index();
 });
 
@@ -145,6 +145,11 @@ $router->get('/api/reservas', function () use ($reservaService) {
 $router->post('/api/reservas', function () use ($reservaService) {
     $controller = new BookingApiController($reservaService);
     $controller->createReserva();
+});
+
+$router->get('/api/me', function () use ($latte, $userService) {
+    $controller = new UserApiController($latte, $userService);
+    $controller->getCurrentUser();
 });
 
 $router->run();

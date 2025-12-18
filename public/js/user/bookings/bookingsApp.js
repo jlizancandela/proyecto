@@ -2,10 +2,11 @@ import { h, render } from "https://esm.sh/preact@10.19.3";
 import { useEffect } from "https://esm.sh/preact@10.19.3/hooks";
 import { useStore } from "https://esm.sh/@nanostores/preact@0.5.1?deps=preact@10.19.3";
 import htm from "https://esm.sh/htm";
-import { $estado, loadServices } from "./context/bookingsContext.js";
+import { $estado, loadServicesAction } from "./context/bookingsStore.js";
 import { DateForm } from "./routes/dateForm.js";
 import { ServiceForm } from "./routes/serviceForm.js";
 import { ConfirmationForm } from "./routes/confirmationForm.js";
+import { BookingNavigation } from "./components/BookingNavigation.js";
 
 const html = htm.bind(h);
 
@@ -13,12 +14,18 @@ const BookingsApp = () => {
   const estado = useStore($estado);
 
   useEffect(() => {
-    loadServices();
+    loadServicesAction();
   }, []);
 
   return html`
-    <h1 class="reserva-titulo">Nueva Reserva</h1>
-    ${renderCurrentStep(estado)}
+    <div class="d-flex flex-column position-relative" style="min-height: 75vh;">
+      <h1 class="reserva-titulo mb-4">Nueva Reserva</h1>
+
+      <!-- Content Area -->
+      <div class="flex-grow-1 mb-5">${renderCurrentStep(estado)}</div>
+
+      <${BookingNavigation} />
+    </div>
   `;
 };
 

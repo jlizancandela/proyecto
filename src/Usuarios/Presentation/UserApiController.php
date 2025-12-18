@@ -268,4 +268,41 @@ class UserApiController
             ], JSON_PRETTY_PRINT);
         }
     }
+    public function getCurrentUser(): void
+    {
+        header('Content-Type: application/json');
+
+        try {
+            if (session_status() === PHP_SESSION_NONE) {
+                session_start();
+            }
+
+            if (!isset($_SESSION['user_id'])) {
+                http_response_code(401);
+                echo json_encode(['success' => false, 'error' => 'No autorizado']);
+                return;
+            }
+
+            $user = $this->userService->getUserById($_SESSION['user_id']);
+
+            if (!$user) {
+                http_response_code(404);
+                echo json_encode(['success' => false, 'error' => 'Usuario no encontrado']);
+                return;
+            }
+
+            echo json_encode([
+                'success' => true,
+                'data' => [
+                    'id' => $user->getId(),
+                    'nombre' => $user->getNombre(),
+                    'apellidos' => $user->getApellidos(),
+                    'email' => $user->getEmail()
+                ]
+            ]);
+        } catch (\Exception $e) {
+            http_response_code(500);
+            echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+        }
+    }
 }
