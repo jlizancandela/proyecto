@@ -258,4 +258,106 @@ class AuthService
 
         return $user->getRol() === $role;
     }
+
+    /**
+     * Genera un token de recuperación de contraseña para un usuario
+     * 
+     * Crea un token único usando random_bytes y establece una expiración
+     * de 1 hora. El token se guarda en la base de datos.
+     * 
+     * @param string $email Email del usuario
+     * @return string Token generado
+     * @throws \RuntimeException Si el usuario no existe
+     */
+    public function generatePasswordResetToken(string $email): string
+    {
+        $user = $this->userRepository->getUserByEmail($email);
+
+        if (!$user) {
+            throw new \RuntimeException("Usuario no encontrado");
+        }
+
+        // Generar token único de 32 bytes (64 caracteres hexadecimales)
+        $token = bin2hex(random_bytes(32));
+
+        // Establecer expiración en 1 hora
+        $expiration = date('Y-m-d H:i:s', time() + 3600);
+
+        // Guardar token y expiración en la base de datos
+        $this->userRepository->savePasswordResetToken($user->getId(), $token, $expiration);
+
+        return $token;
+    }
+
+    /**
+     * Valida un token de recuperación de contraseña
+     * 
+     * Verifica que el token exista y no haya expirado.
+     * 
+     * @param string $token Token de recuperación
+     * @return Usuario|null Usuario si el token es válido, null si no
+     */
+    public function validateResetToken(string $token): ?Usuario
+    {
+        if (empty($token)) {
+            return null;
+        }
+
+        $user = $this->userRepository->getUserByResetToken($token);
+
+        if (!$user) {
+            return null;
+        }
+
+        // Obtener expiración directamente de BD
+        $db = $this->userRepository->getConnection();
+        $query = "SELECT reset_expiration FROM USUARIO WHERE id_usuario = :id";
+        $stmt = $db->prepare($query);
+        $userId = $user->getId();
+        $stmt->bindParam(":id", $userId);
+        $stmt->execute();
+        $result = $stmt->fetch(\PDO::FETCH_ASSOC);
+
+        $expiration = $result['reset_expiration'] ?? null;
+
+        // Verificar si ha expirado
+        if (!$expiration || strtotime($expiration) < time()) {
+            return null;
+        }
+
+        return $user;
+    }
+
+    /**
+     * Resetea la contraseña de un usuario usando un token válido
+     * 
+     * Valida el token, valida la nueva contraseña, la hashea,
+     * actualiza en base de datos y limpia el token.
+     * 
+     * @param string $token Token de recuperación
+     * @param string $newPassword Nueva contraseña en texto plano
+     * @return bool True si se reseteo correctamente, false si el token es inválido
+     * @throws \RuntimeException Si la contraseña no cumple los requisitos
+     */
+    public function resetPassword(string $token, string $newPassword): bool
+    {
+        $user = $this->validateResetToken($token);
+
+        if (!$user) {
+            return false;
+        }
+
+        // Validar nueva contraseña
+        $this->validatePassword($newPassword);
+
+        // Hashear y actualizar contraseña
+        $newPasswordHash = password_hash($newPassword, PASSWORD_DEFAULT);
+        $user->setPassword($newPasswordHash);
+        $this->userService->updateUser($user);
+
+        // Limpiar token para que no pueda reutilizarse
+        $this->userRepository->clearResetToken($user->getId());
+
+        return true;
+    }
 }

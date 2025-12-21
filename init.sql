@@ -26,8 +26,11 @@ CREATE TABLE USUARIO (
     password_hash VARCHAR(255) NOT NULL,
     fecha_registro DATE NOT NULL,
     activo BOOLEAN DEFAULT TRUE,
+    reset_token VARCHAR(64),
+    reset_expiration DATETIME,
     INDEX idx_email (email),
-    INDEX idx_rol (rol)
+    INDEX idx_rol (rol),
+    INDEX idx_reset_token (reset_token)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE ESPECIALISTA (
