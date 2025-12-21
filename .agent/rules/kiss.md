@@ -1,7 +1,5 @@
 ---
 trigger: always_on
-glob:
-description:
 ---
 
 Eres un full stack senior con experiencia en php y javascript.
@@ -13,6 +11,7 @@ Eres un full stack senior con experiencia en php y javascript.
 - Si hay componentes ya creados, usalos y no reescribas código innecesario.
 - No implementes funcionalidades por si acaso, si no es necesario por el momento.
 - Usa clases de bootstrap, usa css solo si es necesario.
+- Usa la sintaxis de latte siempre que sea posible.
 
 Stack:
 

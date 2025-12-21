@@ -1,88 +1,101 @@
-{layout '../layouts/user-panel-layout.latte'} {block title}Mis Reservas{/block} {block content}
-<div class="container-fluid bg-light min-vh-100 py-3 rounded-3">
-  <div class="row mb-4">
-    <div class="col">
-      <div class="d-flex justify-content-between align-items-center mb-2">
-        <h1 class="h2 text-dark mb-0">Mis Reservas</h1>
-        {if isset($bookings) && count($bookings) > 0}
-        <a
-          href="/user/reservas/pdf{if isset($filters['fecha_desde']) || isset($filters['fecha_hasta']) || isset($filters['estado'])}?{if isset($filters['fecha_desde'])}fecha_desde={$filters['fecha_desde']}&{/if}{if isset($filters['fecha_hasta'])}fecha_hasta={$filters['fecha_hasta']}&{/if}{if isset($filters['estado'])}estado={$filters['estado']}{/if}{/if}"
-          class="btn btn-danger"
-          target="_blank"
-        >
-          <i class="bi bi-file-pdf me-2"></i>
-          Exportar PDF
-        </a>
-        {/if}
-      </div>
-      <p class="text-muted mb-0">Gestiona todas tus citas activas, pasadas y canceladas</p>
-    </div>
-  </div>
+{layout '../layouts/user-panel-layout.latte'}
 
-  {* Componente de filtros *} {include '../components/booking-filters.latte', filters: $filters ??
-  []}
+{block title}Mis Reservas{/block}
 
-  <div n:if="!isset($bookings) || count($bookings) === 0">
-    {include '../components/empty-state.latte', title: 'No hay reservas', message: 'No tienes
-    reservas en este momento.
-    <br />
-    ¡Anímate a reservar tu próxima cita!', buttonText: 'Nueva Reserva', buttonUrl:
-    '/user/reservas/nueva', iconClass: 'bi bi-calendar-x' }
-  </div>
-  <div class="row mb-4" n:if="isset($bookings) && count($bookings) > 0">
-    <div class="col-12">
-      <div n:foreach="$bookings as $booking">
-        {include '../components/booking-card.latte', booking: $booking, showActions: true}
+{block content}
+  <div class="container-fluid bg-light min-vh-100 py-3 rounded-3">
+    <div class="row mb-4">
+      <div class="col">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <h1 class="h2 text-dark mb-0">Mis Reservas</h1>
+          <a n:if="isset($bookings) && count($bookings) > 0"
+             n:href="'/user/reservas/pdf' . (isset($filters['fecha_desde']) || isset($filters['fecha_hasta']) || isset($filters['estado']) ? '?' . http_build_query(array_filter($filters ?? [])) : '')"
+             class="btn btn-danger"
+             target="_blank">
+            <i class="bi bi-file-pdf me-2"></i>
+            Exportar PDF
+          </a>
+        </div>
+        <p class="text-muted mb-0">Gestiona todas tus citas activas, pasadas y canceladas</p>
       </div>
     </div>
+
+    {* Componente de filtros *}
+    {include '../components/booking-filters.latte', filters: $filters ?? []}
+
+    {* Estado vacío *}
+    <div n:if="!isset($bookings) || count($bookings) === 0">
+      {include '../components/empty-state.latte',
+        title: 'No hay reservas',
+        message: 'No tienes reservas en este momento.<br />¡Anímate a reservar tu próxima cita!',
+        buttonText: 'Nueva Reserva',
+        buttonUrl: '/user/reservas/nueva',
+        iconClass: 'bi bi-calendar-x'
+      }
+    </div>
+
+    {* Lista de reservas *}
+    <div class="row mb-4" n:if="isset($bookings) && count($bookings) > 0">
+      <div class="col-12">
+        <div n:foreach="$bookings as $booking">
+          {include '../components/booking-card.latte', booking: $booking, showActions: true}
+        </div>
+      </div>
+    </div>
+
+    {* Paginador *}
+    {include '../components/paginator.latte',
+      currentPage: $currentPage ?? 1,
+      totalPages: $totalPages ?? 1,
+      baseUrl: '/user/reservas',
+      ariaLabel: 'Paginación de reservas',
+      filters: $filters ?? []
+    }
   </div>
 
-  {include '../components/paginator.latte', currentPage: $currentPage ?? 1, totalPages: $totalPages
-  ?? 1, baseUrl: '/user/reservas', ariaLabel: 'Paginación de reservas', filters: $filters ?? [] }
-</div>
-
-<div
-  class="modal fade"
-  id="actionModal"
-  tabindex="-1"
-  aria-labelledby="actionModalLabel"
-  aria-hidden="true"
->
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header border-0">
-        <h5 class="modal-title" id="actionModalLabel">
-          <i class="bi bi-exclamation-triangle text-warning me-2"></i>
-          <span id="modalTitle">Acción</span>
-        </h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <p class="mb-3" id="modalMessage">¿Estás seguro de realizar esta acción?</p>
-        <p class="text-muted small mb-0">
-          <i class="bi bi-info-circle me-1"></i>
-          <span id="modalSubMessage">Esta acción no se puede deshacer.</span>
-        </p>
-      </div>
-      <div class="modal-footer border-0">
-        <button
-          type="button"
-          class="btn btn-outline-secondary rounded-pill"
-          data-bs-dismiss="modal"
-          id="modalCancelBtn"
-        >
-          Cancelar
-        </button>
-        <button type="button" class="btn btn-danger rounded-pill" id="confirmActionBtn">
-          Confirmar
-        </button>
+  {* Modal de confirmación de acciones *}
+  <div class="modal fade"
+       id="actionModal"
+       tabindex="-1"
+       aria-labelledby="actionModalLabel"
+       aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header border-0">
+          <h5 class="modal-title" id="actionModalLabel">
+            <i class="bi bi-exclamation-triangle text-warning me-2"></i>
+            <span id="modalTitle">Acción</span>
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p class="mb-3" id="modalMessage">¿Estás seguro de realizar esta acción?</p>
+          <p class="text-muted small mb-0">
+            <i class="bi bi-info-circle me-1"></i>
+            <span id="modalSubMessage">Esta acción no se puede deshacer.</span>
+          </p>
+        </div>
+        <div class="modal-footer border-0">
+          <button type="button"
+                  class="btn btn-outline-secondary rounded-pill"
+                  data-bs-dismiss="modal"
+                  id="modalCancelBtn">
+            Cancelar
+          </button>
+          <button type="button" class="btn btn-danger rounded-pill" id="confirmActionBtn">
+            Confirmar
+          </button>
+        </div>
       </div>
     </div>
   </div>
-</div>
-{/block} {block styles}
-<link rel="stylesheet" href="/public/css/bookings.css" />
-{/block} {block scripts}
-<script src="/public/js/booking-filters.js"></script>
-<script src="/public/js/bookings.js"></script>
+{/block}
+
+{block styles}
+  <link rel="stylesheet" href="/public/css/bookings.css" />
+{/block}
+
+{block scripts}
+  <script src="/public/js/booking-filters.js"></script>
+  <script src="/public/js/bookings.js"></script>
 {/block}
