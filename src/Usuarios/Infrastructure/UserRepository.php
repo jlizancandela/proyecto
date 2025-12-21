@@ -16,6 +16,16 @@ class UserRepository
         $this->db = $db;
     }
 
+    /**
+     * Obtiene la conexión PDO
+     * 
+     * @return PDO Conexión a la base de datos
+     */
+    public function getConnection(): PDO
+    {
+        return $this->db;
+    }
+
     public function getAllUsers($limit = 10, $offset = 0): array
     {
         try {
@@ -273,6 +283,75 @@ class UserRepository
         } catch (PDOException $e) {
             throw new PDOException(
                 "Error al eliminar usuario: " . $e->getMessage(),
+            );
+        }
+    }
+
+    /**
+     * Guarda el token de recuperación de contraseña y su expiración
+     * 
+     * @param int $userId ID del usuario
+     * @param string $token Token de recuperación
+     * @param string $expiration Fecha y hora de expiración (formato: Y-m-d H:i:s)
+     * @return void
+     * @throws PDOException Si hay un error en la base de datos
+     */
+    public function savePasswordResetToken(int $userId, string $token, string $expiration): void
+    {
+        try {
+            $query = "UPDATE USUARIO SET reset_token = :token, reset_expiration = :expiration WHERE id_usuario = :id";
+            $stmt = $this->db->prepare($query);
+            $stmt->bindParam(":token", $token);
+            $stmt->bindParam(":expiration", $expiration);
+            $stmt->bindParam(":id", $userId);
+            $stmt->execute();
+        } catch (PDOException $e) {
+            throw new PDOException(
+                "Error al guardar token de recuperación: " . $e->getMessage(),
+            );
+        }
+    }
+
+    /**
+     * Obtiene un usuario por su token de recuperación
+     * 
+     * @param string $token Token de recuperación
+     * @return Usuario|null Usuario si existe, null si no
+     * @throws PDOException Si hay un error en la base de datos
+     */
+    public function getUserByResetToken(string $token): ?Usuario
+    {
+        try {
+            $query = "SELECT * FROM USUARIO WHERE reset_token = :token";
+            $stmt = $this->db->prepare($query);
+            $stmt->bindParam(":token", $token);
+            $stmt->execute();
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $row ? Usuario::fromDatabase($row) : null;
+        } catch (PDOException $e) {
+            throw new PDOException(
+                "Error al obtener usuario por token: " . $e->getMessage(),
+            );
+        }
+    }
+
+    /**
+     * Limpia el token de recuperación de un usuario
+     * 
+     * @param int $userId ID del usuario
+     * @return void
+     * @throws PDOException Si hay un error en la base de datos
+     */
+    public function clearResetToken(int $userId): void
+    {
+        try {
+            $query = "UPDATE USUARIO SET reset_token = NULL, reset_expiration = NULL WHERE id_usuario = :id";
+            $stmt = $this->db->prepare($query);
+            $stmt->bindParam(":id", $userId);
+            $stmt->execute();
+        } catch (PDOException $e) {
+            throw new PDOException(
+                "Error al limpiar token de recuperación: " . $e->getMessage(),
             );
         }
     }

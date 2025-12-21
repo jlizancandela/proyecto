@@ -7,6 +7,7 @@
       <div class="bg-white rounded shadow-lg p-4">
         <h2 class="text-center mb-4">Iniciar Sesión</h2>
 
+        <div n:if="isset($success)" class="alert alert-success">{$success}</div>
         <div n:if="isset($error)" class="alert alert-danger">{$error}</div>
 
         <form action="/login" method="post">
@@ -48,6 +49,10 @@
           </div>
 
           <button type="submit" class="btn btn-primary w-100 mb-3">Iniciar Sesión</button>
+
+          <div class="text-center mb-3">
+            <a href="/forgot-password" class="text-muted">¿Olvidaste tu contraseña?</a>
+          </div>
 
           <p class="text-center mb-0">
             ¿No tienes cuenta?

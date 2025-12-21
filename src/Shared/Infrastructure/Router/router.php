@@ -32,29 +32,49 @@ $router->get('/', function () use ($latte) {
     echo $controller->index();
 });
 
-$router->get('/login', function () use ($latte, $authService) {
-    $controller = new AuthController($latte, $authService);
+$router->get('/login', function () use ($latte, $authService, $emailService) {
+    $controller = new AuthController($latte, $authService, $emailService);
     echo $controller->showLogin();
 });
 
-$router->post('/login', function () use ($latte, $authService) {
-    $controller = new AuthController($latte, $authService);
+$router->post('/login', function () use ($latte, $authService, $emailService) {
+    $controller = new AuthController($latte, $authService, $emailService);
     $controller->login();
 });
 
-$router->get('/register', function () use ($latte, $authService) {
-    $controller = new AuthController($latte, $authService);
+$router->get('/register', function () use ($latte, $authService, $emailService) {
+    $controller = new AuthController($latte, $authService, $emailService);
     echo $controller->showRegister();
 });
 
-$router->post('/register', function () use ($latte, $authService) {
-    $controller = new AuthController($latte, $authService);
+$router->post('/register', function () use ($latte, $authService, $emailService) {
+    $controller = new AuthController($latte, $authService, $emailService);
     $controller->register();
 });
 
-$router->get('/logout', function () use ($latte, $authService) {
-    $controller = new AuthController($latte, $authService);
+$router->get('/logout', function () use ($latte, $authService, $emailService) {
+    $controller = new AuthController($latte, $authService, $emailService);
     $controller->logout();
+});
+
+$router->get('/forgot-password', function () use ($latte, $authService, $emailService) {
+    $controller = new AuthController($latte, $authService, $emailService);
+    echo $controller->showForgotPasswordForm();
+});
+
+$router->post('/forgot-password', function () use ($latte, $authService, $emailService) {
+    $controller = new AuthController($latte, $authService, $emailService);
+    $controller->sendResetLink();
+});
+
+$router->get('/reset-password', function () use ($latte, $authService, $emailService) {
+    $controller = new AuthController($latte, $authService, $emailService);
+    echo $controller->showResetPasswordForm();
+});
+
+$router->post('/reset-password', function () use ($latte, $authService, $emailService) {
+    $controller = new AuthController($latte, $authService, $emailService);
+    $controller->resetPassword();
 });
 
 $router->get('/admin', function () use ($latte) {
