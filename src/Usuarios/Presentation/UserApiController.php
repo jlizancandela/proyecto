@@ -206,6 +206,16 @@ class UserApiController
                 return;
             }
 
+            // Proteger Admin: no permitir eliminación
+            if ($user->getRol() === \Usuarios\Domain\UserRole::Admin) {
+                http_response_code(403);
+                echo json_encode([
+                    'success' => false,
+                    'error' => 'No se puede eliminar un usuario administrador'
+                ], JSON_PRETTY_PRINT);
+                return;
+            }
+
             $this->userService->deleteUser($id);
 
             echo json_encode([
