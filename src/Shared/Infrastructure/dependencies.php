@@ -19,6 +19,7 @@ $userService = new UserService($userRepository);
 $authService = new AuthService($userRepository, $userService);
 
 $servicioRepository = new \Servicios\Infrastructure\ServicioRepository($db);
+$servicioService = new \Servicios\Application\ServicioService($servicioRepository);
 $especialistaRepository = new \Especialistas\Infrastructure\EspecialistaRepository($db);
 $reservaRepository = new \Reservas\Infrastructure\ReservaRepository($db);
 $reservaService = new \Reservas\Application\ReservaService($reservaRepository);

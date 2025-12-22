@@ -97,6 +97,11 @@ $router->get('/admin/users', function () use ($latte, $userService) {
     echo $controller->usersManagement();
 });
 
+$router->get('/admin/services', function () use ($latte, $servicioService) {
+    $controller = new AdminController($latte, null, $servicioService);
+    echo $controller->servicesManagement();
+});
+
 $router->get('/user', function () use ($latte, $reservaService) {
     $controller = new UserController($latte, $reservaService);
     echo $controller->index();
@@ -167,9 +172,29 @@ $router->delete('/admin/api/users/(\d+)', function ($id) use ($latte, $userServi
     $controller->deleteUser((int)$id);
 });
 
-$router->get('/api/services', function () use ($servicioRepository) {
-    $controller = new ServiceApiController($servicioRepository);
+$router->get('/api/services', function () use ($servicioService) {
+    $controller = new ServiceApiController($servicioService);
     $controller->getAll();
+});
+
+$router->get('/admin/api/services/(\d+)', function ($id) use ($servicioService) {
+    $controller = new ServiceApiController($servicioService);
+    $controller->getServiceById((int)$id);
+});
+
+$router->post('/admin/api/services', function () use ($servicioService) {
+    $controller = new ServiceApiController($servicioService);
+    $controller->createService();
+});
+
+$router->put('/admin/api/services/(\d+)', function ($id) use ($servicioService) {
+    $controller = new ServiceApiController($servicioService);
+    $controller->updateService((int)$id);
+});
+
+$router->delete('/admin/api/services/(\d+)', function ($id) use ($servicioService) {
+    $controller = new ServiceApiController($servicioService);
+    $controller->deleteService((int)$id);
 });
 
 $router->get('/api/especialistas/disponibles', function () use ($especialistaRepository) {
