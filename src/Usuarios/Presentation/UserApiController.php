@@ -317,19 +317,29 @@ class UserApiController
                 return;
             }
 
+            // Proteger Admin: no permitir cambio de rol ni desactivación
+            $rol = $data['rol'];
+            $activo = isset($data['activo']) ? in_array($data['activo'], [true, '1', 1, 'on'], true) : $existingUser->getActivo();
+
+            if ($existingUser->getRol() === \Usuarios\Domain\UserRole::Admin) {
+                // Si el usuario actual es Admin, mantener rol y estado activo
+                $rol = 'Admin';
+                $activo = true;
+            }
+
             $passwordHash = !empty($data['password'])
                 ? password_hash($data['password'], PASSWORD_BCRYPT)
                 : $existingUser->getPassword();
 
             $user = new \Usuarios\Domain\Usuario(
-                $data['rol'],
+                $rol,
                 $data['nombre'],
                 $data['apellidos'],
                 $data['email'],
                 $passwordHash,
                 $data['telefono'] ?? null,
                 $existingUser->getFechaRegistro()->format('Y-m-d H:i:s'),
-                isset($data['activo']) ? in_array($data['activo'], [true, '1', 1, 'on'], true) : $existingUser->getActivo(),
+                $activo,
                 $id
             );
 

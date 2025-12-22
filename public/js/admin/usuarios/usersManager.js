@@ -107,6 +107,15 @@ const editUser = (userId) => {
         editRolInput.value = user.rol;
         editActivoCheckbox.checked = user.activo;
 
+        // Proteger admin: deshabilitar cambio de rol y estado si es Admin
+        if (user.rol === "Admin") {
+          editRolInput.disabled = true;
+          editActivoCheckbox.disabled = true;
+        } else {
+          editRolInput.disabled = false;
+          editActivoCheckbox.disabled = false;
+        }
+
         // Mostrar/ocultar servicios y avatar según rol
         toggleSpecialistFields(user.rol, editServiciosContainer, editAvatarContainer);
 
