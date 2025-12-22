@@ -7,6 +7,7 @@ const editRolInput = document.getElementById("editRol");
 const editServiciosSelect = document.getElementById("editServicios");
 const editServiciosContainer = document.getElementById("editServicesContainer");
 const editAvatarContainer = document.getElementById("editAvatarContainer");
+const editAvatarInput = document.getElementById("editAvatar");
 const editActivoCheckbox = document.getElementById("editActivo");
 const editPasswordInput = document.getElementById("editPassword");
 const editPasswordConfirmInput = document.getElementById("editPasswordConfirm");
@@ -23,6 +24,7 @@ const createRolInput = document.getElementById("createRol");
 const createServiciosSelect = document.getElementById("createServicios");
 const createServiciosContainer = document.getElementById("createServicesContainer");
 const createAvatarContainer = document.getElementById("createAvatarContainer");
+const createAvatarInput = document.getElementById("createAvatar");
 const createUserForm = document.getElementById("createUserForm");
 const createUserModal = document.getElementById("createUserModal");
 
@@ -174,32 +176,35 @@ const handleCreateUserFormSubmit = (e) => {
     return;
   }
 
-  const formData = {
-    nombre: createNombreInput.value,
-    apellidos: createApellidosInput.value,
-    email: createEmailInput.value,
-    telefono: createTelefonoInput.value,
-    password: password,
-    rol: createRolInput.value,
-  };
+  const formData = new FormData();
+  formData.append("nombre", createNombreInput.value);
+  formData.append("apellidos", createApellidosInput.value);
+  formData.append("email", createEmailInput.value);
+  formData.append("telefono", createTelefonoInput.value);
+  formData.append("password", password);
+  formData.append("rol", createRolInput.value);
 
   // Añadir servicios si es especialista
   if (createRolInput.value === "Especialista") {
     const selectedOptions = Array.from(createServiciosSelect.selectedOptions);
-    formData.servicios = selectedOptions.map((option) => parseInt(option.value));
+    selectedOptions.forEach((option) => {
+      formData.append("servicios[]", option.value);
+    });
 
-    if (formData.servicios.length === 0) {
+    if (selectedOptions.length === 0) {
       alert("Debes seleccionar al menos un servicio para el especialista");
       return;
+    }
+
+    // Añadir avatar si existe
+    if (createAvatarInput.files.length > 0) {
+      formData.append("avatar", createAvatarInput.files[0]);
     }
   }
 
   fetch("/admin/api/users", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(formData),
+    body: formData,
   })
     .then((response) => response.json())
     .then((result) => {
@@ -231,36 +236,42 @@ const handleEditUserFormSubmit = (e) => {
     return;
   }
 
-  const formData = {
-    nombre: editNombreInput.value,
-    apellidos: editApellidosInput.value,
-    email: editEmailInput.value,
-    telefono: editTelefonoInput.value,
-    rol: editRolInput.value,
-    activo: editActivoCheckbox.checked,
-  };
+  const formData = new FormData();
+  formData.append("nombre", editNombreInput.value);
+  formData.append("apellidos", editApellidosInput.value);
+  formData.append("email", editEmailInput.value);
+  formData.append("telefono", editTelefonoInput.value);
+  formData.append("rol", editRolInput.value);
+  formData.append("activo", editActivoCheckbox.checked ? "1" : "0");
+
+  if (password) {
+    formData.append("password", password);
+  }
 
   // Añadir servicios si es especialista
   if (editRolInput.value === "Especialista") {
     const selectedOptions = Array.from(editServiciosSelect.selectedOptions);
-    formData.servicios = selectedOptions.map((option) => parseInt(option.value));
+    selectedOptions.forEach((option) => {
+      formData.append("servicios[]", option.value);
+    });
 
-    if (formData.servicios.length === 0) {
+    if (selectedOptions.length === 0) {
       alert("Debes seleccionar al menos un servicio para el especialista");
       return;
     }
-  }
 
-  if (password) {
-    formData.password = password;
+    // Añadir avatar si existe (si se seleccionó uno nuevo)
+    if (editAvatarInput.files.length > 0) {
+      formData.append("avatar", editAvatarInput.files[0]);
+    }
   }
 
   fetch("/admin/api/users/" + userId, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(formData),
+    method: "POST", // Change to POST for file upload support (method spoofing used if API requires PUT, but PHP native file upload generally works better with POST properly handled, or we keep PUT if we parse input stream manually, but FormData with PUT is tricky in PHP. Best practice: POST usually used for files or spoof method)
+    // Actually, PHP doesn't populate $_FILES on PUT requests easily.
+    // Usually one uses POST with _method=PUT.
+    // Let's use POST but send _method field.
+    body: formData,
   })
     .then((response) => response.json())
     .then((result) => {

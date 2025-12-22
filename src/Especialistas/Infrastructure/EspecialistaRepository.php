@@ -96,16 +96,20 @@ class EspecialistaRepository
     /**
      * Creates a basic especialista entry (without full Especialista object)
      * @param int $userId User ID
+     * @param string|null $fotoUrl Avatar URL
      * @return int|null The created especialista ID or null on failure
      */
-    public function createBasicEspecialista(int $userId): ?int
+    public function createBasicEspecialista(int $userId, ?string $fotoUrl = null): ?int
     {
         try {
             $stmt = $this->db->prepare(
                 "INSERT INTO ESPECIALISTA (id_usuario, descripcion, foto_url) 
-                 VALUES (:id_usuario, null, null)"
+                 VALUES (:id_usuario, null, :foto_url)"
             );
-            $stmt->execute(["id_usuario" => $userId]);
+            $stmt->execute([
+                "id_usuario" => $userId,
+                "foto_url" => $fotoUrl
+            ]);
             return (int) $this->db->lastInsertId();
         } catch (\Exception $e) {
             error_log("Error creating basic especialista: " . $e->getMessage());
@@ -169,6 +173,21 @@ class EspecialistaRepository
             ]);
         } catch (\Exception $e) {
             error_log("Error al actualizar especialista: " . $e->getMessage());
+        }
+    }
+
+    public function updateEspecialistaPhoto(int $id, string $fotoUrl): void
+    {
+        try {
+            $stmt = $this->db->prepare(
+                "UPDATE ESPECIALISTA SET foto_url = :foto_url WHERE id_especialista = :id"
+            );
+            $stmt->execute([
+                'foto_url' => $fotoUrl,
+                'id' => $id
+            ]);
+        } catch (\Exception $e) {
+            error_log("Error updating especialista photo: " . $e->getMessage());
         }
     }
 

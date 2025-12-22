@@ -190,7 +190,7 @@ class UserApiController
         header('Content-Type: application/json');
 
         try {
-            $data = json_decode(file_get_contents('php://input'), true);
+            $data = $this->getRequestData();
 
             if (!$data) {
                 http_response_code(400);
@@ -219,8 +219,14 @@ class UserApiController
             if ($data['rol'] === 'Especialista' && !empty($data['servicios'])) {
                 $userId = $user->getId();
 
+                // Procesar avatar si existe
+                $avatarUrl = null;
+                if (isset($_FILES['avatar'])) {
+                    $avatarUrl = $this->handleAvatarUpload($_FILES['avatar']);
+                }
+
                 // Crear entrada en tabla especialistas y obtener el ID
-                $especialistaId = $this->especialistaRepository->createBasicEspecialista($userId);
+                $especialistaId = $this->especialistaRepository->createBasicEspecialista($userId, $avatarUrl);
 
                 if ($especialistaId) {
                     // Asignar servicios usando id_especialista
@@ -253,7 +259,7 @@ class UserApiController
         header('Content-Type: application/json');
 
         try {
-            $data = json_decode(file_get_contents('php://input'), true);
+            $data = $this->getRequestData();
 
             if (!$data) {
                 http_response_code(400);
@@ -287,7 +293,7 @@ class UserApiController
                 $passwordHash,
                 $data['telefono'] ?? null,
                 $existingUser->getFechaRegistro()->format('Y-m-d H:i:s'),
-                $data['activo'] ?? $existingUser->getActivo(),
+                isset($data['activo']) ? in_array($data['activo'], [true, '1', 1, 'on'], true) : $existingUser->getActivo(),
                 $id
             );
 
@@ -303,6 +309,14 @@ class UserApiController
                 }
 
                 if ($especialistaId) {
+                    // Actualizar avatar si se subió uno nuevo
+                    if (isset($_FILES['avatar'])) {
+                        $avatarUrl = $this->handleAvatarUpload($_FILES['avatar']);
+                        if ($avatarUrl) {
+                            $this->especialistaRepository->updateEspecialistaPhoto($especialistaId, $avatarUrl);
+                        }
+                    }
+
                     // Eliminar servicios anteriores y agregar los nuevos
                     $this->especialistaServicioRepository->deleteAllServiciosForEspecialista($especialistaId);
 
@@ -365,5 +379,44 @@ class UserApiController
             http_response_code(500);
             echo json_encode(['success' => false, 'error' => $e->getMessage()]);
         }
+    }
+
+    private function getRequestData(): array
+    {
+        $input = file_get_contents('php://input');
+        if (!empty($input)) {
+            $jsonData = json_decode($input, true);
+            if (json_last_error() === JSON_ERROR_NONE && is_array($jsonData)) {
+                return $jsonData;
+            }
+        }
+        return $_POST;
+    }
+
+    private function handleAvatarUpload(?array $file): ?string
+    {
+        if (!$file || $file['error'] !== UPLOAD_ERR_OK) {
+            return null;
+        }
+
+        $allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+        if (!in_array($file['type'], $allowedTypes)) {
+            return null;
+        }
+
+        // Definir ruta absoluta para uploads
+        $uploadDir = __DIR__ . '/../../../../public/images/avatars/';
+        if (!file_exists($uploadDir)) {
+            mkdir($uploadDir, 0777, true);
+        }
+
+        $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
+        $filename = uniqid('avatar_') . '.' . $extension;
+
+        if (move_uploaded_file($file['tmp_name'], $uploadDir . $filename)) {
+            return '/images/avatars/' . $filename;
+        }
+
+        return null;
     }
 }
