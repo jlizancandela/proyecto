@@ -62,6 +62,20 @@
                 <input type="tel" class="form-control" id="createTelefono" name="telefono" />
                 <div class="invalid-feedback"></div>
               </div>
+
+              {* Descripción (solo para Especialista) *}
+              <div class="mb-3" id="createDescriptionContainer" style="display: none">
+                <label for="createDescripcion" class="form-label">Descripción</label>
+                <textarea
+                  class="form-control"
+                  id="createDescripcion"
+                  name="descripcion"
+                  rows="3"
+                  placeholder="Breve descripción profesional..."
+                ></textarea>
+                <div class="form-text">Visible para los clientes en la reserva</div>
+                <div class="invalid-feedback"></div>
+              </div>
             </div>
 
             {* Columna derecha *}
@@ -105,8 +119,8 @@
                 <div class="invalid-feedback"></div>
               </div>
 
-              {* Avatar y Descripción (solo para Especialista) *}
-              <div id="createSpecialistFields" style="display: none">
+              {* Avatar (solo para Especialista) *}
+              <div class="mb-3" id="createAvatarContainer" style="display: none">
                 <div class="mb-3">
                   <label for="createAvatar" class="form-label">Avatar</label>
                   <input
@@ -117,19 +131,6 @@
                     accept="image/*"
                   />
                   <div class="form-text">Imagen de perfil del especialista (JPG, PNG)</div>
-                  <div class="invalid-feedback"></div>
-                </div>
-
-                <div class="mb-3">
-                  <label for="createDescripcion" class="form-label">Descripción</label>
-                  <textarea
-                    class="form-control"
-                    id="createDescripcion"
-                    name="descripcion"
-                    rows="3"
-                    placeholder="Breve descripción profesional..."
-                  ></textarea>
-                  <div class="form-text">Visible para los clientes en la reserva</div>
                   <div class="invalid-feedback"></div>
                 </div>
               </div>

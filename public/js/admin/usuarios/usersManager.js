@@ -6,7 +6,8 @@ const editTelefonoInput = document.getElementById("editTelefono");
 const editRolInput = document.getElementById("editRol");
 const editServiciosSelect = document.getElementById("editServicios");
 const editServiciosContainer = document.getElementById("editServicesContainer");
-const editSpecialistFields = document.getElementById("editSpecialistFields");
+const editAvatarContainer = document.getElementById("editAvatarContainer");
+const editDescriptionContainer = document.getElementById("editDescriptionContainer");
 const editAvatarInput = document.getElementById("editAvatar");
 const editDescripcionInput = document.getElementById("editDescripcion");
 const editActivoCheckbox = document.getElementById("editActivo");
@@ -24,7 +25,8 @@ const createPasswordConfirmInput = document.getElementById("createPasswordConfir
 const createRolInput = document.getElementById("createRol");
 const createServiciosSelect = document.getElementById("createServicios");
 const createServiciosContainer = document.getElementById("createServicesContainer");
-const createSpecialistFields = document.getElementById("createSpecialistFields");
+const createAvatarContainer = document.getElementById("createAvatarContainer");
+const createDescriptionContainer = document.getElementById("createDescriptionContainer");
 const createAvatarInput = document.getElementById("createAvatar");
 const createDescripcionInput = document.getElementById("createDescripcion");
 const createUserForm = document.getElementById("createUserForm");
@@ -73,18 +75,21 @@ const populateServicesSelect = (selectElement, selectedIds = []) => {
 };
 
 /**
- * Toggles services and avatar/description containers visibility based on role
+ * Toggles services, avatar and description containers visibility based on role
  * @param {string} role - Selected role
  * @param {HTMLElement} servicesContainer - Services container element
- * @param {HTMLElement} specialistFields - Specialist fields container (avatar, description)
+ * @param {HTMLElement} avatarContainer - Avatar container element
+ * @param {HTMLElement} descriptionContainer - Description container element
  */
-const toggleSpecialistFields = (role, servicesContainer, specialistFields) => {
+const toggleSpecialistFields = (role, servicesContainer, avatarContainer, descriptionContainer) => {
   if (role === "Especialista") {
     servicesContainer.style.display = "block";
-    specialistFields.style.display = "block";
+    avatarContainer.style.display = "block";
+    descriptionContainer.style.display = "block";
   } else {
     servicesContainer.style.display = "none";
-    specialistFields.style.display = "none";
+    avatarContainer.style.display = "none";
+    descriptionContainer.style.display = "none";
   }
 };
 
@@ -119,7 +124,12 @@ const editUser = (userId) => {
         }
 
         // Mostrar/ocultar servicios y campos de especialista según rol
-        toggleSpecialistFields(user.rol, editServiciosContainer, editSpecialistFields);
+        toggleSpecialistFields(
+          user.rol,
+          editServiciosContainer,
+          editAvatarContainer,
+          editDescriptionContainer
+        );
 
         // Cargar datos de especialista
         if (user.rol === "Especialista") {
@@ -342,21 +352,32 @@ const handleCreateUserModalHidden = () => {
 const handleEditUserModalHidden = () => {
   editUserForm.reset();
   editServiciosContainer.style.display = "none";
-  editSpecialistFields.style.display = "none";
+  editAvatarContainer.style.display = "none";
+  editDescriptionContainer.style.display = "none";
 };
 
 /**
  * Handles create rol change to show/hide specialist fields
  */
 const handleCreateRolChange = () => {
-  toggleSpecialistFields(createRolInput.value, createServiciosContainer, createSpecialistFields);
+  toggleSpecialistFields(
+    createRolInput.value,
+    createServiciosContainer,
+    createAvatarContainer,
+    createDescriptionContainer
+  );
 };
 
 /**
  * Handles edit rol change to show/hide specialist fields
  */
 const handleEditRolChange = () => {
-  toggleSpecialistFields(editRolInput.value, editServiciosContainer, editSpecialistFields);
+  toggleSpecialistFields(
+    editRolInput.value,
+    editServiciosContainer,
+    editAvatarContainer,
+    editDescriptionContainer
+  );
 };
 
 document.addEventListener("click", handleDocumentClick);
