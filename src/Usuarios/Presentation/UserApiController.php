@@ -80,14 +80,19 @@ class UserApiController
 
             $userData = UserTransformer::toJsonApi($user);
 
-            // Si es especialista, cargar sus servicios
+            // Si es especialista, cargar sus servicios y descripción
             if ($user->getRol() === \Usuarios\Domain\UserRole::Especialista) {
-                $especialistaId = $this->especialistaRepository->getEspecialistaIdByUserId($id);
-                if ($especialistaId) {
+                $especialistaData = $this->especialistaRepository->getEspecialistaDataByUserId($id);
+                if ($especialistaData) {
+                    $userData['descripcion'] = $especialistaData['descripcion'];
+                    $userData['foto_url'] = $especialistaData['foto_url'];
+                    $especialistaId = $especialistaData['id_especialista'];
+                    
                     $servicios = $this->especialistaServicioRepository->getServiciosForEspecialista($especialistaId);
                     $userData['servicios'] = array_map(fn($s) => $s->getIdServicio(), $servicios);
                 } else {
                     $userData['servicios'] = [];
+                    $userData['descripcion'] = '';
                 }
             }
 
@@ -271,8 +276,10 @@ class UserApiController
                     $avatarUrl = $this->handleAvatarUpload($_FILES['avatar']);
                 }
 
+                $descripcion = $data['descripcion'] ?? null;
+
                 // Crear entrada en tabla especialistas y obtener el ID
-                $especialistaId = $this->especialistaRepository->createBasicEspecialista($userId, $avatarUrl);
+                $especialistaId = $this->especialistaRepository->createBasicEspecialista($userId, $avatarUrl, $descripcion);
 
                 if ($especialistaId) {
                     // Asignar servicios usando id_especialista
@@ -371,6 +378,11 @@ class UserApiController
                         if ($avatarUrl) {
                             $this->especialistaRepository->updateEspecialistaPhoto($especialistaId, $avatarUrl);
                         }
+                    }
+
+                    // Actualizar descripción si se proporciona
+                    if (isset($data['descripcion'])) {
+                        $this->especialistaRepository->updateEspecialistaDescription($especialistaId, $data['descripcion']);
                     }
 
                     // Eliminar servicios anteriores y agregar los nuevos

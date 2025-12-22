@@ -97,17 +97,19 @@ class EspecialistaRepository
      * Creates a basic especialista entry (without full Especialista object)
      * @param int $userId User ID
      * @param string|null $fotoUrl Avatar URL
+     * @param string|null $descripcion Specialist description
      * @return int|null The created especialista ID or null on failure
      */
-    public function createBasicEspecialista(int $userId, ?string $fotoUrl = null): ?int
+    public function createBasicEspecialista(int $userId, ?string $fotoUrl = null, ?string $descripcion = null): ?int
     {
         try {
             $stmt = $this->db->prepare(
                 "INSERT INTO ESPECIALISTA (id_usuario, descripcion, foto_url) 
-                 VALUES (:id_usuario, null, :foto_url)"
+                 VALUES (:id_usuario, :descripcion, :foto_url)"
             );
             $stmt->execute([
                 "id_usuario" => $userId,
+                "descripcion" => $descripcion,
                 "foto_url" => $fotoUrl
             ]);
             return (int) $this->db->lastInsertId();
@@ -188,6 +190,41 @@ class EspecialistaRepository
             ]);
         } catch (\Exception $e) {
             error_log("Error updating especialista photo: " . $e->getMessage());
+        }
+    }
+
+    public function updateEspecialistaDescription(int $id, string $descripcion): void
+    {
+        try {
+            $stmt = $this->db->prepare(
+                "UPDATE ESPECIALISTA SET descripcion = :descripcion WHERE id_especialista = :id"
+            );
+            $stmt->execute([
+                'descripcion' => $descripcion,
+                'id' => $id
+            ]);
+        } catch (\Exception $e) {
+            error_log("Error updating especialista description: " . $e->getMessage());
+        }
+    }
+
+    /**
+     * Gets basic especialista data by user ID
+     * @param int $userId
+     * @return array|null ['id_especialista', 'descripcion', 'foto_url']
+     */
+    public function getEspecialistaDataByUserId(int $userId): ?array
+    {
+        try {
+            $stmt = $this->db->prepare(
+                "SELECT id_especialista, descripcion, foto_url FROM ESPECIALISTA WHERE id_usuario = :id_usuario"
+            );
+            $stmt->execute(["id_usuario" => $userId]);
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $result ?: null;
+        } catch (\Exception $e) {
+            error_log("Error getting especialista data: " . $e->getMessage());
+            return null;
         }
     }
 

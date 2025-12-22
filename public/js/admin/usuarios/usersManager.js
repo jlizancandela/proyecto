@@ -6,8 +6,9 @@ const editTelefonoInput = document.getElementById("editTelefono");
 const editRolInput = document.getElementById("editRol");
 const editServiciosSelect = document.getElementById("editServicios");
 const editServiciosContainer = document.getElementById("editServicesContainer");
-const editAvatarContainer = document.getElementById("editAvatarContainer");
+const editSpecialistFields = document.getElementById("editSpecialistFields");
 const editAvatarInput = document.getElementById("editAvatar");
+const editDescripcionInput = document.getElementById("editDescripcion");
 const editActivoCheckbox = document.getElementById("editActivo");
 const editPasswordInput = document.getElementById("editPassword");
 const editPasswordConfirmInput = document.getElementById("editPasswordConfirm");
@@ -23,8 +24,9 @@ const createPasswordConfirmInput = document.getElementById("createPasswordConfir
 const createRolInput = document.getElementById("createRol");
 const createServiciosSelect = document.getElementById("createServicios");
 const createServiciosContainer = document.getElementById("createServicesContainer");
-const createAvatarContainer = document.getElementById("createAvatarContainer");
+const createSpecialistFields = document.getElementById("createSpecialistFields");
 const createAvatarInput = document.getElementById("createAvatar");
+const createDescripcionInput = document.getElementById("createDescripcion");
 const createUserForm = document.getElementById("createUserForm");
 const createUserModal = document.getElementById("createUserModal");
 
@@ -71,18 +73,18 @@ const populateServicesSelect = (selectElement, selectedIds = []) => {
 };
 
 /**
- * Toggles services and avatar containers visibility based on role
+ * Toggles services and avatar/description containers visibility based on role
  * @param {string} role - Selected role
  * @param {HTMLElement} servicesContainer - Services container element
- * @param {HTMLElement} avatarContainer - Avatar container element
+ * @param {HTMLElement} specialistFields - Specialist fields container (avatar, description)
  */
-const toggleSpecialistFields = (role, servicesContainer, avatarContainer) => {
+const toggleSpecialistFields = (role, servicesContainer, specialistFields) => {
   if (role === "Especialista") {
     servicesContainer.style.display = "block";
-    avatarContainer.style.display = "block";
+    specialistFields.style.display = "block";
   } else {
     servicesContainer.style.display = "none";
-    avatarContainer.style.display = "none";
+    specialistFields.style.display = "none";
   }
 };
 
@@ -116,12 +118,13 @@ const editUser = (userId) => {
           editActivoCheckbox.disabled = false;
         }
 
-        // Mostrar/ocultar servicios y avatar según rol
-        toggleSpecialistFields(user.rol, editServiciosContainer, editAvatarContainer);
+        // Mostrar/ocultar servicios y campos de especialista según rol
+        toggleSpecialistFields(user.rol, editServiciosContainer, editSpecialistFields);
 
-        // Cargar servicios si es especialista
+        // Cargar datos de especialista
         if (user.rol === "Especialista") {
           currentEditUserServices = user.servicios || [];
+          editDescripcionInput.value = user.descripcion || "";
 
           // Si los servicios disponibles no se han cargado aún, cargarlos primero
           if (availableServices.length === 0) {
@@ -137,6 +140,8 @@ const editUser = (userId) => {
           } else {
             populateServicesSelect(editServiciosSelect, currentEditUserServices);
           }
+        } else {
+          editDescripcionInput.value = "";
         }
 
         const modal = new bootstrap.Modal(editUserModal);
@@ -216,7 +221,7 @@ const handleCreateUserFormSubmit = (e) => {
   formData.append("password", password);
   formData.append("rol", createRolInput.value);
 
-  // Añadir servicios si es especialista
+  // Añadir servicios y descripción si es especialista
   if (createRolInput.value === "Especialista") {
     const selectedOptions = Array.from(createServiciosSelect.selectedOptions);
     selectedOptions.forEach((option) => {
@@ -227,6 +232,8 @@ const handleCreateUserFormSubmit = (e) => {
       alert("Debes seleccionar al menos un servicio para el especialista");
       return;
     }
+
+    formData.append("descripcion", createDescripcionInput.value);
 
     // Añadir avatar si existe
     if (createAvatarInput.files.length > 0) {
@@ -280,7 +287,7 @@ const handleEditUserFormSubmit = (e) => {
     formData.append("password", password);
   }
 
-  // Añadir servicios si es especialista
+  // Añadir servicios y descripción si es especialista
   if (editRolInput.value === "Especialista") {
     const selectedOptions = Array.from(editServiciosSelect.selectedOptions);
     selectedOptions.forEach((option) => {
@@ -291,6 +298,8 @@ const handleEditUserFormSubmit = (e) => {
       alert("Debes seleccionar al menos un servicio para el especialista");
       return;
     }
+
+    formData.append("descripcion", editDescripcionInput.value);
 
     // Añadir avatar si existe (si se seleccionó uno nuevo)
     if (editAvatarInput.files.length > 0) {
@@ -333,21 +342,21 @@ const handleCreateUserModalHidden = () => {
 const handleEditUserModalHidden = () => {
   editUserForm.reset();
   editServiciosContainer.style.display = "none";
-  editAvatarContainer.style.display = "none";
+  editSpecialistFields.style.display = "none";
 };
 
 /**
  * Handles create rol change to show/hide specialist fields
  */
 const handleCreateRolChange = () => {
-  toggleSpecialistFields(createRolInput.value, createServiciosContainer, createAvatarContainer);
+  toggleSpecialistFields(createRolInput.value, createServiciosContainer, createSpecialistFields);
 };
 
 /**
  * Handles edit rol change to show/hide specialist fields
  */
 const handleEditRolChange = () => {
-  toggleSpecialistFields(editRolInput.value, editServiciosContainer, editAvatarContainer);
+  toggleSpecialistFields(editRolInput.value, editServiciosContainer, editSpecialistFields);
 };
 
 document.addEventListener("click", handleDocumentClick);
