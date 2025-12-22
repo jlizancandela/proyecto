@@ -15,6 +15,11 @@ class EspecialistaRepository
         $this->db = $db;
     }
 
+    public function getDb(): PDO
+    {
+        return $this->db;
+    }
+
     public function getAllEspecialistasConUsuario(): array
     {
         try {

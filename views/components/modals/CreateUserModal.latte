@@ -98,6 +98,32 @@
             </select>
             <div class="invalid-feedback"></div>
           </div>
+
+          {* Servicios (solo para Especialista) *}
+          <div class="mb-3" id="create Services Container" style="display: none">
+            <label for="createServicios" class="form-label">Servicios *</label>
+            <select class="form-select" id="createServicios" name="servicios" multiple size="5">
+              {* Servicios cargados dinámicamente *}
+            </select>
+            <div class="form-text">
+              Mantén presionado Ctrl (Cmd en Mac) para seleccionar múltiples servicios
+            </div>
+            <div class="invalid-feedback"></div>
+          </div>
+
+          {* Avatar (solo para Especialista) *}
+          <div class="mb-3" id="createAvatarContainer" style="display: none">
+            <label for="createAvatar" class="form-label">Avatar</label>
+            <input
+              type="file"
+              class="form-control"
+              id="createAvatar"
+              name="avatar"
+              accept="image/*"
+            />
+            <div class="form-text">Imagen de perfil del especialista (JPG, PNG)</div>
+            <div class="invalid-feedback"></div>
+          </div>
         </div>
 
         <div class="modal-footer">

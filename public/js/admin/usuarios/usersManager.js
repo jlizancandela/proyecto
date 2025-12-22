@@ -4,6 +4,10 @@ const editApellidosInput = document.getElementById("editApellidos");
 const editEmailInput = document.getElementById("editEmail");
 const editTelefonoInput = document.getElementById("editTelefono");
 const editRolInput = document.getElementById("editRol");
+const editServiciosSelect = document.getElementById("editServicios");
+const editServiciosContainer = document.getElementById("editServicesContainer");
+const editAvatarContainer = document.getElementById("editAvatarContainer");
+const editActivoCheckbox = document.getElementById("editActivo");
 const editPasswordInput = document.getElementById("editPassword");
 const editPasswordConfirmInput = document.getElementById("editPasswordConfirm");
 const editUserModal = document.getElementById("editUserModal");
@@ -16,8 +20,63 @@ const createTelefonoInput = document.getElementById("createTelefono");
 const createPasswordInput = document.getElementById("createPassword");
 const createPasswordConfirmInput = document.getElementById("createPasswordConfirm");
 const createRolInput = document.getElementById("createRol");
+const createServiciosSelect = document.getElementById("createServicios");
+const createServiciosContainer = document.getElementById("createServicesContainer");
+const createAvatarContainer = document.getElementById("createAvatarContainer");
 const createUserForm = document.getElementById("createUserForm");
 const createUserModal = document.getElementById("createUserModal");
+
+let availableServices = [];
+
+/**
+ * Loads available services from API
+ */
+const loadServices = () => {
+  fetch("/api/services")
+    .then((response) => response.json())
+    .then((services) => {
+      availableServices = services;
+      populateServicesSelect(createServiciosSelect, []);
+      populateServicesSelect(editServiciosSelect, []);
+    })
+    .catch((error) => {
+      console.error("Error loading services:", error);
+    });
+};
+
+/**
+ * Populates a services select element
+ * @param {HTMLSelectElement} selectElement - The select element to populate
+ * @param {array} selectedIds - Array of selected service IDs
+ */
+const populateServicesSelect = (selectElement, selectedIds = []) => {
+  selectElement.innerHTML = "";
+  availableServices.forEach((service) => {
+    const option = document.createElement("option");
+    option.value = service.id;
+    option.textContent = service.nombre;
+    if (selectedIds.includes(service.id)) {
+      option.selected = true;
+    }
+    selectElement.appendChild(option);
+  });
+};
+
+/**
+ * Toggles services and avatar containers visibility based on role
+ * @param {string} role - Selected role
+ * @param {HTMLElement} servicesContainer - Services container element
+ * @param {HTMLElement} avatarContainer - Avatar container element
+ */
+const toggleSpecialistFields = (role, servicesContainer, avatarContainer) => {
+  if (role === "Especialista") {
+    servicesContainer.style.display = "block";
+    avatarContainer.style.display = "block";
+  } else {
+    servicesContainer.style.display = "none";
+    avatarContainer.style.display = "none";
+  }
+};
 
 /**
  * Fetches and displays user data in the edit modal.
@@ -35,6 +94,16 @@ const editUser = (userId) => {
         editEmailInput.value = user.email;
         editTelefonoInput.value = user.telefono || "";
         editRolInput.value = user.rol;
+        editActivoCheckbox.checked = user.activo;
+
+        // Mostrar/ocultar servicios y avatar según rol
+        toggleSpecialistFields(user.rol, editServiciosContainer, editAvatarContainer);
+
+        // Cargar servicios si es especialista
+        if (user.rol === "Especialista") {
+          const selectedServices = user.servicios || [];
+          populateServicesSelect(editServiciosSelect, selectedServices);
+        }
 
         const modal = new bootstrap.Modal(editUserModal);
         modal.show();
@@ -114,6 +183,17 @@ const handleCreateUserFormSubmit = (e) => {
     rol: createRolInput.value,
   };
 
+  // Añadir servicios si es especialista
+  if (createRolInput.value === "Especialista") {
+    const selectedOptions = Array.from(createServiciosSelect.selectedOptions);
+    formData.servicios = selectedOptions.map((option) => parseInt(option.value));
+
+    if (formData.servicios.length === 0) {
+      alert("Debes seleccionar al menos un servicio para el especialista");
+      return;
+    }
+  }
+
   fetch("/admin/api/users", {
     method: "POST",
     headers: {
@@ -157,7 +237,19 @@ const handleEditUserFormSubmit = (e) => {
     email: editEmailInput.value,
     telefono: editTelefonoInput.value,
     rol: editRolInput.value,
+    activo: editActivoCheckbox.checked,
   };
+
+  // Añadir servicios si es especialista
+  if (editRolInput.value === "Especialista") {
+    const selectedOptions = Array.from(editServiciosSelect.selectedOptions);
+    formData.servicios = selectedOptions.map((option) => parseInt(option.value));
+
+    if (formData.servicios.length === 0) {
+      alert("Debes seleccionar al menos un servicio para el especialista");
+      return;
+    }
+  }
 
   if (password) {
     formData.password = password;
@@ -197,6 +289,22 @@ const handleCreateUserModalHidden = () => {
  */
 const handleEditUserModalHidden = () => {
   editUserForm.reset();
+  editServiciosContainer.style.display = "none";
+  editAvatarContainer.style.display = "none";
+};
+
+/**
+ * Handles create rol change to show/hide specialist fields
+ */
+const handleCreateRolChange = () => {
+  toggleSpecialistFields(createRolInput.value, createServiciosContainer, createAvatarContainer);
+};
+
+/**
+ * Handles edit rol change to show/hide specialist fields
+ */
+const handleEditRolChange = () => {
+  toggleSpecialistFields(editRolInput.value, editServiciosContainer, editAvatarContainer);
 };
 
 document.addEventListener("click", handleDocumentClick);
@@ -204,3 +312,8 @@ createUserForm.addEventListener("submit", handleCreateUserFormSubmit);
 editUserForm.addEventListener("submit", handleEditUserFormSubmit);
 createUserModal.addEventListener("hidden.bs.modal", handleCreateUserModalHidden);
 editUserModal.addEventListener("hidden.bs.modal", handleEditUserModalHidden);
+createRolInput.addEventListener("change", handleCreateRolChange);
+editRolInput.addEventListener("change", handleEditRolChange);
+
+// Cargar servicios al iniciar
+loadServices();

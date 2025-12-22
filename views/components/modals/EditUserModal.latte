@@ -100,6 +100,49 @@
             </select>
             <div class="invalid-feedback"></div>
           </div>
+
+          {* Servicios (solo para Especialista) *}
+          <div class="mb-3" id="editServicesContainer" style="display: none">
+            <label for="editServicios" class="form-label">Servicios *</label>
+            <select class="form-select" id="editServicios" name="servicios" multiple size="5">
+              {* Servicios cargados dinámicamente *}
+            </select>
+            <div class="form-text">
+              Mantén presionado Ctrl (Cmd en Mac) para seleccionar múltiples servicios
+            </div>
+            <div class="invalid-feedback"></div>
+          </div>
+
+          {* Avatar (solo para Especialista) *}
+          <div class="mb-3" id="editAvatarContainer" style="display: none">
+            <label for="editAvatar" class="form-label">Avatar</label>
+            <input
+              type="file"
+              class="form-control"
+              id="editAvatar"
+              name="avatar"
+              accept="image/*"
+            />
+            <div class="form-text">
+              Imagen de perfil del especialista (JPG, PNG). Dejar vacío para mantener el actual.
+            </div>
+            <div class="invalid-feedback"></div>
+          </div>
+
+          {* Estado Activo *}
+          <div class="mb-3">
+            <div class="form-check">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                id="editActivo"
+                name="activo"
+                checked
+              />
+              <label class="form-check-label" for="editActivo">Usuario activo</label>
+            </div>
+            <div class="form-text">Desmarcar para desactivar la cuenta del usuario</div>
+          </div>
         </div>
 
         <div class="modal-footer">

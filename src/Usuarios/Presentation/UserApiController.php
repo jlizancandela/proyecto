@@ -11,11 +11,19 @@ class UserApiController
 {
     private UserService $userService;
     private Engine $latte;
+    private \Especialistas\Infrastructure\EspecialistaServicioRepository $especialistaServicioRepository;
+    private \Especialistas\Infrastructure\EspecialistaRepository $especialistaRepository;
 
-    public function __construct(Engine $latte, UserService $userService)
-    {
+    public function __construct(
+        Engine $latte,
+        UserService $userService,
+        \Especialistas\Infrastructure\EspecialistaServicioRepository $especialistaServicioRepository,
+        \Especialistas\Infrastructure\EspecialistaRepository $especialistaRepository
+    ) {
         $this->latte = $latte;
         $this->userService = $userService;
+        $this->especialistaServicioRepository = $especialistaServicioRepository;
+        $this->especialistaRepository = $especialistaRepository;
     }
 
     public function getAllUsers(): void
@@ -70,9 +78,17 @@ class UserApiController
                 return;
             }
 
+            $userData = UserTransformer::toJsonApi($user);
+
+            // Si es especialista, cargar sus servicios
+            if ($user->getRol() === 'Especialista') {
+                $servicios = $this->especialistaServicioRepository->getServiciosForEspecialista($id);
+                $userData['servicios'] = array_map(fn($s) => $s->getIdServicio(), $servicios);
+            }
+
             echo json_encode([
                 'success' => true,
-                'data' => UserTransformer::toJsonApi($user)
+                'data' => $userData
             ], JSON_PRETTY_PRINT);
         } catch (\Exception $e) {
             http_response_code(500);
@@ -183,7 +199,7 @@ class UserApiController
             }
 
             $user = new \Usuarios\Domain\Usuario(
-                $data['rol'] ?? 'USER',
+                $data['rol'] ?? 'Cliente',
                 $data['nombre'],
                 $data['apellidos'],
                 $data['email'],
@@ -195,6 +211,30 @@ class UserApiController
             );
 
             $this->userService->setUser($user);
+
+            // Si es especialista, crear entrada en especialistas y asignar servicios
+            if ($data['rol'] === 'Especialista' && !empty($data['servicios'])) {
+                $userId = $user->getId();
+
+                // Crear entrada en tabla especialistas mediante query directa
+                try {
+                    $stmt = $this->especialistaRepository->getDb()->prepare(
+                        "INSERT INTO especialistas (id_usuario, descripcion, foto_url) VALUES (:id_usuario, null, null)"
+                    );
+                    $stmt->execute(['id_usuario' => $userId]);
+                } catch (\Exception $e) {
+                    error_log("Error creating especialista: " . $e->getMessage());
+                }
+
+                // Asignar servicios
+                foreach ($data['servicios'] as $servicioId) {
+                    $especialistaServicio = new \Especialistas\Domain\EspecialistaServicio(
+                        $userId,
+                        (int) $servicioId
+                    );
+                    $this->especialistaServicioRepository->addEspecialistaServicio($especialistaServicio);
+                }
+            }
 
             echo json_encode([
                 'success' => true,
