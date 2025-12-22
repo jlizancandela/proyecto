@@ -1,40 +1,46 @@
-// Bookings Page JavaScript
-
 let currentBookingId = null;
 let currentAction = null;
 
-// Event listeners cuando el DOM esté cargado
-document.addEventListener("DOMContentLoaded", function () {
-  // Event listeners para botones de modificar
-  const modifyButtons = document.querySelectorAll(".btn-modify");
+const modifyButtons = document.querySelectorAll(".btn-modify");
+const cancelButtons = document.querySelectorAll(".btn-cancel");
+const confirmBtn = document.getElementById("confirmActionBtn");
+const actionModal = document.getElementById("actionModal");
+const modalTitle = document.getElementById("modalTitle");
+const modalMessage = document.getElementById("modalMessage");
+const modalSubMessage = document.getElementById("modalSubMessage");
+const modalCancelBtn = document.getElementById("modalCancelBtn");
+
+/**
+ * Initializes event listeners for booking action buttons.
+ */
+const initializeBookingListeners = () => {
   modifyButtons.forEach((button) => {
-    button.addEventListener("click", function () {
-      const bookingId = this.getAttribute("data-booking-id");
+    button.addEventListener("click", () => {
+      const bookingId = button.getAttribute("data-booking-id");
       modifyBooking(bookingId);
     });
   });
 
-  // Event listeners para botones de cancelar
-  const cancelButtons = document.querySelectorAll(".btn-cancel");
   cancelButtons.forEach((button) => {
-    button.addEventListener("click", function () {
-      const bookingId = this.getAttribute("data-booking-id");
+    button.addEventListener("click", () => {
+      const bookingId = button.getAttribute("data-booking-id");
       cancelBooking(bookingId);
     });
   });
 
-  // Event listener para el botón de confirmación del modal
-  const confirmBtn = document.getElementById("confirmActionBtn");
   if (confirmBtn) {
     confirmBtn.addEventListener("click", confirmAction);
   }
-});
+};
 
-function modifyBooking(bookingId) {
+/**
+ * Opens modify booking confirmation modal.
+ * @param {string} bookingId - The booking ID to modify.
+ */
+const modifyBooking = (bookingId) => {
   currentBookingId = bookingId;
   currentAction = "modify";
 
-  // Actualizar contenido del modal
   updateModal(
     "Modificar Reserva",
     "¿Deseas modificar esta reserva? Esto cancelará la reserva actual y te llevará a crear una nueva.",
@@ -43,15 +49,18 @@ function modifyBooking(bookingId) {
     "Sí, modificar"
   );
 
-  const modal = new bootstrap.Modal(document.getElementById("actionModal"));
+  const modal = new bootstrap.Modal(actionModal);
   modal.show();
-}
+};
 
-function cancelBooking(bookingId) {
+/**
+ * Opens cancel booking confirmation modal.
+ * @param {string} bookingId - The booking ID to cancel.
+ */
+const cancelBooking = (bookingId) => {
   currentBookingId = bookingId;
   currentAction = "cancel";
 
-  // Actualizar contenido del modal
   updateModal(
     "Cancelar Reserva",
     "¿Estás seguro de que deseas cancelar esta reserva?",
@@ -60,30 +69,41 @@ function cancelBooking(bookingId) {
     "Sí, cancelar"
   );
 
-  const modal = new bootstrap.Modal(document.getElementById("actionModal"));
+  const modal = new bootstrap.Modal(actionModal);
   modal.show();
-}
+};
 
-function updateModal(title, message, subMessage, cancelText, confirmText) {
-  document.getElementById("modalTitle").textContent = title;
-  document.getElementById("modalMessage").textContent = message;
-  document.getElementById("modalSubMessage").textContent = subMessage;
-  document.getElementById("modalCancelBtn").textContent = cancelText;
-  document.getElementById("confirmActionBtn").textContent = confirmText;
-}
+/**
+ * Updates modal content with provided text.
+ * @param {string} title - Modal title.
+ * @param {string} message - Modal main message.
+ * @param {string} subMessage - Modal sub message.
+ * @param {string} cancelText - Cancel button text.
+ * @param {string} confirmText - Confirm button text.
+ */
+const updateModal = (title, message, subMessage, cancelText, confirmText) => {
+  modalTitle.textContent = title;
+  modalMessage.textContent = message;
+  modalSubMessage.textContent = subMessage;
+  modalCancelBtn.textContent = cancelText;
+  confirmBtn.textContent = confirmText;
+};
 
-function confirmAction() {
+/**
+ * Executes the current booking action (modify or cancel).
+ */
+const confirmAction = () => {
   if (currentBookingId && currentAction) {
     if (currentAction === "cancel") {
-      // Crear formulario POST para cancelar
       const form = document.createElement("form");
       form.method = "POST";
       form.action = `/user/reservas/cancel/${currentBookingId}`;
       document.body.appendChild(form);
       form.submit();
     } else if (currentAction === "modify") {
-      // Redirigir para modificar
       window.location.href = `/user/reservas/modify/${currentBookingId}`;
     }
   }
-}
+};
+
+document.addEventListener("DOMContentLoaded", initializeBookingListeners);

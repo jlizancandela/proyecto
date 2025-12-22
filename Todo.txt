@@ -2,8 +2,6 @@
 ├── index.php
 ├── public
 │   └── js
-│       ├── booking-filters.js
-│       ├── bookings.js
 │       ├── loginForm.js
 │       ├── registerForm.js
 │       └── user
