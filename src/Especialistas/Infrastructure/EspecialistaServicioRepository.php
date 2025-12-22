@@ -20,7 +20,7 @@ class EspecialistaServicioRepository
     {
         try {
             $stmt = $this->db->prepare(
-                "SELECT * FROM especialista_servicios 
+                "SELECT * FROM ESPECIALISTA_SERVICIO 
                  WHERE id_especialista = :id_especialista AND id_servicio = :id_servicio"
             );
             $stmt->execute([
@@ -39,8 +39,8 @@ class EspecialistaServicioRepository
     {
         try {
             $stmt = $this->db->prepare(
-                "SELECT s.* FROM servicios s
-                 INNER JOIN especialista_servicios es ON s.id_servicio = es.id_servicio
+                "SELECT s.* FROM SERVICIO s
+                 INNER JOIN ESPECIALISTA_SERVICIO es ON s.id_servicio = es.id_servicio
                  WHERE es.id_especialista = :id_especialista"
             );
             $stmt->execute(["id_especialista" => $id_especialista]);
@@ -60,8 +60,8 @@ class EspecialistaServicioRepository
     {
         try {
             $stmt = $this->db->prepare(
-                "SELECT e.* FROM especialistas e
-                 INNER JOIN especialista_servicios es ON e.id_especialista = es.id_especialista
+                "SELECT e.* FROM ESPECIALISTA e
+                 INNER JOIN ESPECIALISTA_SERVICIO es ON e.id_especialista = es.id_especialista
                  WHERE es.id_servicio = :id_servicio"
             );
             $stmt->execute(["id_servicio" => $id_servicio]);
@@ -81,7 +81,7 @@ class EspecialistaServicioRepository
     {
         try {
             $stmt = $this->db->prepare(
-                "INSERT INTO especialista_servicios (id_especialista, id_servicio) 
+                "INSERT INTO ESPECIALISTA_SERVICIO (id_especialista, id_servicio) 
                  VALUES (:id_especialista, :id_servicio)"
             );
             $stmt->execute([
@@ -97,7 +97,7 @@ class EspecialistaServicioRepository
     {
         try {
             $stmt = $this->db->prepare(
-                "DELETE FROM especialista_servicios 
+                "DELETE FROM ESPECIALISTA_SERVICIO 
                  WHERE id_especialista = :id_especialista AND id_servicio = :id_servicio"
             );
             $stmt->execute([
@@ -113,7 +113,7 @@ class EspecialistaServicioRepository
     {
         try {
             $stmt = $this->db->prepare(
-                "DELETE FROM especialista_servicios WHERE id_especialista = :id_especialista"
+                "DELETE FROM ESPECIALISTA_SERVICIO WHERE id_especialista = :id_especialista"
             );
             $stmt->execute(["id_especialista" => $id_especialista]);
         } catch (\Exception $e) {

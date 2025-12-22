@@ -154,6 +154,50 @@ class UserRepository
         }
     }
 
+    /**
+     * Obtiene usuarios por rol con paginación
+     */
+    public function getUsersByRole(string $rol, int $limit = 10, int $offset = 0): array
+    {
+        try {
+            $query = "SELECT * FROM USUARIO WHERE rol = :rol LIMIT :limit OFFSET :offset";
+            $stmt = $this->db->prepare($query);
+            $stmt->bindValue(":rol", $rol);
+            $stmt->bindValue(":limit", $limit, PDO::PARAM_INT);
+            $stmt->bindValue(":offset", $offset, PDO::PARAM_INT);
+            $stmt->execute();
+
+            $users = [];
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                $users[] = Usuario::fromDatabase($row);
+            }
+            return $users;
+        } catch (PDOException $e) {
+            throw new PDOException(
+                "Error al obtener usuarios por rol: " . $e->getMessage(),
+            );
+        }
+    }
+
+    /**
+     * Cuenta usuarios por rol
+     */
+    public function getTotalUsersByRole(string $rol): int
+    {
+        try {
+            $query = "SELECT COUNT(*) as total FROM USUARIO WHERE rol = :rol";
+            $stmt = $this->db->prepare($query);
+            $stmt->bindValue(":rol", $rol);
+            $stmt->execute();
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            return (int) $result["total"];
+        } catch (PDOException $e) {
+            throw new PDOException(
+                "Error al contar usuarios por rol: " . $e->getMessage(),
+            );
+        }
+    }
+
     public function getUserByEmail(string $email): ?Usuario
     {
         try {

@@ -2,10 +2,11 @@
 <div class="mb-4">
   <h1 class="mb-4">Gestión de Usuarios</h1>
 
-  {* Barra de búsqueda y botón crear *}
-  <div class="row g-3 mb-3 justify-content-between align-items-center">
-    <div class="col-12 col-md-6 col-lg-5 col-xl-4">
-      <form method="GET" action="/admin/users" class="position-relative">
+  {* Barra de búsqueda, filtros y botón crear *}
+  <div class="d-flex justify-content-between align-items-center gap-3 mb-3 flex-wrap">
+    {* Buscador *}
+    <div>
+      <form method="GET" action="/admin/users" class="position-relative" style="width: 400px">
         <input
           type="search"
           name="search"
@@ -18,10 +19,47 @@
         ></i>
       </form>
     </div>
-    <div class="col-12 col-md-auto">
+
+    {* Filtros por rol *}
+    <div class="d-flex gap-2 flex-wrap">
+      <a
+        href="/admin/users"
+        class="badge {!isset($_GET['rol']) ? 'bg-dark' : 'bg-secondary'} text-decoration-none"
+        style="cursor: pointer; padding: 0.5rem 0.75rem"
+      >
+        Todos
+      </a>
+      <a
+        href="/admin/users?rol=Admin"
+        class="badge {isset($_GET['rol']) && $_GET['rol'] === 'Admin' ? 'bg-danger' : 'bg-secondary'} text-decoration-none"
+        style="cursor: pointer; padding: 0.5rem 0.75rem"
+      >
+        <i class="bi bi-shield-fill me-1"></i>
+        Admin
+      </a>
+      <a
+        href="/admin/users?rol=Especialista"
+        class="badge {isset($_GET['rol']) && $_GET['rol'] === 'Especialista' ? 'bg-warning' : 'bg-secondary'} text-decoration-none"
+        style="cursor: pointer; padding: 0.5rem 0.75rem"
+      >
+        <i class="bi bi-person-badge me-1"></i>
+        Especialista
+      </a>
+      <a
+        href="/admin/users?rol=Cliente"
+        class="badge {isset($_GET['rol']) && $_GET['rol'] === 'Cliente' ? 'bg-primary' : 'bg-secondary'} text-decoration-none"
+        style="cursor: pointer; padding: 0.5rem 0.75rem"
+      >
+        <i class="bi bi-person me-1"></i>
+        Cliente
+      </a>
+    </div>
+
+    {* Botón crear *}
+    <div>
       <button
         type="button"
-        class="btn btn-primary shadow-sm w-100 w-md-auto px-4"
+        class="btn btn-primary shadow-sm px-4"
         data-bs-toggle="modal"
         data-bs-target="#createUserModal"
       >
@@ -40,6 +78,7 @@
           <th>Nombre</th>
           <th>Email</th>
           <th>Rol</th>
+          <th>Servicios</th>
           <th>Teléfono</th>
           <th>Fecha Registro</th>
           <th>Estado</th>
@@ -58,6 +97,16 @@
             >
               {$user['rol']}
             </span>
+          </td>
+          <td>
+            {if isset($user['servicios']) && count($user['servicios']) > 0} {foreach
+            $user['servicios'] as $servicio} {if $iterator->counter <= 2}
+            <span class="badge bg-secondary me-1">{$servicio}</span>
+            {/if} {/foreach} {if count($user['servicios']) > 2}
+            <span class="badge bg-dark">+{count($user['servicios']) - 2} más</span>
+            {/if} {else}
+            <span class="text-muted">-</span>
+            {/if}
           </td>
           <td>{$user['telefono'] ?? '-'}</td>
           <td>{$user['fechaRegistro']}</td>

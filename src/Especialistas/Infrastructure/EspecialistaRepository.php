@@ -28,11 +28,11 @@ class EspecialistaRepository
                     u.telefono,
                     u.fecha_registro,
                     u.activo,
-                    e.id as id_especialista,
+                    e.id_especialista,
                     e.descripcion,
                     e.foto_url
-                FROM usuarios u
-                INNER JOIN especialistas e ON u.id_usuario = e.id_usuario
+                FROM USUARIO u
+                INNER JOIN ESPECIALISTA e ON u.id_usuario = e.id_usuario
             ");
 
             $especialistas = [];
@@ -59,12 +59,12 @@ class EspecialistaRepository
                     u.telefono,
                     u.fecha_registro,
                     u.activo,
-                    e.id as id_especialista,
+                    e.id_especialista,
                     e.descripcion,
                     e.foto_url
-                FROM usuarios u
-                INNER JOIN especialistas e ON u.id_usuario = e.id_usuario
-                WHERE e.id = :id
+                FROM USUARIO u
+                INNER JOIN ESPECIALISTA e ON u.id_usuario = e.id_usuario
+                WHERE e.id_especialista = :id
             ");
             $stmt->execute(["id" => $id]);
 
@@ -80,7 +80,7 @@ class EspecialistaRepository
     {
         try {
             $stmt = $this->db->prepare(
-                "INSERT INTO especialistas (id_usuario, descripcion, foto_url) 
+                "INSERT INTO ESPECIALISTA (id_usuario, descripcion, foto_url) 
                  VALUES (:id_usuario, :descripcion, :foto_url)"
             );
             $stmt->execute([
@@ -93,13 +93,77 @@ class EspecialistaRepository
         }
     }
 
+    /**
+     * Creates a basic especialista entry (without full Especialista object)
+     * @param int $userId User ID
+     * @param string|null $fotoUrl Avatar URL
+     * @return int|null The created especialista ID or null on failure
+     */
+    public function createBasicEspecialista(int $userId, ?string $fotoUrl = null): ?int
+    {
+        try {
+            $stmt = $this->db->prepare(
+                "INSERT INTO ESPECIALISTA (id_usuario, descripcion, foto_url) 
+                 VALUES (:id_usuario, null, :foto_url)"
+            );
+            $stmt->execute([
+                "id_usuario" => $userId,
+                "foto_url" => $fotoUrl
+            ]);
+            return (int) $this->db->lastInsertId();
+        } catch (\Exception $e) {
+            error_log("Error creating basic especialista: " . $e->getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Gets especialista ID by user ID
+     * @param int $userId User ID
+     * @return int|null
+     */
+    public function getEspecialistaIdByUserId(int $userId): ?int
+    {
+        try {
+            $stmt = $this->db->prepare(
+                "SELECT id_especialista FROM ESPECIALISTA WHERE id_usuario = :id_usuario"
+            );
+            $stmt->execute(["id_usuario" => $userId]);
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $result ? (int) $result['id_especialista'] : null;
+        } catch (\Exception $e) {
+            error_log("Error getting especialista ID: " . $e->getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Checks if especialista entry exists for user
+     * @param int $userId User ID
+     * @return bool
+     */
+    public function especialistaExists(int $userId): bool
+    {
+        try {
+            $stmt = $this->db->prepare(
+                "SELECT COUNT(*) as count FROM ESPECIALISTA WHERE id_usuario = :id_usuario"
+            );
+            $stmt->execute(["id_usuario" => $userId]);
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $result['count'] > 0;
+        } catch (\Exception $e) {
+            error_log("Error checking especialista: " . $e->getMessage());
+            return false;
+        }
+    }
+
     public function updateEspecialista(Especialista $especialista): void
     {
         try {
             $stmt = $this->db->prepare(
-                "UPDATE especialistas 
+                "UPDATE ESPECIALISTA 
                  SET id_usuario = :id_usuario, descripcion = :descripcion, foto_url = :foto_url 
-                 WHERE id = :id"
+                 WHERE id_especialista = :id"
             );
             $stmt->execute([
                 "id" => $especialista->getIdEspecialista(),
@@ -109,6 +173,21 @@ class EspecialistaRepository
             ]);
         } catch (\Exception $e) {
             error_log("Error al actualizar especialista: " . $e->getMessage());
+        }
+    }
+
+    public function updateEspecialistaPhoto(int $id, string $fotoUrl): void
+    {
+        try {
+            $stmt = $this->db->prepare(
+                "UPDATE ESPECIALISTA SET foto_url = :foto_url WHERE id_especialista = :id"
+            );
+            $stmt->execute([
+                'foto_url' => $fotoUrl,
+                'id' => $id
+            ]);
+        } catch (\Exception $e) {
+            error_log("Error updating especialista photo: " . $e->getMessage());
         }
     }
 
@@ -264,7 +343,7 @@ class EspecialistaRepository
     public function deleteEspecialista(int $id): void
     {
         try {
-            $stmt = $this->db->prepare("DELETE FROM especialistas WHERE id = :id");
+            $stmt = $this->db->prepare("DELETE FROM ESPECIALISTA WHERE id_especialista = :id");
             $stmt->execute(["id" => $id]);
         } catch (\Exception $e) {
             error_log("Error al eliminar especialista: " . $e->getMessage());
