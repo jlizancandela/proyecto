@@ -92,8 +92,8 @@ $router->get('/admin', function () use ($latte) {
     echo $controller->index();
 });
 
-$router->get('/admin/users', function () use ($latte, $userService) {
-    $controller = new AdminController($latte, $userService);
+$router->get('/admin/users', function () use ($latte, $userService, $especialistaServicioRepository, $especialistaRepository) {
+    $controller = new AdminController($latte, $userService, null, $especialistaServicioRepository, $especialistaRepository);
     echo $controller->usersManagement();
 });
 
@@ -160,6 +160,11 @@ $router->post('/admin/api/users', function () use ($latte, $userService, $especi
 $router->get('/admin/api/users/(\d+)', function ($id) use ($latte, $userService, $especialistaServicioRepository, $especialistaRepository) {
     $controller = new UserApiController($latte, $userService, $especialistaServicioRepository, $especialistaRepository);
     $controller->getUserById((int)$id);
+});
+
+$router->post('/admin/api/users/(\d+)', function ($id) use ($latte, $userService, $especialistaServicioRepository, $especialistaRepository) {
+    $controller = new UserApiController($latte, $userService, $especialistaServicioRepository, $especialistaRepository);
+    $controller->updateUser((int)$id);
 });
 
 $router->put('/admin/api/users/(\d+)', function ($id) use ($latte, $userService, $especialistaServicioRepository, $especialistaRepository) {

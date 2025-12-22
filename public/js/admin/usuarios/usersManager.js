@@ -30,6 +30,9 @@ const createUserModal = document.getElementById("createUserModal");
 
 let availableServices = [];
 
+// Variable para almacenar servicios del usuario actual en edición (para manejar condiciones de carrera)
+let currentEditUserServices = [];
+
 /**
  * Loads available services from API
  */
@@ -39,7 +42,8 @@ const loadServices = () => {
     .then((services) => {
       availableServices = services;
       populateServicesSelect(createServiciosSelect, []);
-      populateServicesSelect(editServiciosSelect, []);
+      // Usar los servicios guardados si ya se abrió el modal de edición
+      populateServicesSelect(editServiciosSelect, currentEditUserServices);
     })
     .catch((error) => {
       console.error("Error loading services:", error);
@@ -57,7 +61,9 @@ const populateServicesSelect = (selectElement, selectedIds = []) => {
     const option = document.createElement("option");
     option.value = service.id;
     option.textContent = service.nombre;
-    if (selectedIds.includes(service.id)) {
+    // Convertir IDs a string para comparación robusta
+    const selectedIdsString = selectedIds.map(String);
+    if (selectedIdsString.includes(String(service.id))) {
       option.selected = true;
     }
     selectElement.appendChild(option);
@@ -85,6 +91,9 @@ const toggleSpecialistFields = (role, servicesContainer, avatarContainer) => {
  * @param {string} userId - The ID of the user to edit.
  */
 const editUser = (userId) => {
+  // Resetear servicios actuales antes de cargar usuario
+  currentEditUserServices = [];
+
   fetch("/admin/api/users/" + userId)
     .then((response) => response.json())
     .then((result) => {
@@ -103,8 +112,22 @@ const editUser = (userId) => {
 
         // Cargar servicios si es especialista
         if (user.rol === "Especialista") {
-          const selectedServices = user.servicios || [];
-          populateServicesSelect(editServiciosSelect, selectedServices);
+          currentEditUserServices = user.servicios || [];
+
+          // Si los servicios disponibles no se han cargado aún, cargarlos primero
+          if (availableServices.length === 0) {
+            fetch("/api/services")
+              .then((response) => response.json())
+              .then((services) => {
+                availableServices = services;
+                populateServicesSelect(editServiciosSelect, currentEditUserServices);
+              })
+              .catch((error) => {
+                console.error("Error loading services:", error);
+              });
+          } else {
+            populateServicesSelect(editServiciosSelect, currentEditUserServices);
+          }
         }
 
         const modal = new bootstrap.Modal(editUserModal);

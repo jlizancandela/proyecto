@@ -6,7 +6,7 @@
   aria-labelledby="createUserModalLabel"
   aria-hidden="true"
 >
-  <div class="modal-dialog">
+  <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="createUserModalLabel">
@@ -18,111 +18,123 @@
 
       <form id="createUserForm">
         <div class="modal-body">
-          {* Nombre *}
-          <div class="mb-3">
-            <label for="createNombre" class="form-label">Nombre *</label>
-            <input
-              type="text"
-              class="form-control"
-              id="createNombre"
-              name="nombre"
-              required
-              minlength="2"
-            />
-            <div class="invalid-feedback"></div>
-          </div>
+          <div class="row">
+            {* Columna izquierda *}
+            <div class="col-md-6">
+              {* Nombre *}
+              <div class="mb-3">
+                <label for="createNombre" class="form-label">Nombre *</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="createNombre"
+                  name="nombre"
+                  required
+                  minlength="2"
+                />
+                <div class="invalid-feedback"></div>
+              </div>
 
-          {* Apellidos *}
-          <div class="mb-3">
-            <label for="createApellidos" class="form-label">Apellidos *</label>
-            <input
-              type="text"
-              class="form-control"
-              id="createApellidos"
-              name="apellidos"
-              required
-              minlength="2"
-            />
-            <div class="invalid-feedback"></div>
-          </div>
+              {* Apellidos *}
+              <div class="mb-3">
+                <label for="createApellidos" class="form-label">Apellidos *</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="createApellidos"
+                  name="apellidos"
+                  required
+                  minlength="2"
+                />
+                <div class="invalid-feedback"></div>
+              </div>
 
-          {* Email *}
-          <div class="mb-3">
-            <label for="createEmail" class="form-label">Email *</label>
-            <input type="email" class="form-control" id="createEmail" name="email" required />
-            <div class="invalid-feedback"></div>
-          </div>
+              {* Email *}
+              <div class="mb-3">
+                <label for="createEmail" class="form-label">Email *</label>
+                <input type="email" class="form-control" id="createEmail" name="email" required />
+                <div class="invalid-feedback"></div>
+              </div>
 
-          {* Teléfono *}
-          <div class="mb-3">
-            <label for="createTelefono" class="form-label">Teléfono</label>
-            <input type="tel" class="form-control" id="createTelefono" name="telefono" />
-            <div class="invalid-feedback"></div>
-          </div>
-
-          {* Contraseña *}
-          <div class="mb-3">
-            <label for="createPassword" class="form-label">Contraseña *</label>
-            <input
-              type="password"
-              class="form-control"
-              id="createPassword"
-              name="password"
-              required
-              minlength="6"
-            />
-            <div class="invalid-feedback"></div>
-          </div>
-
-          {* Confirmar contraseña *}
-          <div class="mb-3">
-            <label for="createPasswordConfirm" class="form-label">Confirmar Contraseña *</label>
-            <input
-              type="password"
-              class="form-control"
-              id="createPasswordConfirm"
-              name="password-confirm"
-              required
-              minlength="6"
-            />
-            <div class="invalid-feedback"></div>
-          </div>
-
-          {* Rol *}
-          <div class="mb-3">
-            <label for="createRol" class="form-label">Rol *</label>
-            <select class="form-select" id="createRol" name="rol" required>
-              <option value="Cliente">Cliente</option>
-              <option value="Especialista">Especialista</option>
-              <option value="Admin">Administrador</option>
-            </select>
-            <div class="invalid-feedback"></div>
-          </div>
-
-          {* Servicios (solo para Especialista) *}
-          <div class="mb-3" id="create Services Container" style="display: none">
-            <label for="createServicios" class="form-label">Servicios *</label>
-            <select class="form-select" id="createServicios" name="servicios" multiple size="5">
-              {* Servicios cargados dinámicamente *}
-            </select>
-            <div class="form-text">
-              Mantén presionado Ctrl (Cmd en Mac) para seleccionar múltiples servicios
+              {* Teléfono *}
+              <div class="mb-3">
+                <label for="createTelefono" class="form-label">Teléfono</label>
+                <input type="tel" class="form-control" id="createTelefono" name="telefono" />
+                <div class="invalid-feedback"></div>
+              </div>
             </div>
-            <div class="invalid-feedback"></div>
+
+            {* Columna derecha *}
+            <div class="col-md-6">
+              {* Contraseña *}
+              <div class="mb-3">
+                <label for="createPassword" class="form-label">Contraseña *</label>
+                <input
+                  type="password"
+                  class="form-control"
+                  id="createPassword"
+                  name="password"
+                  required
+                  minlength="6"
+                />
+                <div class="invalid-feedback"></div>
+              </div>
+
+              {* Confirmar contraseña *}
+              <div class="mb-3">
+                <label for="createPasswordConfirm" class="form-label">Confirmar Contraseña *</label>
+                <input
+                  type="password"
+                  class="form-control"
+                  id="createPasswordConfirm"
+                  name="password-confirm"
+                  required
+                  minlength="6"
+                />
+                <div class="invalid-feedback"></div>
+              </div>
+
+              {* Rol *}
+              <div class="mb-3">
+                <label for="createRol" class="form-label">Rol *</label>
+                <select class="form-select" id="createRol" name="rol" required>
+                  <option value="Cliente">Cliente</option>
+                  <option value="Especialista">Especialista</option>
+                  <option value="Admin">Administrador</option>
+                </select>
+                <div class="invalid-feedback"></div>
+              </div>
+
+              {* Avatar (solo para Especialista) *}
+              <div class="mb-3" id="createAvatarContainer" style="display: none">
+                <label for="createAvatar" class="form-label">Avatar</label>
+                <input
+                  type="file"
+                  class="form-control"
+                  id="createAvatar"
+                  name="avatar"
+                  accept="image/*"
+                />
+                <div class="form-text">Imagen de perfil del especialista (JPG, PNG)</div>
+                <div class="invalid-feedback"></div>
+              </div>
+            </div>
           </div>
 
-          {* Avatar (solo para Especialista) *}
-          <div class="mb-3" id="createAvatarContainer" style="display: none">
-            <label for="createAvatar" class="form-label">Avatar</label>
-            <input
-              type="file"
-              class="form-control"
-              id="createAvatar"
-              name="avatar"
-              accept="image/*"
-            />
-            <div class="form-text">Imagen de perfil del especialista (JPG, PNG)</div>
-            <div class="invalid-feedback"></div>
+          {* Servicios - Ancho completo *}
+          <div class="row">
+            <div class="col-12">
+              <div class="mb-3" id="createServicesContainer" style="display: none">
+                <label for="createServicios" class="form-label">Servicios *</label>
+                <select class="form-select" id="createServicios" name="servicios" multiple size="5">
+                  {* Servicios cargados dinámicamente *}
+                </select>
+                <div class="form-text">
+                  Mantén presionado Ctrl (Cmd en Mac) para seleccionar múltiples servicios
+                </div>
+                <div class="invalid-feedback"></div>
+              </div>
+            </div>
           </div>
         </div>
 

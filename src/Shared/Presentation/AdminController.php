@@ -13,15 +13,21 @@ class AdminController
     private Engine $latte;
     private ?UserService $userService;
     private ?ServicioService $servicioService;
+    private ?\Especialistas\Infrastructure\EspecialistaServicioRepository $especialistaServicioRepository;
+    private ?\Especialistas\Infrastructure\EspecialistaRepository $especialistaRepository;
 
     public function __construct(
         Engine $latte,
         ?UserService $userService = null,
-        ?ServicioService $servicioService = null
+        ?ServicioService $servicioService = null,
+        ?\Especialistas\Infrastructure\EspecialistaServicioRepository $especialistaServicioRepository = null,
+        ?\Especialistas\Infrastructure\EspecialistaRepository $especialistaRepository = null
     ) {
         $this->latte = $latte;
         $this->userService = $userService;
         $this->servicioService = $servicioService;
+        $this->especialistaServicioRepository = $especialistaServicioRepository;
+        $this->especialistaRepository = $especialistaRepository;
     }
 
     public function index(): string
@@ -40,9 +46,14 @@ class AdminController
         $limit = 10;
         $page = (int) ($_GET['page'] ?? 1);
         $search = trim($_GET['search'] ?? '');
+        $rol = trim($_GET['rol'] ?? '');
         $offset = ($page - 1) * $limit;
 
-        if (!empty($search)) {
+        // Filtrar por rol si está especificado
+        if (!empty($rol)) {
+            $users = $this->userService->getUsersByRole($rol, $limit, $offset);
+            $total = $this->userService->getTotalUsersByRole($rol);
+        } elseif (!empty($search)) {
             $users = $this->userService->searchUsers($search, $limit, $offset);
             $total = $this->userService->getTotalSearchResults($search);
         } else {
@@ -52,11 +63,30 @@ class AdminController
 
         $totalPages = (int) ceil($total / $limit);
 
+        $usersArray = UserTransformer::toArrayCollection($users);
+
+        // Agregar servicios para especialistas
+        if ($this->especialistaServicioRepository && $this->especialistaRepository) {
+            foreach ($usersArray as &$userData) {
+                if ($userData['rol'] === 'Especialista') {
+                    $especialistaId = $this->especialistaRepository->getEspecialistaIdByUserId($userData['id']);
+                    if ($especialistaId) {
+                        $servicios = $this->especialistaServicioRepository->getServiciosForEspecialista($especialistaId);
+                        $userData['servicios'] = array_map(fn($s) => $s->getNombreServicio(), $servicios);
+                    } else {
+                        $userData['servicios'] = [];
+                    }
+                } else {
+                    $userData['servicios'] = [];
+                }
+            }
+        }
+
         return $this->latte->renderToString(
             __DIR__ . '/../../../views/pages/UsersManagement.latte',
             [
                 'userName' => ucfirst($_SESSION['name'] ?? 'Usuario'),
-                'users' => UserTransformer::toArrayCollection($users),
+                'users' => $usersArray,
                 'page' => $page,
                 'totalPages' => $totalPages,
                 'search' => $search,

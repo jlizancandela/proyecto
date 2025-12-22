@@ -67,6 +67,30 @@ class UserService
     }
 
     /**
+     * Obtiene usuarios por rol con paginación
+     * 
+     * @param string $rol Nombre del rol (Admin, Especialista, Cliente)
+     * @param int $limit Número máximo de resultados
+     * @param int $offset Desplazamiento para paginación
+     * @return array Array de usuarios con ese rol
+     */
+    public function getUsersByRole(string $rol, int $limit = 10, int $offset = 0): array
+    {
+        return $this->userRepository->getUsersByRole($rol, $limit, $offset);
+    }
+
+    /**
+     * Cuenta el total de usuarios con un rol específico
+     * 
+     * @param string $rol Nombre del rol (Admin, Especialista, Cliente)
+     * @return int Número de usuarios con ese rol
+     */
+    public function getTotalUsersByRole(string $rol): int
+    {
+        return $this->userRepository->getTotalUsersByRole($rol);
+    }
+
+    /**
      * Busca usuarios por nombre, apellidos o email con paginación
      * 
      * @param string $search Término de búsqueda

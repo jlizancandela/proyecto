@@ -81,11 +81,13 @@ class UserApiController
             $userData = UserTransformer::toJsonApi($user);
 
             // Si es especialista, cargar sus servicios
-            if ($user->getRol() === 'Especialista') {
+            if ($user->getRol() === \Usuarios\Domain\UserRole::Especialista) {
                 $especialistaId = $this->especialistaRepository->getEspecialistaIdByUserId($id);
                 if ($especialistaId) {
                     $servicios = $this->especialistaServicioRepository->getServiciosForEspecialista($especialistaId);
                     $userData['servicios'] = array_map(fn($s) => $s->getIdServicio(), $servicios);
+                } else {
+                    $userData['servicios'] = [];
                 }
             }
 
@@ -112,10 +114,27 @@ class UserApiController
             $totalPages = Paginator::getTotalPages($total, $limit);
             $page = Paginator::validatePage($page, $totalPages);
 
+            $usersArray = UserTransformer::toArrayCollection($users);
+
+            // Agregar servicios para especialistas
+            foreach ($usersArray as &$userData) {
+                if ($userData['rol'] === 'Especialista') {
+                    $especialistaId = $this->especialistaRepository->getEspecialistaIdByUserId($userData['id']);
+                    if ($especialistaId) {
+                        $servicios = $this->especialistaServicioRepository->getServiciosForEspecialista($especialistaId);
+                        $userData['servicios'] = array_map(fn($s) => $s->getNombreServicio(), $servicios);
+                    } else {
+                        $userData['servicios'] = [];
+                    }
+                } else {
+                    $userData['servicios'] = [];
+                }
+            }
+
             return $this->latte->renderToString(
                 __DIR__ . '/../../../views/components/users-table-content.latte',
                 [
-                    'users' => UserTransformer::toArrayCollection($users),
+                    'users' => $usersArray,
                     'pagination' => Paginator::getPagination($page, $totalPages, '/admin/users/table'),
                     'hasUsers' => count($users) > 0
                 ]
@@ -141,10 +160,27 @@ class UserApiController
             $totalPages = Paginator::getTotalPages($total, $limit);
             $page = Paginator::validatePage($page, $totalPages);
 
+            $usersArray = UserTransformer::toArrayCollection($users);
+
+            // Agregar servicios para especialistas
+            foreach ($usersArray as &$userData) {
+                if ($userData['rol'] === 'Especialista') {
+                    $especialistaId = $this->especialistaRepository->getEspecialistaIdByUserId($userData['id']);
+                    if ($especialistaId) {
+                        $servicios = $this->especialistaServicioRepository->getServiciosForEspecialista($especialistaId);
+                        $userData['servicios'] = array_map(fn($s) => $s->getNombreServicio(), $servicios);
+                    } else {
+                        $userData['servicios'] = [];
+                    }
+                } else {
+                    $userData['servicios'] = [];
+                }
+            }
+
             return $this->latte->renderToString(
                 __DIR__ . '/../../../views/components/users-table-content.latte',
                 [
-                    'users' => UserTransformer::toArrayCollection($users),
+                    'users' => $usersArray,
                     'pagination' => Paginator::getPagination($page, $totalPages, "/admin/users/search?search={$search}"),
                     'hasUsers' => count($users) > 0
                 ]
@@ -405,7 +441,7 @@ class UserApiController
         }
 
         // Definir ruta absoluta para uploads
-        $uploadDir = __DIR__ . '/../../../../public/images/avatars/';
+        $uploadDir = __DIR__ . '/../../../public/images/avatars/';
         if (!file_exists($uploadDir)) {
             mkdir($uploadDir, 0777, true);
         }
@@ -414,7 +450,7 @@ class UserApiController
         $filename = uniqid('avatar_') . '.' . $extension;
 
         if (move_uploaded_file($file['tmp_name'], $uploadDir . $filename)) {
-            return '/images/avatars/' . $filename;
+            return '/public/images/avatars/' . $filename;
         }
 
         return null;
