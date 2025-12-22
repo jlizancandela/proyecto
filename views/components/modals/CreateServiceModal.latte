@@ -1,0 +1,90 @@
+{* Modal para crear servicio *}
+<div
+  class="modal fade"
+  id="createServiceModal"
+  tabindex="-1"
+  aria-labelledby="createServiceModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="createServiceModalLabel">
+          <i class="bi bi-scissors me-2"></i>
+          Crear Nuevo Servicio
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <form id="createServiceForm">
+        <div class="modal-body">
+          {* Nombre *}
+          <div class="mb-3">
+            <label for="createNombreServicio" class="form-label">Nombre del Servicio *</label>
+            <input
+              type="text"
+              class="form-control"
+              id="createNombreServicio"
+              name="nombre_servicio"
+              required
+              minlength="3"
+              maxlength="100"
+            />
+            <div class="invalid-feedback"></div>
+          </div>
+
+          {* Descripción *}
+          <div class="mb-3">
+            <label for="createDescripcion" class="form-label">Descripción *</label>
+            <textarea
+              class="form-control"
+              id="createDescripcion"
+              name="descripcion"
+              rows="3"
+              required
+            ></textarea>
+            <div class="invalid-feedback"></div>
+          </div>
+
+          {* Duración *}
+          <div class="mb-3">
+            <label for="createDuracion" class="form-label">Duración (minutos) *</label>
+            <input
+              type="number"
+              class="form-control"
+              id="createDuracion"
+              name="duracion_minutos"
+              required
+              min="15"
+              max="300"
+            />
+            <div class="invalid-feedback"></div>
+          </div>
+
+          {* Precio *}
+          <div class="mb-3">
+            <label for="createPrecio" class="form-label">Precio (€) *</label>
+            <input
+              type="number"
+              class="form-control"
+              id="createPrecio"
+              name="precio"
+              required
+              min="0"
+              step="0.01"
+            />
+            <div class="invalid-feedback"></div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary">
+            <i class="bi bi-save me-1"></i>
+            Crear Servicio
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

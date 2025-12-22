@@ -1,3 +1,41 @@
+## Archivos nuevos - Gestión de Servicios (2025-12-22)
+
+### Backend - Application Layer
+- src/Servicios/Application/ServicioService.php
+  -> Service con validaciones y lógica de negocio para CRUD de servicios
+
+### Backend - Presentation Layer updates
+- src/Servicios/Presentation/ServiceApiController.php (MODIFICADO)
+  -> Añadidos endpoints CRUD completos (create, getById, update, delete)
+
+### Backend - Controller updates
+- src/Shared/Presentation/AdminController.php (MODIFICADO)
+  -> Añadido método servicesManagement() para renderizar gestión de servicios
+
+### Frontend - Vistas
+- views/pages/ServicesManagement.latte
+  -> Página principal de gestión de servicios con tabla y botones de acción
+
+### Frontend - Modales
+- views/components/modals/CreateServiceModal.latte
+  -> Modal para crear nuevos servicios
+- views/components/modals/EditServiceModal.latte
+  -> Modal para editar servicios existentes
+
+### Frontend - JavaScript
+- public/js/admin/servicios/servicesManager.js
+  -> Handlers para CRUD de servicios (create, edit, delete)
+
+### Configuración
+- src/Shared/Infrastructure/dependencies.php (MODIFICADO)
+  -> Añadido ServicioService a las dependencias
+- src/Shared/Infrastructure/Router/router.php (MODIFICADO)
+  -> Añadidas rutas para gestión de servicios
+- views/components/sidebar.latte (MODIFICADO)
+  -> Añadido enlace a sección de servicios
+
+---
+
 ## Archivos nuevos - Gestión de Perfil y Desactivación de Cuenta (2025-12-22)
 
 ### Modal de confirmación de desactivación
