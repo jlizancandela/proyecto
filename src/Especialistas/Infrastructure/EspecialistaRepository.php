@@ -96,8 +96,9 @@ class EspecialistaRepository
     /**
      * Creates a basic especialista entry (without full Especialista object)
      * @param int $userId User ID
+     * @return int|null The created especialista ID or null on failure
      */
-    public function createBasicEspecialista(int $userId): void
+    public function createBasicEspecialista(int $userId): ?int
     {
         try {
             $stmt = $this->db->prepare(
@@ -105,8 +106,30 @@ class EspecialistaRepository
                  VALUES (:id_usuario, null, null)"
             );
             $stmt->execute(["id_usuario" => $userId]);
+            return (int) $this->db->lastInsertId();
         } catch (\Exception $e) {
             error_log("Error creating basic especialista: " . $e->getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Gets especialista ID by user ID
+     * @param int $userId User ID
+     * @return int|null
+     */
+    public function getEspecialistaIdByUserId(int $userId): ?int
+    {
+        try {
+            $stmt = $this->db->prepare(
+                "SELECT id FROM especialistas WHERE id_usuario = :id_usuario"
+            );
+            $stmt->execute(["id_usuario" => $userId]);
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $result ? (int) $result['id'] : null;
+        } catch (\Exception $e) {
+            error_log("Error getting especialista ID: " . $e->getMessage());
+            return null;
         }
     }
 
