@@ -94,6 +94,17 @@ class MyBookingsController
 
         $totalPages = ceil($totalBookings / $limit);
 
+        // Construir URL para PDF con filtros
+        $pdfUrl = '/user/reservas/pdf';
+        $filterParams = array_filter([
+            'fecha_desde' => $fechaDesde,
+            'fecha_hasta' => $fechaHasta,
+            'estado' => $estado
+        ]);
+        if (!empty($filterParams)) {
+            $pdfUrl .= '?' . http_build_query($filterParams);
+        }
+
         return $this->latte->renderToString(
             __DIR__ . '/../../../views/pages/Bookings.latte',
             [
@@ -107,7 +118,8 @@ class MyBookingsController
                     'fecha_desde' => $fechaDesde,
                     'fecha_hasta' => $fechaHasta,
                     'estado' => $estado
-                ]
+                ],
+                'pdfUrl' => $pdfUrl
             ]
         );
     }
