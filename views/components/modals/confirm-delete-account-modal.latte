@@ -1,0 +1,45 @@
+{* Modal de confirmación de desactivación de cuenta *}
+<div
+  class="modal fade"
+  id="confirmDeleteAccountModal"
+  tabindex="-1"
+  aria-labelledby="confirmDeleteAccountModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header border-0">
+        <h5 class="modal-title text-warning fw-bold" id="confirmDeleteAccountModalLabel">
+          <i class="bi bi-exclamation-triangle-fill me-2"></i>
+          Confirmar desactivación de cuenta
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="alert alert-info border-info mb-3">
+          <i class="bi bi-info-circle-fill me-2"></i>
+          <strong>Tu cuenta será desactivada temporalmente.</strong>
+        </div>
+        <p class="mb-2">Al desactivar tu cuenta:</p>
+        <ul class="mb-3">
+          <li>No podrás acceder a la aplicación temporalmente</li>
+          <li>Tus datos se conservarán de forma segura</li>
+          <li><strong>Podrás reactivar tu cuenta cuando quieras</strong></li>
+        </ul>
+        <p class="mb-0 text-muted">¿Estás seguro de que deseas desactivar tu cuenta?</p>
+      </div>
+      <div class="modal-footer border-0">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          <i class="bi bi-x-circle me-1"></i>
+          Cancelar
+        </button>
+        <form method="POST" action="/user/profile/delete" class="d-inline">
+          <button type="submit" class="btn btn-warning">
+            <i class="bi bi-pause-circle-fill me-1"></i>
+            Sí, desactivar mi cuenta
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
