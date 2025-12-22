@@ -1,0 +1,171 @@
+.
+├── index.php
+├── public
+│   ├── css
+│   │   ├── bookings.css
+│   │   ├── bootstrap-landing-theme.css
+│   │   ├── bootstrap-panel-theme.css
+│   │   ├── calendario.css
+│   │   ├── pdf-reservas.css
+│   │   ├── style.css
+│   │   └── user-dashboard.css
+│   └── js
+│       ├── admin
+│       │   └── usuarios
+│       │       ├── createUserModal.js
+│       │       ├── editUserModal.js
+│       │       ├── usersManagement.js
+│       │       └── usersManager.js
+│       ├── booking-filters.js
+│       ├── bookings.js
+│       ├── loginForm.js
+│       ├── registerForm.js
+│       └── user
+│           └── bookings
+│               ├── api
+│               │   └── bookingsApi.js
+│               ├── bookingsApp.js
+│               ├── components
+│               │   ├── BookingNavigation.js
+│               │   ├── Calendario.js
+│               │   ├── ConfirmationActions.js
+│               │   ├── EspecialistasList.js
+│               │   ├── Pagination.js
+│               │   ├── ResumenCita.js
+│               │   ├── ResumenItem.js
+│               │   ├── StatusAlert.js
+│               │   └── service.js
+│               ├── context
+│               │   ├── bookingsContext.js
+│               │   └── bookingsStore.js
+│               ├── hooks
+│               │   └── useReservas.js
+│               ├── routes
+│               │   ├── confirmationForm.js
+│               │   ├── dateForm.js
+│               │   └── serviceForm.js
+│               └── tools
+│                   ├── formatters.js
+│                   └── validators.js
+├── src
+│   ├── Especialistas
+│   │   ├── Application
+│   │   │   ├── EspecialistaService.php
+│   │   │   └── EspecialistaUsuarioDTO.php
+│   │   ├── Domain
+│   │   │   ├── Especialista.php
+│   │   │   ├── EspecialistaServicio.php
+│   │   │   └── HorarioEspecialista.php
+│   │   ├── Infrastructure
+│   │   │   ├── EspecialistaRepository.php
+│   │   │   ├── EspecialistaServicioRepository.php
+│   │   │   └── HorarioEspecialistaRepository.php
+│   │   └── Presentation
+│   │       └── EspecialistaApiController.php
+│   ├── Reservas
+│   │   ├── Application
+│   │   │   ├── ReservaCompletaDTO.php
+│   │   │   └── ReservaService.php
+│   │   ├── Domain
+│   │   │   └── Reserva.php
+│   │   ├── Infrastructure
+│   │   │   └── ReservaRepository.php
+│   │   └── Presentation
+│   │       ├── BookingApiController.php
+│   │       ├── BookingController.php
+│   │       ├── MyBookingsController.php
+│   │       └── PdfExportController.php
+│   ├── Servicios
+│   │   ├── Domain
+│   │   │   └── Servicio.php
+│   │   ├── Infrastructure
+│   │   │   └── ServicioRepository.php
+│   │   └── Presentation
+│   │       └── ServiceApiController.php
+│   ├── Shared
+│   │   ├── Domain
+│   │   │   └── Exceptions
+│   │   │       └── InvalidValidation.php
+│   │   ├── Infrastructure
+│   │   │   ├── Database
+│   │   │   │   └── Database.php
+│   │   │   ├── Email
+│   │   │   │   └── EmailService.php
+│   │   │   ├── Middleware
+│   │   │   │   └── AuthMiddleware.php
+│   │   │   ├── Pagination
+│   │   │   │   └── Paginator.php
+│   │   │   ├── Router
+│   │   │   │   └── router.php
+│   │   │   └── dependencies.php
+│   │   └── Presentation
+│   │       ├── AdminController.php
+│   │       └── HomeController.php
+│   └── Usuarios
+│       ├── Application
+│       │   ├── AuthService.php
+│       │   └── UserService.php
+│       ├── Domain
+│       │   ├── UserRole.php
+│       │   └── Usuario.php
+│       ├── Infrastructure
+│       │   └── UserRepository.php
+│       └── Presentation
+│           ├── AuthController.php
+│           ├── ProfileController.php
+│           ├── Transformers
+│           │   └── UserTransformer.php
+│           ├── UserApiController.php
+│           └── UserController.php
+└── views
+    ├── components
+    │   ├── booking-card.latte
+    │   ├── booking-filters.latte
+    │   ├── booking-last-card.latte
+    │   ├── card.latte
+    │   ├── contacto.latte
+    │   ├── delete-user-toast.latte
+    │   ├── empty-state.latte
+    │   ├── footer.latte
+    │   ├── header.latte
+    │   ├── hero.latte
+    │   ├── modals
+    │   │   ├── CreateUserModal.latte
+    │   │   ├── EditUserModal.latte
+    │   │   └── confirm-modal.latte
+    │   ├── paginator.latte
+    │   ├── services.latte
+    │   ├── sidebar.latte
+    │   ├── user-breadcrumb.latte
+    │   ├── user-offers.latte
+    │   ├── user-quick-actions.latte
+    │   ├── user-sidebar.latte
+    │   ├── users-table-content.latte
+    │   ├── userstable.latte
+    │   └── whoami.latte
+    ├── errors
+    │   ├── 404.php
+    │   ├── 405.php
+    │   └── 500.php
+    ├── layouts
+    │   ├── landing-scripts.latte
+    │   ├── landpage.latte
+    │   ├── panel-layout.latte
+    │   ├── panelScripts.latte
+    │   ├── user-panel-layout.latte
+    │   └── userPanelScripts.latte
+    ├── pages
+    │   ├── Admin.latte
+    │   ├── Bookings.latte
+    │   ├── ForgotPassword.latte
+    │   ├── Home.latte
+    │   ├── Login.latte
+    │   ├── NewBooking.latte
+    │   ├── Profile.latte
+    │   ├── Register.latte
+    │   ├── ResetPassword.latte
+    │   ├── User.latte
+    │   └── UsersManagement.latte
+    └── pdf
+        └── reservas-pdf.latte
+
