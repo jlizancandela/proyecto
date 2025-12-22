@@ -1,17 +1,42 @@
-function editUser(userId) {
+const editUserIdInput = document.getElementById("editUserId");
+const editNombreInput = document.getElementById("editNombre");
+const editApellidosInput = document.getElementById("editApellidos");
+const editEmailInput = document.getElementById("editEmail");
+const editTelefonoInput = document.getElementById("editTelefono");
+const editRolInput = document.getElementById("editRol");
+const editPasswordInput = document.getElementById("editPassword");
+const editPasswordConfirmInput = document.getElementById("editPasswordConfirm");
+const editUserModal = document.getElementById("editUserModal");
+const editUserForm = document.getElementById("editUserForm");
+
+const createNombreInput = document.getElementById("createNombre");
+const createApellidosInput = document.getElementById("createApellidos");
+const createEmailInput = document.getElementById("createEmail");
+const createTelefonoInput = document.getElementById("createTelefono");
+const createPasswordInput = document.getElementById("createPassword");
+const createPasswordConfirmInput = document.getElementById("createPasswordConfirm");
+const createRolInput = document.getElementById("createRol");
+const createUserForm = document.getElementById("createUserForm");
+const createUserModal = document.getElementById("createUserModal");
+
+/**
+ * Fetches and displays user data in the edit modal.
+ * @param {string} userId - The ID of the user to edit.
+ */
+const editUser = (userId) => {
   fetch("/admin/api/users/" + userId)
     .then((response) => response.json())
     .then((result) => {
       if (result.success) {
         const user = result.data;
-        document.getElementById("editUserId").value = user.id;
-        document.getElementById("editNombre").value = user.nombre;
-        document.getElementById("editApellidos").value = user.apellidos;
-        document.getElementById("editEmail").value = user.email;
-        document.getElementById("editTelefono").value = user.telefono || "";
-        document.getElementById("editRol").value = user.rol;
+        editUserIdInput.value = user.id;
+        editNombreInput.value = user.nombre;
+        editApellidosInput.value = user.apellidos;
+        editEmailInput.value = user.email;
+        editTelefonoInput.value = user.telefono || "";
+        editRolInput.value = user.rol;
 
-        const modal = new bootstrap.Modal(document.getElementById("editUserModal"));
+        const modal = new bootstrap.Modal(editUserModal);
         modal.show();
       } else {
         alert("Error al cargar usuario: " + result.error);
@@ -20,9 +45,14 @@ function editUser(userId) {
     .catch((error) => {
       alert("Error: " + error.message);
     });
-}
+};
 
-function deleteUser(userId, userName) {
+/**
+ * Deletes a user after confirmation.
+ * @param {string} userId - The ID of the user to delete.
+ * @param {string} userName - The name of the user to delete.
+ */
+const deleteUser = (userId, userName) => {
   if (!confirm("¿Estás seguro de eliminar a " + userName + "?")) {
     return;
   }
@@ -42,9 +72,12 @@ function deleteUser(userId, userName) {
     .catch((error) => {
       alert("Error: " + error.message);
     });
-}
+};
 
-document.addEventListener("click", function (e) {
+/**
+ * Handles document click events for edit and delete user buttons.
+ */
+const handleDocumentClick = (e) => {
   if (e.target.closest(".btn-edit-user")) {
     const userId = e.target.closest(".btn-edit-user").dataset.userId;
     editUser(userId);
@@ -56,13 +89,16 @@ document.addEventListener("click", function (e) {
     const userName = button.dataset.userName;
     deleteUser(userId, userName);
   }
-});
+};
 
-document.getElementById("createUserForm").addEventListener("submit", function (e) {
+/**
+ * Handles create user form submission.
+ */
+const handleCreateUserFormSubmit = (e) => {
   e.preventDefault();
 
-  const password = document.getElementById("createPassword").value;
-  const passwordConfirm = document.getElementById("createPasswordConfirm").value;
+  const password = createPasswordInput.value;
+  const passwordConfirm = createPasswordConfirmInput.value;
 
   if (password !== passwordConfirm) {
     alert("Las contraseñas no coinciden");
@@ -70,12 +106,12 @@ document.getElementById("createUserForm").addEventListener("submit", function (e
   }
 
   const formData = {
-    nombre: document.getElementById("createNombre").value,
-    apellidos: document.getElementById("createApellidos").value,
-    email: document.getElementById("createEmail").value,
-    telefono: document.getElementById("createTelefono").value,
+    nombre: createNombreInput.value,
+    apellidos: createApellidosInput.value,
+    email: createEmailInput.value,
+    telefono: createTelefonoInput.value,
     password: password,
-    rol: document.getElementById("createRol").value,
+    rol: createRolInput.value,
   };
 
   fetch("/admin/api/users", {
@@ -89,7 +125,7 @@ document.getElementById("createUserForm").addEventListener("submit", function (e
     .then((result) => {
       if (result.success) {
         alert("Usuario creado correctamente");
-        bootstrap.Modal.getInstance(document.getElementById("createUserModal")).hide();
+        bootstrap.Modal.getInstance(createUserModal).hide();
         window.location.reload();
       } else {
         alert("Error: " + result.error);
@@ -98,14 +134,17 @@ document.getElementById("createUserForm").addEventListener("submit", function (e
     .catch((error) => {
       alert("Error: " + error.message);
     });
-});
+};
 
-document.getElementById("editUserForm").addEventListener("submit", function (e) {
+/**
+ * Handles edit user form submission.
+ */
+const handleEditUserFormSubmit = (e) => {
   e.preventDefault();
 
-  const userId = document.getElementById("editUserId").value;
-  const password = document.getElementById("editPassword").value;
-  const passwordConfirm = document.getElementById("editPasswordConfirm").value;
+  const userId = editUserIdInput.value;
+  const password = editPasswordInput.value;
+  const passwordConfirm = editPasswordConfirmInput.value;
 
   if (password && password !== passwordConfirm) {
     alert("Las contraseñas no coinciden");
@@ -113,11 +152,11 @@ document.getElementById("editUserForm").addEventListener("submit", function (e) 
   }
 
   const formData = {
-    nombre: document.getElementById("editNombre").value,
-    apellidos: document.getElementById("editApellidos").value,
-    email: document.getElementById("editEmail").value,
-    telefono: document.getElementById("editTelefono").value,
-    rol: document.getElementById("editRol").value,
+    nombre: editNombreInput.value,
+    apellidos: editApellidosInput.value,
+    email: editEmailInput.value,
+    telefono: editTelefonoInput.value,
+    rol: editRolInput.value,
   };
 
   if (password) {
@@ -135,7 +174,7 @@ document.getElementById("editUserForm").addEventListener("submit", function (e) 
     .then((result) => {
       if (result.success) {
         alert("Usuario actualizado correctamente");
-        bootstrap.Modal.getInstance(document.getElementById("editUserModal")).hide();
+        bootstrap.Modal.getInstance(editUserModal).hide();
         window.location.reload();
       } else {
         alert("Error: " + result.error);
@@ -144,12 +183,24 @@ document.getElementById("editUserForm").addEventListener("submit", function (e) 
     .catch((error) => {
       alert("Error: " + error.message);
     });
-});
+};
 
-document.getElementById("createUserModal").addEventListener("hidden.bs.modal", function () {
-  document.getElementById("createUserForm").reset();
-});
+/**
+ * Handles create user modal hidden event to reset the form.
+ */
+const handleCreateUserModalHidden = () => {
+  createUserForm.reset();
+};
 
-document.getElementById("editUserModal").addEventListener("hidden.bs.modal", function () {
-  document.getElementById("editUserForm").reset();
-});
+/**
+ * Handles edit user modal hidden event to reset the form.
+ */
+const handleEditUserModalHidden = () => {
+  editUserForm.reset();
+};
+
+document.addEventListener("click", handleDocumentClick);
+createUserForm.addEventListener("submit", handleCreateUserFormSubmit);
+editUserForm.addEventListener("submit", handleEditUserFormSubmit);
+createUserModal.addEventListener("hidden.bs.modal", handleCreateUserModalHidden);
+editUserModal.addEventListener("hidden.bs.modal", handleEditUserModalHidden);

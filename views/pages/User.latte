@@ -1,12 +1,22 @@
-{layout '../layouts/user-panel-layout.latte'} {block title}Panel de Usuario{/block} {block head}
-<link rel="stylesheet" href="/public/css/user-dashboard.css" />
-{/block} {block content}
+{layout '../layouts/user-panel-layout.latte'} {block title}Panel de Usuario{/block} {block head}{/block} {block content}
 <div class="container-fluid p-0">
   <div class="row mb-4">
     <div class="col-12">
       <h1 class="h2 mb-2 text-dark fw-bold">
         Hola, {$userName}
-        <span class="wave">👋</span>
+        <span style="display: inline-block; animation: wave 2.5s infinite;">👋</span>
+        <style>
+          @keyframes wave {
+            0% { transform: rotate(0deg); }
+            10% { transform: rotate(14deg); }
+            20% { transform: rotate(-8deg); }
+            30% { transform: rotate(14deg); }
+            40% { transform: rotate(-4deg); }
+            50% { transform: rotate(10deg); }
+            60% { transform: rotate(0deg); }
+            100% { transform: rotate(0deg); }
+          }
+        </style>
       </h1>
       <p class="text-muted">Bienvenido de nuevo a tu panel de control.</p>
     </div>

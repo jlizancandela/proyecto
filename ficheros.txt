@@ -1,21 +1,7 @@
 .
 ├── index.php
 ├── public
-│   ├── css
-│   │   ├── bookings.css
-│   │   ├── bootstrap-landing-theme.css
-│   │   ├── bootstrap-panel-theme.css
-│   │   ├── calendario.css
-│   │   ├── pdf-reservas.css
-│   │   ├── style.css
-│   │   └── user-dashboard.css
 │   └── js
-│       ├── admin
-│       │   └── usuarios
-│       │       ├── createUserModal.js
-│       │       ├── editUserModal.js
-│       │       ├── usersManagement.js
-│       │       └── usersManager.js
 │       ├── booking-filters.js
 │       ├── bookings.js
 │       ├── loginForm.js

@@ -17,7 +17,10 @@ export function Calendario({ fecha, diaSeleccionado, handleDiaChange, handleMesC
   const calendarioCompleto = buildCalendarDays(primerDiaMes, diasTotalesMes);
 
   return html`
-    <div class="card calendario border-0 shadow-sm rounded-4 p-4 calendario-container bg-white">
+    <div
+      class="card border-0 shadow-sm rounded-4 p-4 bg-white"
+      style="width: 380px; margin: 0 auto;"
+    >
       ${renderNavigationButtons(year, month, textMonth, textYear, handleMesChange)}
       <div class="row g-0 text-center small text-primary fw-bold mb-2">
         ${diasSemana.map(
@@ -103,7 +106,10 @@ function renderCell(dia, year, month, diaSeleccionado, handleDiaChange) {
   // Deshabilitar días pasados y domingos
   if (isPast || isSunday) {
     return html`
-      <span class="d-flex align-items-center justify-content-center text-secondary calendario-day">
+      <span
+        class="d-flex align-items-center justify-content-center text-secondary"
+        style="width: 40px; height: 40px;"
+      >
         ${dia}
       </span>
     `;
@@ -113,7 +119,8 @@ function renderCell(dia, year, month, diaSeleccionado, handleDiaChange) {
     return html`
       <button
         type="button"
-        class="btn calendario-day active rounded-circle d-flex align-items-center justify-content-center bg-primary text-white"
+        class="btn rounded-circle d-flex align-items-center justify-content-center bg-primary text-white border-0"
+        style="width: 40px; height: 40px;"
         onClick=${() => handleDiaChange(new Date(year, month, dia))}
       >
         ${dia}
@@ -124,7 +131,8 @@ function renderCell(dia, year, month, diaSeleccionado, handleDiaChange) {
   return html`
     <button
       type="button"
-      class="btn calendario-day rounded-circle d-flex align-items-center justify-content-center text-black"
+      class="btn rounded-circle d-flex align-items-center justify-content-center text-black border-0"
+      style="width: 40px; height: 40px;"
       onClick=${() => handleDiaChange(new Date(year, month, dia))}
     >
       ${dia}

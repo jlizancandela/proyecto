@@ -1,21 +1,30 @@
-// Función para editar usuario (carga datos con fetch)
-async function editUser(userId) {
+const editUserIdInput = document.getElementById("editUserId");
+const editNombreInput = document.getElementById("editNombre");
+const editApellidosInput = document.getElementById("editApellidos");
+const editEmailInput = document.getElementById("editEmail");
+const editTelefonoInput = document.getElementById("editTelefono");
+const editRolInput = document.getElementById("editRol");
+const editUserModal = document.getElementById("editUserModal");
+
+/**
+ * Fetches and displays user data in the edit modal.
+ * @param {string} userId - The ID of the user to edit.
+ */
+const editUser = async (userId) => {
   try {
     const response = await fetch(`/admin/api/users/${userId}`);
     const result = await response.json();
 
     if (result.success) {
       const user = result.data;
-      // Rellenar el modal de edición
-      document.getElementById("editUserId").value = user.id;
-      document.getElementById("editNombre").value = user.nombre;
-      document.getElementById("editApellidos").value = user.apellidos;
-      document.getElementById("editEmail").value = user.email;
-      document.getElementById("editTelefono").value = user.telefono || "";
-      document.getElementById("editRol").value = user.rol;
+      editUserIdInput.value = user.id;
+      editNombreInput.value = user.nombre;
+      editApellidosInput.value = user.apellidos;
+      editEmailInput.value = user.email;
+      editTelefonoInput.value = user.telefono || "";
+      editRolInput.value = user.rol;
 
-      // Abrir modal
-      const modal = new bootstrap.Modal(document.getElementById("editUserModal"));
+      const modal = new bootstrap.Modal(editUserModal);
       modal.show();
     } else {
       alert("Error al cargar usuario: " + result.error);
@@ -23,10 +32,14 @@ async function editUser(userId) {
   } catch (error) {
     alert("Error al cargar usuario: " + error.message);
   }
-}
+};
 
-// Función para eliminar usuario (con fetch)
-async function deleteUser(userId, userName) {
+/**
+ * Deletes a user after confirmation.
+ * @param {string} userId - The ID of the user to delete.
+ * @param {string} userName - The name of the user to delete.
+ */
+const deleteUser = async (userId, userName) => {
   if (!confirm(`¿Estás seguro de eliminar a ${userName}?`)) {
     return;
   }
@@ -38,7 +51,6 @@ async function deleteUser(userId, userName) {
     const result = await response.json();
 
     if (result.success) {
-      // Recargar la página para mostrar la tabla actualizada
       window.location.reload();
     } else {
       alert("Error al eliminar: " + result.error);
@@ -46,4 +58,4 @@ async function deleteUser(userId, userName) {
   } catch (error) {
     alert("Error al eliminar: " + error.message);
   }
-}
+};
