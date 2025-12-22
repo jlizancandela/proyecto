@@ -95,6 +95,26 @@ class Usuario
         $this->password_hash = $password;
     }
 
+    public function setNombre(string $nombre): void
+    {
+        $this->nombre = $nombre;
+    }
+
+    public function setApellidos(string $apellidos): void
+    {
+        $this->apellidos = $apellidos;
+    }
+
+    public function setEmail(string $email): void
+    {
+        $this->email = $email;
+    }
+
+    public function setTelefono(?string $telefono): void
+    {
+        $this->telefono = $telefono;
+    }
+
     public static function fromDatabase(array $data): self
     {
         $usuario = new self(

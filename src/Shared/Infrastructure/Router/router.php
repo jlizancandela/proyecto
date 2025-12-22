@@ -32,49 +32,59 @@ $router->get('/', function () use ($latte) {
     echo $controller->index();
 });
 
-$router->get('/login', function () use ($latte, $authService, $emailService) {
-    $controller = new AuthController($latte, $authService, $emailService);
+$router->get('/login', function () use ($latte, $authService, $emailService, $userService) {
+    $controller = new AuthController($latte, $authService, $emailService, $userService);
     echo $controller->showLogin();
 });
 
-$router->post('/login', function () use ($latte, $authService, $emailService) {
-    $controller = new AuthController($latte, $authService, $emailService);
+$router->post('/login', function () use ($latte, $authService, $emailService, $userService) {
+    $controller = new AuthController($latte, $authService, $emailService, $userService);
     $controller->login();
 });
 
-$router->get('/register', function () use ($latte, $authService, $emailService) {
-    $controller = new AuthController($latte, $authService, $emailService);
+$router->get('/register', function () use ($latte, $authService, $emailService, $userService) {
+    $controller = new AuthController($latte, $authService, $emailService, $userService);
     echo $controller->showRegister();
 });
 
-$router->post('/register', function () use ($latte, $authService, $emailService) {
-    $controller = new AuthController($latte, $authService, $emailService);
+$router->post('/register', function () use ($latte, $authService, $emailService, $userService) {
+    $controller = new AuthController($latte, $authService, $emailService, $userService);
     $controller->register();
 });
 
-$router->get('/logout', function () use ($latte, $authService, $emailService) {
-    $controller = new AuthController($latte, $authService, $emailService);
+$router->get('/logout', function () use ($latte, $authService, $emailService, $userService) {
+    $controller = new AuthController($latte, $authService, $emailService, $userService);
     $controller->logout();
 });
 
-$router->get('/forgot-password', function () use ($latte, $authService, $emailService) {
-    $controller = new AuthController($latte, $authService, $emailService);
+$router->get('/forgot-password', function () use ($latte, $authService, $emailService, $userService) {
+    $controller = new AuthController($latte, $authService, $emailService, $userService);
     echo $controller->showForgotPasswordForm();
 });
 
-$router->post('/forgot-password', function () use ($latte, $authService, $emailService) {
-    $controller = new AuthController($latte, $authService, $emailService);
+$router->post('/forgot-password', function () use ($latte, $authService, $emailService, $userService) {
+    $controller = new AuthController($latte, $authService, $emailService, $userService);
     $controller->sendResetLink();
 });
 
-$router->get('/reset-password', function () use ($latte, $authService, $emailService) {
-    $controller = new AuthController($latte, $authService, $emailService);
+$router->get('/reset-password', function () use ($latte, $authService, $emailService, $userService) {
+    $controller = new AuthController($latte, $authService, $emailService, $userService);
     echo $controller->showResetPasswordForm();
 });
 
-$router->post('/reset-password', function () use ($latte, $authService, $emailService) {
-    $controller = new AuthController($latte, $authService, $emailService);
+$router->post('/reset-password', function () use ($latte, $authService, $emailService, $userService) {
+    $controller = new AuthController($latte, $authService, $emailService, $userService);
     $controller->resetPassword();
+});
+
+$router->get('/reactivate', function () use ($latte, $authService, $emailService, $userService) {
+    $controller = new AuthController($latte, $authService, $emailService, $userService);
+    echo $controller->showReactivate();
+});
+
+$router->post('/reactivate', function () use ($latte, $authService, $emailService, $userService) {
+    $controller = new AuthController($latte, $authService, $emailService, $userService);
+    $controller->reactivate();
 });
 
 $router->get('/admin', function () use ($latte) {
@@ -92,9 +102,19 @@ $router->get('/user', function () use ($latte, $reservaService) {
     echo $controller->index();
 });
 
-$router->get('/user/profile', function () use ($latte) {
-    $controller = new ProfileController($latte);
+$router->get('/user/profile', function () use ($latte, $userService) {
+    $controller = new ProfileController($latte, $userService);
     echo $controller->index();
+});
+
+$router->post('/user/profile/update', function () use ($latte, $userService) {
+    $controller = new ProfileController($latte, $userService);
+    $controller->update();
+});
+
+$router->post('/user/profile/delete', function () use ($latte, $userService) {
+    $controller = new ProfileController($latte, $userService);
+    $controller->delete();
 });
 
 $router->get('/user/reservas', function () use ($latte, $reservaService) {

@@ -4,6 +4,7 @@ namespace Usuarios\Presentation;
 
 use Latte\Engine;
 use Usuarios\Application\AuthService;
+use Usuarios\Application\UserService;
 use Shared\Infrastructure\Email\EmailService;
 
 class AuthController
@@ -11,15 +12,18 @@ class AuthController
     private Engine $latte;
     private AuthService $authService;
     private EmailService $emailService;
+    private ?UserService $userService;
 
     public function __construct(
         Engine $latte,
         AuthService $authService,
-        EmailService $emailService
+        EmailService $emailService,
+        UserService $userService = null
     ) {
         $this->latte = $latte;
         $this->authService = $authService;
         $this->emailService = $emailService;
+        $this->userService = $userService;
     }
 
     public function showLogin(): string
@@ -55,6 +59,14 @@ class AuthController
         if ($user === null) {
             $_SESSION['login_error'] = 'Email o contraseña incorrectos';
             header('Location: /login');
+            exit;
+        }
+
+        // Verificar si el usuario está activo
+        if (!$user->getActivo()) {
+            $_SESSION['inactive_user_id'] = $user->getId();
+            $_SESSION['inactive_user_email'] = $user->getEmail();
+            header('Location: /reactivate');
             exit;
         }
 
@@ -257,6 +269,70 @@ class AuthController
         } catch (\Exception $e) {
             $_SESSION['reset_error'] = $e->getMessage();
             header("Location: /reset-password?token={$token}");
+            exit;
+        }
+    }
+
+    /**
+     * Muestra la página de reactivación de cuenta
+     */
+    public function showReactivate(): string
+    {
+        if (!isset($_SESSION['inactive_user_id'])) {
+            header('Location: /login');
+            exit;
+        }
+
+        return $this->latte->renderToString(
+            __DIR__ . '/../../../views/pages/Reactivate.latte',
+            [
+                'email' => $_SESSION['inactive_user_email'] ?? 'tu cuenta',
+                'currentUrl' => $_SERVER['REQUEST_URI'] ?? '/reactivate'
+            ]
+        );
+    }
+
+    /**
+     * Procesa la reactivación de cuenta
+     */
+    public function reactivate(): void
+    {
+        if (!isset($_SESSION['inactive_user_id'])) {
+            header('Location: /login');
+            exit;
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: /reactivate');
+            exit;
+        }
+
+        try {
+            $userId = $_SESSION['inactive_user_id'];
+
+            // Reactivar usuario usando el UserService inyectado
+            $this->userService->activateUser($userId);
+
+            // Obtener usuario actualizado e iniciar sesión
+            $user = $this->userService->getUserById($userId);
+
+            if ($user) {
+                $this->authService->startSession($user);
+                unset($_SESSION['inactive_user_id']);
+                unset($_SESSION['inactive_user_email']);
+
+                $_SESSION['success_message'] = '¡Bienvenido de nuevo! Tu cuenta ha sido reactivada.';
+                header('Location: /user');
+                exit;
+            }
+
+            $_SESSION['login_error'] = 'Error al reactivar la cuenta';
+            header('Location: /login');
+            exit;
+        } catch (\Exception $e) {
+            error_log('Error reactivating account: ' . $e->getMessage());
+            $_SESSION['login_error'] = 'Error al reactivar la cuenta. Por favor, inténtalo de nuevo.';
+            header('Location: /login');
             exit;
         }
     }

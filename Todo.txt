@@ -1,3 +1,15 @@
+## Archivos nuevos - Gestión de Perfil y Desactivación de Cuenta (2025-12-22)
+
+### Modal de confirmación de desactivación
+- views/components/modals/confirm-delete-account-modal.latte
+  -> Modal que confirma la desactivación temporal de cuenta (baja lógica)
+
+### Página de reactivación
+- views/pages/Reactivate.latte
+  -> Página que permite reactivar una cuenta desactivada con un solo clic
+
+---
+
 .
 ├── index.php
 ├── public

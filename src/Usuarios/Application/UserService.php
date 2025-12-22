@@ -175,4 +175,26 @@ class UserService
     {
         $this->userRepository->deleteUser($id);
     }
+
+    /**
+     * Desactiva un usuario (baja lógica)
+     * 
+     * @param int $id ID del usuario a desactivar
+     * @return void
+     */
+    public function deactivateUser(int $id): void
+    {
+        $this->userRepository->setUserStatus($id, false);
+    }
+
+    /**
+     * Activa un usuario
+     * 
+     * @param int $id ID del usuario a activar
+     * @return void
+     */
+    public function activateUser(int $id): void
+    {
+        $this->userRepository->setUserStatus($id, true);
+    }
 }
