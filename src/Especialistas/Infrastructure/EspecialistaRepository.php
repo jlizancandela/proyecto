@@ -28,11 +28,11 @@ class EspecialistaRepository
                     u.telefono,
                     u.fecha_registro,
                     u.activo,
-                    e.id as id_especialista,
+                    e.id_especialista,
                     e.descripcion,
                     e.foto_url
-                FROM usuarios u
-                INNER JOIN especialistas e ON u.id_usuario = e.id_usuario
+                FROM USUARIO u
+                INNER JOIN ESPECIALISTA e ON u.id_usuario = e.id_usuario
             ");
 
             $especialistas = [];
@@ -59,12 +59,12 @@ class EspecialistaRepository
                     u.telefono,
                     u.fecha_registro,
                     u.activo,
-                    e.id as id_especialista,
+                    e.id_especialista,
                     e.descripcion,
                     e.foto_url
-                FROM usuarios u
-                INNER JOIN especialistas e ON u.id_usuario = e.id_usuario
-                WHERE e.id = :id
+                FROM USUARIO u
+                INNER JOIN ESPECIALISTA e ON u.id_usuario = e.id_usuario
+                WHERE e.id_especialista = :id
             ");
             $stmt->execute(["id" => $id]);
 
@@ -80,7 +80,7 @@ class EspecialistaRepository
     {
         try {
             $stmt = $this->db->prepare(
-                "INSERT INTO especialistas (id_usuario, descripcion, foto_url) 
+                "INSERT INTO ESPECIALISTA (id_usuario, descripcion, foto_url) 
                  VALUES (:id_usuario, :descripcion, :foto_url)"
             );
             $stmt->execute([
@@ -102,7 +102,7 @@ class EspecialistaRepository
     {
         try {
             $stmt = $this->db->prepare(
-                "INSERT INTO especialistas (id_usuario, descripcion, foto_url) 
+                "INSERT INTO ESPECIALISTA (id_usuario, descripcion, foto_url) 
                  VALUES (:id_usuario, null, null)"
             );
             $stmt->execute(["id_usuario" => $userId]);
@@ -122,11 +122,11 @@ class EspecialistaRepository
     {
         try {
             $stmt = $this->db->prepare(
-                "SELECT id FROM especialistas WHERE id_usuario = :id_usuario"
+                "SELECT id_especialista FROM ESPECIALISTA WHERE id_usuario = :id_usuario"
             );
             $stmt->execute(["id_usuario" => $userId]);
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
-            return $result ? (int) $result['id'] : null;
+            return $result ? (int) $result['id_especialista'] : null;
         } catch (\Exception $e) {
             error_log("Error getting especialista ID: " . $e->getMessage());
             return null;
@@ -142,7 +142,7 @@ class EspecialistaRepository
     {
         try {
             $stmt = $this->db->prepare(
-                "SELECT COUNT(*) as count FROM especialistas WHERE id_usuario = :id_usuario"
+                "SELECT COUNT(*) as count FROM ESPECIALISTA WHERE id_usuario = :id_usuario"
             );
             $stmt->execute(["id_usuario" => $userId]);
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -157,9 +157,9 @@ class EspecialistaRepository
     {
         try {
             $stmt = $this->db->prepare(
-                "UPDATE especialistas 
+                "UPDATE ESPECIALISTA 
                  SET id_usuario = :id_usuario, descripcion = :descripcion, foto_url = :foto_url 
-                 WHERE id = :id"
+                 WHERE id_especialista = :id"
             );
             $stmt->execute([
                 "id" => $especialista->getIdEspecialista(),
@@ -324,7 +324,7 @@ class EspecialistaRepository
     public function deleteEspecialista(int $id): void
     {
         try {
-            $stmt = $this->db->prepare("DELETE FROM especialistas WHERE id = :id");
+            $stmt = $this->db->prepare("DELETE FROM ESPECIALISTA WHERE id_especialista = :id");
             $stmt->execute(["id" => $id]);
         } catch (\Exception $e) {
             error_log("Error al eliminar especialista: " . $e->getMessage());
