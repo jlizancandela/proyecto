@@ -147,28 +147,28 @@ $router->get('/user/reservas/pdf', function () use ($latte, $reservaService) {
     $controller->exportReservas();
 });
 
-$router->get('/admin/api/users', function () use ($latte, $userService) {
-    $controller = new UserApiController($latte, $userService);
+$router->get('/admin/api/users', function () use ($latte, $userService, $especialistaServicioRepository, $especialistaRepository) {
+    $controller = new UserApiController($latte, $userService, $especialistaServicioRepository, $especialistaRepository);
     $controller->getAllUsers();
 });
 
-$router->post('/admin/api/users', function () use ($latte, $userService) {
-    $controller = new UserApiController($latte, $userService);
+$router->post('/admin/api/users', function () use ($latte, $userService, $especialistaServicioRepository, $especialistaRepository) {
+    $controller = new UserApiController($latte, $userService, $especialistaServicioRepository, $especialistaRepository);
     $controller->createUser();
 });
 
-$router->get('/admin/api/users/(\d+)', function ($id) use ($latte, $userService) {
-    $controller = new UserApiController($latte, $userService);
+$router->get('/admin/api/users/(\d+)', function ($id) use ($latte, $userService, $especialistaServicioRepository, $especialistaRepository) {
+    $controller = new UserApiController($latte, $userService, $especialistaServicioRepository, $especialistaRepository);
     $controller->getUserById((int)$id);
 });
 
-$router->put('/admin/api/users/(\d+)', function ($id) use ($latte, $userService) {
-    $controller = new UserApiController($latte, $userService);
+$router->put('/admin/api/users/(\d+)', function ($id) use ($latte, $userService, $especialistaServicioRepository, $especialistaRepository) {
+    $controller = new UserApiController($latte, $userService, $especialistaServicioRepository, $especialistaRepository);
     $controller->updateUser((int)$id);
 });
 
-$router->delete('/admin/api/users/(\d+)', function ($id) use ($latte, $userService) {
-    $controller = new UserApiController($latte, $userService);
+$router->delete('/admin/api/users/(\d+)', function ($id) use ($latte, $userService, $especialistaServicioRepository, $especialistaRepository) {
+    $controller = new UserApiController($latte, $userService, $especialistaServicioRepository, $especialistaRepository);
     $controller->deleteUser((int)$id);
 });
 
@@ -212,8 +212,8 @@ $router->post('/api/reservas', function () use ($reservaService) {
     $controller->createReserva();
 });
 
-$router->get('/api/me', function () use ($latte, $userService) {
-    $controller = new UserApiController($latte, $userService);
+$router->get('/api/me', function () use ($latte, $userService, $especialistaServicioRepository, $especialistaRepository) {
+    $controller = new UserApiController($latte, $userService, $especialistaServicioRepository, $especialistaRepository);
     $controller->getCurrentUser();
 });
 

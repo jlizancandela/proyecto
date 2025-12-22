@@ -215,16 +215,8 @@ class UserApiController
             // Si es especialista, crear entrada en especialistas y asignar servicios
             if ($data['rol'] === 'Especialista' && !empty($data['servicios'])) {
                 $userId = $user->getId();
-
-                // Crear entrada en tabla especialistas mediante query directa
-                try {
-                    $stmt = $this->especialistaRepository->getDb()->prepare(
-                        "INSERT INTO especialistas (id_usuario, descripcion, foto_url) VALUES (:id_usuario, null, null)"
-                    );
-                    $stmt->execute(['id_usuario' => $userId]);
-                } catch (\Exception $e) {
-                    error_log("Error creating especialista: " . $e->getMessage());
-                }
+                // Crear entrada en tabla especialistas
+                $this->especialistaRepository->createBasicEspecialista($userId);
 
                 // Asignar servicios
                 foreach ($data['servicios'] as $servicioId) {
@@ -289,11 +281,30 @@ class UserApiController
                 $passwordHash,
                 $data['telefono'] ?? null,
                 $existingUser->getFechaRegistro()->format('Y-m-d H:i:s'),
-                $existingUser->getActivo(),
+                $data['activo'] ?? $existingUser->getActivo(),
                 $id
             );
 
             $this->userService->updateUser($user);
+
+            // Si es especialista, actualizar servicios
+            if ($data['rol'] === 'Especialista' && isset($data['servicios'])) {
+                // Verificar si ya existe entrada en especialistas, si no, crearla
+                if (!$this->especialistaRepository->especialistaExists($id)) {
+                    $this->especialistaRepository->createBasicEspecialista($id);
+                }
+
+                // Eliminar servicios anteriores y agregar los nuevos
+                $this->especialistaServicioRepository->deleteAllServiciosForEspecialista($id);
+
+                foreach ($data['servicios'] as $servicioId) {
+                    $especialistaServicio = new \Especialistas\Domain\EspecialistaServicio(
+                        $id,
+                        (int) $servicioId
+                    );
+                    $this->especialistaServicioRepository->addEspecialistaServicio($especialistaServicio);
+                }
+            }
 
             echo json_encode([
                 'success' => true,

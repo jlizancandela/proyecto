@@ -15,11 +15,6 @@ class EspecialistaRepository
         $this->db = $db;
     }
 
-    public function getDb(): PDO
-    {
-        return $this->db;
-    }
-
     public function getAllEspecialistasConUsuario(): array
     {
         try {
@@ -95,6 +90,43 @@ class EspecialistaRepository
             ]);
         } catch (\Exception $e) {
             error_log("Error al agregar especialista: " . $e->getMessage());
+        }
+    }
+
+    /**
+     * Creates a basic especialista entry (without full Especialista object)
+     * @param int $userId User ID
+     */
+    public function createBasicEspecialista(int $userId): void
+    {
+        try {
+            $stmt = $this->db->prepare(
+                "INSERT INTO especialistas (id_usuario, descripcion, foto_url) 
+                 VALUES (:id_usuario, null, null)"
+            );
+            $stmt->execute(["id_usuario" => $userId]);
+        } catch (\Exception $e) {
+            error_log("Error creating basic especialista: " . $e->getMessage());
+        }
+    }
+
+    /**
+     * Checks if especialista entry exists for user
+     * @param int $userId User ID
+     * @return bool
+     */
+    public function especialistaExists(int $userId): bool
+    {
+        try {
+            $stmt = $this->db->prepare(
+                "SELECT COUNT(*) as count FROM especialistas WHERE id_usuario = :id_usuario"
+            );
+            $stmt->execute(["id_usuario" => $userId]);
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $result['count'] > 0;
+        } catch (\Exception $e) {
+            error_log("Error checking especialista: " . $e->getMessage());
+            return false;
         }
     }
 
