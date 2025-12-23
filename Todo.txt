@@ -5,8 +5,6 @@
 │       └── user/
 │           └── bookings/
 │               ├── context/
-│               │   ├── bookingsContext.js
-│               │   └── bookingsStore.js
 │               ├── hooks/
 │               │   └── useReservas.js
 │               ├── routes/

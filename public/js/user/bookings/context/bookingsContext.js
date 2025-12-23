@@ -15,33 +15,51 @@ export const $totalEspecialistas = atom(0);
 export const $pageSize = atom(2);
 export const $userName = atom("Usuario");
 
+/**
+ * Loads the current user and updates the user name store.
+ * @returns {Promise<void>}
+ */
 export const loadUser = async () => {
   const user = await getCurrentUser();
-  if (user && user.nombre) {
+  if (user?.nombre) {
     $userName.set(user.nombre);
   }
 };
 
+/**
+ * Loads the current user and available services in parallel.
+ * Updates the services store with the fetched data.
+ * @returns {Promise<void>}
+ */
 export const loadServices = async () => {
-  // Cargar usuario y servicios en paralelo
   loadUser();
   const servicesData = await getServices();
   console.log("Servicios cargados:", servicesData);
   $services.set(servicesData);
 };
 
+/**
+ * Sets the selected service and transitions the state to 'DateForm'.
+ * @param {Object} service - The service object to select.
+ * @returns {void}
+ */
 export const selectService = (service) => {
   $selectedService.set(service);
   $estado.set("DateForm");
 };
 
+/**
+ * Loads available specialists based on the selected service, date, and pagination.
+ * Updates the specialists, total count, and current page stores.
+ * @param {number|null} [page=null] - The page number to load. If null, uses the current page from the store.
+ * @returns {Promise<void>}
+ */
 export const loadEspecialistasDisponibles = async (page = null) => {
   const selectedService = $selectedService.get();
   const dia = $dia.get();
   const pageSize = $pageSize.get();
-  const currentPage = page !== null ? page : $currentPage.get();
+  const currentPage = page ?? $currentPage.get();
 
-  // Guard clauses mejoradas
   if (!selectedService) {
     console.log("No hay servicio seleccionado");
     return;
@@ -60,14 +78,6 @@ export const loadEspecialistasDisponibles = async (page = null) => {
   const fechaFormateada = formatearFechaISO(dia);
   const offset = (currentPage - 1) * pageSize;
 
-  console.log("Cargando especialistas para:", {
-    servicio: selectedService.id,
-    fecha: fechaFormateada,
-    page: currentPage,
-    limit: pageSize,
-    offset: offset,
-  });
-
   const response = await getEspecialistasDisponibles(
     selectedService.id,
     fechaFormateada,
@@ -80,12 +90,23 @@ export const loadEspecialistasDisponibles = async (page = null) => {
   $currentPage.set(currentPage);
 };
 
+/**
+ * Sets the selected specialist and time slot.
+ * @param {Object} especialista - The selected specialist object.
+ * @param {string} hora - The selected time slot (e.g., "10:00").
+ * @returns {void}
+ */
 export const selectEspecialistaYHora = (especialista, hora) => {
   $selectedEspecialista.set(especialista);
   $selectedHora.set(hora);
   console.log("Selección guardada:", { especialista, hora });
 };
 
+/**
+ * Resets the booking process to its initial state.
+ * Clears selections but preserves the loaded services.
+ * @returns {void}
+ */
 export const resetBooking = () => {
   const services = $services.get();
   $estado.set("ServiceForm");
