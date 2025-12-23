@@ -1,6 +1,15 @@
+const SERVICES_API_URL = "/api/services";
+const AVAILABLE_SPECIALISTS_API_URL = "/api/especialistas/disponibles";
+const USER_BOOKINGS_API_URL = "/api/reservas";
+const CURRENT_USER_API_URL = "/api/me";
+
+/**
+ * Fetches all available services.
+ * @returns {Promise<Array>} Array of services or empty array on error.
+ */
 export const getServices = async () => {
   try {
-    const response = await fetch("/api/services");
+    const response = await fetch(SERVICES_API_URL);
 
     if (!response.ok) {
       throw new Error("Error al obtener servicios");
@@ -14,25 +23,30 @@ export const getServices = async () => {
   }
 };
 
+/**
+ * Fetches available specialists for a service and date.
+ * @param {string} idServicio - The service ID.
+ * @param {string} fecha - The date in format YYYY-MM-DD.
+ * @param {number} [limit=null] - Maximum number of results.
+ * @param {number} [offset=null] - Number of results to skip.
+ * @returns {Promise<Object>} Object with data array and total count.
+ */
 export const getEspecialistasDisponibles = async (
   idServicio,
   fecha,
   limit = null,
   offset = null
 ) => {
-  // Validación simple de parámetros requeridos
   if (!idServicio) {
-    console.warn("getEspecialistasDisponibles: Se necesita un ID de servicio");
     return { data: [], total: 0 };
   }
 
   if (!fecha) {
-    console.warn("getEspecialistasDisponibles: Se necesita una fecha");
     return { data: [], total: 0 };
   }
 
   try {
-    let url = `/api/especialistas/disponibles?servicio=${idServicio}&fecha=${fecha}`;
+    let url = `${AVAILABLE_SPECIALISTS_API_URL}?servicio=${idServicio}&fecha=${fecha}`;
 
     if (limit !== null) {
       url += `&limit=${limit}`;
@@ -56,9 +70,13 @@ export const getEspecialistasDisponibles = async (
   }
 };
 
+/**
+ * Fetches all bookings for the current user.
+ * @returns {Promise<Array>} Array of user bookings or empty array on error.
+ */
 export const getUserBookings = async () => {
   try {
-    const response = await fetch("/api/reservas");
+    const response = await fetch(USER_BOOKINGS_API_URL);
 
     if (!response.ok) {
       throw new Error("Error al obtener reservas");
@@ -72,6 +90,12 @@ export const getUserBookings = async () => {
   }
 };
 
+/**
+ * Creates a new booking with the provided data.
+ * @param {Object} reservaData - The booking data containing servicio_id, especialista_id, fecha, and hora.
+ * @returns {Promise<Object>} The created booking data.
+ * @throws {Error} If validation fails or API request fails.
+ */
 export const createReserva = async (reservaData) => {
   if (!reservaData || typeof reservaData !== "object") {
     throw new Error("Los datos de la reserva son obligatorios");
@@ -96,7 +120,7 @@ export const createReserva = async (reservaData) => {
   }
 
   try {
-    const response = await fetch("/api/reservas", {
+    const response = await fetch(USER_BOOKINGS_API_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -116,9 +140,13 @@ export const createReserva = async (reservaData) => {
   }
 };
 
+/**
+ * Fetches the current authenticated user.
+ * @returns {Promise<Object|null>} User object or null if not authenticated.
+ */
 export const getCurrentUser = async () => {
   try {
-    const response = await fetch("/api/me");
+    const response = await fetch(CURRENT_USER_API_URL);
     if (!response.ok) return null;
     const data = await response.json();
     return data.success ? data.data : null;

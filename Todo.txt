@@ -52,23 +52,8 @@
 ├── index.php
 ├── public
 │   └── js
-│       ├── loginForm.js
-│       ├── registerForm.js
 │       └── user
 │           └── bookings
-│               ├── api
-│               │   └── bookingsApi.js
-│               ├── bookingsApp.js
-│               ├── components
-│               │   ├── BookingNavigation.js
-│               │   ├── Calendario.js
-│               │   ├── ConfirmationActions.js
-│               │   ├── EspecialistasList.js
-│               │   ├── Pagination.js
-│               │   ├── ResumenCita.js
-│               │   ├── ResumenItem.js
-│               │   ├── StatusAlert.js
-│               │   └── service.js
 │               ├── context
 │               │   ├── bookingsContext.js
 │               │   └── bookingsStore.js
