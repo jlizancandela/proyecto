@@ -1,17 +1,30 @@
-const togglePasswordVisibility = () => {
-  const button = document.getElementById("toggle-password");
-  const input = document.getElementById("password");
+const togglePasswordButton = document.getElementById("toggle-password");
+const passwordInput = document.getElementById("password");
 
-  if (!button || !input) return;
+/**
+ * Handles password visibility toggle.
+ */
+const handlePasswordToggle = () => {
+  if (!togglePasswordButton || !passwordInput) return;
 
-  button.addEventListener("click", () => {
-    const icon = button.querySelector("i");
-    const isPassword = input.type === "password";
+  const icon = togglePasswordButton.querySelector("i");
+  const isPassword = passwordInput.type === "password";
 
-    input.type = isPassword ? "text" : "password";
-    icon.className = isPassword ? "bi bi-eye-slash" : "bi bi-eye";
-    button.setAttribute("aria-label", isPassword ? "Ocultar contraseña" : "Mostrar contraseña");
-  });
+  passwordInput.type = isPassword ? "text" : "password";
+  icon.className = isPassword ? "bi bi-eye-slash" : "bi bi-eye";
+  togglePasswordButton.setAttribute(
+    "aria-label",
+    isPassword ? "Ocultar contraseña" : "Mostrar contraseña"
+  );
 };
 
-document.addEventListener("DOMContentLoaded", togglePasswordVisibility);
+/**
+ * Initializes password visibility toggle functionality.
+ */
+const initializePasswordToggle = () => {
+  if (togglePasswordButton) {
+    togglePasswordButton.addEventListener("click", handlePasswordToggle);
+  }
+};
+
+document.addEventListener("DOMContentLoaded", initializePasswordToggle);

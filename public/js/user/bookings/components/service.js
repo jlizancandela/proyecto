@@ -1,10 +1,8 @@
 /**
- * ========================================
- * SERVICE COMPONENT - Componente Presentacional
- * ========================================
+ * Service Component
  *
- * Componente para mostrar un servicio individual.
- * Acepta un callback para manejar la selección.
+ * Displays an individual service card with name and duration.
+ * Handles selection callback and shows selected state visually.
  */
 
 import { h } from "https://esm.sh/preact@10.19.3";
@@ -12,26 +10,35 @@ import htm from "https://esm.sh/htm";
 
 const html = htm.bind(h);
 
+const MIN_HEIGHT = "120px";
+const SHADOW_COLOR = "rgba(13, 110, 253, 0.5)";
+
 /**
- * Componente de servicio
- * @param {Object} props
- * @param {Object} props.service - Datos del servicio
- * @param {Function} props.onSelect - Callback cuando se selecciona el servicio
- * @param {boolean} props.isSelected - Si el servicio está seleccionado
+ * Handles service selection.
+ * @param {Object} service - Service object to select.
+ * @param {Function} onSelect - Callback for service selection.
+ */
+const handleServiceClick = (service, onSelect) => {
+  if (onSelect) {
+    onSelect(service);
+  }
+};
+
+/**
+ * Renders a service card with selection capability.
+ * @param {Object} props - Component props.
+ * @param {Object} props.service - Service data object.
+ * @param {Function} props.onSelect - Callback for service selection.
+ * @param {boolean} [props.isSelected=false] - Whether the service is selected.
+ * @returns {Object} Preact component.
  */
 export const Service = ({ service, onSelect, isSelected = false }) => {
-  const handleClick = () => {
-    if (onSelect) {
-      onSelect(service);
-    }
-  };
-
   return html`
     <div
       class="card ${isSelected ? "border-primary border-3" : ""}"
-      onclick=${handleClick}
-      style="cursor: pointer; min-height: 120px; ${isSelected
-        ? "box-shadow: 0 0 10px rgba(13, 110, 253, 0.5);"
+      onclick=${() => handleServiceClick(service, onSelect)}
+      style="cursor: pointer; min-height: ${MIN_HEIGHT}; ${isSelected
+        ? `box-shadow: 0 0 10px ${SHADOW_COLOR};`
         : ""}"
     >
       <div class="card-body d-flex align-items-center gap-3">

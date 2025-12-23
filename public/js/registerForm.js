@@ -1,59 +1,33 @@
-const validateRegisterForm = () => {
-  const form = document.getElementById("register-form");
+const registerForm = document.getElementById("register-form");
+const togglePasswordButton = document.getElementById("toggle-password");
+const passwordInput = document.getElementById("password");
+const passwordConfirmInput = document.getElementById("password-confirm");
 
-  if (!form) {
-    console.log("Formulario de registro no encontrado");
-    return;
-  }
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const MIN_NAME_LENGTH = 2;
+const MIN_PASSWORD_LENGTH = 6;
 
-  console.log("Formulario de registro encontrado, agregando listener");
-
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    console.log("Submit interceptado");
-    clearErrors();
-
-    const formData = {
-      nombre: form.querySelector('[name="nombre"]').value,
-      apellidos: form.querySelector('[name="apellidos"]').value,
-      email: form.querySelector('[name="email"]').value,
-      telefono: form.querySelector('[name="telefono"]').value,
-      password: form.querySelector('[name="password"]').value,
-      "password-confirm": form.querySelector('[name="password-confirm"]').value,
-    };
-
-    console.log("Datos del formulario:", formData);
-
-    const errors = validateForm(formData);
-
-    if (Object.keys(errors).length > 0) {
-      console.log("Errores de validación encontrados:", errors);
-      displayErrors(errors);
-      return;
-    }
-
-    console.log("Validación pasada, enviando formulario...");
-    form.submit();
-  });
-};
-
+/**
+ * Validates form data and returns validation errors.
+ * @param {Object} formData - The form data to validate.
+ * @returns {Object} Object containing validation errors.
+ */
 const validateForm = (formData) => {
   const errors = {};
 
-  if (!formData.nombre || formData.nombre.length < 2) {
+  if (!formData.nombre || formData.nombre.length < MIN_NAME_LENGTH) {
     errors.nombre = "El nombre debe tener al menos 2 caracteres";
   }
 
-  if (!formData.apellidos || formData.apellidos.length < 2) {
+  if (!formData.apellidos || formData.apellidos.length < MIN_NAME_LENGTH) {
     errors.apellidos = "Los apellidos deben tener al menos 2 caracteres";
   }
 
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!formData.email || !emailRegex.test(formData.email)) {
+  if (!formData.email || !EMAIL_REGEX.test(formData.email)) {
     errors.email = "El email no es válido";
   }
 
-  if (!formData.password || formData.password.length < 6) {
+  if (!formData.password || formData.password.length < MIN_PASSWORD_LENGTH) {
     errors.password = "La contraseña debe tener al menos 6 caracteres";
   }
 
@@ -64,6 +38,10 @@ const validateForm = (formData) => {
   return errors;
 };
 
+/**
+ * Displays validation errors in the form.
+ * @param {Object} errors - Object containing validation errors.
+ */
 const displayErrors = (errors) => {
   Object.keys(errors).forEach((field) => {
     const input = document.querySelector(`[name="${field}"]`);
@@ -77,6 +55,9 @@ const displayErrors = (errors) => {
   });
 };
 
+/**
+ * Clears all validation errors from the form.
+ */
 const clearErrors = () => {
   const errorMessages = document.querySelectorAll(".form-text.text-danger");
   errorMessages.forEach((error) => error.remove());
@@ -85,28 +66,60 @@ const clearErrors = () => {
   invalidInputs.forEach((input) => input.classList.remove("is-invalid"));
 };
 
-const togglePasswordVisibility = () => {
-  const button = document.getElementById("toggle-password");
-  const passwordInput = document.getElementById("password");
-  const confirmInput = document.getElementById("password-confirm");
+/**
+ * Handles register form submission with validation.
+ */
+const handleRegisterFormSubmit = async (e) => {
+  e.preventDefault();
+  clearErrors();
 
-  if (!button || !passwordInput || !confirmInput) return;
+  const formData = {
+    nombre: registerForm.querySelector('[name="nombre"]').value,
+    apellidos: registerForm.querySelector('[name="apellidos"]').value,
+    email: registerForm.querySelector('[name="email"]').value,
+    telefono: registerForm.querySelector('[name="telefono"]').value,
+    password: registerForm.querySelector('[name="password"]').value,
+    "password-confirm": registerForm.querySelector('[name="password-confirm"]').value,
+  };
 
-  button.addEventListener("click", () => {
-    const icon = button.querySelector("i");
-    const isPassword = passwordInput.type === "password";
+  const errors = validateForm(formData);
 
-    // Cambiar tipo de ambos inputs
-    passwordInput.type = isPassword ? "text" : "password";
-    confirmInput.type = isPassword ? "text" : "password";
+  if (Object.keys(errors).length > 0) {
+    displayErrors(errors);
+    return;
+  }
 
-    // Cambiar icono y aria-label
-    icon.className = isPassword ? "bi bi-eye-slash" : "bi bi-eye";
-    button.setAttribute("aria-label", isPassword ? "Ocultar contraseña" : "Mostrar contraseña");
-  });
+  registerForm.submit();
 };
 
-document.addEventListener("DOMContentLoaded", () => {
-  validateRegisterForm();
-  togglePasswordVisibility();
-});
+/**
+ * Handles password visibility toggle for both password fields.
+ */
+const handlePasswordToggle = () => {
+  const icon = togglePasswordButton.querySelector("i");
+  const isPassword = passwordInput.type === "password";
+
+  passwordInput.type = isPassword ? "text" : "password";
+  passwordConfirmInput.type = isPassword ? "text" : "password";
+
+  icon.className = isPassword ? "bi bi-eye-slash" : "bi bi-eye";
+  togglePasswordButton.setAttribute(
+    "aria-label",
+    isPassword ? "Ocultar contraseña" : "Mostrar contraseña"
+  );
+};
+
+/**
+ * Initializes register form with validation and password toggle.
+ */
+const initializeRegisterForm = () => {
+  if (registerForm) {
+    registerForm.addEventListener("submit", handleRegisterFormSubmit);
+  }
+
+  if (togglePasswordButton && passwordInput && passwordConfirmInput) {
+    togglePasswordButton.addEventListener("click", handlePasswordToggle);
+  }
+};
+
+document.addEventListener("DOMContentLoaded", initializeRegisterForm);

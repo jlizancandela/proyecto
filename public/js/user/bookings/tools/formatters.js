@@ -1,8 +1,8 @@
 /**
- * Formatea una fecha en español con formato largo
- * @param {Date} fecha - Fecha a formatear
- * @param {boolean} capitalizar - Si debe capitalizar la primera letra
- * @returns {string} Fecha formateada
+ * Formats a date in long Spanish format
+ * @param {Date} fecha - Date to format
+ * @param {boolean} capitalizar - Whether to capitalize the first letter
+ * @returns {string} Formatted date string
  */
 export const formatearFechaLarga = (fecha, capitalizar = true) => {
   const fechaFormateada = fecha.toLocaleDateString("es-ES", {
@@ -18,10 +18,10 @@ export const formatearFechaLarga = (fecha, capitalizar = true) => {
 };
 
 /**
- * Formatea una fecha en formato ISO (YYYY-MM-DD)
- * Usa componentes locales para evitar problemas de zona horaria
- * @param {Date} fecha - Fecha a formatear
- * @returns {string} Fecha en formato ISO
+ * Formats a date in ISO format (YYYY-MM-DD)
+ * Uses local components to avoid timezone issues
+ * @param {Date} fecha - Date to format
+ * @returns {string} Date in ISO format
  */
 export const formatearFechaISO = (fecha) => {
   const year = fecha.getFullYear();
@@ -31,9 +31,9 @@ export const formatearFechaISO = (fecha) => {
 };
 
 /**
- * Capitaliza la primera letra de un string
- * @param {string} texto - Texto a capitalizar
- * @returns {string} Texto capitalizado
+ * Capitalizes the first letter of a string
+ * @param {string} texto - Text to capitalize
+ * @returns {string} Capitalized text
  */
 export const capitalizarPrimeraLetra = (texto) => {
   if (!texto) return "";
@@ -41,9 +41,9 @@ export const capitalizarPrimeraLetra = (texto) => {
 };
 
 /**
- * Verifica si una fecha es hoy
- * @param {Date} fecha - Fecha a verificar
- * @returns {boolean} True si la fecha es hoy
+ * Checks if a date is today
+ * @param {Date} fecha - Date to check
+ * @returns {boolean} True if date is today
  */
 export const esHoy = (fecha) => {
   const hoy = new Date();
@@ -55,27 +55,21 @@ export const esHoy = (fecha) => {
 };
 
 /**
- * Verifica si una hora ya ha pasado en el día actual
- * Si la fecha no es hoy, retorna false (todas las horas son válidas)
- * @param {Date} fecha - Fecha seleccionada
- * @param {string} hora - Hora en formato "HH:MM"
- * @returns {boolean} True si la hora ya pasó
+ * Checks if a time has already passed today
+ * If the date is not today, returns false (all times are valid)
+ * @param {Date} fecha - Selected date
+ * @param {string} hora - Time in "HH:MM" format
+ * @returns {boolean} True if time has passed
  */
-export const horaYaPaso = (fecha, hora) => {
-  // Si no es hoy, todas las horas son válidas
+export const isPastTime = (fecha, hora) => {
   if (!esHoy(fecha)) {
     return false;
   }
 
-  // Parsear la hora
   const [horas, minutos] = hora.split(":").map(Number);
-
-  // Crear fecha con la hora especificada
   const horaSeleccionada = new Date();
   horaSeleccionada.setHours(horas, minutos, 0, 0);
 
-  // Comparar con la hora actual
   const ahora = new Date();
-
   return horaSeleccionada <= ahora;
 };
