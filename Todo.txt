@@ -2,9 +2,6 @@
 ├── index.php
 ├── public/
 │   └── js/
-│       ├── admin/
-│       │   └── servicios/
-│       │       └── servicesManager.js       # Handlers CRUD servicios
 │       └── user/
 │           └── bookings/
 │               ├── context/
