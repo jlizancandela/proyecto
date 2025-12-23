@@ -1,190 +1,149 @@
-## Archivos nuevos - Gestión de Servicios (2025-12-22)
-
-### Backend - Application Layer
-- src/Servicios/Application/ServicioService.php
-  -> Service con validaciones y lógica de negocio para CRUD de servicios
-
-### Backend - Presentation Layer updates
-- src/Servicios/Presentation/ServiceApiController.php (MODIFICADO)
-  -> Añadidos endpoints CRUD completos (create, getById, update, delete)
-
-### Backend - Controller updates
-- src/Shared/Presentation/AdminController.php (MODIFICADO)
-  -> Añadido método servicesManagement() para renderizar gestión de servicios
-
-### Frontend - Vistas
-- views/pages/ServicesManagement.latte
-  -> Página principal de gestión de servicios con tabla y botones de acción
-
-### Frontend - Modales
-- views/components/modals/CreateServiceModal.latte
-  -> Modal para crear nuevos servicios
-- views/components/modals/EditServiceModal.latte
-  -> Modal para editar servicios existentes
-
-### Frontend - JavaScript
-- public/js/admin/servicios/servicesManager.js
-  -> Handlers para CRUD de servicios (create, edit, delete)
-
-### Configuración
-- src/Shared/Infrastructure/dependencies.php (MODIFICADO)
-  -> Añadido ServicioService a las dependencias
-- src/Shared/Infrastructure/Router/router.php (MODIFICADO)
-  -> Añadidas rutas para gestión de servicios
-- views/components/sidebar.latte (MODIFICADO)
-  -> Añadido enlace a sección de servicios
-
----
-
-## Archivos nuevos - Gestión de Perfil y Desactivación de Cuenta (2025-12-22)
-
-### Modal de confirmación de desactivación
-- views/components/modals/confirm-delete-account-modal.latte
-  -> Modal que confirma la desactivación temporal de cuenta (baja lógica)
-
-### Página de reactivación
-- views/pages/Reactivate.latte
-  -> Página que permite reactivar una cuenta desactivada con un solo clic
-
----
-
 .
 ├── index.php
-├── public
-│   └── js
-│       └── user
-│           └── bookings
-│               ├── context
-│               │   ├── bookingsContext.js
-│               │   └── bookingsStore.js
-│               ├── hooks
-│               │   └── useReservas.js
-│               ├── routes
-│               │   ├── confirmationForm.js
-│               │   ├── dateForm.js
-│               │   └── serviceForm.js
-│               └── tools
-│                   ├── formatters.js
-│                   └── validators.js
-├── src
-│   ├── Especialistas
-│   │   ├── Application
-│   │   │   ├── EspecialistaService.php
-│   │   │   └── EspecialistaUsuarioDTO.php
-│   │   ├── Domain
-│   │   │   ├── Especialista.php
-│   │   │   ├── EspecialistaServicio.php
-│   │   │   └── HorarioEspecialista.php
-│   │   ├── Infrastructure
-│   │   │   ├── EspecialistaRepository.php
-│   │   │   ├── EspecialistaServicioRepository.php
-│   │   │   └── HorarioEspecialistaRepository.php
-│   │   └── Presentation
-│   │       └── EspecialistaApiController.php
-│   ├── Reservas
-│   │   ├── Application
-│   │   │   ├── ReservaCompletaDTO.php
-│   │   │   └── ReservaService.php
-│   │   ├── Domain
-│   │   │   └── Reserva.php
-│   │   ├── Infrastructure
-│   │   │   └── ReservaRepository.php
-│   │   └── Presentation
-│   │       ├── BookingApiController.php
-│   │       ├── BookingController.php
-│   │       ├── MyBookingsController.php
-│   │       └── PdfExportController.php
-│   ├── Servicios
-│   │   ├── Domain
-│   │   │   └── Servicio.php
-│   │   ├── Infrastructure
-│   │   │   └── ServicioRepository.php
-│   │   └── Presentation
-│   │       └── ServiceApiController.php
-│   ├── Shared
-│   │   ├── Domain
-│   │   │   └── Exceptions
-│   │   │       └── InvalidValidation.php
-│   │   ├── Infrastructure
-│   │   │   ├── Database
-│   │   │   │   └── Database.php
-│   │   │   ├── Email
-│   │   │   │   └── EmailService.php
-│   │   │   ├── Middleware
-│   │   │   │   └── AuthMiddleware.php
-│   │   │   ├── Pagination
-│   │   │   │   └── Paginator.php
-│   │   │   ├── Router
-│   │   │   │   └── router.php
-│   │   │   └── dependencies.php
-│   │   └── Presentation
-│   │       ├── AdminController.php
-│   │       └── HomeController.php
-│   └── Usuarios
-│       ├── Application
-│       │   ├── AuthService.php
-│       │   └── UserService.php
-│       ├── Domain
-│       │   ├── UserRole.php
-│       │   └── Usuario.php
-│       ├── Infrastructure
-│       │   └── UserRepository.php
-│       └── Presentation
-│           ├── AuthController.php
-│           ├── ProfileController.php
-│           ├── Transformers
-│           │   └── UserTransformer.php
-│           ├── UserApiController.php
-│           └── UserController.php
-└── views
-    ├── components
-    │   ├── booking-card.latte
-    │   ├── booking-filters.latte
-    │   ├── booking-last-card.latte
-    │   ├── card.latte
-    │   ├── contacto.latte
-    │   ├── delete-user-toast.latte
-    │   ├── empty-state.latte
-    │   ├── footer.latte
-    │   ├── header.latte
-    │   ├── hero.latte
-    │   ├── modals
-    │   │   ├── CreateUserModal.latte
-    │   │   ├── EditUserModal.latte
-    │   │   └── confirm-modal.latte
-    │   ├── paginator.latte
-    │   ├── services.latte
-    │   ├── sidebar.latte
-    │   ├── user-breadcrumb.latte
-    │   ├── user-offers.latte
-    │   ├── user-quick-actions.latte
-    │   ├── user-sidebar.latte
-    │   ├── users-table-content.latte
-    │   ├── userstable.latte
-    │   └── whoami.latte
-    ├── errors
-    │   ├── 404.php
-    │   ├── 405.php
-    │   └── 500.php
-    ├── layouts
-    │   ├── landing-scripts.latte
-    │   ├── landpage.latte
-    │   ├── panel-layout.latte
-    │   ├── panelScripts.latte
-    │   ├── user-panel-layout.latte
-    │   └── userPanelScripts.latte
-    ├── pages
-    │   ├── Admin.latte
-    │   ├── Bookings.latte
-    │   ├── ForgotPassword.latte
-    │   ├── Home.latte
-    │   ├── Login.latte
-    │   ├── NewBooking.latte
-    │   ├── Profile.latte
-    │   ├── Register.latte
-    │   ├── ResetPassword.latte
-    │   ├── User.latte
-    │   └── UsersManagement.latte
-    └── pdf
+├── public/
+│   └── js/
+│       ├── admin/
+│       │   └── servicios/
+│       │       └── servicesManager.js       # Handlers CRUD servicios
+│       └── user/
+│           └── bookings/
+│               ├── context/
+│               │   ├── bookingsContext.js
+│               │   └── bookingsStore.js
+│               ├── hooks/
+│               │   └── useReservas.js
+│               ├── routes/
+│               │   ├── confirmationForm.js
+│               │   ├── dateForm.js
+│               │   └── serviceForm.js
+│               └── tools/
+│                   ├── formatters.js
+│                   └── validators.js
+├── src/
+│   ├── Especialistas/
+│   │   ├── Application/
+│   │   │   ├── EspecialistaService.php
+│   │   │   └── EspecialistaUsuarioDTO.php
+│   │   ├── Domain/
+│   │   │   ├── Especialista.php
+│   │   │   ├── EspecialistaServicio.php
+│   │   │   └── HorarioEspecialista.php
+│   │   ├── Infrastructure/
+│   │   │   ├── EspecialistaRepository.php
+│   │   │   ├── EspecialistaServicioRepository.php
+│   │   │   └── HorarioEspecialistaRepository.php
+│   │   └── Presentation/
+│   │       └── EspecialistaApiController.php
+│   ├── Reservas/
+│   │   ├── Application/
+│   │   │   ├── ReservaCompletaDTO.php
+│   │   │   └── ReservaService.php
+│   │   ├── Domain/
+│   │   │   └── Reserva.php
+│   │   ├── Infrastructure/
+│   │   │   └── ReservaRepository.php
+│   │   └── Presentation/
+│   │       ├── BookingApiController.php
+│   │       ├── BookingController.php
+│   │       ├── MyBookingsController.php
+│   │       └── PdfExportController.php
+│   ├── Servicios/
+│   │   ├── Application/
+│   │   │   └── ServicioService.php          # Lógica CRUD servicios
+│   │   ├── Domain/
+│   │   │   └── Servicio.php
+│   │   ├── Infrastructure/
+│   │   │   └── ServicioRepository.php
+│   │   └── Presentation/
+│   │       └── ServiceApiController.php     # Endpoints CRUD servicios
+│   ├── Shared/
+│   │   ├── Domain/
+│   │   │   └── Exceptions/
+│   │   │       └── InvalidValidation.php
+│   │   ├── Infrastructure/
+│   │   │   ├── Database/
+│   │   │   │   └── Database.php
+│   │   │   ├── Email/
+│   │   │   │   └── EmailService.php
+│   │   │   ├── Middleware/
+│   │   │   │   └── AuthMiddleware.php
+│   │   │   ├── Pagination/
+│   │   │   │   └── Paginator.php
+│   │   │   ├── Router/
+│   │   │   │   └── router.php               # Rutas actualizadas
+│   │   │   └── dependencies.php             # DI de ServicioService
+│   │   └── Presentation/
+│   │       ├── AdminController.php          # Gestión de servicios añadida
+│   │       └── HomeController.php
+│   └── Usuarios/
+│       ├── Application/
+│       │   ├── AuthService.php
+│       │   └── UserService.php
+│       ├── Domain/
+│       │   ├── UserRole.php
+│       │   └── Usuario.php
+│       ├── Infrastructure/
+│       │   └── UserRepository.php
+│       └── Presentation/
+│           ├── Transformers/
+│           │   └── UserTransformer.php
+│           ├── AuthController.php
+│           ├── ProfileController.php
+│           ├── UserApiController.php
+│           └── UserController.php
+└── views/
+    ├── components/
+    │   ├── modals/
+    │   │   ├── CreateServiceModal.latte     # Nuevo
+    │   │   ├── EditServiceModal.latte       # Nuevo
+    │   │   ├── CreateUserModal.latte
+    │   │   ├── EditUserModal.latte
+    │   │   ├── confirm-modal.latte
+    │   │   └── confirm-delete-account-modal.latte # Nuevo
+    │   ├── booking-card.latte
+    │   ├── booking-filters.latte
+    │   ├── booking-last-card.latte
+    │   ├── card.latte
+    │   ├── contacto.latte
+    │   ├── delete-user-toast.latte
+    │   ├── empty-state.latte
+    │   ├── footer.latte
+    │   ├── header.latte
+    │   ├── hero.latte
+    │   ├── paginator.latte
+    │   ├── services.latte
+    │   ├── sidebar.latte                  # Link a servicios añadido
+    │   ├── user-breadcrumb.latte
+    │   ├── user-offers.latte
+    │   ├── user-quick-actions.latte
+    │   ├── user-sidebar.latte
+    │   ├── users-table-content.latte
+    │   ├── userstable.latte
+    │   └── whoami.latte
+    ├── errors/
+    │   ├── 404.php
+    │   ├── 405.php
+    │   └── 500.php
+    ├── layouts/
+    │   ├── landing-scripts.latte
+    │   ├── landpage.latte
+    │   ├── panel-layout.latte
+    │   ├── panelScripts.latte
+    │   ├── user-panel-layout.latte
+    │   └── userPanelScripts.latte
+    ├── pages/
+    │   ├── ServicesManagement.latte       # Nueva página
+    │   ├── Reactivate.latte               # Nueva página
+    │   ├── Admin.latte
+    │   ├── Bookings.latte
+    │   ├── ForgotPassword.latte
+    │   ├── Home.latte
+    │   ├── Login.latte
+    │   ├── NewBooking.latte
+    │   ├── Profile.latte
+    │   ├── Register.latte
+    │   ├── ResetPassword.latte
+    │   ├── User.latte
+    │   └── UsersManagement.latte
+    └── pdf/
         └── reservas-pdf.latte
-
