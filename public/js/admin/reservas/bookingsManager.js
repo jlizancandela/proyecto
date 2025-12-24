@@ -17,6 +17,105 @@ let currentPage = 1;
 let currentFilters = {};
 
 /**
+ * Loads clients into select dropdown
+ *
+ * @param {string} selectId - ID of the select element
+ * @return {Promise<void>}
+ */
+const loadClients = async (selectId) => {
+  try {
+    const response = await fetch("/admin/api/users?rol=Cliente&limit=1000");
+    const data = await response.json();
+
+    if (data.success) {
+      const select = document.getElementById(selectId);
+      const currentValue = select.value;
+
+      // Keep first option (placeholder)
+      select.innerHTML = '<option value="">Selecciona un cliente...</option>';
+
+      data.users.forEach((user) => {
+        const option = document.createElement("option");
+        option.value = user.id;
+        option.textContent = `${user.nombre} ${user.apellidos} (${user.email})`;
+        select.appendChild(option);
+      });
+
+      // Restore previous value if exists
+      if (currentValue) select.value = currentValue;
+    }
+  } catch (error) {
+    console.error("Error loading clients:", error);
+  }
+};
+
+/**
+ * Loads specialists into select dropdown
+ *
+ * @param {string} selectId - ID of the select element
+ * @return {Promise<void>}
+ */
+const loadSpecialists = async (selectId) => {
+  try {
+    const response = await fetch("/admin/api/users?rol=Especialista&limit=1000");
+    const data = await response.json();
+
+    if (data.success) {
+      const select = document.getElementById(selectId);
+      const currentValue = select.value;
+
+      // Keep first option (placeholder)
+      select.innerHTML = '<option value="">Selecciona un especialista...</option>';
+
+      data.users.forEach((user) => {
+        const option = document.createElement("option");
+        option.value = user.id;
+        option.textContent = `${user.nombre} ${user.apellidos}`;
+        select.appendChild(option);
+      });
+
+      // Restore previous value if exists
+      if (currentValue) select.value = currentValue;
+    }
+  } catch (error) {
+    console.error("Error loading specialists:", error);
+  }
+};
+
+/**
+ * Loads services into select dropdown
+ *
+ * @param {string} selectId - ID of the select element
+ * @return {Promise<void>}
+ */
+const loadServices = async (selectId) => {
+  try {
+    const response = await fetch("/admin/api/services");
+    const data = await response.json();
+
+    if (data.success) {
+      const select = document.getElementById(selectId);
+      const currentValue = select.value;
+
+      // Keep first option (placeholder)
+      select.innerHTML = '<option value="">Selecciona un servicio...</option>';
+
+      data.servicios.forEach((service) => {
+        const option = document.createElement("option");
+        option.value = service.id;
+        option.textContent = `${service.nombre_servicio} (${service.duracion_minutos} min - €${service.precio})`;
+        select.appendChild(option);
+      });
+
+      // Restore previous value if exists
+      if (currentValue) select.value = currentValue;
+    }
+  } catch (error) {
+    console.error("Error loading services:", error);
+  }
+};
+
+/**
  * Fetches bookings from API
  *
  * @param {number} page - Page number
@@ -106,6 +205,14 @@ const renderBookingsTable = (bookings) => {
             <td class="text-end text-nowrap">
               <button
                 type="button"
+                class="btn btn-sm btn-outline-primary btn-edit-booking"
+                data-booking-id="${booking.id_reserva}"
+                title="Editar"
+              >
+                <i class="bi bi-pencil"></i>
+              </button>
+              <button
+                type="button"
                 class="btn btn-sm btn-outline-danger btn-delete-booking"
                 data-booking-id="${booking.id_reserva}"
                 title="Eliminar"
@@ -123,6 +230,7 @@ const renderBookingsTable = (bookings) => {
 
   bookingsTableContainer.innerHTML = tableHTML;
   attachDeleteHandlers();
+  attachEditHandlers();
 };
 
 /**
@@ -203,6 +311,135 @@ const attachDeleteHandlers = () => {
 };
 
 /**
+ * Attaches edit handlers to buttons
+ *
+ * @return {void}
+ */
+const attachEditHandlers = () => {
+  document.querySelectorAll(".btn-edit-booking").forEach((btn) => {
+    btn.addEventListener("click", handleEditBooking);
+  });
+};
+
+/**
+ * Handles edit booking button click
+ *
+ * @param {Event} e - Click event
+ * @return {Promise<void>}
+ */
+const handleEditBooking = async (e) => {
+  const bookingId = e.currentTarget.dataset.bookingId;
+
+  try {
+    const response = await fetch(`/admin/api/reservas/${bookingId}`);
+    const data = await response.json();
+
+    if (data.success) {
+      const booking = data.data;
+
+      // Populate form
+      document.getElementById("editBookingId").value = booking.id_reserva;
+      document.getElementById("editCliente").value = booking.id_cliente;
+      document.getElementById("editEspecialista").value = booking.id_especialista;
+      document.getElementById("editServicio").value = booking.id_servicio;
+      document.getElementById("editFecha").value = booking.fecha_reserva;
+      document.getElementById("editHora").value = booking.hora_inicio;
+      document.getElementById("editEstado").value = booking.estado;
+      document.getElementById("editObservaciones").value = booking.observaciones || "";
+
+      // Calculate duration from hora_inicio and hora_fin
+      const inicio = new Date(`2000-01-01T${booking.hora_inicio}`);
+      const fin = new Date(`2000-01-01T${booking.hora_fin}`);
+      const duracion = (fin - inicio) / (1000 * 60);
+      document.getElementById("editDuracion").value = duracion;
+
+      // Show modal
+      const modal = new bootstrap.Modal(document.getElementById("editBookingModal"));
+      modal.show();
+    } else {
+      showError("Error al cargar los datos de la reserva");
+    }
+  } catch (error) {
+    console.error("Error fetching booking:", error);
+    showError("Error al conectar con el servidor");
+  }
+};
+
+/**
+ * Handles create booking form submission
+ *
+ * @param {Event} e - Submit event
+ * @return {Promise<void>}
+ */
+const handleCreateBooking = async (e) => {
+  e.preventDefault();
+
+  const formData = new FormData(e.target);
+  const data = Object.fromEntries(formData.entries());
+
+  try {
+    const response = await fetch("/admin/api/reservas", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+
+    const result = await response.json();
+
+    if (result.success) {
+      showSuccess("Reserva creada correctamente");
+      bootstrap.Modal.getInstance(document.getElementById("createBookingModal")).hide();
+      e.target.reset();
+      fetchBookings(currentPage, currentFilters);
+    } else {
+      showError(result.error || "Error al crear la reserva");
+    }
+  } catch (error) {
+    console.error("Error creating booking:", error);
+    showError("Error al conectar con el servidor");
+  }
+};
+
+/**
+ * Handles edit booking form submission
+ *
+ * @param {Event} e - Submit event
+ * @return {Promise<void>}
+ */
+const handleUpdateBooking = async (e) => {
+  e.preventDefault();
+
+  const formData = new FormData(e.target);
+  const data = Object.fromEntries(formData.entries());
+  const bookingId = data.id_reserva;
+
+  try {
+    const response = await fetch(`/admin/api/reservas/${bookingId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+
+    const result = await response.json();
+
+    if (result.success) {
+      showSuccess("Reserva actualizada correctamente");
+      bootstrap.Modal.getInstance(document.getElementById("editBookingModal")).hide();
+      fetchBookings(currentPage, currentFilters);
+    } else {
+      showError(result.error || "Error al actualizar la reserva");
+    }
+  } catch (error) {
+    console.error("Error updating booking:", error);
+    showError("Error al conectar con el servidor");
+  }
+};
+
+/**
  * Handles booking deletion
  *
  * @param {Event} e - Click event
@@ -234,71 +471,6 @@ const handleDeleteBooking = async (e) => {
   }
 };
 
-/**
- * Gets bootstrap color for status
- *
- * @param {string} status - Booking status
- * @return {string} Bootstrap color class
- */
-const getStatusColor = (status) => {
-  const colors = {
-    Pendiente: "warning",
-    Confirmada: "success",
-    Completada: "info",
-    Cancelada: "secondary",
-  };
-  return colors[status] || "secondary";
-};
-
-/**
- * Formats date to readable format
- *
- * @param {string} dateStr - Date string
- * @return {string} Formatted date
- */
-const formatDate = (dateStr) => {
-  const date = new Date(dateStr + "T00:00:00");
-  return date.toLocaleDateString("es-ES", {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  });
-};
-
-/**
- * Shows error message
- *
- * @param {string} message - Error message
- * @return {void}
- */
-const showError = (message) => {
-  bookingsTableContainer.innerHTML = `
-    <div class="alert alert-danger">
-      <i class="bi bi-exclamation-triangle me-2"></i>
-      ${message}
-    </div>
-  `;
-};
-
-/**
- * Shows success message
- *
- * @param {string} message - Success message
- * @return {void}
- */
-const showSuccess = (message) => {
-  const alertDiv = document.createElement("div");
-  alertDiv.className = "alert alert-success alert-dismissible fade show";
-  alertDiv.innerHTML = `
-    <i class="bi bi-check-circle me-2"></i>
-    ${message}
-    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-  `;
-  document.querySelector(".mb-4").prepend(alertDiv);
-
-  setTimeout(() => alertDiv.remove(), 3000);
-};
-
 // Event handlers
 btnApplyFilters.addEventListener("click", () => {
   currentFilters = {};
@@ -323,6 +495,23 @@ btnClearFilters.addEventListener("click", () => {
   currentFilters = {};
   currentPage = 1;
   fetchBookings(currentPage, currentFilters);
+});
+
+// Form handlers
+document.getElementById("createBookingForm").addEventListener("submit", handleCreateBooking);
+document.getElementById("editBookingForm").addEventListener("submit", handleUpdateBooking);
+
+// Modal event listeners - Load data when modals are shown
+document.getElementById("createBookingModal").addEventListener("show.bs.modal", () => {
+  loadClients("createCliente");
+  loadSpecialists("createEspecialista");
+  loadServices("createServicio");
+});
+
+document.getElementById("editBookingModal").addEventListener("show.bs.modal", () => {
+  loadClients("editCliente");
+  loadSpecialists("editEspecialista");
+  loadServices("editServicio");
 });
 
 // Initial load

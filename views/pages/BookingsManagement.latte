@@ -46,7 +46,7 @@
     </div>
   </div>
 
-  <div class="mb-3">
+  <div class="mb-3 d-flex gap-2 flex-wrap">
     <button id="btnApplyFilters" class="btn btn-primary">
       <i class="bi bi-funnel me-2"></i>
       Aplicar Filtros
@@ -54,6 +54,15 @@
     <button id="btnClearFilters" class="btn btn-secondary">
       <i class="bi bi-x-circle me-2"></i>
       Limpiar
+    </button>
+    <button
+      type="button"
+      class="btn btn-success ms-auto"
+      data-bs-toggle="modal"
+      data-bs-target="#createBookingModal"
+    >
+      <i class="bi bi-plus-circle me-2"></i>
+      Nueva Reserva
     </button>
   </div>
 
@@ -68,6 +77,9 @@
 
   {* Paginación *}
   <nav id="paginationContainer" aria-label="Paginación de reservas" class="mt-4"></nav>
+
+  {* Modales *} {include '../components/modals/CreateBookingModal.latte'} {include
+  '../components/modals/EditBookingModal.latte'}
 </div>
 
 <script src="/public/js/admin/reservas/bookingsManager.js"></script>

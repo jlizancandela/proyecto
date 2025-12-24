@@ -1,0 +1,125 @@
+{* Modal para crear reserva *}
+<div
+  class="modal fade"
+  id="createBookingModal"
+  tabindex="-1"
+  aria-labelledby="createBookingModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="createBookingModalLabel">
+          <i class="bi bi-calendar-plus me-2"></i>
+          Crear Nueva Reserva
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <form id="createBookingForm">
+        <div class="modal-body">
+          <div class="row">
+            {* Columna izquierda *}
+            <div class="col-md-6">
+              {* Cliente *}
+              <div class="mb-3">
+                <label for="createCliente" class="form-label">Cliente *</label>
+                <select class="form-select" id="createCliente" name="id_cliente" required>
+                  <option value="">Selecciona un cliente...</option>
+                  {* Clientes cargados dinámicamente *}
+                </select>
+                <div class="invalid-feedback"></div>
+              </div>
+
+              {* Especialista *}
+              <div class="mb-3">
+                <label for="createEspecialista" class="form-label">Especialista *</label>
+                <select class="form-select" id="createEspecialista" name="especialista_id" required>
+                  <option value="">Selecciona un especialista...</option>
+                  {* Especialistas cargados dinámicamente *}
+                </select>
+                <div class="invalid-feedback"></div>
+              </div>
+
+              {* Servicio *}
+              <div class="mb-3">
+                <label for="createServicio" class="form-label">Servicio *</label>
+                <select class="form-select" id="createServicio" name="servicio_id" required>
+                  <option value="">Selecciona un servicio...</option>
+                  {* Servicios cargados dinámicamente *}
+                </select>
+                <div class="invalid-feedback"></div>
+              </div>
+
+              {* Duración *}
+              <div class="mb-3">
+                <label for="createDuracion" class="form-label">Duración (minutos)</label>
+                <input
+                  type="number"
+                  class="form-control"
+                  id="createDuracion"
+                  name="duracion"
+                  value="60"
+                  min="15"
+                  step="15"
+                />
+                <div class="form-text">Duración del servicio en minutos</div>
+                <div class="invalid-feedback"></div>
+              </div>
+            </div>
+
+            {* Columna derecha *}
+            <div class="col-md-6">
+              {* Fecha *}
+              <div class="mb-3">
+                <label for="createFecha" class="form-label">Fecha *</label>
+                <input type="date" class="form-control" id="createFecha" name="fecha" required />
+                <div class="invalid-feedback"></div>
+              </div>
+
+              {* Hora *}
+              <div class="mb-3">
+                <label for="createHora" class="form-label">Hora *</label>
+                <input type="time" class="form-control" id="createHora" name="hora" required />
+                <div class="invalid-feedback"></div>
+              </div>
+
+              {* Estado *}
+              <div class="mb-3">
+                <label for="createEstado" class="form-label">Estado *</label>
+                <select class="form-select" id="createEstado" name="estado" required>
+                  <option value="Pendiente">Pendiente</option>
+                  <option value="Confirmada">Confirmada</option>
+                  <option value="Completada">Completada</option>
+                  <option value="Cancelada">Cancelada</option>
+                </select>
+                <div class="invalid-feedback"></div>
+              </div>
+
+              {* Observaciones *}
+              <div class="mb-3">
+                <label for="createObservaciones" class="form-label">Observaciones</label>
+                <textarea
+                  class="form-control"
+                  id="createObservaciones"
+                  name="observaciones"
+                  rows="3"
+                  placeholder="Notas adicionales..."
+                ></textarea>
+                <div class="invalid-feedback"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary">
+            <i class="bi bi-save me-1"></i>
+            Crear Reserva
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
