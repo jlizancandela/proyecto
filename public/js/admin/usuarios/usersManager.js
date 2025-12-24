@@ -4,7 +4,7 @@ const editApellidosInput = document.getElementById("editApellidos");
 const editEmailInput = document.getElementById("editEmail");
 const editTelefonoInput = document.getElementById("editTelefono");
 const editRolInput = document.getElementById("editRol");
-const editServiciosSelect = document.getElementById("editServicios");
+const editServiciosCheckboxes = document.getElementById("editServiciosCheckboxes");
 const editServiciosContainer = document.getElementById("editServicesContainer");
 const editAvatarContainer = document.getElementById("editAvatarContainer");
 const editDescriptionContainer = document.getElementById("editDescriptionContainer");
@@ -23,8 +23,8 @@ const createTelefonoInput = document.getElementById("createTelefono");
 const createPasswordInput = document.getElementById("createPassword");
 const createPasswordConfirmInput = document.getElementById("createPasswordConfirm");
 const createRolInput = document.getElementById("createRol");
-const createServiciosSelect = document.getElementById("createServicios");
 const createServiciosContainer = document.getElementById("createServicesContainer");
+const createServiciosCheckboxes = document.getElementById("createServiciosCheckboxes");
 const createAvatarContainer = document.getElementById("createAvatarContainer");
 const createDescriptionContainer = document.getElementById("createDescriptionContainer");
 const createAvatarInput = document.getElementById("createAvatar");
@@ -45,9 +45,9 @@ const loadServices = () => {
     .then((response) => response.json())
     .then((data) => {
       availableServices = data.success ? data.servicios : [];
-      populateServicesSelect(createServiciosSelect, []);
+      populateServicesCheckboxes(createServiciosCheckboxes, [], "create");
       // Usar los servicios guardados si ya se abrió el modal de edición
-      populateServicesSelect(editServiciosSelect, currentEditUserServices);
+      populateServicesCheckboxes(editServiciosCheckboxes, currentEditUserServices, "edit");
     })
     .catch((error) => {
       console.error("Error loading services:", error);
@@ -55,22 +55,42 @@ const loadServices = () => {
 };
 
 /**
- * Populates a services select element
- * @param {HTMLSelectElement} selectElement - The select element to populate
+ * Populates a services container with checkboxes
+ * @param {HTMLElement} container - The container element to populate
  * @param {array} selectedIds - Array of selected service IDs
+ * @param {string} prefix - Prefix for checkbox IDs (create/edit)
  */
-const populateServicesSelect = (selectElement, selectedIds = []) => {
-  selectElement.innerHTML = "";
+const populateServicesCheckboxes = (container, selectedIds = [], prefix = "create") => {
+  container.innerHTML = "";
   availableServices.forEach((service) => {
-    const option = document.createElement("option");
-    option.value = service.id;
-    option.textContent = service.nombre_servicio;
+    const col = document.createElement("div");
+    col.className = "col-6";
+
+    const wrapper = document.createElement("div");
+    wrapper.className = "form-check";
+
+    const input = document.createElement("input");
+    input.className = "form-check-input";
+    input.type = "checkbox";
+    input.value = service.id;
+    input.id = `${prefix}Service${service.id}`;
+    input.name = "servicios[]";
+
     // Convertir IDs a string para comparación robusta
     const selectedIdsString = selectedIds.map(String);
     if (selectedIdsString.includes(String(service.id))) {
-      option.selected = true;
+      input.checked = true;
     }
-    selectElement.appendChild(option);
+
+    const label = document.createElement("label");
+    label.className = "form-check-label";
+    label.htmlFor = `${prefix}Service${service.id}`;
+    label.textContent = service.nombre_servicio;
+
+    wrapper.appendChild(input);
+    wrapper.appendChild(label);
+    col.appendChild(wrapper);
+    container.appendChild(col);
   });
 };
 
@@ -142,13 +162,17 @@ const editUser = (userId) => {
               .then((response) => response.json())
               .then((data) => {
                 availableServices = data.success ? data.servicios : [];
-                populateServicesSelect(editServiciosSelect, currentEditUserServices);
+                populateServicesCheckboxes(
+                  editServiciosCheckboxes,
+                  currentEditUserServices,
+                  "edit"
+                );
               })
               .catch((error) => {
                 console.error("Error loading services:", error);
               });
           } else {
-            populateServicesSelect(editServiciosSelect, currentEditUserServices);
+            populateServicesCheckboxes(editServiciosCheckboxes, currentEditUserServices, "edit");
           }
         } else {
           editDescripcionInput.value = "";
@@ -236,12 +260,14 @@ const handleCreateUserFormSubmit = (e) => {
 
   // Añadir servicios y descripción si es especialista
   if (createRolInput.value === "Especialista") {
-    const selectedOptions = Array.from(createServiciosSelect.selectedOptions);
-    selectedOptions.forEach((option) => {
-      formData.append("servicios[]", option.value);
+    const checkboxes = createServiciosCheckboxes.querySelectorAll("input[type=checkbox]:checked");
+    const selectedIds = Array.from(checkboxes).map((cb) => cb.value);
+
+    selectedIds.forEach((id) => {
+      formData.append("servicios[]", id);
     });
 
-    if (selectedOptions.length === 0) {
+    if (selectedIds.length === 0) {
       alert("Debes seleccionar al menos un servicio para el especialista");
       return;
     }
@@ -302,12 +328,14 @@ const handleEditUserFormSubmit = (e) => {
 
   // Añadir servicios y descripción si es especialista
   if (editRolInput.value === "Especialista") {
-    const selectedOptions = Array.from(editServiciosSelect.selectedOptions);
-    selectedOptions.forEach((option) => {
-      formData.append("servicios[]", option.value);
+    const checkboxes = editServiciosCheckboxes.querySelectorAll("input[type=checkbox]:checked");
+    const selectedIds = Array.from(checkboxes).map((cb) => cb.value);
+
+    selectedIds.forEach((id) => {
+      formData.append("servicios[]", id);
     });
 
-    if (selectedOptions.length === 0) {
+    if (selectedIds.length === 0) {
       alert("Debes seleccionar al menos un servicio para el especialista");
       return;
     }
