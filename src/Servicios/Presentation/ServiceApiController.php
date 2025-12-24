@@ -22,17 +22,23 @@ class ServiceApiController
             $data = array_map(function ($servicio) {
                 return [
                     'id' => $servicio->getIdServicio(),
-                    'nombre' => $servicio->getNombreServicio(),
-                    'duracion' => $servicio->getDuracionMinutos(),
+                    'nombre_servicio' => $servicio->getNombreServicio(),
+                    'duracion_minutos' => $servicio->getDuracionMinutos(),
                     'precio' => $servicio->getPrecio(),
                     'descripcion' => $servicio->getDescripcion()
                 ];
             }, $servicios);
 
-            echo json_encode($data);
+            echo json_encode([
+                'success' => true,
+                'servicios' => $data
+            ], JSON_PRETTY_PRINT);
         } catch (\Exception $e) {
             http_response_code(500);
-            echo json_encode(['error' => 'Error al obtener servicios']);
+            echo json_encode([
+                'success' => false,
+                'error' => 'Error al obtener servicios'
+            ], JSON_PRETTY_PRINT);
         }
     }
 
