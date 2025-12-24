@@ -180,15 +180,34 @@ const renderBookingsTable = (bookings) => {
     return;
   }
 
+  const getSortIcon = (field) => {
+    if (currentFilters.sort !== field) return '<i class="bi bi-arrow-down-up text-muted"></i>';
+    return currentFilters.order === "asc"
+      ? '<i class="bi bi-caret-up-fill"></i>'
+      : '<i class="bi bi-caret-down-fill"></i>';
+  };
+
   const tableHTML = `
     <table class="table table-hover align-middle">
       <thead class="table-light">
         <tr>
           <th>ID</th>
-          <th>Cliente</th>
-          <th>Especialista</th>
+          <th>
+            <a href="#" class="text-decoration-none text-dark sort-link" data-sort="cliente">
+              Cliente ${getSortIcon("cliente")}
+            </a>
+          </th>
+          <th>
+            <a href="#" class="text-decoration-none text-dark sort-link" data-sort="especialista">
+              Especialista ${getSortIcon("especialista")}
+            </a>
+          </th>
           <th>Servicio</th>
-          <th>Fecha</th>
+          <th>
+            <a href="#" class="text-decoration-none text-dark sort-link" data-sort="fecha">
+              Fecha ${getSortIcon("fecha")}
+            </a>
+          </th>
           <th>Hora</th>
           <th>Estado</th>
           <th class="text-end">Acciones</th>
@@ -229,14 +248,17 @@ const renderBookingsTable = (bookings) => {
               >
                 <i class="bi bi-pencil"></i>
               </button>
-              <button
-                type="button"
-                class="btn btn-sm btn-outline-danger btn-delete-booking"
-                data-booking-id="${booking.id_reserva}"
-                title="Eliminar"
-              >
-                <i class="bi bi-trash"></i>
-              </button>
+              ${
+                booking.estado !== "Pendiente"
+                  ? `<span class="d-inline-block" title="Solo se pueden eliminar reservas pendientes" style="cursor: not-allowed">
+                     <button type="button" class="btn btn-sm btn-outline-danger btn-delete-booking" disabled style="pointer-events: none">
+                       <i class="bi bi-trash"></i>
+                     </button>
+                   </span>`
+                  : `<button type="button" class="btn btn-sm btn-outline-danger btn-delete-booking" data-booking-id="${booking.id_reserva}" title="Eliminar">
+                     <i class="bi bi-trash"></i>
+                   </button>`
+              }
             </td>
           </tr>
         `
@@ -249,6 +271,34 @@ const renderBookingsTable = (bookings) => {
   bookingsTableContainer.innerHTML = tableHTML;
   attachDeleteHandlers();
   attachEditHandlers();
+  attachSortHandlers();
+};
+
+const attachSortHandlers = () => {
+  document.querySelectorAll(".sort-link").forEach((link) => {
+    link.addEventListener("click", (e) => {
+      e.preventDefault();
+      const sortField = e.currentTarget.dataset.sort;
+
+      // Toggle order
+      if (currentFilters.sort === sortField) {
+        currentFilters.order = currentFilters.order === "asc" ? "desc" : "asc";
+      } else {
+        currentFilters.sort = sortField;
+        currentFilters.order = "asc";
+      }
+
+      fetchBookings(1, currentFilters);
+      updateUrlParams(currentFilters);
+      updatePdfExportLink(new URLSearchParams(currentFilters));
+    });
+  });
+};
+
+const updateUrlParams = (filters) => {
+  const params = new URLSearchParams(filters);
+  const newUrl = `${window.location.pathname}?${params.toString()}`;
+  window.history.pushState({}, "", newUrl);
 };
 
 /**
@@ -622,16 +672,18 @@ btnApplyFilters.addEventListener("click", () => {
     if (!filters[key]) delete filters[key];
   });
 
+  // Preserve existing sort order
+  if (currentFilters.sort) filters.sort = currentFilters.sort;
+  if (currentFilters.order) filters.order = currentFilters.order;
+
   currentFilters = filters;
   fetchBookings(1, filters);
 
   // Update URL parameters without reloading
-  const params = new URLSearchParams(filters);
-  const newUrl = `${window.location.pathname}?${params.toString()}`;
-  window.history.pushState({}, "", newUrl);
+  updateUrlParams(filters);
 
   // Update PDF Export Link dinamically
-  updatePdfExportLink(params);
+  updatePdfExportLink(new URLSearchParams(filters));
 });
 
 btnClearFilters.addEventListener("click", () => {
