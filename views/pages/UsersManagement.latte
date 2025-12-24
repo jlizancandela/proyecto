@@ -167,7 +167,11 @@
             {$user['activo'] ? 'Activo' : 'Inactivo'}
           </span>
           {else}
-          <span class="badge bg-{$user['activo'] ? 'success' : 'secondary'}">
+          <span
+            class="badge bg-{$user['activo'] ? 'success' : 'secondary'}"
+            style="cursor: not-allowed"
+            title="No se puede desactivar al Administrador"
+          >
             {$user['activo'] ? 'Activo' : 'Inactivo'}
           </span>
           {/if}
