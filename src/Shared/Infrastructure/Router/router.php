@@ -103,6 +103,11 @@ $router->get('/admin/services', function () use ($latte, $servicioService) {
     echo $controller->servicesManagement();
 });
 
+$router->get('/admin/bookings', function () use ($latte) {
+    $controller = new AdminController($latte);
+    echo $controller->bookingsManagement();
+});
+
 $router->get('/user', function () use ($latte, $reservaService) {
     $controller = new UserController($latte, $reservaService);
     echo $controller->index();
