@@ -31,7 +31,7 @@ class UserApiController
         header('Content-Type: application/json');
 
         try {
-            $limit = 10;
+            $limit = min((int) ($_GET['limit'] ?? 10), 1000);
             $page = (int) ($_GET['page'] ?? 1);
             $search = trim($_GET['search'] ?? '');
             $offset = ($page - 1) * $limit;
@@ -87,7 +87,7 @@ class UserApiController
                     $userData['descripcion'] = $especialistaData['descripcion'];
                     $userData['foto_url'] = $especialistaData['foto_url'];
                     $especialistaId = $especialistaData['id_especialista'];
-                    
+
                     $servicios = $this->especialistaServicioRepository->getServiciosForEspecialista($especialistaId);
                     $userData['servicios'] = array_map(fn($s) => $s->getIdServicio(), $servicios);
                 } else {
