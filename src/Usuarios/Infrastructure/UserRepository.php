@@ -26,13 +26,33 @@ class UserRepository
         return $this->db;
     }
 
-    public function getAllUsers($limit = 10, $offset = 0): array
+    public function getAllUsers($limit = 10, $offset = 0, $sort = '', $order = 'asc'): array
     {
         try {
-            $query = "SELECT * FROM USUARIO LIMIT :limit OFFSET :offset";
+            // Dynamic ORDER BY
+            $orderBy = "id_usuario DESC";
+            if (!empty($sort)) {
+                $orderDirection = strtoupper($order) === 'DESC' ? 'DESC' : 'ASC';
+                switch ($sort) {
+                    case 'nombre':
+                        $orderBy = "nombre $orderDirection, apellidos $orderDirection";
+                        break;
+                    case 'email':
+                        $orderBy = "email $orderDirection";
+                        break;
+                    case 'rol':
+                        $orderBy = "rol $orderDirection";
+                        break;
+                    case 'fecha':
+                        $orderBy = "fecha_registro $orderDirection";
+                        break;
+                }
+            }
+
+            $query = "SELECT * FROM USUARIO ORDER BY $orderBy LIMIT :limit OFFSET :offset";
             $stmt = $this->db->prepare($query);
-            $stmt->bindParam(":limit", $limit);
-            $stmt->bindParam(":offset", $offset);
+            $stmt->bindParam(":limit", $limit, PDO::PARAM_INT);
+            $stmt->bindParam(":offset", $offset, PDO::PARAM_INT);
             $stmt->execute();
 
             $users = [];
@@ -62,14 +82,35 @@ class UserRepository
         }
     }
 
-    public function searchUsers(string $search, int $limit = 10, int $offset = 0): array
+    public function searchUsers(string $search, int $limit = 10, int $offset = 0, $sort = '', $order = 'asc'): array
     {
         try {
+            // Dynamic ORDER BY
+            $orderBy = "id_usuario DESC";
+            if (!empty($sort)) {
+                $orderDirection = strtoupper($order) === 'DESC' ? 'DESC' : 'ASC';
+                switch ($sort) {
+                    case 'nombre':
+                        $orderBy = "nombre $orderDirection, apellidos $orderDirection";
+                        break;
+                    case 'email':
+                        $orderBy = "email $orderDirection";
+                        break;
+                    case 'rol':
+                        $orderBy = "rol $orderDirection";
+                        break;
+                    case 'fecha':
+                        $orderBy = "fecha_registro $orderDirection";
+                        break;
+                }
+            }
+
             $query = "SELECT * FROM USUARIO 
                       WHERE nombre LIKE :search1 
                       OR apellidos LIKE :search2 
                       OR email LIKE :search3 
                       OR telefono LIKE :search4 
+                      ORDER BY $orderBy
                       LIMIT :limit OFFSET :offset";
             $stmt = $this->db->prepare($query);
             $searchParam = "%{$search}%";
@@ -157,10 +198,30 @@ class UserRepository
     /**
      * Obtiene usuarios por rol con paginación
      */
-    public function getUsersByRole(string $rol, int $limit = 10, int $offset = 0): array
+    public function getUsersByRole(string $rol, int $limit = 10, int $offset = 0, $sort = '', $order = 'asc'): array
     {
         try {
-            $query = "SELECT * FROM USUARIO WHERE rol = :rol LIMIT :limit OFFSET :offset";
+            // Dynamic ORDER BY
+            $orderBy = "id_usuario DESC";
+            if (!empty($sort)) {
+                $orderDirection = strtoupper($order) === 'DESC' ? 'DESC' : 'ASC';
+                switch ($sort) {
+                    case 'nombre':
+                        $orderBy = "nombre $orderDirection, apellidos $orderDirection";
+                        break;
+                    case 'email':
+                        $orderBy = "email $orderDirection";
+                        break;
+                    case 'rol':
+                        $orderBy = "rol $orderDirection";
+                        break;
+                    case 'fecha':
+                        $orderBy = "fecha_registro $orderDirection";
+                        break;
+                }
+            }
+
+            $query = "SELECT * FROM USUARIO WHERE rol = :rol ORDER BY $orderBy LIMIT :limit OFFSET :offset";
             $stmt = $this->db->prepare($query);
             $stmt->bindValue(":rol", $rol);
             $stmt->bindValue(":limit", $limit, PDO::PARAM_INT);
