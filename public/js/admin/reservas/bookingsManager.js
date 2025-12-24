@@ -607,6 +607,57 @@ document.querySelectorAll(".btn-edit-booking").forEach((btn) => {
   btn.addEventListener("click", handleEditBooking);
 });
 
+// Filter handlers
+btnApplyFilters.addEventListener("click", () => {
+  const filters = {
+    cliente: filterCliente.value,
+    especialista: filterEspecialista.value,
+    estado: filterEstado.value,
+    fecha_desde: filterFechaDesde.value,
+    fecha_hasta: filterFechaHasta.value,
+  };
+
+  // Remove empty filters
+  Object.keys(filters).forEach((key) => {
+    if (!filters[key]) delete filters[key];
+  });
+
+  currentFilters = filters;
+  fetchBookings(1, filters);
+
+  // Update URL parameters without reloading
+  const params = new URLSearchParams(filters);
+  const newUrl = `${window.location.pathname}?${params.toString()}`;
+  window.history.pushState({}, "", newUrl);
+
+  // Update PDF Export Link dinamically
+  updatePdfExportLink(params);
+});
+
+btnClearFilters.addEventListener("click", () => {
+  filterCliente.value = "";
+  filterEspecialista.value = "";
+  filterEstado.value = "";
+  filterFechaDesde.value = "";
+  filterFechaHasta.value = "";
+
+  currentFilters = {};
+  fetchBookings(1, {});
+
+  // Clean URL params
+  window.history.pushState({}, "", window.location.pathname);
+
+  // Reset PDF Export Link
+  updatePdfExportLink(new URLSearchParams());
+});
+
+const updatePdfExportLink = (params) => {
+  const pdfLink = document.querySelector('a[href^="/admin/bookings/pdf"]');
+  if (pdfLink) {
+    pdfLink.href = `/admin/bookings/pdf?${params.toString()}`;
+  }
+};
+
 // Populate filter selectors on page load
 (async () => {
   try {
@@ -616,9 +667,36 @@ document.querySelectorAll(".btn-edit-booking").forEach((btn) => {
     const urlParams = new URLSearchParams(window.location.search);
     const clienteParam = urlParams.get("cliente");
     const especialistaParam = urlParams.get("especialista");
+    const estadoParam = urlParams.get("estado");
+    const fechaDesdeParam = urlParams.get("fecha_desde");
+    const fechaHastaParam = urlParams.get("fecha_hasta");
+    const sortParam = urlParams.get("sort");
+    const orderParam = urlParams.get("order");
 
-    if (clienteParam) document.getElementById("filterCliente").value = clienteParam;
-    if (especialistaParam) document.getElementById("filterEspecialista").value = especialistaParam;
+    if (clienteParam) {
+      document.getElementById("filterCliente").value = clienteParam;
+      currentFilters.cliente = clienteParam;
+    }
+    if (especialistaParam) {
+      document.getElementById("filterEspecialista").value = especialistaParam;
+      currentFilters.especialista = especialistaParam;
+    }
+    if (estadoParam) {
+      document.getElementById("filterEstado").value = estadoParam;
+      currentFilters.estado = estadoParam;
+    }
+    if (fechaDesdeParam) {
+      document.getElementById("filterFechaDesde").value = fechaDesdeParam;
+      currentFilters.fecha_desde = fechaDesdeParam;
+    }
+    if (fechaHastaParam) {
+      document.getElementById("filterFechaHasta").value = fechaHastaParam;
+      currentFilters.fecha_hasta = fechaHastaParam;
+    }
+
+    // Persist sort/order filters if present
+    if (sortParam) currentFilters.sort = sortParam;
+    if (orderParam) currentFilters.order = orderParam;
   } catch (error) {
     console.error("Error loading filter selectors:", error);
   }
