@@ -43,8 +43,8 @@ let currentEditUserServices = [];
 const loadServices = () => {
   fetch("/api/services")
     .then((response) => response.json())
-    .then((services) => {
-      availableServices = services;
+    .then((data) => {
+      availableServices = data.success ? data.servicios : [];
       populateServicesSelect(createServiciosSelect, []);
       // Usar los servicios guardados si ya se abrió el modal de edición
       populateServicesSelect(editServiciosSelect, currentEditUserServices);
@@ -140,8 +140,8 @@ const editUser = (userId) => {
           if (availableServices.length === 0) {
             fetch("/api/services")
               .then((response) => response.json())
-              .then((services) => {
-                availableServices = services;
+              .then((data) => {
+                availableServices = data.success ? data.servicios : [];
                 populateServicesSelect(editServiciosSelect, currentEditUserServices);
               })
               .catch((error) => {
