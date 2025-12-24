@@ -2,6 +2,9 @@
 ├── index.php
 ├── public/
 │   └── js/
+│       ├── admin/
+│       │   └── reservas/
+│       │       └── bookingsManager.js        # Nuevo - Gestión admin reservas
 │       └── user/
 │           └── bookings/
 │               ├── context/
@@ -38,6 +41,7 @@
 │   │   ├── Infrastructure/
 │   │   │   └── ReservaRepository.php
 │   │   └── Presentation/
+│   │       ├── BookingAdminApiController.php # Nuevo - Admin CRUD
 │   │       ├── BookingApiController.php
 │   │       ├── BookingController.php
 │   │       ├── MyBookingsController.php
@@ -127,6 +131,7 @@
     │   ├── user-panel-layout.latte
     │   └── userPanelScripts.latte
     ├── pages/
+    │   ├── BookingsManagement.latte       # Nueva página - Admin reservas
     │   ├── ServicesManagement.latte       # Nueva página
     │   ├── Reactivate.latte               # Nueva página
     │   ├── Admin.latte
