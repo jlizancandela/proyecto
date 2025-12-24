@@ -211,21 +211,22 @@ class UserApiController
                 return;
             }
 
-            // Proteger Admin: no permitir eliminación
+            // Proteger Admin: no permitir desactivación
             if ($user->getRol() === \Usuarios\Domain\UserRole::Admin) {
                 http_response_code(403);
                 echo json_encode([
                     'success' => false,
-                    'error' => 'No se puede eliminar un usuario administrador'
+                    'error' => 'No se puede desactivar un usuario administrador'
                 ], JSON_PRETTY_PRINT);
                 return;
             }
 
-            $this->userService->deleteUser($id);
+            // Baja lógica: desactivar usuario en lugar de eliminar
+            $this->userService->deactivateUser($id);
 
             echo json_encode([
                 'success' => true,
-                'message' => 'Usuario eliminado correctamente'
+                'message' => 'Usuario desactivado correctamente'
             ], JSON_PRETTY_PRINT);
         } catch (\Exception $e) {
             http_response_code(500);
