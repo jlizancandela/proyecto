@@ -92,7 +92,7 @@ const renderBookingsTable = (bookings) => {
             </td>
             <td>
               <div>${booking.servicio.nombre}</div>
-              <small class="text-muted">${booking.servicio.duracion} min - €${
+              <small class="text-muted">${booking.servicio.duracion_minutos} min - €${
               booking.servicio.precio
             }</small>
             </td>

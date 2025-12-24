@@ -56,38 +56,7 @@ class BookingAdminApiController
             $total = $this->reservaService->countAllReservasWithFilters($filtros);
             $totalPages = (int) ceil($total / $limit);
 
-            $bookingsData = [];
-            foreach ($bookings as $booking) {
-                $bookingsData[] = [
-                    'id_reserva' => $booking->id_reserva,
-                    'cliente' => [
-                        'id' => $booking->id_cliente,
-                        'nombre' => $booking->cliente_nombre,
-                        'apellidos' => $booking->cliente_apellidos,
-                        'email' => $booking->cliente_email,
-                        'telefono' => $booking->cliente_telefono
-                    ],
-                    'especialista' => [
-                        'id' => $booking->id_especialista,
-                        'nombre' => $booking->especialista_nombre,
-                        'apellidos' => $booking->especialista_apellidos,
-                        'email' => $booking->especialista_email,
-                        'telefono' => $booking->especialista_telefono
-                    ],
-                    'servicio' => [
-                        'id' => $booking->id_servicio,
-                        'nombre' => $booking->nombre_servicio,
-                        'duracion' => $booking->duracion_minutos,
-                        'precio' => $booking->precio
-                    ],
-                    'fecha_reserva' => $booking->fecha_reserva,
-                    'hora_inicio' => $booking->hora_inicio,
-                    'hora_fin' => $booking->hora_fin,
-                    'estado' => $booking->estado,
-                    'observaciones' => $booking->observaciones,
-                    'fecha_creacion' => $booking->fecha_creacion
-                ];
-            }
+            $bookingsData = array_map(fn($booking) => $booking->toArray(), $bookings);
 
             http_response_code(200);
             echo json_encode([
@@ -132,33 +101,7 @@ class BookingAdminApiController
             http_response_code(200);
             echo json_encode([
                 'success' => true,
-                'data' => [
-                    'id_reserva' => $booking->id_reserva,
-                    'cliente' => [
-                        'id' => $booking->id_cliente,
-                        'nombre' => $booking->cliente_nombre,
-                        'apellidos' => $booking->cliente_apellidos,
-                        'email' => $booking->cliente_email,
-                        'telefono' => $booking->cliente_telefono
-                    ],
-                    'especialista' => [
-                        'id' => $booking->id_especialista,
-                        'nombre' => $booking->especialista_nombre,
-                        'apellidos' => $booking->especialista_apellidos
-                    ],
-                    'servicio' => [
-                        'id' => $booking->id_servicio,
-                        'nombre' => $booking->nombre_servicio,
-                        'duracion' => $booking->duracion_minutos,
-                        'precio' => $booking->precio
-                    ],
-                    'fecha_reserva' => $booking->fecha_reserva,
-                    'hora_inicio' => $booking->hora_inicio,
-                    'hora_fin' => $booking->hora_fin,
-                    'estado' => $booking->estado,
-                    'observaciones' => $booking->observaciones,
-                    'fecha_creacion' => $booking->fecha_creacion
-                ]
+                'data' => $booking->toArray()
             ], JSON_PRETTY_PRINT);
         } catch (\Exception $e) {
             error_log("Error getting booking: " . $e->getMessage());
