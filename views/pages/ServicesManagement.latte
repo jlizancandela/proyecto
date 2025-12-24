@@ -2,20 +2,17 @@
 <div class="mb-4">
   <h1 class="mb-4">Gestión de Servicios</h1>
 
-  {* Botón crear *}
-  <div class="row g-3 mb-3 justify-content-end">
-    <div class="col-12 col-md-auto">
-      <button
-        type="button"
-        class="btn btn-primary shadow-sm w-100 w-md-auto px-4"
-        data-bs-toggle="modal"
-        data-bs-target="#createServiceModal"
-      >
-        <i class="bi bi-plus-circle me-2"></i>
-        Nuevo Servicio
-      </button>
-    </div>
-  </div>
+  {* Botón flotante para nuevo servicio *}
+  <button
+    type="button"
+    class="btn btn-primary rounded-circle shadow-lg"
+    data-bs-toggle="modal"
+    data-bs-target="#createServiceModal"
+    style="position: fixed; bottom: 2rem; right: 2rem; width: 60px; height: 60px; z-index: 1000"
+    title="Nuevo Servicio"
+  >
+    <i class="bi bi-plus-lg fs-4"></i>
+  </button>
 
   {* Tabla de servicios *} {if count($servicios) > 0}
   <div class="table-responsive">
