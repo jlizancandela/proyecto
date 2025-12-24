@@ -369,7 +369,7 @@ class UserApiController
             $this->userService->updateUser($user);
 
             // Si es especialista, actualizar servicios
-            if ($data['rol'] === 'Especialista' && isset($data['servicios'])) {
+            if ($rol === 'Especialista' && isset($data['servicios'])) {
                 // Verificar si ya existe entrada en especialistas, si no, crearla
                 $especialistaId = $this->especialistaRepository->getEspecialistaIdByUserId($id);
 
