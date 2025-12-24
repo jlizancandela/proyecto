@@ -287,8 +287,29 @@ class ReservaRepository
                 $params['fecha_hasta'] = $filtros['fecha_hasta'];
             }
 
-            $sql .= " ORDER BY r.fecha_reserva DESC, r.hora_inicio DESC";
+
+            // Dynamic ORDER BY based on sort parameter
+            $orderBy = "r.fecha_reserva DESC, r.hora_inicio DESC"; // Default
+
+            if (isset($filtros['sort'])) {
+                $order = isset($filtros['order']) && strtoupper($filtros['order']) === 'DESC' ? 'DESC' : 'ASC';
+
+                switch ($filtros['sort']) {
+                    case 'cliente':
+                        $orderBy = "c.nombre $order, c.apellidos $order";
+                        break;
+                    case 'especialista':
+                        $orderBy = "u.nombre $order, u.apellidos $order";
+                        break;
+                    case 'fecha':
+                        $orderBy = "r.fecha_reserva $order, r.hora_inicio $order";
+                        break;
+                }
+            }
+
+            $sql .= " ORDER BY $orderBy";
             $sql .= " LIMIT :limit OFFSET :offset";
+
 
             $stmt = $this->db->prepare($sql);
 
