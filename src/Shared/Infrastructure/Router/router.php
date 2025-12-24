@@ -94,7 +94,7 @@ $router->get('/admin', function () use ($latte) {
 });
 
 $router->get('/admin/users', function () use ($latte, $userService, $especialistaServicioRepository, $especialistaRepository) {
-    $controller = new AdminController($latte, $userService, null, $especialistaServicioRepository, $especialistaRepository);
+    $controller = new AdminController($latte, $userService, null, null, $especialistaServicioRepository, $especialistaRepository);
     echo $controller->usersManagement();
 });
 
