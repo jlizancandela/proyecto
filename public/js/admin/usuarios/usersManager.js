@@ -173,11 +173,6 @@ const editUser = (userId) => {
  */
 const toggleUserStatus = (userId, userName, currentStatus) => {
   const newStatus = currentStatus === "1" ? "0" : "1";
-  const actionText = newStatus === "1" ? "activar" : "desactivar";
-
-  if (!confirm(`¿Estás seguro de ${actionText} a ${userName}?`)) {
-    return;
-  }
 
   const formData = new FormData();
   formData.append("activo", newStatus);
