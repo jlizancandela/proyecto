@@ -79,4 +79,64 @@ class PdfExportController
         // Output PDF
         $dompdf->stream("mis-reservas.pdf", ["Attachment" => false]);
     }
+
+    /**
+     * Exporta todas las reservas (visión admin) a PDF aplicando filtros
+     *
+     * @return void Envía el PDF directamente al navegador
+     */
+    public function exportAdminReservas(): void
+    {
+        // Get filter parameters mapped from query string
+        $filtros = [];
+
+        if (!empty($_GET['cliente'])) {
+            $filtros['cliente'] = (int)$_GET['cliente'];
+        }
+
+        if (!empty($_GET['especialista'])) {
+            $filtros['especialista'] = (int)$_GET['especialista'];
+        }
+
+        if (!empty($_GET['estado'])) {
+            $filtros['estado'] = $_GET['estado'];
+        }
+
+        if (!empty($_GET['fecha_desde'])) {
+            $filtros['fecha_desde'] = $_GET['fecha_desde'];
+        }
+
+        if (!empty($_GET['fecha_hasta'])) {
+            $filtros['fecha_hasta'] = $_GET['fecha_hasta'];
+        }
+
+        // Get all bookings (limit 1000 for PDF performance)
+        $bookings = $this->reservaService->getAllReservasWithFilters(
+            $filtros,
+            1000,
+            0
+        );
+
+        // Render HTML using Latte
+        $html = $this->latte->renderToString(
+            __DIR__ . '/../../../views/pdf/admin-reservas-pdf.latte',
+            [
+                'bookings' => $bookings,
+                'fechaDesde' => $filtros['fecha_desde'] ?? null,
+                'fechaHasta' => $filtros['fecha_hasta'] ?? null,
+                'estado' => $filtros['estado'] ?? null,
+                'clienteId' => $filtros['cliente'] ?? null,
+                'especialistaId' => $filtros['especialista'] ?? null
+            ]
+        );
+
+        // Generate PDF
+        $dompdf = new Dompdf();
+        $dompdf->loadHtml($html);
+        $dompdf->setPaper('A4', 'landscape'); // Landscape for better table fit
+        $dompdf->render();
+
+        // Output PDF
+        $dompdf->stream("gestion-reservas.pdf", ["Attachment" => false]);
+    }
 }
