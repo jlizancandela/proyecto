@@ -186,6 +186,59 @@ $router->get('/admin/api/especialistas', function () use ($especialistaRepositor
     }
 });
 
+// Endpoint para estadísticas de ocupación de especialistas
+$router->get('/admin/api/stats/specialist-occupancy', function () use ($especialistaRepository, $reservaService) {
+    header('Content-Type: application/json');
+    try {
+        $especialistas = $especialistaRepository->getAllEspecialistasWithUserData();
+
+        $labels = [];
+        $data = [];
+        $colors = [
+            'rgba(255, 99, 132, 0.8)',
+            'rgba(54, 162, 235, 0.8)',
+            'rgba(255, 206, 86, 0.8)',
+            'rgba(75, 192, 192, 0.8)',
+            'rgba(153, 102, 255, 0.8)',
+            'rgba(255, 159, 64, 0.8)',
+            'rgba(199, 199, 199, 0.8)',
+            'rgba(83, 102, 255, 0.8)',
+            'rgba(255, 99, 255, 0.8)',
+            'rgba(99, 255, 132, 0.8)'
+        ];
+
+        foreach ($especialistas as $especialista) {
+            $labels[] = $especialista['nombre'] . ' ' . $especialista['apellidos'];
+
+            // Count active bookings for this specialist
+            $bookings = $reservaService->getAllReservasWithFilters([
+                'especialista' => $especialista['id'],
+                'estado' => null // All states except we'll filter
+            ], 1000, 0);
+
+            // Count only active bookings (not cancelled)
+            $activeCount = count(array_filter($bookings, function ($booking) {
+                return $booking->estado !== 'Cancelada';
+            }));
+
+            $data[] = $activeCount;
+        }
+
+        echo json_encode([
+            'success' => true,
+            'labels' => $labels,
+            'data' => $data,
+            'colors' => array_slice($colors, 0, count($labels))
+        ], JSON_PRETTY_PRINT);
+    } catch (\Exception $e) {
+        http_response_code(500);
+        echo json_encode([
+            'success' => false,
+            'error' => 'Error al obtener estadísticas de ocupación'
+        ], JSON_PRETTY_PRINT);
+    }
+});
+
 $router->post('/admin/api/users', function () use ($latte, $userService, $especialistaServicioRepository, $especialistaRepository) {
     $controller = new UserApiController($latte, $userService, $especialistaServicioRepository, $especialistaRepository);
     $controller->createUser();
