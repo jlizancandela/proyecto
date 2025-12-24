@@ -68,16 +68,16 @@ const loadSpecialists = async (selectId) => {
   select.disabled = true;
 
   try {
-    const response = await fetch("/admin/api/users?rol=Especialista&limit=1000");
+    const response = await fetch("/admin/api/especialistas");
     const data = await response.json();
 
     if (data.success) {
       select.innerHTML = '<option value="">Selecciona un especialista...</option>';
 
-      data.users.forEach((user) => {
+      data.especialistas.forEach((especialista) => {
         const option = document.createElement("option");
-        option.value = user.id;
-        option.textContent = `${user.nombre} ${user.apellidos}`;
+        option.value = especialista.id;
+        option.textContent = `${especialista.nombre} ${especialista.apellidos}`;
         select.appendChild(option);
       });
 
