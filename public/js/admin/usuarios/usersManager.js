@@ -64,7 +64,7 @@ const populateServicesCheckboxes = (container, selectedIds = [], prefix = "creat
   container.innerHTML = "";
   availableServices.forEach((service) => {
     const col = document.createElement("div");
-    col.className = "col-6";
+    col.className = "col-4";
 
     const wrapper = document.createElement("div");
     wrapper.className = "form-check";
