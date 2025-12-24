@@ -13,6 +13,7 @@ class AdminController
     private Engine $latte;
     private ?UserService $userService;
     private ?ServicioService $servicioService;
+    private ?\Reservas\Application\ReservaService $reservaService;
     private ?\Especialistas\Infrastructure\EspecialistaServicioRepository $especialistaServicioRepository;
     private ?\Especialistas\Infrastructure\EspecialistaRepository $especialistaRepository;
 
@@ -20,12 +21,14 @@ class AdminController
         Engine $latte,
         ?UserService $userService = null,
         ?ServicioService $servicioService = null,
+        ?\Reservas\Application\ReservaService $reservaService = null,
         ?\Especialistas\Infrastructure\EspecialistaServicioRepository $especialistaServicioRepository = null,
         ?\Especialistas\Infrastructure\EspecialistaRepository $especialistaRepository = null
     ) {
         $this->latte = $latte;
         $this->userService = $userService;
         $this->servicioService = $servicioService;
+        $this->reservaService = $reservaService;
         $this->especialistaServicioRepository = $especialistaServicioRepository;
         $this->especialistaRepository = $especialistaRepository;
     }
@@ -122,10 +125,47 @@ class AdminController
 
     public function bookingsManagement(): string
     {
+        $limit = 10;
+        $page = (int) ($_GET['page'] ?? 1);
+        $offset = ($page - 1) * $limit;
+
+        $filtros = [];
+
+        if (!empty($_GET['cliente'])) {
+            $filtros['cliente'] = (int) $_GET['cliente'];
+        }
+
+        if (!empty($_GET['especialista'])) {
+            $filtros['especialista'] = (int) $_GET['especialista'];
+        }
+
+        if (!empty($_GET['estado'])) {
+            $filtros['estado'] = trim($_GET['estado']);
+        }
+
+        if (!empty($_GET['fecha_desde'])) {
+            $filtros['fecha_desde'] = trim($_GET['fecha_desde']);
+        }
+
+        if (!empty($_GET['fecha_hasta'])) {
+            $filtros['fecha_hasta'] = trim($_GET['fecha_hasta']);
+        }
+
+        $reservas = $this->reservaService->getAllReservasWithFilters($filtros, $limit, $offset);
+        $total = $this->reservaService->countAllReservasWithFilters($filtros);
+        $totalPages = (int) ceil($total / $limit);
+
+        $reservasData = array_map(fn($reserva) => $reserva->toArray(), $reservas);
+
         return $this->latte->renderToString(
             __DIR__ . '/../../../views/pages/BookingsManagement.latte',
             [
                 'userName' => ucfirst($_SESSION['name'] ?? 'Usuario'),
+                'reservas' => $reservasData,
+                'page' => $page,
+                'totalPages' => $totalPages,
+                'total' => $total,
+                'filtros' => $filtros,
                 'currentUrl' => $_SERVER['REQUEST_URI'] ?? '/admin/bookings'
             ]
         );
