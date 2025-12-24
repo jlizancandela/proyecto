@@ -76,9 +76,42 @@
     <thead class="table-light">
       <tr>
         <th>ID</th>
-        <th>Nombre</th>
-        <th>Email</th>
-        <th>Rol</th>
+        <th>
+          <a
+            href="?{http_build_query(array_merge($_GET, ['sort' => 'nombre', 'order' => ($_GET['sort'] ?? '') === 'nombre' && ($_GET['order'] ?? 'asc') === 'asc' ? 'desc' : 'asc']))}"
+            class="text-decoration-none text-dark"
+          >
+            Nombre {if ($_GET['sort'] ?? '') === 'nombre'}
+            <i class="bi bi-caret-{($_GET['order'] ?? 'asc') === 'asc' ? 'up' : 'down'}-fill"></i>
+            {else}
+            <i class="bi bi-arrow-down-up text-muted"></i>
+            {/if}
+          </a>
+        </th>
+        <th>
+          <a
+            href="?{http_build_query(array_merge($_GET, ['sort' => 'email', 'order' => ($_GET['sort'] ?? '') === 'email' && ($_GET['order'] ?? 'asc') === 'asc' ? 'desc' : 'asc']))}"
+            class="text-decoration-none text-dark"
+          >
+            Email {if ($_GET['sort'] ?? '') === 'email'}
+            <i class="bi bi-caret-{($_GET['order'] ?? 'asc') === 'asc' ? 'up' : 'down'}-fill"></i>
+            {else}
+            <i class="bi bi-arrow-down-up text-muted"></i>
+            {/if}
+          </a>
+        </th>
+        <th>
+          <a
+            href="?{http_build_query(array_merge($_GET, ['sort' => 'rol', 'order' => ($_GET['sort'] ?? '') === 'rol' && ($_GET['order'] ?? 'asc') === 'asc' ? 'desc' : 'asc']))}"
+            class="text-decoration-none text-dark"
+          >
+            Rol {if ($_GET['sort'] ?? '') === 'rol'}
+            <i class="bi bi-caret-{($_GET['order'] ?? 'asc') === 'asc' ? 'up' : 'down'}-fill"></i>
+            {else}
+            <i class="bi bi-arrow-down-up text-muted"></i>
+            {/if}
+          </a>
+        </th>
         <th>Servicios</th>
         <th>Teléfono</th>
         <th>Fecha Registro</th>

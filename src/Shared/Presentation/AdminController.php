@@ -50,17 +50,19 @@ class AdminController
         $page = (int) ($_GET['page'] ?? 1);
         $search = trim($_GET['search'] ?? '');
         $rol = trim($_GET['rol'] ?? '');
+        $sort = trim($_GET['sort'] ?? '');
+        $order = trim($_GET['order'] ?? 'asc');
         $offset = ($page - 1) * $limit;
 
         // Filtrar por rol si está especificado
         if (!empty($rol)) {
-            $users = $this->userService->getUsersByRole($rol, $limit, $offset);
+            $users = $this->userService->getUsersByRole($rol, $limit, $offset, $sort, $order);
             $total = $this->userService->getTotalUsersByRole($rol);
         } elseif (!empty($search)) {
-            $users = $this->userService->searchUsers($search, $limit, $offset);
+            $users = $this->userService->searchUsers($search, $limit, $offset, $sort, $order);
             $total = $this->userService->getTotalSearchResults($search);
         } else {
-            $users = $this->userService->getAllUsers($limit, $offset);
+            $users = $this->userService->getAllUsers($limit, $offset, $sort, $order);
             $total = $this->userService->getTotalUsers();
         }
 
