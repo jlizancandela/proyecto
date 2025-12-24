@@ -188,6 +188,11 @@ $router->get('/api/services', function () use ($servicioService) {
     $controller->getAll();
 });
 
+
+$router->get('/admin/api/services', function () use ($servicioService) {
+    $controller = new ServiceApiController($servicioService);
+    $controller->getAll();
+});
 $router->get('/admin/api/services/(\d+)', function ($id) use ($servicioService) {
     $controller = new ServiceApiController($servicioService);
     $controller->getServiceById((int)$id);
