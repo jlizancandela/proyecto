@@ -166,25 +166,33 @@ const editUser = (userId) => {
 };
 
 /**
- * Deletes a user after confirmation.
- * @param {string} userId - The ID of the user to delete.
- * @param {string} userName - The name of the user to delete.
+ * Toggles a user's active status.
+ * @param {string} userId - The ID of the user.
+ * @param {string} userName - The name of the user.
+ * @param {string} currentStatus - Current active status ("1" or "0").
  */
-const deleteUser = (userId, userName) => {
-  if (!confirm("¿Estás seguro de eliminar a " + userName + "?")) {
+const toggleUserStatus = (userId, userName, currentStatus) => {
+  const newStatus = currentStatus === "1" ? "0" : "1";
+  const actionText = newStatus === "1" ? "activar" : "desactivar";
+
+  if (!confirm(`¿Estás seguro de ${actionText} a ${userName}?`)) {
     return;
   }
 
+  const formData = new FormData();
+  formData.append("activo", newStatus);
+
   fetch("/admin/api/users/" + userId, {
-    method: "DELETE",
+    method: "POST",
+    body: formData,
   })
     .then((response) => response.json())
     .then((result) => {
       if (result.success) {
-        alert("Usuario eliminado correctamente");
+        alert(`Usuario ${newStatus === "1" ? "activado" : "desactivado"} correctamente`);
         window.location.reload();
       } else {
-        alert("Error al eliminar: " + result.error);
+        alert("Error al cambiar estado: " + result.error);
       }
     })
     .catch((error) => {
@@ -193,7 +201,7 @@ const deleteUser = (userId, userName) => {
 };
 
 /**
- * Handles document click events for edit and delete user buttons.
+ * Handles document click events for edit and status toggle user buttons.
  */
 const handleDocumentClick = (e) => {
   if (e.target.closest(".btn-edit-user")) {
@@ -201,11 +209,12 @@ const handleDocumentClick = (e) => {
     editUser(userId);
   }
 
-  if (e.target.closest(".btn-delete-user")) {
-    const button = e.target.closest(".btn-delete-user");
-    const userId = button.dataset.userId;
-    const userName = button.dataset.userName;
-    deleteUser(userId, userName);
+  if (e.target.closest(".btn-toggle-status")) {
+    const badge = e.target.closest(".btn-toggle-status");
+    const userId = badge.dataset.userId;
+    const userName = badge.dataset.userName;
+    const currentStatus = badge.dataset.currentStatus;
+    toggleUserStatus(userId, userName, currentStatus);
   }
 };
 

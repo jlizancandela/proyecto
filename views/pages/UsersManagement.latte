@@ -155,9 +155,22 @@
         <td class="text-nowrap">{$user['telefono'] ?? '-'}</td>
         <td class="text-nowrap">{$user['fechaRegistro']}</td>
         <td class="text-nowrap">
+          {if $user['rol'] !== 'Admin'}
+          <span
+            class="badge bg-{$user['activo'] ? 'success' : 'secondary'} btn-toggle-status"
+            style="cursor: pointer"
+            data-user-id="{$user['id']}"
+            data-user-name="{$user['nombreCompleto']}"
+            data-current-status="{$user['activo'] ? '1' : '0'}"
+            title="Click para {$user['activo'] ? 'desactivar' : 'activar'}"
+          >
+            {$user['activo'] ? 'Activo' : 'Inactivo'}
+          </span>
+          {else}
           <span class="badge bg-{$user['activo'] ? 'success' : 'secondary'}">
             {$user['activo'] ? 'Activo' : 'Inactivo'}
           </span>
+          {/if}
         </td>
         <td class="text-end text-nowrap">
           <button
@@ -168,26 +181,6 @@
           >
             <i class="bi bi-pencil"></i>
           </button>
-          {if $user['rol'] !== 'Admin'}
-          <button
-            type="button"
-            class="btn btn-sm btn-outline-danger m-1 btn-delete-user"
-            data-user-id="{$user['id']}"
-            data-user-name="{$user['nombreCompleto']}"
-            title="Eliminar"
-          >
-            <i class="bi bi-trash"></i>
-          </button>
-          {else}
-          <button
-            type="button"
-            class="btn btn-sm btn-outline-secondary m-1"
-            disabled
-            title="No se puede eliminar Admin"
-          >
-            <i class="bi bi-trash"></i>
-          </button>
-          {/if}
         </td>
       </tr>
       {/foreach}
