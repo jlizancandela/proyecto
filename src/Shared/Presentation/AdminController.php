@@ -96,7 +96,8 @@ class AdminController
                 'totalPages' => $totalPages,
                 'search' => $search,
                 'total' => $total,
-                'currentUrl' => $_SERVER['REQUEST_URI'] ?? '/admin/users'
+                'currentUrl' => $_SERVER['REQUEST_URI'] ?? '/admin/users',
+                'availableServices' => $this->servicioService->getAllServices()
             ]
         );
     }
@@ -176,7 +177,10 @@ class AdminController
                 'totalPages' => $totalPages,
                 'total' => $total,
                 'filtros' => $filtros,
-                'currentUrl' => $_SERVER['REQUEST_URI'] ?? '/admin/bookings'
+                'currentUrl' => $_SERVER['REQUEST_URI'] ?? '/admin/bookings',
+                'clients' => $this->userService->getUsersByRole(\Usuarios\Domain\UserRole::Cliente->value, 1000),
+                'specialists' => $this->especialistaRepository->getAllEspecialistasWithUserData(),
+                'services' => $this->servicioService->getAllServices()
             ]
         );
     }

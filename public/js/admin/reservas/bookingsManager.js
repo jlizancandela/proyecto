@@ -16,123 +16,6 @@ const paginationContainer = document.getElementById("paginationContainer");
 let currentPage = 1;
 let currentFilters = {};
 
-// Cache for loaded data to avoid multiple API calls
-let cachedClients = null;
-let cachedSpecialists = null;
-let cachedServices = null;
-
-/**
- * Loads clients into select dropdown
- *
- * @param {string} selectId - ID of the select element
- * @return {Promise<void>}
- */
-const loadClients = async (selectId) => {
-  const select = document.getElementById(selectId);
-  const currentValue = select.value;
-
-  // Show loading
-  select.innerHTML = '<option value="">Cargando clientes...</option>';
-  select.disabled = true;
-
-  try {
-    const response = await fetch("/admin/api/users?limit=1000");
-    const data = await response.json();
-
-    if (data.success) {
-      select.innerHTML = '<option value="">Selecciona un cliente...</option>';
-
-      data.users.forEach((user) => {
-        const option = document.createElement("option");
-        option.value = user.id;
-        option.textContent = `${user.nombre} ${user.apellidos} (${user.email})`;
-        select.appendChild(option);
-      });
-
-      if (currentValue) select.value = currentValue;
-    }
-  } catch (error) {
-    console.error("Error loading clients:", error);
-    select.innerHTML = '<option value="">Error al cargar</option>';
-  } finally {
-    select.disabled = false;
-  }
-};
-
-/**
- * Loads specialists into select dropdown
- *
- * @param {string} selectId - ID of the select element
- * @return {Promise<void>}
- */
-const loadSpecialists = async (selectId) => {
-  const select = document.getElementById(selectId);
-  const currentValue = select.value;
-
-  select.innerHTML = '<option value="">Cargando especialistas...</option>';
-  select.disabled = true;
-
-  try {
-    const response = await fetch("/admin/api/especialistas");
-    const data = await response.json();
-
-    if (data.success) {
-      select.innerHTML = '<option value="">Selecciona un especialista...</option>';
-
-      data.especialistas.forEach((especialista) => {
-        const option = document.createElement("option");
-        option.value = especialista.id;
-        option.textContent = `${especialista.nombre} ${especialista.apellidos}`;
-        select.appendChild(option);
-      });
-
-      if (currentValue) select.value = currentValue;
-    }
-  } catch (error) {
-    console.error("Error loading specialists:", error);
-    select.innerHTML = '<option value="">Error al cargar</option>';
-  } finally {
-    select.disabled = false;
-  }
-};
-
-/**
- * Loads services into select dropdown
- *
- * @param {string} selectId - ID of the select element
- * @return {Promise<void>}
- */
-const loadServices = async (selectId) => {
-  const select = document.getElementById(selectId);
-  const currentValue = select.value;
-
-  select.innerHTML = '<option value="">Cargando servicios...</option>';
-  select.disabled = true;
-
-  try {
-    const response = await fetch("/admin/api/services");
-    const data = await response.json();
-
-    if (data.success) {
-      select.innerHTML = '<option value="">Selecciona un servicio...</option>';
-
-      data.servicios.forEach((service) => {
-        const option = document.createElement("option");
-        option.value = service.id;
-        option.textContent = `${service.nombre_servicio} (${service.duracion_minutos} min - €${service.precio})`;
-        select.appendChild(option);
-      });
-
-      if (currentValue) select.value = currentValue;
-    }
-  } catch (error) {
-    console.error("Error loading services:", error);
-    select.innerHTML = '<option value="">Error al cargar</option>';
-  } finally {
-    select.disabled = false;
-  }
-};
-
 /**
  * Fetches bookings from API
  *
@@ -406,45 +289,17 @@ const handleEditBooking = async (e) => {
     if (data.success) {
       const booking = data.data;
 
-      // Load all selectors first (in parallel)
-      await Promise.all([
-        loadClients("editCliente"),
-        loadSpecialists("editEspecialista"),
-        loadServices("editServicio"),
-      ]);
-
-      // Now populate form with booking data
+      // Form populate with booking data
       document.getElementById("editBookingId").value = booking.id_reserva;
       document.getElementById("editFecha").value = booking.fecha_reserva;
       document.getElementById("editHora").value = booking.hora_inicio;
       document.getElementById("editEstado").value = booking.estado;
       document.getElementById("editObservaciones").value = booking.observaciones || "";
 
-      // Debug: Log the booking data
-      console.log("Booking data:", booking);
-      console.log("Cliente ID from booking:", booking.id_cliente);
-      console.log("Especialista ID from booking:", booking.id_especialista);
-      console.log("Servicio ID from booking:", booking.id_servicio);
-
-      // Set select values with a small delay to ensure DOM is ready
-      setTimeout(() => {
-        const clienteSelect = document.getElementById("editCliente");
-        const especialistaSelect = document.getElementById("editEspecialista");
-        const servicioSelect = document.getElementById("editServicio");
-
-        console.log(
-          "Cliente select options:",
-          Array.from(clienteSelect.options).map((o) => ({ value: o.value, text: o.text }))
-        );
-
-        clienteSelect.value = booking.id_cliente;
-        especialistaSelect.value = booking.id_especialista;
-        servicioSelect.value = booking.id_servicio;
-
-        console.log("Cliente selected value:", clienteSelect.value);
-        console.log("Especialista selected value:", especialistaSelect.value);
-        console.log("Servicio selected value:", servicioSelect.value);
-      }, 100);
+      // Direct value assignment without wait (options already in DOM)
+      document.getElementById("editCliente").value = booking.id_cliente;
+      document.getElementById("editEspecialista").value = booking.id_especialista;
+      document.getElementById("editServicio").value = booking.id_servicio;
 
       // Calculate duration from hora_inicio and hora_fin
       const inicio = new Date(`2000-01-01T${booking.hora_inicio}`);
@@ -639,15 +494,6 @@ const showSuccess = (message) => {
 document.getElementById("createBookingForm").addEventListener("submit", handleCreateBooking);
 document.getElementById("editBookingForm").addEventListener("submit", handleUpdateBooking);
 
-// Load data when create modal is shown
-document.getElementById("createBookingModal").addEventListener("show.bs.modal", async () => {
-  await Promise.all([
-    loadClients("createCliente"),
-    loadSpecialists("createEspecialista"),
-    loadServices("createServicio"),
-  ]);
-});
-
 // Attach handlers to existing table rows (server-rendered)
 document.querySelectorAll(".btn-delete-booking").forEach((btn) => {
   btn.addEventListener("click", handleDeleteBooking);
@@ -710,46 +556,22 @@ const updatePdfExportLink = (params) => {
   }
 };
 
-// Populate filter selectors on page load
-(async () => {
-  try {
-    await Promise.all([loadClients("filterCliente"), loadSpecialists("filterEspecialista")]);
+// Initialize filters state on page load
+(() => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const clienteParam = urlParams.get("cliente");
+  const especialistaParam = urlParams.get("especialista");
+  const estadoParam = urlParams.get("estado");
+  const fechaDesdeParam = urlParams.get("fecha_desde");
+  const fechaHastaParam = urlParams.get("fecha_hasta");
+  const sortParam = urlParams.get("sort");
+  const orderParam = urlParams.get("order");
 
-    // Set filter values from URL if present
-    const urlParams = new URLSearchParams(window.location.search);
-    const clienteParam = urlParams.get("cliente");
-    const especialistaParam = urlParams.get("especialista");
-    const estadoParam = urlParams.get("estado");
-    const fechaDesdeParam = urlParams.get("fecha_desde");
-    const fechaHastaParam = urlParams.get("fecha_hasta");
-    const sortParam = urlParams.get("sort");
-    const orderParam = urlParams.get("order");
-
-    if (clienteParam) {
-      document.getElementById("filterCliente").value = clienteParam;
-      currentFilters.cliente = clienteParam;
-    }
-    if (especialistaParam) {
-      document.getElementById("filterEspecialista").value = especialistaParam;
-      currentFilters.especialista = especialistaParam;
-    }
-    if (estadoParam) {
-      document.getElementById("filterEstado").value = estadoParam;
-      currentFilters.estado = estadoParam;
-    }
-    if (fechaDesdeParam) {
-      document.getElementById("filterFechaDesde").value = fechaDesdeParam;
-      currentFilters.fecha_desde = fechaDesdeParam;
-    }
-    if (fechaHastaParam) {
-      document.getElementById("filterFechaHasta").value = fechaHastaParam;
-      currentFilters.fecha_hasta = fechaHastaParam;
-    }
-
-    // Persist sort/order filters if present
-    if (sortParam) currentFilters.sort = sortParam;
-    if (orderParam) currentFilters.order = orderParam;
-  } catch (error) {
-    console.error("Error loading filter selectors:", error);
-  }
+  if (clienteParam) currentFilters.cliente = clienteParam;
+  if (especialistaParam) currentFilters.especialista = especialistaParam;
+  if (estadoParam) currentFilters.estado = estadoParam;
+  if (fechaDesdeParam) currentFilters.fecha_desde = fechaDesdeParam;
+  if (fechaHastaParam) currentFilters.fecha_hasta = fechaHastaParam;
+  if (sortParam) currentFilters.sort = sortParam;
+  if (orderParam) currentFilters.order = orderParam;
 })();

@@ -93,8 +93,8 @@ $router->get('/admin', function () use ($latte) {
     echo $controller->index();
 });
 
-$router->get('/admin/users', function () use ($latte, $userService, $especialistaServicioRepository, $especialistaRepository) {
-    $controller = new AdminController($latte, $userService, null, null, $especialistaServicioRepository, $especialistaRepository);
+$router->get('/admin/users', function () use ($latte, $userService, $servicioService, $especialistaServicioRepository, $especialistaRepository) {
+    $controller = new AdminController($latte, $userService, $servicioService, null, $especialistaServicioRepository, $especialistaRepository);
     echo $controller->usersManagement();
 });
 
@@ -103,8 +103,8 @@ $router->get('/admin/services', function () use ($latte, $servicioService) {
     echo $controller->servicesManagement();
 });
 
-$router->get('/admin/bookings', function () use ($latte, $reservaService) {
-    $controller = new AdminController($latte, null, null, $reservaService);
+$router->get('/admin/bookings', function () use ($latte, $userService, $servicioService, $reservaService, $especialistaRepository) {
+    $controller = new AdminController($latte, $userService, $servicioService, $reservaService, null, $especialistaRepository);
     echo $controller->bookingsManagement();
 });
 

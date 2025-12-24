@@ -32,67 +32,8 @@ const createDescripcionInput = document.getElementById("createDescripcion");
 const createUserForm = document.getElementById("createUserForm");
 const createUserModal = document.getElementById("createUserModal");
 
-let availableServices = [];
-
 // Variable para almacenar servicios del usuario actual en edición (para manejar condiciones de carrera)
 let currentEditUserServices = [];
-
-/**
- * Loads available services from API
- */
-const loadServices = () => {
-  fetch("/api/services")
-    .then((response) => response.json())
-    .then((data) => {
-      availableServices = data.success ? data.servicios : [];
-      populateServicesCheckboxes(createServiciosCheckboxes, [], "create");
-      // Usar los servicios guardados si ya se abrió el modal de edición
-      populateServicesCheckboxes(editServiciosCheckboxes, currentEditUserServices, "edit");
-    })
-    .catch((error) => {
-      console.error("Error loading services:", error);
-    });
-};
-
-/**
- * Populates a services container with checkboxes
- * @param {HTMLElement} container - The container element to populate
- * @param {array} selectedIds - Array of selected service IDs
- * @param {string} prefix - Prefix for checkbox IDs (create/edit)
- */
-const populateServicesCheckboxes = (container, selectedIds = [], prefix = "create") => {
-  container.innerHTML = "";
-  availableServices.forEach((service) => {
-    const col = document.createElement("div");
-    col.className = "col-4";
-
-    const wrapper = document.createElement("div");
-    wrapper.className = "form-check";
-
-    const input = document.createElement("input");
-    input.className = "form-check-input";
-    input.type = "checkbox";
-    input.value = service.id;
-    input.id = `${prefix}Service${service.id}`;
-    input.name = "servicios[]";
-
-    // Convertir IDs a string para comparación robusta
-    const selectedIdsString = selectedIds.map(String);
-    if (selectedIdsString.includes(String(service.id))) {
-      input.checked = true;
-    }
-
-    const label = document.createElement("label");
-    label.className = "form-check-label";
-    label.htmlFor = `${prefix}Service${service.id}`;
-    label.textContent = service.nombre_servicio;
-
-    wrapper.appendChild(input);
-    wrapper.appendChild(label);
-    col.appendChild(wrapper);
-    container.appendChild(col);
-  });
-};
 
 /**
  * Toggles services, avatar and description containers visibility based on role
@@ -156,24 +97,15 @@ const editUser = (userId) => {
           currentEditUserServices = user.servicios || [];
           editDescripcionInput.value = user.descripcion || "";
 
-          // Si los servicios disponibles no se han cargado aún, cargarlos primero
-          if (availableServices.length === 0) {
-            fetch("/api/services")
-              .then((response) => response.json())
-              .then((data) => {
-                availableServices = data.success ? data.servicios : [];
-                populateServicesCheckboxes(
-                  editServiciosCheckboxes,
-                  currentEditUserServices,
-                  "edit"
-                );
-              })
-              .catch((error) => {
-                console.error("Error loading services:", error);
-              });
-          } else {
-            populateServicesCheckboxes(editServiciosCheckboxes, currentEditUserServices, "edit");
-          }
+          // Resetear todos los checkboxes
+          const checkboxes = editServiciosCheckboxes.querySelectorAll('input[type="checkbox"]');
+          checkboxes.forEach((cb) => (cb.checked = false));
+
+          // Marcar los que tiene el usuario
+          currentEditUserServices.forEach((serviceId) => {
+            const cb = document.getElementById(`editService${serviceId}`);
+            if (cb) cb.checked = true;
+          });
         } else {
           editDescripcionInput.value = "";
         }
@@ -420,4 +352,3 @@ createRolInput.addEventListener("change", handleCreateRolChange);
 editRolInput.addEventListener("change", handleEditRolChange);
 
 // Cargar servicios al iniciar
-loadServices();

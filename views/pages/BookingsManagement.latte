@@ -36,10 +36,10 @@
               <label for="filterEstado" class="form-label">Estado</label>
               <select id="filterEstado" class="form-select">
                 <option value="">Todos</option>
-                <option value="Pendiente">Pendiente</option>
-                <option value="Confirmada">Confirmada</option>
-                <option value="Completada">Completada</option>
-                <option value="Cancelada">Cancelada</option>
+                <option value="Pendiente" {if ($filtros['estado'] ?? '') === 'Pendiente'}selected{/if}>Pendiente</option>
+                <option value="Confirmada" {if ($filtros['estado'] ?? '') === 'Confirmada'}selected{/if}>Confirmada</option>
+                <option value="Completada" {if ($filtros['estado'] ?? '') === 'Completada'}selected{/if}>Completada</option>
+                <option value="Cancelada" {if ($filtros['estado'] ?? '') === 'Cancelada'}selected{/if}>Cancelada</option>
               </select>
             </div>
 
@@ -48,7 +48,11 @@
               <label for="filterCliente" class="form-label">Cliente</label>
               <select id="filterCliente" class="form-select">
                 <option value="">Todos los clientes</option>
-                {* Clientes cargados dinámicamente *}
+                {foreach $clients as $client}
+                <option value="{$client->getId()}" {if isset($filtros['cliente']) && $filtros['cliente'] == $client->getId()}selected{/if}>
+                  {$client->getNombre()} {$client->getApellidos()} ({$client->getEmail()})
+                </option>
+                {/foreach}
               </select>
             </div>
 
@@ -57,7 +61,11 @@
               <label for="filterEspecialista" class="form-label">Especialista</label>
               <select id="filterEspecialista" class="form-select">
                 <option value="">Todos los especialistas</option>
-                {* Especialistas cargados dinámicamente *}
+                {foreach $specialists as $specialist}
+                <option value="{$specialist['id']}" {if isset($filtros['especialista']) && $filtros['especialista'] == $specialist['id']}selected{/if}>
+                  {$specialist['nombre']} {$specialist['apellidos']}
+                </option>
+                {/foreach}
               </select>
             </div>
           </div>
@@ -65,12 +73,12 @@
           <div class="row g-3 mb-3">
             <div class="col-12 col-md-6">
               <label for="filterFechaDesde" class="form-label">Fecha desde</label>
-              <input type="date" id="filterFechaDesde" class="form-control" />
+              <input type="date" id="filterFechaDesde" class="form-control" value="{$filtros['fecha_desde'] ?? ''}" />
             </div>
 
             <div class="col-12 col-md-6">
               <label for="filterFechaHasta" class="form-label">Fecha hasta</label>
-              <input type="date" id="filterFechaHasta" class="form-control" />
+              <input type="date" id="filterFechaHasta" class="form-control" value="{$filtros['fecha_hasta'] ?? ''}" />
             </div>
           </div>
 

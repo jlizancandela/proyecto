@@ -26,7 +26,11 @@
                 <label for="createCliente" class="form-label">Cliente *</label>
                 <select class="form-select" id="createCliente" name="id_cliente" required>
                   <option value="">Selecciona un cliente...</option>
-                  {* Clientes cargados dinámicamente *}
+                  {foreach $clients as $client}
+                  <option value="{$client->getId()}">
+                    {$client->getNombre()} {$client->getApellidos()} ({$client->getEmail()})
+                  </option>
+                  {/foreach}
                 </select>
                 <div class="invalid-feedback"></div>
               </div>
@@ -36,7 +40,11 @@
                 <label for="createEspecialista" class="form-label">Especialista *</label>
                 <select class="form-select" id="createEspecialista" name="especialista_id" required>
                   <option value="">Selecciona un especialista...</option>
-                  {* Especialistas cargados dinámicamente *}
+                  {foreach $specialists as $specialist}
+                  <option value="{$specialist['id']}">
+                    {$specialist['nombre']} {$specialist['apellidos']}
+                  </option>
+                  {/foreach}
                 </select>
                 <div class="invalid-feedback"></div>
               </div>
@@ -46,7 +54,12 @@
                 <label for="createServicio" class="form-label">Servicio *</label>
                 <select class="form-select" id="createServicio" name="servicio_id" required>
                   <option value="">Selecciona un servicio...</option>
-                  {* Servicios cargados dinámicamente *}
+                  {foreach $services as $service}
+                  <option value="{$service->getIdServicio()}">
+                    {$service->getNombreServicio()} ({$service->getDuracionMinutos()} min -
+                    €{$service->getPrecio()})
+                  </option>
+                  {/foreach}
                 </select>
                 <div class="invalid-feedback"></div>
               </div>
