@@ -93,6 +93,8 @@
 └── views/
     ├── components/
     │   ├── modals/
+    │   │   ├── CreateBookingModal.latte     # Nuevo - Modal crear reserva
+    │   │   ├── EditBookingModal.latte       # Nuevo - Modal editar reserva
     │   │   ├── CreateServiceModal.latte     # Nuevo
     │   │   ├── EditServiceModal.latte       # Nuevo
     │   │   ├── CreateUserModal.latte
