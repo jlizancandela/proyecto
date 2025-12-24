@@ -365,12 +365,31 @@ const handleEditBooking = async (e) => {
       document.getElementById("editEstado").value = booking.estado;
       document.getElementById("editObservaciones").value = booking.observaciones || "";
 
+      // Debug: Log the booking data
+      console.log("Booking data:", booking);
+      console.log("Cliente ID from booking:", booking.id_cliente);
+      console.log("Especialista ID from booking:", booking.id_especialista);
+      console.log("Servicio ID from booking:", booking.id_servicio);
+
       // Set select values with a small delay to ensure DOM is ready
       setTimeout(() => {
-        document.getElementById("editCliente").value = booking.id_cliente;
-        document.getElementById("editEspecialista").value = booking.id_especialista;
-        document.getElementById("editServicio").value = booking.id_servicio;
-      }, 50);
+        const clienteSelect = document.getElementById("editCliente");
+        const especialistaSelect = document.getElementById("editEspecialista");
+        const servicioSelect = document.getElementById("editServicio");
+
+        console.log(
+          "Cliente select options:",
+          Array.from(clienteSelect.options).map((o) => ({ value: o.value, text: o.text }))
+        );
+
+        clienteSelect.value = booking.id_cliente;
+        especialistaSelect.value = booking.id_especialista;
+        servicioSelect.value = booking.id_servicio;
+
+        console.log("Cliente selected value:", clienteSelect.value);
+        console.log("Especialista selected value:", especialistaSelect.value);
+        console.log("Servicio selected value:", servicioSelect.value);
+      }, 100);
 
       // Calculate duration from hora_inicio and hora_fin
       const inicio = new Date(`2000-01-01T${booking.hora_inicio}`);
