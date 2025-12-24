@@ -118,7 +118,7 @@
             href="?{http_build_query(array_merge($_GET, ['sort' => 'fecha', 'order' => ($_GET['sort'] ?? '') === 'fecha' && ($_GET['order'] ?? 'asc') === 'asc' ? 'desc' : 'asc']))}"
             class="text-decoration-none text-dark"
           >
-            Fecha Registro {if ($_GET['sort'] ?? '') === 'fecha'}
+            Fecha Reg {if ($_GET['sort'] ?? '') === 'fecha'}
             <i class="bi bi-caret-{($_GET['order'] ?? 'asc') === 'asc' ? 'up' : 'down'}-fill"></i>
             {else}
             <i class="bi bi-arrow-down-up text-muted"></i>
