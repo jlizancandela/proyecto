@@ -64,7 +64,7 @@ const populateServicesSelect = (selectElement, selectedIds = []) => {
   availableServices.forEach((service) => {
     const option = document.createElement("option");
     option.value = service.id;
-    option.textContent = service.nombre;
+    option.textContent = service.nombre_servicio;
     // Convertir IDs a string para comparación robusta
     const selectedIdsString = selectedIds.map(String);
     if (selectedIdsString.includes(String(service.id))) {
