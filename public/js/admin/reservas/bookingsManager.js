@@ -601,3 +601,20 @@ document.querySelectorAll(".btn-delete-booking").forEach((btn) => {
 document.querySelectorAll(".btn-edit-booking").forEach((btn) => {
   btn.addEventListener("click", handleEditBooking);
 });
+
+// Populate filter selectors on page load
+(async () => {
+  try {
+    await Promise.all([loadClients("filterCliente"), loadSpecialists("filterEspecialista")]);
+
+    // Set filter values from URL if present
+    const urlParams = new URLSearchParams(window.location.search);
+    const clienteParam = urlParams.get("cliente");
+    const especialistaParam = urlParams.get("especialista");
+
+    if (clienteParam) document.getElementById("filterCliente").value = clienteParam;
+    if (especialistaParam) document.getElementById("filterEspecialista").value = especialistaParam;
+  } catch (error) {
+    console.error("Error loading filter selectors:", error);
+  }
+})();

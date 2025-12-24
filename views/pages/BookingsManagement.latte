@@ -18,19 +18,20 @@
 
     {* Filtro por cliente *}
     <div class="col-12 col-md-6 col-lg-4">
-      <label for="filterCliente" class="form-label">Cliente (ID)</label>
-      <input type="number" id="filterCliente" class="form-control" placeholder="ID del cliente" />
+      <label for="filterCliente" class="form-label">Cliente</label>
+      <select id="filterCliente" class="form-select">
+        <option value="">Todos los clientes</option>
+        {* Clientes cargados dinámicamente *}
+      </select>
     </div>
 
     {* Filtro por especialista *}
     <div class="col-12 col-md-6 col-lg-4">
-      <label for="filterEspecialista" class="form-label">Especialista (ID)</label>
-      <input
-        type="number"
-        id="filterEspecialista"
-        class="form-control"
-        placeholder="ID del especialista"
-      />
+      <label for="filterEspecialista" class="form-label">Especialista</label>
+      <select id="filterEspecialista" class="form-select">
+        <option value="">Todos los especialistas</option>
+        {* Especialistas cargados dinámicamente *}
+      </select>
     </div>
   </div>
 
