@@ -10,6 +10,7 @@ use Shared\Presentation\HomeController;
 use Shared\Presentation\AdminController;
 use Reservas\Presentation\BookingController;
 use Reservas\Presentation\BookingApiController;
+use Reservas\Presentation\BookingAdminApiController;
 use Reservas\Presentation\MyBookingsController;
 use Reservas\Presentation\PdfExportController;
 use Servicios\Presentation\ServiceApiController;
@@ -100,6 +101,11 @@ $router->get('/admin/users', function () use ($latte, $userService, $especialist
 $router->get('/admin/services', function () use ($latte, $servicioService) {
     $controller = new AdminController($latte, null, $servicioService);
     echo $controller->servicesManagement();
+});
+
+$router->get('/admin/bookings', function () use ($latte) {
+    $controller = new AdminController($latte);
+    echo $controller->bookingsManagement();
 });
 
 $router->get('/user', function () use ($latte, $reservaService) {
@@ -220,6 +226,31 @@ $router->post('/api/reservas', function () use ($reservaService) {
 $router->get('/api/me', function () use ($latte, $userService, $especialistaServicioRepository, $especialistaRepository) {
     $controller = new UserApiController($latte, $userService, $especialistaServicioRepository, $especialistaRepository);
     $controller->getCurrentUser();
+});
+
+$router->get('/admin/api/reservas', function () use ($reservaService) {
+    $controller = new BookingAdminApiController($reservaService);
+    $controller->getAllBookings();
+});
+
+$router->get('/admin/api/reservas/(\d+)', function ($id) use ($reservaService) {
+    $controller = new BookingAdminApiController($reservaService);
+    $controller->getBookingById((int)$id);
+});
+
+$router->post('/admin/api/reservas', function () use ($reservaService) {
+    $controller = new BookingAdminApiController($reservaService);
+    $controller->createBooking();
+});
+
+$router->put('/admin/api/reservas/(\d+)', function ($id) use ($reservaService) {
+    $controller = new BookingAdminApiController($reservaService);
+    $controller->updateBooking((int)$id);
+});
+
+$router->delete('/admin/api/reservas/(\d+)', function ($id) use ($reservaService) {
+    $controller = new BookingAdminApiController($reservaService);
+    $controller->deleteBooking((int)$id);
 });
 
 $router->run();

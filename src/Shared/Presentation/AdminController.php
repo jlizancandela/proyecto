@@ -119,4 +119,15 @@ class AdminController
             ]
         );
     }
+
+    public function bookingsManagement(): string
+    {
+        return $this->latte->renderToString(
+            __DIR__ . '/../../../views/pages/BookingsManagement.latte',
+            [
+                'userName' => ucfirst($_SESSION['name'] ?? 'Usuario'),
+                'currentUrl' => $_SERVER['REQUEST_URI'] ?? '/admin/bookings'
+            ]
+        );
+    }
 }

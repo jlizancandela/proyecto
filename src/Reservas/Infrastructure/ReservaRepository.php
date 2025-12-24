@@ -717,4 +717,62 @@ class ReservaRepository
             return null;
         }
     }
+
+    /**
+     * Counts all bookings with optional filters
+     * 
+     * @param array $filtros Filters (cliente, especialista, estado, fecha_desde, fecha_hasta)
+     * @return int Total count of bookings matching filters
+     */
+    public function countAllFiltered(array $filtros = []): int
+    {
+        try {
+            $sql = "SELECT COUNT(*) as total FROM RESERVA r WHERE 1=1";
+            $params = [];
+
+            if (isset($filtros['cliente'])) {
+                $sql .= " AND r.id_cliente = :id_cliente";
+                $params['id_cliente'] = $filtros['cliente'];
+            }
+
+            if (isset($filtros['especialista'])) {
+                $sql .= " AND r.id_especialista = :id_especialista";
+                $params['id_especialista'] = $filtros['especialista'];
+            }
+
+            if (isset($filtros['servicio'])) {
+                $sql .= " AND r.id_servicio = :id_servicio";
+                $params['id_servicio'] = $filtros['servicio'];
+            }
+
+            if (isset($filtros['estado'])) {
+                $sql .= " AND r.estado = :estado";
+                $params['estado'] = $filtros['estado'];
+            }
+
+            if (isset($filtros['fecha_desde'])) {
+                $sql .= " AND r.fecha_reserva >= :fecha_desde";
+                $params['fecha_desde'] = $filtros['fecha_desde'];
+            }
+
+            if (isset($filtros['fecha_hasta'])) {
+                $sql .= " AND r.fecha_reserva <= :fecha_hasta";
+                $params['fecha_hasta'] = $filtros['fecha_hasta'];
+            }
+
+            $stmt = $this->db->prepare($sql);
+
+            foreach ($params as $key => $value) {
+                $stmt->bindValue(":$key", $value);
+            }
+
+            $stmt->execute();
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            return (int)$result['total'];
+        } catch (\Exception $e) {
+            error_log("Error counting filtered bookings: " . $e->getMessage());
+            return 0;
+        }
+    }
 }

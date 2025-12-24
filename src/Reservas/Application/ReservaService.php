@@ -285,4 +285,111 @@ class ReservaService
     {
         return $this->reservaRepository->findLatestByUserId($userId);
     }
+
+    /**
+     * Gets all bookings with optional filters (admin)
+     * 
+     * @param array $filtros Filters (cliente, especialista, estado, fecha_desde, fecha_hasta)
+     * @param int $limit Limit of results
+     * @param int $offset Offset for pagination
+     * @return array Array of ReservaCompletaDTO
+     */
+    public function getAllReservasWithFilters(
+        array $filtros = [],
+        int $limit = 50,
+        int $offset = 0
+    ): array {
+        return $this->reservaRepository->findAllFiltered($filtros, $limit, $offset);
+    }
+
+    /**
+     * Counts all bookings with optional filters (admin)
+     * 
+     * @param array $filtros Filters (cliente, especialista, estado, fecha_desde, fecha_hasta)
+     * @return int Total count of bookings
+     */
+    public function countAllReservasWithFilters(array $filtros = []): int
+    {
+        return $this->reservaRepository->countAllFiltered($filtros);
+    }
+
+    /**
+     * Updates a booking with validation
+     * 
+     * @param int $reservaId Booking ID
+     * @param array $data Updated booking data
+     * @return bool True if updated successfully
+     * @throws \RuntimeException If validation fails
+     */
+    public function updateReserva(int $reservaId, array $data): bool
+    {
+        $existingReserva = $this->reservaRepository->findById($reservaId);
+
+        if (!$existingReserva) {
+            throw new \RuntimeException('Reserva no encontrada');
+        }
+
+        $this->validateReservaData($data);
+
+        $clientId = (int) $data['id_cliente'];
+        $specialistId = (int) $data['especialista_id'];
+        $serviceId = (int) $data['servicio_id'];
+        $date = $data['fecha'];
+        $startTime = $data['hora'];
+        $duration = $data['duracion'] ?? 60;
+        $endTime = date('H:i:s', strtotime($startTime) + ($duration * 60));
+        $estado = $data['estado'] ?? 'Pendiente';
+        $observaciones = $data['observaciones'] ?? null;
+
+        // Validate no conflicts, excluding current booking
+        $hasConflict = $this->reservaRepository->findConflicts(
+            $date,
+            $startTime,
+            $endTime,
+            $specialistId,
+            $reservaId
+        );
+
+        if ($hasConflict) {
+            throw new \RuntimeException('El horario seleccionado ya no está disponible');
+        }
+
+        $clientConflict = $this->reservaRepository->findClientConflicts(
+            $date,
+            $startTime,
+            $endTime,
+            $clientId,
+            $reservaId
+        );
+
+        if ($clientConflict) {
+            throw new \RuntimeException('El cliente ya tiene otra reserva en ese horario');
+        }
+
+        $reserva = new Reserva(
+            $clientId,
+            $specialistId,
+            $serviceId,
+            $date,
+            $startTime,
+            $endTime,
+            $estado,
+            $observaciones,
+            $existingReserva->fecha_creacion,
+            $reservaId
+        );
+
+        return $this->reservaRepository->updateReserva($reserva);
+    }
+
+    /**
+     * Deletes a booking
+     * 
+     * @param int $reservaId Booking ID
+     * @return bool True if deleted successfully
+     */
+    public function deleteReserva(int $reservaId): bool
+    {
+        return $this->reservaRepository->deleteReserva($reservaId);
+    }
 }
