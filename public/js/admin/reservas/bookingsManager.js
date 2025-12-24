@@ -536,32 +536,6 @@ const showSuccess = (message) => {
   setTimeout(() => alertDiv.remove(), 3000);
 };
 
-// Event handlers
-btnApplyFilters.addEventListener("click", () => {
-  currentFilters = {};
-
-  if (filterEstado.value) currentFilters.estado = filterEstado.value;
-  if (filterCliente.value) currentFilters.cliente = filterCliente.value;
-  if (filterEspecialista.value) currentFilters.especialista = filterEspecialista.value;
-  if (filterFechaDesde.value) currentFilters.fecha_desde = filterFechaDesde.value;
-  if (filterFechaHasta.value) currentFilters.fecha_hasta = filterFechaHasta.value;
-
-  currentPage = 1;
-  fetchBookings(currentPage, currentFilters);
-});
-
-btnClearFilters.addEventListener("click", () => {
-  filterEstado.value = "";
-  filterCliente.value = "";
-  filterEspecialista.value = "";
-  filterFechaDesde.value = "";
-  filterFechaHasta.value = "";
-
-  currentFilters = {};
-  currentPage = 1;
-  fetchBookings(currentPage, currentFilters);
-});
-
 // Form handlers
 document.getElementById("createBookingForm").addEventListener("submit", handleCreateBooking);
 document.getElementById("editBookingForm").addEventListener("submit", handleUpdateBooking);
@@ -579,5 +553,11 @@ document.getElementById("editBookingModal").addEventListener("show.bs.modal", ()
   loadServices("editServicio");
 });
 
-// Initial load
-fetchBookings(currentPage, currentFilters);
+// Attach handlers to existing table rows (server-rendered)
+document.querySelectorAll(".btn-delete-booking").forEach((btn) => {
+  btn.addEventListener("click", handleDeleteBooking);
+});
+
+document.querySelectorAll(".btn-edit-booking").forEach((btn) => {
+  btn.addEventListener("click", handleEditBooking);
+});
