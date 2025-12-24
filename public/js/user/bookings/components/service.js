@@ -44,10 +44,10 @@ export const Service = ({ service, onSelect, isSelected = false }) => {
       <div class="card-body d-flex align-items-center gap-3">
         <i class="bi bi-scissors fs-1 text-primary"></i>
         <div class="flex-grow-1">
-          <h5 class="card-title mb-2">${service.nombre}</h5>
+          <h5 class="card-title mb-2">${service.nombre_servicio}</h5>
           <p class="card-text text-muted mb-0">
             <i class="bi bi-clock me-1"></i>
-            ${service.duracion} minutos
+            ${service.duracion_minutos} minutos
           </p>
         </div>
       </div>
