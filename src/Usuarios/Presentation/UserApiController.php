@@ -335,10 +335,15 @@ class UserApiController
                 return;
             }
 
-            // Proteger Admin: no permitir cambio de rol ni desactivación
-            $rol = $data['rol'];
+            // Obtener datos con valores por defecto del usuario existente si no se proporcionan
+            $rol = $data['rol'] ?? $existingUser->getRol()->value;
+            $nombre = $data['nombre'] ?? $existingUser->getNombre();
+            $apellidos = $data['apellidos'] ?? $existingUser->getApellidos();
+            $email = $data['email'] ?? $existingUser->getEmail();
+            $telefono = $data['telefono'] ?? $existingUser->getTelefono();
             $activo = isset($data['activo']) ? in_array($data['activo'], [true, '1', 1, 'on'], true) : $existingUser->getActivo();
 
+            // Proteger Admin: no permitir cambio de rol ni desactivación
             if ($existingUser->getRol() === \Usuarios\Domain\UserRole::Admin) {
                 // Si el usuario actual es Admin, mantener rol y estado activo
                 $rol = 'Admin';
@@ -351,11 +356,11 @@ class UserApiController
 
             $user = new \Usuarios\Domain\Usuario(
                 $rol,
-                $data['nombre'],
-                $data['apellidos'],
-                $data['email'],
+                $nombre,
+                $apellidos,
+                $email,
                 $passwordHash,
-                $data['telefono'] ?? null,
+                $telefono,
                 $existingUser->getFechaRegistro()->format('Y-m-d H:i:s'),
                 $activo,
                 $id
