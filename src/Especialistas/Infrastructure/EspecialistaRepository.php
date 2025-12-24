@@ -46,6 +46,32 @@ class EspecialistaRepository
         }
     }
 
+    /**
+     * Gets all especialistas with basic user data for selectors
+     * Returns array with id_especialista and user name
+     * @return array
+     */
+    public function getAllEspecialistasWithUserData(): array
+    {
+        try {
+            $stmt = $this->db->query("
+                SELECT 
+                    e.id_especialista as id,
+                    u.nombre,
+                    u.apellidos
+                FROM ESPECIALISTA e
+                INNER JOIN USUARIO u ON e.id_usuario = u.id_usuario
+                WHERE u.activo = 1
+                ORDER BY u.nombre, u.apellidos
+            ");
+
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (\Exception $e) {
+            error_log("Error getting especialistas for selector: " . $e->getMessage());
+            return [];
+        }
+    }
+
     public function getEspecialistaConUsuarioById(int $id): ?EspecialistaUsuarioDTO
     {
         try {

@@ -158,6 +158,24 @@ $router->get('/admin/api/users', function () use ($latte, $userService, $especia
     $controller->getAllUsers();
 });
 
+// Endpoint para obtener especialistas con id_especialista
+$router->get('/admin/api/especialistas', function () use ($especialistaRepository) {
+    header('Content-Type: application/json');
+    try {
+        $especialistas = $especialistaRepository->getAllEspecialistasWithUserData();
+        echo json_encode([
+            'success' => true,
+            'especialistas' => $especialistas
+        ], JSON_PRETTY_PRINT);
+    } catch (\Exception $e) {
+        http_response_code(500);
+        echo json_encode([
+            'success' => false,
+            'error' => 'Error al obtener especialistas'
+        ], JSON_PRETTY_PRINT);
+    }
+});
+
 $router->post('/admin/api/users', function () use ($latte, $userService, $especialistaServicioRepository, $especialistaRepository) {
     $controller = new UserApiController($latte, $userService, $especialistaServicioRepository, $especialistaRepository);
     $controller->createUser();
