@@ -3,18 +3,8 @@
   <h1 class="mb-4">Gestión de Reservas</h1>
 
 
-  {* Botón nueva reserva y filtros en la misma fila *}
+  {* Filtros en acordeón y botón nueva reserva en la misma fila *}
   <div class="d-flex gap-3 mb-3 align-items-start">
-    <button
-      type="button"
-      class="btn btn-success"
-      data-bs-toggle="modal"
-      data-bs-target="#createBookingModal"
-    >
-      <i class="bi bi-plus-circle me-2"></i>
-      Nueva Reserva
-    </button>
-
     {* Filtros en acordeón *}
     <div class="accordion flex-grow-1" id="filtersAccordion">
       <div class="accordion-item">
@@ -84,6 +74,17 @@
         </div>
       </div>
     </div>
+
+    {* Botón nueva reserva a la derecha *}
+    <button
+      type="button"
+      class="btn btn-success"
+      data-bs-toggle="modal"
+      data-bs-target="#createBookingModal"
+    >
+      <i class="bi bi-plus-circle me-2"></i>
+      Nueva Reserva
+    </button>
   </div>
 
   {* Tabla de reservas *} {if count($reservas) > 0}
