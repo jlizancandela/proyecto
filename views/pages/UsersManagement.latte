@@ -1,6 +1,12 @@
 {layout '../layouts/panel-layout.latte'} {block title}Gestión de Usuarios{/block} {block content}
 <div class="mb-4">
-  <h1 class="mb-4">Gestión de Usuarios</h1>
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="mb-0">Gestión de Usuarios</h1>
+    <a href="/admin/users/pdf?{http_build_query($_GET)}" class="btn btn-danger" target="_blank">
+      <i class="bi bi-file-pdf me-2"></i>
+      Exportar PDF
+    </a>
+  </div>
 
   {* Barra de búsqueda, filtros y botón crear *}
   <div class="row g-3 mb-3">

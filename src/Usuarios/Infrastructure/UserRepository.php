@@ -460,4 +460,80 @@ class UserRepository
             );
         }
     }
+
+    /**
+     * Obtiene usuarios aplicando múltiples filtros
+     * 
+     * @param array $filters Filtros (rol, search, sort, order)
+     * @param int $limit Límite de resultados
+     * @param int $offset Desplazamiento
+     * @return array Array de usuarios
+     */
+    public function findAllFiltered(array $filters = [], int $limit = 50, int $offset = 0): array
+    {
+        try {
+            $sql = "SELECT * FROM USUARIO WHERE 1=1";
+            $params = [];
+
+            // Filter by search term
+            if (!empty($filters['search'])) {
+                $sql .= " AND (nombre LIKE :search OR apellidos LIKE :search OR email LIKE :search OR telefono LIKE :search)";
+                $params['search'] = "%{$filters['search']}%";
+            }
+
+            // Filter by role
+            if (!empty($filters['rol'])) {
+                $sql .= " AND rol = :rol";
+                $params['rol'] = $filters['rol'];
+            }
+
+            // Order By
+            $sort = $filters['sort'] ?? '';
+            $order = strtoupper($filters['order'] ?? 'ASC') === 'DESC' ? 'DESC' : 'ASC';
+            $orderBy = "id_usuario DESC";
+
+            if (!empty($sort)) {
+                switch ($sort) {
+                    case 'nombre':
+                        $orderBy = "nombre $order, apellidos $order";
+                        break;
+                    case 'email':
+                        $orderBy = "email $order";
+                        break;
+                    case 'rol':
+                        $orderBy = "rol $order";
+                        break;
+                    case 'fecha':
+                        $orderBy = "fecha_registro $order";
+                        break;
+                }
+            }
+            $sql .= " ORDER BY $orderBy";
+
+            // Pagination
+            $sql .= " LIMIT :limit OFFSET :offset";
+
+            $stmt = $this->db->prepare($sql);
+
+            foreach ($params as $key => $value) {
+                $stmt->bindValue(":$key", $value);
+            }
+
+            $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+            $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+
+            $stmt->execute();
+
+            $users = [];
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                $users[] = Usuario::fromDatabase($row);
+            }
+
+            return $users;
+        } catch (PDOException $e) {
+            throw new PDOException(
+                "Error al filtrar usuarios: " . $e->getMessage(),
+            );
+        }
+    }
 }

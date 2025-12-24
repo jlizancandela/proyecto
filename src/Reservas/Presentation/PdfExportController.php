@@ -16,12 +16,13 @@ use Reservas\Application\ReservaService;
 class PdfExportController
 {
     private Engine $latte;
-    private ReservaService $reservaService;
+    private  ?\Usuarios\Application\UserService $userService = null;
 
-    public function __construct(Engine $latte, ReservaService $reservaService)
+    public function __construct(Engine $latte, ReservaService $reservaService, ?\Usuarios\Application\UserService $userService = null)
     {
         $this->latte = $latte;
         $this->reservaService = $reservaService;
+        $this->userService = $userService;
     }
 
     /**
@@ -146,5 +147,59 @@ class PdfExportController
 
         // Output PDF
         $dompdf->stream("gestion-reservas.pdf", ["Attachment" => false]);
+    }
+
+    /**
+     * Exporta usuarios a PDF aplicando filtros y ordenación
+     *
+     * @return void Envía el PDF directamente al navegador
+     */
+    public function exportAdminUsers(): void
+    {
+        if (!$this->userService) {
+            throw new \RuntimeException('UserService is required for this action');
+        }
+
+        $filtros = [];
+
+        if (!empty($_GET['search'])) {
+            $filtros['search'] = $_GET['search'];
+        }
+
+        if (!empty($_GET['rol'])) {
+            $filtros['rol'] = $_GET['rol'];
+        }
+
+        if (!empty($_GET['sort'])) {
+            $filtros['sort'] = $_GET['sort'];
+        }
+
+        if (!empty($_GET['order'])) {
+            $filtros['order'] = $_GET['order'];
+        }
+
+        // Get filtered users (limit 1000)
+        $users = $this->userService->getAllUsersWithFilters($filtros, 1000, 0);
+
+        // Render HTML using Latte
+        $html = $this->latte->renderToString(
+            __DIR__ . '/../../../views/pdf/admin-users-pdf.latte',
+            [
+                'users' => $users,
+                'search' => $filtros['search'] ?? null,
+                'rol' => $filtros['rol'] ?? null,
+                'sort' => $filtros['sort'] ?? null,
+                'order' => $filtros['order'] ?? null
+            ]
+        );
+
+        // Generate PDF
+        $dompdf = new Dompdf();
+        $dompdf->loadHtml($html);
+        $dompdf->setPaper('A4', 'landscape');
+        $dompdf->render();
+
+        // Output PDF
+        $dompdf->stream("gestion-usuarios.pdf", ["Attachment" => false]);
     }
 }

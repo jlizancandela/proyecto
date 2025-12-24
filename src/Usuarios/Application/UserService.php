@@ -121,6 +121,19 @@ class UserService
     }
 
     /**
+     * Obtiene usuarios aplicando múltiples filtros (visión admin)
+     * 
+     * @param array $filters Filtros asociados arrays asociativo
+     * @param int $limit Límite
+     * @param int $offset Desplazamiento
+     * @return array Array de usuarios 
+     */
+    public function getAllUsersWithFilters(array $filters = [], int $limit = 50, int $offset = 0): array
+    {
+        return $this->userRepository->findAllFiltered($filters, $limit, $offset);
+    }
+
+    /**
      * Crea un nuevo usuario validando datos y verificando email único
      * 
      * Valida los datos del usuario y verifica que el email no esté registrado.

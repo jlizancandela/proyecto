@@ -158,6 +158,11 @@ $router->get('/admin/bookings/pdf', function () use ($latte, $reservaService) {
     $controller->exportAdminReservas();
 });
 
+$router->get('/admin/users/pdf', function () use ($latte, $reservaService, $userService) {
+    $controller = new PdfExportController($latte, $reservaService, $userService);
+    $controller->exportAdminUsers();
+});
+
 $router->get('/admin/api/users', function () use ($latte, $userService, $especialistaServicioRepository, $especialistaRepository) {
     $controller = new UserApiController($latte, $userService, $especialistaServicioRepository, $especialistaRepository);
     $controller->getAllUsers();
