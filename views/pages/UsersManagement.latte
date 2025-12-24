@@ -51,6 +51,14 @@
                 <input type="hidden" name="rol" value="{$_GET['rol']}" />
                 {/if} {if isset($_GET['estado'])}
                 <input type="hidden" name="estado" value="{$_GET['estado']}" />
+                {/if} {if !empty($search) || isset($_GET['rol']) || isset($_GET['estado'])}
+                <a
+                  href="/admin/users"
+                  class="position-absolute top-50 end-0 translate-middle-y me-2 text-decoration-none text-muted"
+                  title="Limpiar filtros"
+                >
+                  <i class="bi bi-x-circle-fill"></i>
+                </a>
                 {/if}
               </form>
             </div>
