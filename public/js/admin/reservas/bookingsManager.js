@@ -23,15 +23,18 @@ let currentFilters = {};
  * @return {Promise<void>}
  */
 const loadClients = async (selectId) => {
+  const select = document.getElementById(selectId);
+  const currentValue = select.value;
+
+  // Show loading
+  select.innerHTML = '<option value="">Cargando clientes...</option>';
+  select.disabled = true;
+
   try {
     const response = await fetch("/admin/api/users?rol=Cliente&limit=1000");
     const data = await response.json();
 
     if (data.success) {
-      const select = document.getElementById(selectId);
-      const currentValue = select.value;
-
-      // Keep first option (placeholder)
       select.innerHTML = '<option value="">Selecciona un cliente...</option>';
 
       data.users.forEach((user) => {
@@ -41,11 +44,13 @@ const loadClients = async (selectId) => {
         select.appendChild(option);
       });
 
-      // Restore previous value if exists
       if (currentValue) select.value = currentValue;
     }
   } catch (error) {
     console.error("Error loading clients:", error);
+    select.innerHTML = '<option value="">Error al cargar</option>';
+  } finally {
+    select.disabled = false;
   }
 };
 
@@ -56,15 +61,17 @@ const loadClients = async (selectId) => {
  * @return {Promise<void>}
  */
 const loadSpecialists = async (selectId) => {
+  const select = document.getElementById(selectId);
+  const currentValue = select.value;
+
+  select.innerHTML = '<option value="">Cargando especialistas...</option>';
+  select.disabled = true;
+
   try {
     const response = await fetch("/admin/api/users?rol=Especialista&limit=1000");
     const data = await response.json();
 
     if (data.success) {
-      const select = document.getElementById(selectId);
-      const currentValue = select.value;
-
-      // Keep first option (placeholder)
       select.innerHTML = '<option value="">Selecciona un especialista...</option>';
 
       data.users.forEach((user) => {
@@ -74,11 +81,13 @@ const loadSpecialists = async (selectId) => {
         select.appendChild(option);
       });
 
-      // Restore previous value if exists
       if (currentValue) select.value = currentValue;
     }
   } catch (error) {
     console.error("Error loading specialists:", error);
+    select.innerHTML = '<option value="">Error al cargar</option>';
+  } finally {
+    select.disabled = false;
   }
 };
 
@@ -89,15 +98,17 @@ const loadSpecialists = async (selectId) => {
  * @return {Promise<void>}
  */
 const loadServices = async (selectId) => {
+  const select = document.getElementById(selectId);
+  const currentValue = select.value;
+
+  select.innerHTML = '<option value="">Cargando servicios...</option>';
+  select.disabled = true;
+
   try {
     const response = await fetch("/admin/api/services");
     const data = await response.json();
 
     if (data.success) {
-      const select = document.getElementById(selectId);
-      const currentValue = select.value;
-
-      // Keep first option (placeholder)
       select.innerHTML = '<option value="">Selecciona un servicio...</option>';
 
       data.servicios.forEach((service) => {
@@ -107,11 +118,13 @@ const loadServices = async (selectId) => {
         select.appendChild(option);
       });
 
-      // Restore previous value if exists
       if (currentValue) select.value = currentValue;
     }
   } catch (error) {
     console.error("Error loading services:", error);
+    select.innerHTML = '<option value="">Error al cargar</option>';
+  } finally {
+    select.disabled = false;
   }
 };
 
@@ -331,13 +344,21 @@ const handleEditBooking = async (e) => {
   const bookingId = e.currentTarget.dataset.bookingId;
 
   try {
+    // Fetch booking data
     const response = await fetch(`/admin/api/reservas/${bookingId}`);
     const data = await response.json();
 
     if (data.success) {
       const booking = data.data;
 
-      // Populate form
+      // Load all selectors first (in parallel)
+      await Promise.all([
+        loadClients("editCliente"),
+        loadSpecialists("editEspecialista"),
+        loadServices("editServicio"),
+      ]);
+
+      // Now populate form with booking data
       document.getElementById("editBookingId").value = booking.id_reserva;
       document.getElementById("editCliente").value = booking.id_cliente;
       document.getElementById("editEspecialista").value = booking.id_especialista;
@@ -353,15 +374,15 @@ const handleEditBooking = async (e) => {
       const duracion = (fin - inicio) / (1000 * 60);
       document.getElementById("editDuracion").value = duracion;
 
-      // Show modal
+      // Show modal after everything is loaded
       const modal = new bootstrap.Modal(document.getElementById("editBookingModal"));
       modal.show();
     } else {
-      showError("Error al cargar los datos de la reserva");
+      alert("Error al cargar los datos de la reserva");
     }
   } catch (error) {
     console.error("Error fetching booking:", error);
-    showError("Error al conectar con el servidor");
+    alert("Error al conectar con el servidor");
   }
 };
 
@@ -540,17 +561,13 @@ const showSuccess = (message) => {
 document.getElementById("createBookingForm").addEventListener("submit", handleCreateBooking);
 document.getElementById("editBookingForm").addEventListener("submit", handleUpdateBooking);
 
-// Modal event listeners - Load data when modals are shown
-document.getElementById("createBookingModal").addEventListener("show.bs.modal", () => {
-  loadClients("createCliente");
-  loadSpecialists("createEspecialista");
-  loadServices("createServicio");
-});
-
-document.getElementById("editBookingModal").addEventListener("show.bs.modal", () => {
-  loadClients("editCliente");
-  loadSpecialists("editEspecialista");
-  loadServices("editServicio");
+// Load data when create modal is shown
+document.getElementById("createBookingModal").addEventListener("show.bs.modal", async () => {
+  await Promise.all([
+    loadClients("createCliente"),
+    loadSpecialists("createEspecialista"),
+    loadServices("createServicio"),
+  ]);
 });
 
 // Attach handlers to existing table rows (server-rendered)
