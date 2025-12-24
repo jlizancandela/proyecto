@@ -471,6 +471,71 @@ const handleDeleteBooking = async (e) => {
   }
 };
 
+/**
+ * Gets bootstrap color for status
+ *
+ * @param {string} status - Booking status
+ * @return {string} Bootstrap color class
+ */
+const getStatusColor = (status) => {
+  const colors = {
+    Pendiente: "warning",
+    Confirmada: "success",
+    Completada: "info",
+    Cancelada: "secondary",
+  };
+  return colors[status] || "secondary";
+};
+
+/**
+ * Formats date to readable format
+ *
+ * @param {string} dateStr - Date string
+ * @return {string} Formatted date
+ */
+const formatDate = (dateStr) => {
+  const date = new Date(dateStr + "T00:00:00");
+  return date.toLocaleDateString("es-ES", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  });
+};
+
+/**
+ * Shows error message
+ *
+ * @param {string} message - Error message
+ * @return {void}
+ */
+const showError = (message) => {
+  bookingsTableContainer.innerHTML = `
+    <div class="alert alert-danger">
+      <i class="bi bi-exclamation-triangle me-2"></i>
+      ${message}
+    </div>
+  `;
+};
+
+/**
+ * Shows success message
+ *
+ * @param {string} message - Success message
+ * @return {void}
+ */
+const showSuccess = (message) => {
+  const alertDiv = document.createElement("div");
+  alertDiv.className = "alert alert-success alert-dismissible fade show";
+  alertDiv.innerHTML = `
+    <i class="bi bi-check-circle me-2"></i>
+    ${message}
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  `;
+  document.querySelector(".mb-4").prepend(alertDiv);
+
+  setTimeout(() => alertDiv.remove(), 3000);
+};
+
 // Event handlers
 btnApplyFilters.addEventListener("click", () => {
   currentFilters = {};
