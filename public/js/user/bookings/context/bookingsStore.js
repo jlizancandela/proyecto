@@ -111,7 +111,7 @@ export const loadServicesAction = async () => {
   loadUserAction();
   const servicesData = await getServices();
   console.log("Servicios cargados:", servicesData);
-  $services.set(servicesData);
+  $services.set(servicesData.servicios || []);
 };
 
 /**
