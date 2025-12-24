@@ -16,6 +16,11 @@ const paginationContainer = document.getElementById("paginationContainer");
 let currentPage = 1;
 let currentFilters = {};
 
+// Cache for loaded data to avoid multiple API calls
+let cachedClients = null;
+let cachedSpecialists = null;
+let cachedServices = null;
+
 /**
  * Loads clients into select dropdown
  *
