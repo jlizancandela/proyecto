@@ -31,7 +31,7 @@ const loadClients = async (selectId) => {
   select.disabled = true;
 
   try {
-    const response = await fetch("/admin/api/users?rol=Cliente&limit=1000");
+    const response = await fetch("/admin/api/users?limit=1000");
     const data = await response.json();
 
     if (data.success) {
