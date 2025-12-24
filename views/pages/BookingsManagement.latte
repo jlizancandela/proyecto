@@ -131,8 +131,8 @@
     </table>
   </div>
 
-  {* Paginación *} {if $totalPages > 1} {include '../components/paginator.latte', page: $page,
-  totalPages: $totalPages, baseUrl: '/admin/bookings'} {/if} {else}
+  {* Paginación *} {if $totalPages > 1} {include '../components/paginator.latte', currentPage:
+  $page, totalPages: $totalPages, baseUrl: '/admin/bookings'} {/if} {else}
   <div class="alert alert-info">
     <i class="bi bi-info-circle me-2"></i>
     No se encontraron reservas con los filtros aplicados.
