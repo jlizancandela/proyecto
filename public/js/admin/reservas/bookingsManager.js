@@ -360,13 +360,17 @@ const handleEditBooking = async (e) => {
 
       // Now populate form with booking data
       document.getElementById("editBookingId").value = booking.id_reserva;
-      document.getElementById("editCliente").value = booking.id_cliente;
-      document.getElementById("editEspecialista").value = booking.id_especialista;
-      document.getElementById("editServicio").value = booking.id_servicio;
       document.getElementById("editFecha").value = booking.fecha_reserva;
       document.getElementById("editHora").value = booking.hora_inicio;
       document.getElementById("editEstado").value = booking.estado;
       document.getElementById("editObservaciones").value = booking.observaciones || "";
+
+      // Set select values with a small delay to ensure DOM is ready
+      setTimeout(() => {
+        document.getElementById("editCliente").value = booking.id_cliente;
+        document.getElementById("editEspecialista").value = booking.id_especialista;
+        document.getElementById("editServicio").value = booking.id_servicio;
+      }, 50);
 
       // Calculate duration from hora_inicio and hora_fin
       const inicio = new Date(`2000-01-01T${booking.hora_inicio}`);
