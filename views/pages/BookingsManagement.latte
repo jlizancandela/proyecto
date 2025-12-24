@@ -167,7 +167,7 @@
               class="btn btn-sm btn-outline-danger btn-delete-booking"
               data-booking-id="{$reserva['id_reserva']}"
               title="{$reserva['estado'] === 'Pendiente' ? 'Eliminar' : 'Solo se pueden eliminar reservas pendientes'}"
-              {if $reserva['estado'] !== 'Pendiente'}disabled{/if}
+              {if $reserva['estado'] !== 'Pendiente'}disabled style="cursor: not-allowed !important;"{/if}
             >
               <i class="bi bi-trash"></i>
             </button>
