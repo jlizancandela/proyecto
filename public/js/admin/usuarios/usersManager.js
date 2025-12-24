@@ -184,7 +184,6 @@ const toggleUserStatus = (userId, userName, currentStatus) => {
     .then((response) => response.json())
     .then((result) => {
       if (result.success) {
-        alert(`Usuario ${newStatus === "1" ? "activado" : "desactivado"} correctamente`);
         window.location.reload();
       } else {
         alert("Error al cambiar estado: " + result.error);
