@@ -10,6 +10,7 @@ use Shared\Presentation\HomeController;
 use Shared\Presentation\AdminController;
 use Reservas\Presentation\BookingController;
 use Reservas\Presentation\BookingApiController;
+use Reservas\Presentation\BookingAdminApiController;
 use Reservas\Presentation\MyBookingsController;
 use Reservas\Presentation\PdfExportController;
 use Servicios\Presentation\ServiceApiController;
@@ -220,6 +221,31 @@ $router->post('/api/reservas', function () use ($reservaService) {
 $router->get('/api/me', function () use ($latte, $userService, $especialistaServicioRepository, $especialistaRepository) {
     $controller = new UserApiController($latte, $userService, $especialistaServicioRepository, $especialistaRepository);
     $controller->getCurrentUser();
+});
+
+$router->get('/admin/api/reservas', function () use ($reservaService) {
+    $controller = new BookingAdminApiController($reservaService);
+    $controller->getAllBookings();
+});
+
+$router->get('/admin/api/reservas/(\d+)', function ($id) use ($reservaService) {
+    $controller = new BookingAdminApiController($reservaService);
+    $controller->getBookingById((int)$id);
+});
+
+$router->post('/admin/api/reservas', function () use ($reservaService) {
+    $controller = new BookingAdminApiController($reservaService);
+    $controller->createBooking();
+});
+
+$router->put('/admin/api/reservas/(\d+)', function ($id) use ($reservaService) {
+    $controller = new BookingAdminApiController($reservaService);
+    $controller->updateBooking((int)$id);
+});
+
+$router->delete('/admin/api/reservas/(\d+)', function ($id) use ($reservaService) {
+    $controller = new BookingAdminApiController($reservaService);
+    $controller->deleteBooking((int)$id);
 });
 
 $router->run();

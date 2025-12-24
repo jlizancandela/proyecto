@@ -8,6 +8,8 @@ Eres un full stack senior con experiencia en php y javascript.
 - Este proyecto es un sistema de reserva de peluquería.
 - Este proyecto es para el final de curso de FP de DAW.
 - No te compliques con detalles que no son esenciales.
+- No te compliques escribiendo codigo de mas.
+- Si puedes que cambie el codigo lo menos posible.
 - Si hay componentes ya creados, usalos y no reescribas código innecesario.
 - No implementes funcionalidades por si acaso, si no es necesario por el momento.
 - Usa clases de bootstrap, usa css solo si es necesario.
