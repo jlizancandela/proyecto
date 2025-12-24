@@ -27,11 +27,13 @@ class UserService
      * 
      * @param int $limit Número máximo de resultados
      * @param int $offset Desplazamiento para paginación
+     * @param string $sort Campo por el que ordenar
+     * @param string $order Dirección del ordenamiento (asc/desc)
      * @return array Array de usuarios
      */
-    public function getAllUsers($limit = 10, $offset = 0): array
+    public function getAllUsers($limit = 10, $offset = 0, $sort = '', $order = 'asc'): array
     {
-        return $this->userRepository->getAllUsers($limit, $offset);
+        return $this->userRepository->getAllUsers($limit, $offset, $sort, $order);
     }
 
     /**
@@ -72,11 +74,13 @@ class UserService
      * @param string $rol Nombre del rol (Admin, Especialista, Cliente)
      * @param int $limit Número máximo de resultados
      * @param int $offset Desplazamiento para paginación
+     * @param string $sort Campo por el que ordenar
+     * @param string $order Dirección del ordenamiento (asc/desc)
      * @return array Array de usuarios con ese rol
      */
-    public function getUsersByRole(string $rol, int $limit = 10, int $offset = 0): array
+    public function getUsersByRole(string $rol, int $limit = 10, int $offset = 0, $sort = '', $order = 'asc'): array
     {
-        return $this->userRepository->getUsersByRole($rol, $limit, $offset);
+        return $this->userRepository->getUsersByRole($rol, $limit, $offset, $sort, $order);
     }
 
     /**
@@ -96,11 +100,13 @@ class UserService
      * @param string $search Término de búsqueda
      * @param int $limit Número máximo de resultados
      * @param int $offset Desplazamiento para paginación
+     * @param string $sort Campo por el que ordenar
+     * @param string $order Dirección del ordenamiento (asc/desc)
      * @return array Array de usuarios que coinciden con la búsqueda
      */
-    public function searchUsers(string $search, int $limit = 10, int $offset = 0): array
+    public function searchUsers(string $search, int $limit = 10, int $offset = 0, $sort = '', $order = 'asc'): array
     {
-        return $this->userRepository->searchUsers($search, $limit, $offset);
+        return $this->userRepository->searchUsers($search, $limit, $offset, $sort, $order);
     }
 
     /**
