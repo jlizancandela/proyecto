@@ -110,6 +110,14 @@ class PdfExportController
             $filtros['fecha_hasta'] = $_GET['fecha_hasta'];
         }
 
+        if (!empty($_GET['sort'])) {
+            $filtros['sort'] = $_GET['sort'];
+        }
+
+        if (!empty($_GET['order'])) {
+            $filtros['order'] = $_GET['order'];
+        }
+
         // Get all bookings (limit 1000 for PDF performance)
         $bookings = $this->reservaService->getAllReservasWithFilters(
             $filtros,
