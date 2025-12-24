@@ -193,6 +193,7 @@ class PdfExportController
                 'users' => $users,
                 'search' => $filtros['search'] ?? null,
                 'rol' => $filtros['rol'] ?? null,
+                'estado' => $filtros['estado'] ?? null,
                 'sort' => $filtros['sort'] ?? null,
                 'order' => $filtros['order'] ?? null
             ]
