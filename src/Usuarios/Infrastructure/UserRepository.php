@@ -477,8 +477,12 @@ class UserRepository
 
             // Filter by search term
             if (!empty($filters['search'])) {
-                $sql .= " AND (nombre LIKE :search OR apellidos LIKE :search OR email LIKE :search OR telefono LIKE :search)";
-                $params['search'] = "%{$filters['search']}%";
+                $sql .= " AND (nombre LIKE :search1 OR apellidos LIKE :search2 OR email LIKE :search3 OR telefono LIKE :search4)";
+                $searchParam = "%{$filters['search']}%";
+                $params['search1'] = $searchParam;
+                $params['search2'] = $searchParam;
+                $params['search3'] = $searchParam;
+                $params['search4'] = $searchParam;
             }
 
             // Filter by role

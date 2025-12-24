@@ -17,6 +17,7 @@ class PdfExportController
 {
     private Engine $latte;
     private  ?\Usuarios\Application\UserService $userService = null;
+    private ReservaService $reservaService;
 
     public function __construct(Engine $latte, ReservaService $reservaService, ?\Usuarios\Application\UserService $userService = null)
     {
