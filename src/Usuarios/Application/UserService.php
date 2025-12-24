@@ -134,6 +134,17 @@ class UserService
     }
 
     /**
+     * Cuenta el total de usuarios aplicando múltiples filtros
+     * 
+     * @param array $filters Filtros asociados arrays asociativo
+     * @return int Total de usuarios
+     */
+    public function countAllUsersWithFilters(array $filters = []): int
+    {
+        return $this->userRepository->countAllFiltered($filters);
+    }
+
+    /**
      * Crea un nuevo usuario validando datos y verificando email único
      * 
      * Valida los datos del usuario y verifica que el email no esté registrado.

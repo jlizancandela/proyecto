@@ -546,4 +546,55 @@ class UserRepository
             );
         }
     }
+
+    /**
+     * Cuenta usuarios aplicando múltiples filtros
+     * 
+     * @param array $filters Filtros (rol, search, estado)
+     * @return int Total de usuarios
+     */
+    public function countAllFiltered(array $filters = []): int
+    {
+        try {
+            $sql = "SELECT COUNT(*) as total FROM USUARIO WHERE 1=1";
+            $params = [];
+
+            // Filter by search term
+            if (!empty($filters['search'])) {
+                $sql .= " AND (nombre LIKE :search1 OR apellidos LIKE :search2 OR email LIKE :search3 OR telefono LIKE :search4)";
+                $searchParam = "%{$filters['search']}%";
+                $params['search1'] = $searchParam;
+                $params['search2'] = $searchParam;
+                $params['search3'] = $searchParam;
+                $params['search4'] = $searchParam;
+            }
+
+            // Filter by role
+            if (!empty($filters['rol'])) {
+                $sql .= " AND rol = :rol";
+                $params['rol'] = $filters['rol'];
+            }
+
+            // Filter by active status
+            if (isset($filters['estado']) && $filters['estado'] !== '') {
+                $sql .= " AND activo = :estado";
+                $params['estado'] = (int)$filters['estado'];
+            }
+
+            $stmt = $this->db->prepare($sql);
+
+            foreach ($params as $key => $value) {
+                $stmt->bindValue(":$key", $value);
+            }
+
+            $stmt->execute();
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            return (int) $result['total'];
+        } catch (PDOException $e) {
+            throw new PDOException(
+                "Error al contar usuarios filtrados: " . $e->getMessage(),
+            );
+        }
+    }
 }

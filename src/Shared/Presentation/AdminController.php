@@ -54,17 +54,17 @@ class AdminController
         $order = trim($_GET['order'] ?? 'asc');
         $offset = ($page - 1) * $limit;
 
-        // Filtrar por rol si está especificado
-        if (!empty($rol)) {
-            $users = $this->userService->getUsersByRole($rol, $limit, $offset, $sort, $order);
-            $total = $this->userService->getTotalUsersByRole($rol);
-        } elseif (!empty($search)) {
-            $users = $this->userService->searchUsers($search, $limit, $offset, $sort, $order);
-            $total = $this->userService->getTotalSearchResults($search);
-        } else {
-            $users = $this->userService->getAllUsers($limit, $offset, $sort, $order);
-            $total = $this->userService->getTotalUsers();
-        }
+        // Construir array de filtros
+        $filters = [];
+        if (!empty($search)) $filters['search'] = $search;
+        if (!empty($rol)) $filters['rol'] = $rol;
+        if (!empty($sort)) $filters['sort'] = $sort;
+        if (!empty($order)) $filters['order'] = $order;
+        if (isset($_GET['estado']) && $_GET['estado'] !== '') $filters['estado'] = $_GET['estado'];
+
+        // Obtener usuarios filtrados y total
+        $users = $this->userService->getAllUsersWithFilters($filters, $limit, $offset);
+        $total = $this->userService->countAllUsersWithFilters($filters);
 
         $totalPages = (int) ceil($total / $limit);
 
