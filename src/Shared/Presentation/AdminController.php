@@ -151,6 +151,14 @@ class AdminController
             $filtros['fecha_hasta'] = trim($_GET['fecha_hasta']);
         }
 
+        if (!empty($_GET['sort'])) {
+            $filtros['sort'] = trim($_GET['sort']);
+        }
+
+        if (!empty($_GET['order'])) {
+            $filtros['order'] = trim($_GET['order']);
+        }
+
         $reservas = $this->reservaService->getAllReservasWithFilters($filtros, $limit, $offset);
         $total = $this->reservaService->countAllReservasWithFilters($filtros);
         $totalPages = (int) ceil($total / $limit);

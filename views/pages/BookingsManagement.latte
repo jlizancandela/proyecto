@@ -73,10 +73,37 @@
       <thead class="table-light">
         <tr>
           <th>ID</th>
-          <th>Cliente</th>
-          <th>Especialista</th>
+          <th>
+            <a href="?{http_build_query(array_merge($_GET, ['sort' => 'cliente', 'order' => ($filtros['sort'] ?? '') === 'cliente' && ($filtros['order'] ?? 'asc') === 'asc' ? 'desc' : 'asc']))}" class="text-decoration-none text-dark">
+              Cliente
+              {if ($filtros['sort'] ?? '') === 'cliente'}
+                <i class="bi bi-caret-{($filtros['order'] ?? 'asc') === 'asc' ? 'up' : 'down'}-fill"></i>
+              {else}
+                <i class="bi bi-arrow-down-up text-muted"></i>
+              {/if}
+            </a>
+          </th>
+          <th>
+            <a href="?{http_build_query(array_merge($_GET, ['sort' => 'especialista', 'order' => ($filtros['sort'] ?? '') === 'especialista' && ($filtros['order'] ?? 'asc') === 'asc' ? 'desc' : 'asc']))}" class="text-decoration-none text-dark">
+              Especialista
+              {if ($filtros['sort'] ?? '') === 'especialista'}
+                <i class="bi bi-caret-{($filtros['order'] ?? 'asc') === 'asc' ? 'up' : 'down'}-fill"></i>
+              {else}
+                <i class="bi bi-arrow-down-up text-muted"></i>
+              {/if}
+            </a>
+          </th>
           <th>Servicio</th>
-          <th>Fecha</th>
+          <th>
+            <a href="?{http_build_query(array_merge($_GET, ['sort' => 'fecha', 'order' => ($filtros['sort'] ?? '') === 'fecha' && ($filtros['order'] ?? 'asc') === 'asc' ? 'desc' : 'asc']))}" class="text-decoration-none text-dark">
+              Fecha
+              {if ($filtros['sort'] ?? '') === 'fecha'}
+                <i class="bi bi-caret-{($filtros['order'] ?? 'asc') === 'asc' ? 'up' : 'down'}-fill"></i>
+              {else}
+                <i class="bi bi-arrow-down-up text-muted"></i>
+              {/if}
+            </a>
+          </th>
           <th>Hora</th>
           <th>Estado</th>
           <th class="text-end">Acciones</th>
