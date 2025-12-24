@@ -28,38 +28,68 @@
 
     {* Filtros por rol *}
     <div class="col-12 col-md-6 col-lg-5">
-      <div class="d-flex gap-2 flex-wrap">
-        <a
-          href="/admin/users"
-          class="badge {!isset($_GET['rol']) ? 'bg-dark' : 'bg-secondary'} text-decoration-none"
-          style="cursor: pointer; padding: 0.5rem 0.75rem"
-        >
-          Todos
-        </a>
-        <a
-          href="/admin/users?rol=Admin"
-          class="badge {isset($_GET['rol']) && $_GET['rol'] === 'Admin' ? 'bg-danger' : 'bg-secondary'} text-decoration-none"
-          style="cursor: pointer; padding: 0.5rem 0.75rem"
-        >
-          <i class="bi bi-shield-fill me-1"></i>
-          Admin
-        </a>
-        <a
-          href="/admin/users?rol=Especialista"
-          class="badge {isset($_GET['rol']) && $_GET['rol'] === 'Especialista' ? 'bg-warning' : 'bg-secondary'} text-decoration-none"
-          style="cursor: pointer; padding: 0.5rem 0.75rem"
-        >
-          <i class="bi bi-person-badge me-1"></i>
-          Especialista
-        </a>
-        <a
-          href="/admin/users?rol=Cliente"
-          class="badge {isset($_GET['rol']) && $_GET['rol'] === 'Cliente' ? 'bg-primary' : 'bg-secondary'} text-decoration-none"
-          style="cursor: pointer; padding: 0.5rem 0.75rem"
-        >
-          <i class="bi bi-person me-1"></i>
-          Cliente
-        </a>
+      <div class="d-flex flex-column gap-2">
+        {* Filtros por rol *}
+        <div class="d-flex gap-2 flex-wrap">
+          <a
+            href="?{http_build_query(array_merge($_GET, ['rol' => null]))}"
+            class="badge {!isset($_GET['rol']) ? 'bg-dark' : 'bg-secondary'} text-decoration-none"
+            style="cursor: pointer; padding: 0.5rem 0.75rem"
+          >
+            Todos los Roles
+          </a>
+          <a
+            href="?{http_build_query(array_merge($_GET, ['rol' => 'Admin']))}"
+            class="badge {isset($_GET['rol']) && $_GET['rol'] === 'Admin' ? 'bg-danger' : 'bg-secondary'} text-decoration-none"
+            style="cursor: pointer; padding: 0.5rem 0.75rem"
+          >
+            <i class="bi bi-shield-fill me-1"></i>
+            Admin
+          </a>
+          <a
+            href="?{http_build_query(array_merge($_GET, ['rol' => 'Especialista']))}"
+            class="badge {isset($_GET['rol']) && $_GET['rol'] === 'Especialista' ? 'bg-warning' : 'bg-secondary'} text-decoration-none"
+            style="cursor: pointer; padding: 0.5rem 0.75rem"
+          >
+            <i class="bi bi-person-badge me-1"></i>
+            Especialista
+          </a>
+          <a
+            href="?{http_build_query(array_merge($_GET, ['rol' => 'Cliente']))}"
+            class="badge {isset($_GET['rol']) && $_GET['rol'] === 'Cliente' ? 'bg-primary' : 'bg-secondary'} text-decoration-none"
+            style="cursor: pointer; padding: 0.5rem 0.75rem"
+          >
+            <i class="bi bi-person me-1"></i>
+            Cliente
+          </a>
+        </div>
+
+        {* Filtros por estado *}
+        <div class="d-flex gap-2 flex-wrap">
+          <a
+            href="?{http_build_query(array_merge($_GET, ['estado' => null]))}"
+            class="badge {!isset($_GET['estado']) ? 'bg-dark' : 'bg-secondary'} text-decoration-none"
+            style="cursor: pointer; padding: 0.5rem 0.75rem"
+          >
+            Todos los Estados
+          </a>
+          <a
+            href="?{http_build_query(array_merge($_GET, ['estado' => '1']))}"
+            class="badge {isset($_GET['estado']) && $_GET['estado'] === '1' ? 'bg-success' : 'bg-secondary'} text-decoration-none"
+            style="cursor: pointer; padding: 0.5rem 0.75rem"
+          >
+            <i class="bi bi-check-circle me-1"></i>
+            Activos
+          </a>
+          <a
+            href="?{http_build_query(array_merge($_GET, ['estado' => '0']))}"
+            class="badge {isset($_GET['estado']) && $_GET['estado'] === '0' ? 'bg-danger' : 'bg-secondary'} text-decoration-none"
+            style="cursor: pointer; padding: 0.5rem 0.75rem"
+          >
+            <i class="bi bi-x-circle me-1"></i>
+            Inactivos
+          </a>
+        </div>
       </div>
     </div>
   </div>

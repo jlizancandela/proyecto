@@ -171,6 +171,10 @@ class PdfExportController
             $filtros['rol'] = $_GET['rol'];
         }
 
+        if (isset($_GET['estado']) && $_GET['estado'] !== '') {
+            $filtros['estado'] = $_GET['estado'];
+        }
+
         if (!empty($_GET['sort'])) {
             $filtros['sort'] = $_GET['sort'];
         }

@@ -491,6 +491,12 @@ class UserRepository
                 $params['rol'] = $filters['rol'];
             }
 
+            // Filter by active status
+            if (isset($filters['estado']) && $filters['estado'] !== '') {
+                $sql .= " AND activo = :estado";
+                $params['estado'] = (int)$filters['estado'];
+            }
+
             // Order By
             $sort = $filters['sort'] ?? '';
             $order = strtoupper($filters['order'] ?? 'ASC') === 'DESC' ? 'DESC' : 'ASC';
