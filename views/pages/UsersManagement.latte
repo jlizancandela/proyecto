@@ -9,7 +9,7 @@
   </div>
 
   {* Barra de búsqueda, filtros y botón crear *}
-  <div class="row g-3 mb-3">
+  <div class="row g-3 mb-3 justify-content-between">
     {* Buscador *}
     <div class="col-12 col-md-6 col-lg-4">
       <form method="GET" action="/admin/users" class="position-relative">
@@ -27,10 +27,10 @@
     </div>
 
     {* Filtros por rol *}
-    <div class="col-12 col-md-6 col-lg-5">
-      <div class="d-flex flex-column gap-2">
+    <div class="col-12 col-md-6 col-lg-6">
+      <div class="d-flex flex-column gap-2 align-items-end">
         {* Filtros por rol *}
-        <div class="d-flex gap-2 flex-wrap">
+        <div class="d-flex gap-2 flex-wrap justify-content-end">
           <a
             href="?{http_build_query(array_merge($_GET, ['rol' => null]))}"
             class="badge {!isset($_GET['rol']) ? 'bg-dark' : 'bg-secondary'} text-decoration-none"
@@ -65,7 +65,7 @@
         </div>
 
         {* Filtros por estado *}
-        <div class="d-flex gap-2 flex-wrap">
+        <div class="d-flex gap-2 flex-wrap justify-content-end">
           <a
             href="?{http_build_query(array_merge($_GET, ['estado' => null]))}"
             class="badge {!isset($_GET['estado']) ? 'bg-dark' : 'bg-secondary'} text-decoration-none"
