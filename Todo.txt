@@ -24,6 +24,7 @@
 │   │   │   └── EspecialistaUsuarioDTO.php
 │   │   ├── Domain/
 │   │   │   ├── Especialista.php
+│   │   │   ├── EspecialistaDTO.php
 │   │   │   ├── EspecialistaServicio.php
 │   │   │   └── HorarioEspecialista.php
 │   │   ├── Infrastructure/
