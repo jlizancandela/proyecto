@@ -12,38 +12,30 @@ class Especialista extends Usuario
     private ?string $descripcion;
     private ?string $fotoUrl;
 
-    public function __construct(
-        string $rol,
-        string $nombre,
-        string $apellidos,
-        string $email,
-        string $passwordHash,
-        int $idUsuario,
-        ?string $descripcion = null,
-        ?string $fotoUrl = null,
-        ?string $telefono = null,
-        ?string $fechaRegistro = null,
-        bool $activo = true,
-        ?int $usuarioId = null,
-        ?int $idEspecialista = null
-    ) {
+    /**
+     * Creates a new Especialista instance
+     *
+     * @param EspecialistaDTO $dto Data transfer object with all required fields
+     */
+    public function __construct(EspecialistaDTO $dto)
+    {
         parent::__construct(
-            $rol,
-            $nombre,
-            $apellidos,
-            $email,
-            $passwordHash,
-            $telefono,
-            $fechaRegistro,
-            $activo,
-            $usuarioId
+            $dto->rol,
+            $dto->nombre,
+            $dto->apellidos,
+            $dto->email,
+            $dto->passwordHash,
+            $dto->telefono,
+            $dto->fechaRegistro,
+            $dto->activo,
+            $dto->usuarioId
         );
 
-        $this->idUsuario = $idUsuario;
-        $this->descripcion = $descripcion;
-        $this->fotoUrl = $fotoUrl;
-        if ($idEspecialista !== null) {
-            $this->idEspecialista = $idEspecialista;
+        $this->idUsuario = $dto->idUsuario;
+        $this->descripcion = $dto->descripcion;
+        $this->fotoUrl = $dto->fotoUrl;
+        if ($dto->idEspecialista !== null) {
+            $this->idEspecialista = $dto->idEspecialista;
         }
     }
 
@@ -67,23 +59,30 @@ class Especialista extends Usuario
         return $this->fotoUrl;
     }
 
+    /**
+     * Creates an Especialista instance from database row data
+     *
+     * @param array $data Database row data
+     * @return self
+     */
     public static function fromDatabase(array $data): self
     {
-        $especialista = new self(
-            $data["rol"],
-            $data["nombre"],
-            $data["apellidos"],
-            $data["email"],
-            $data["password_hash"],
-            $data["id_usuario"],
-            $data["descripcion"] ?? null,
-            $data["foto_url"] ?? null,
-            $data["telefono"] ?? null,
-            $data["fecha_registro"],
-            (bool) ($data["activo"] ?? true),
-            $data["id_usuario"] ?? null,
-            $data["id_especialista"] ?? null
-        );
-        return $especialista;
+        $dto = EspecialistaDTO::fromArray([
+            'rol' => $data["rol"],
+            'nombre' => $data["nombre"],
+            'apellidos' => $data["apellidos"],
+            'email' => $data["email"],
+            'passwordHash' => $data["password_hash"],
+            'idUsuario' => $data["id_usuario"],
+            'descripcion' => $data["descripcion"] ?? null,
+            'fotoUrl' => $data["foto_url"] ?? null,
+            'telefono' => $data["telefono"] ?? null,
+            'fechaRegistro' => $data["fecha_registro"],
+            'activo' => (bool) ($data["activo"] ?? true),
+            'usuarioId' => $data["id_usuario"] ?? null,
+            'idEspecialista' => $data["id_especialista"] ?? null
+        ]);
+
+        return new self($dto);
     }
 }
