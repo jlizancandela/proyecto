@@ -1,4 +1,5 @@
 <?php
+// Domain entity for specialists, extends base user with specialist-specific fields
 
 namespace Especialistas\Domain;
 
@@ -6,49 +7,49 @@ use Usuarios\Domain\Usuario;
 
 class Especialista extends Usuario
 {
-    private int $id_especialista;
+    private int $idEspecialista;
     private int $idUsuario;
     private ?string $descripcion;
-    private ?string $foto_url;
+    private ?string $fotoUrl;
 
     public function __construct(
         string $rol,
         string $nombre,
         string $apellidos,
         string $email,
-        string $password_hash,
+        string $passwordHash,
         int $idUsuario,
         ?string $descripcion = null,
-        ?string $foto_url = null,
+        ?string $fotoUrl = null,
         ?string $telefono = null,
-        ?string $fecha_registro = null,
+        ?string $fechaRegistro = null,
         bool $activo = true,
-        ?int $usuario_id = null,
-        ?int $id_especialista = null
+        ?int $usuarioId = null,
+        ?int $idEspecialista = null
     ) {
         parent::__construct(
             $rol,
             $nombre,
             $apellidos,
             $email,
-            $password_hash,
+            $passwordHash,
             $telefono,
-            $fecha_registro,
+            $fechaRegistro,
             $activo,
-            $usuario_id
+            $usuarioId
         );
 
         $this->idUsuario = $idUsuario;
         $this->descripcion = $descripcion;
-        $this->foto_url = $foto_url;
-        if ($id_especialista !== null) {
-            $this->id_especialista = $id_especialista;
+        $this->fotoUrl = $fotoUrl;
+        if ($idEspecialista !== null) {
+            $this->idEspecialista = $idEspecialista;
         }
     }
 
     public function getIdEspecialista(): int
     {
-        return $this->id_especialista;
+        return $this->idEspecialista;
     }
 
     public function getIdUsuario(): int
@@ -63,7 +64,7 @@ class Especialista extends Usuario
 
     public function getFotoUrl(): ?string
     {
-        return $this->foto_url;
+        return $this->fotoUrl;
     }
 
     public static function fromDatabase(array $data): self
