@@ -7,7 +7,7 @@ use Usuarios\Domain\Usuario;
 class Especialista extends Usuario
 {
     private int $id_especialista;
-    private int $id_usuario;
+    private int $idUsuario;
     private ?string $descripcion;
     private ?string $foto_url;
 
@@ -17,7 +17,7 @@ class Especialista extends Usuario
         string $apellidos,
         string $email,
         string $password_hash,
-        int $id_usuario,
+        int $idUsuario,
         ?string $descripcion = null,
         ?string $foto_url = null,
         ?string $telefono = null,
@@ -38,7 +38,7 @@ class Especialista extends Usuario
             $usuario_id
         );
 
-        $this->id_usuario = $id_usuario;
+        $this->idUsuario = $idUsuario;
         $this->descripcion = $descripcion;
         $this->foto_url = $foto_url;
         if ($id_especialista !== null) {
@@ -53,7 +53,7 @@ class Especialista extends Usuario
 
     public function getIdUsuario(): int
     {
-        return $this->id_usuario;
+        return $this->idUsuario;
     }
 
     public function getDescripcion(): ?string
