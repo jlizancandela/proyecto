@@ -6,19 +6,19 @@ class HorarioEspecialista
 {
     private int $id_horario;
     private int $id_especialista;
-    private int $dia_semana;
+    private int $diaSemana;
     private string $hora_inicio;
     private string $hora_fin;
 
     public function __construct(
         int $id_especialista,
-        int $dia_semana,
+        int $diaSemana,
         string $hora_inicio,
         string $hora_fin,
         ?int $id_horario = null,
     ) {
         $this->id_especialista = $id_especialista;
-        $this->dia_semana = $dia_semana;
+        $this->diaSemana = $diaSemana;
         $this->hora_inicio = $hora_inicio;
         $this->hora_fin = $hora_fin;
         if ($id_horario !== null) {
@@ -38,7 +38,7 @@ class HorarioEspecialista
 
     public function getDiaSemana(): int
     {
-        return $this->dia_semana;
+        return $this->diaSemana;
     }
 
     public function getHoraInicio(): string
