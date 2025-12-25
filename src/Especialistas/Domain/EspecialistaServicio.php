@@ -4,23 +4,23 @@ namespace Especialistas\Domain;
 
 class EspecialistaServicio
 {
-    private int $id_especialista;
-    private int $id_servicio;
+    private int $idEspecialista;
+    private int $idServicio;
 
-    public function __construct(int $id_especialista, int $id_servicio)
+    public function __construct(int $idEspecialista, int $idServicio)
     {
-        $this->id_especialista = $id_especialista;
-        $this->id_servicio = $id_servicio;
+        $this->idEspecialista = $idEspecialista;
+        $this->idServicio = $idServicio;
     }
 
     public function getIdEspecialista(): int
     {
-        return $this->id_especialista;
+        return $this->idEspecialista;
     }
 
     public function getIdServicio(): int
     {
-        return $this->id_servicio;
+        return $this->idServicio;
     }
 
     public static function fromDatabase(array $data): self
