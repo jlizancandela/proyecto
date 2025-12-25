@@ -1,15 +1,24 @@
 <?php
 
+// Represents a specialist's work schedule with day and time slots.
+
 namespace Especialistas\Domain;
 
 class HorarioEspecialista
 {
-    private int $id_horario;
-    private int $id_especialista;
+    private int $idHorario;
+    private int $idEspecialista;
     private int $diaSemana;
-    private string $hora_inicio;
-    private string $hora_fin;
+    private string $horaInicio;
+    private string $horaFin;
 
+    /**
+     * @param int $id_especialista
+     * @param int $diaSemana
+     * @param string $hora_inicio
+     * @param string $hora_fin
+     * @param int|null $id_horario
+     */
     public function __construct(
         int $id_especialista,
         int $diaSemana,
@@ -17,40 +26,59 @@ class HorarioEspecialista
         string $hora_fin,
         ?int $id_horario = null,
     ) {
-        $this->id_especialista = $id_especialista;
+        $this->idEspecialista = $id_especialista;
         $this->diaSemana = $diaSemana;
-        $this->hora_inicio = $hora_inicio;
-        $this->hora_fin = $hora_fin;
+        $this->horaInicio = $hora_inicio;
+        $this->horaFin = $hora_fin;
         if ($id_horario !== null) {
-            $this->id_horario = $id_horario;
+            $this->idHorario = $id_horario;
         }
     }
 
+    /**
+     * @return int
+     */
     public function getIdHorario(): int
     {
-        return $this->id_horario;
+        return $this->idHorario;
     }
 
+    /**
+     * @return int
+     */
     public function getIdEspecialista(): int
     {
-        return $this->id_especialista;
+        return $this->idEspecialista;
     }
 
+    /**
+     * @return int
+     */
     public function getDiaSemana(): int
     {
         return $this->diaSemana;
     }
 
+    /**
+     * @return string
+     */
     public function getHoraInicio(): string
     {
-        return $this->hora_inicio;
+        return $this->horaInicio;
     }
 
+    /**
+     * @return string
+     */
     public function getHoraFin(): string
     {
-        return $this->hora_fin;
+        return $this->horaFin;
     }
 
+    /**
+     * @param array $data
+     * @return self
+     */
     public static function fromDatabase(array $data): self
     {
         return new self(

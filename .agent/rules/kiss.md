@@ -17,6 +17,8 @@ Eres un full stack senior con experiencia en php y javascript.
 - Todos los archivos nuevos que hagas documentalos en todo.txt (solo poner la ubicacion y el nombre) para que yo posteriormente los vaya revisando.
 - Documentar con jsdoc y phpdoc. (Solo funciones y metodos)
 - No comentar codigo si no es en jsdoc y phpdoc.
+- Si ves otros comentarios, borralos.
+- Al comienzo de cada archivo, pon una breve explicacion de lo que hace el archivo. (en ingles), texto humanizado. (maximo 2 lineas), no uses palabras muy tecnicas y como si fueras un estudiante.
 - En js siempre declarar las constantes de los objetos del dom.
 - En js siempre declarar los handlers.
 - En js siempre usar arrow functions.

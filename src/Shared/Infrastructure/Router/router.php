@@ -239,6 +239,84 @@ $router->get('/admin/api/stats/specialist-occupancy', function () use ($especial
     }
 });
 
+// Endpoint para estadísticas de servicios más solicitados
+$router->get('/admin/api/stats/popular-services', function () use ($reservaService, $servicioService) {
+    header('Content-Type: application/json');
+    try {
+        $servicios = $servicioService->getAllServices();
+
+        $labels = [];
+        $data = [];
+
+        foreach ($servicios as $servicio) {
+            $labels[] = $servicio->getNombreServicio();
+
+            // Count bookings for this service
+            $bookings = $reservaService->getAllReservasWithFilters([
+                'servicio' => $servicio->getIdServicio()
+            ], 1000, 0);
+
+            // Count only active bookings (not cancelled)
+            $activeCount = count(array_filter($bookings, function ($booking) {
+                return $booking->estado !== 'Cancelada';
+            }));
+
+            $data[] = $activeCount;
+        }
+
+        echo json_encode([
+            'success' => true,
+            'labels' => $labels,
+            'data' => $data
+        ], JSON_PRETTY_PRINT);
+    } catch (\Exception $e) {
+        http_response_code(500);
+        echo json_encode([
+            'success' => false,
+            'error' => 'Error al obtener estadísticas de servicios'
+        ], JSON_PRETTY_PRINT);
+    }
+});
+
+// Endpoint para KPIs del día actual
+$router->get('/admin/api/stats/today-kpis', function () use ($reservaService) {
+    header('Content-Type: application/json');
+    try {
+        $today = date('Y-m-d');
+
+        // Get today's bookings
+        $todayBookings = $reservaService->getAllReservasWithFilters([
+            'fecha_desde' => $today,
+            'fecha_hasta' => $today
+        ], 1000, 0);
+
+        // Count active bookings (not cancelled)
+        $activeBookings = array_filter($todayBookings, function ($booking) {
+            return $booking->estado !== 'Cancelada';
+        });
+
+        $totalBookings = count($activeBookings);
+
+        // Calculate estimated revenue
+        $estimatedRevenue = array_reduce($activeBookings, function ($total, $booking) {
+            return $total + ($booking->servicio_precio ?? 0);
+        }, 0);
+
+        echo json_encode([
+            'success' => true,
+            'totalBookings' => $totalBookings,
+            'estimatedRevenue' => number_format($estimatedRevenue, 2, '.', '')
+        ], JSON_PRETTY_PRINT);
+    } catch (\Exception $e) {
+        http_response_code(500);
+        echo json_encode([
+            'success' => false,
+            'error' => 'Error al obtener KPIs del día'
+        ], JSON_PRETTY_PRINT);
+    }
+});
+
+
 $router->post('/admin/api/users', function () use ($latte, $userService, $especialistaServicioRepository, $especialistaRepository) {
     $controller = new UserApiController($latte, $userService, $especialistaServicioRepository, $especialistaRepository);
     $controller->createUser();

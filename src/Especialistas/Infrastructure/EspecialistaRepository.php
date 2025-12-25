@@ -1,5 +1,7 @@
 <?php
 
+// Handles database operations for specialist entities and their relationships.
+
 namespace Especialistas\Infrastructure;
 
 use Especialistas\Domain\Especialista;
@@ -10,11 +12,17 @@ class EspecialistaRepository
 {
     private PDO $db;
 
+    /**
+     * @param PDO $db
+     */
     public function __construct(PDO $db)
     {
         $this->db = $db;
     }
 
+    /**
+     * @return array
+     */
     public function getAllEspecialistasConUsuario(): array
     {
         try {
@@ -55,7 +63,7 @@ class EspecialistaRepository
     {
         try {
             $stmt = $this->db->query("
-                SELECT 
+                SELECT
                     e.id_especialista as id,
                     u.nombre,
                     u.apellidos
@@ -72,11 +80,15 @@ class EspecialistaRepository
         }
     }
 
+    /**
+     * @param int $id
+     * @return EspecialistaUsuarioDTO|null
+     */
     public function getEspecialistaConUsuarioById(int $id): ?EspecialistaUsuarioDTO
     {
         try {
             $stmt = $this->db->prepare("
-                SELECT 
+                SELECT
                     u.id_usuario,
                     u.rol,
                     u.nombre,
@@ -102,11 +114,17 @@ class EspecialistaRepository
         }
     }
 
+    /**
+     * Adds a new specialist entry to the database.
+     *
+     * @param Especialista $especialista The Especialista object containing the data to be added.
+     * @return void
+     */
     public function addEspecialista(Especialista $especialista): void
     {
         try {
             $stmt = $this->db->prepare(
-                "INSERT INTO ESPECIALISTA (id_usuario, descripcion, foto_url) 
+                "INSERT INTO ESPECIALISTA (id_usuario, descripcion, foto_url)
                  VALUES (:id_usuario, :descripcion, :foto_url)"
             );
             $stmt->execute([
@@ -120,17 +138,18 @@ class EspecialistaRepository
     }
 
     /**
-     * Creates a basic especialista entry (without full Especialista object)
-     * @param int $userId User ID
-     * @param string|null $fotoUrl Avatar URL
-     * @param string|null $descripcion Specialist description
-     * @return int|null The created especialista ID or null on failure
+     * Creates a basic especialista entry (without full Especialista object).
+     *
+     * @param int $userId User ID.
+     * @param string|null $fotoUrl Avatar URL.
+     * @param string|null $descripcion Specialist description.
+     * @return int|null The created especialista ID or null on failure.
      */
     public function createBasicEspecialista(int $userId, ?string $fotoUrl = null, ?string $descripcion = null): ?int
     {
         try {
             $stmt = $this->db->prepare(
-                "INSERT INTO ESPECIALISTA (id_usuario, descripcion, foto_url) 
+                "INSERT INTO ESPECIALISTA (id_usuario, descripcion, foto_url)
                  VALUES (:id_usuario, :descripcion, :foto_url)"
             );
             $stmt->execute([
@@ -146,9 +165,10 @@ class EspecialistaRepository
     }
 
     /**
-     * Gets especialista ID by user ID
-     * @param int $userId User ID
-     * @return int|null
+     * Gets especialista ID by user ID.
+     *
+     * @param int $userId User ID.
+     * @return int|null The specialist ID if found, otherwise null.
      */
     public function getEspecialistaIdByUserId(int $userId): ?int
     {
@@ -166,9 +186,10 @@ class EspecialistaRepository
     }
 
     /**
-     * Checks if especialista entry exists for user
-     * @param int $userId User ID
-     * @return bool
+     * Checks if an especialista entry exists for a given user ID.
+     *
+     * @param int $userId User ID.
+     * @return bool True if a specialist exists for the user, false otherwise.
      */
     public function especialistaExists(int $userId): bool
     {
@@ -185,12 +206,17 @@ class EspecialistaRepository
         }
     }
 
+    /**
+     * Updates an existing especialista entry.
+     * @param Especialista $especialista The Especialista object with updated data.
+     * @return void
+     */
     public function updateEspecialista(Especialista $especialista): void
     {
         try {
             $stmt = $this->db->prepare(
-                "UPDATE ESPECIALISTA 
-                 SET id_usuario = :id_usuario, descripcion = :descripcion, foto_url = :foto_url 
+                "UPDATE ESPECIALISTA
+                 SET id_usuario = :id_usuario, descripcion = :descripcion, foto_url = :foto_url
                  WHERE id_especialista = :id"
             );
             $stmt->execute([
@@ -204,6 +230,11 @@ class EspecialistaRepository
         }
     }
 
+    /**
+     * @param int $id
+     * @param string $fotoUrl
+     * @return void
+     */
     public function updateEspecialistaPhoto(int $id, string $fotoUrl): void
     {
         try {
@@ -219,6 +250,11 @@ class EspecialistaRepository
         }
     }
 
+    /**
+     * @param int $id
+     * @param string $descripcion
+     * @return void
+     */
     public function updateEspecialistaDescription(int $id, string $descripcion): void
     {
         try {
@@ -254,6 +290,13 @@ class EspecialistaRepository
         }
     }
 
+    /**
+     * @param int $idServicio
+     * @param string $fecha
+     * @param int|null $limit
+     * @param int|null $offset
+     * @return array
+     */
     public function getEspecialistasDisponibles(int $idServicio, string $fecha, ?int $limit = null, ?int $offset = null): array
     {
         try {
@@ -307,9 +350,9 @@ class EspecialistaRepository
 
                 // Obtener reservas del especialista para ese día
                 $stmtReservas = $this->db->prepare("
-                    SELECT hora_inicio, hora_fin 
-                    FROM RESERVA 
-                    WHERE id_especialista = :id_especialista 
+                    SELECT hora_inicio, hora_fin
+                    FROM RESERVA
+                    WHERE id_especialista = :id_especialista
                     AND fecha_reserva = :fecha
                     AND estado != 'Cancelada'
                     ORDER BY hora_inicio
@@ -341,6 +384,11 @@ class EspecialistaRepository
         }
     }
 
+    /**
+     * @param array $reservas
+     * @param int $duracionMinutos
+     * @return array
+     */
     private function calcularHorasDisponibles(array $reservas, int $duracionMinutos): array
     {
         $horaInicio = new \DateTime('09:00');
@@ -382,7 +430,11 @@ class EspecialistaRepository
         return $horasDisponibles;
     }
 
-    public function countEspecialistasDisponibles(int $idServicio, string $fecha): int
+    /**
+     * @param int $idServicio
+     * @return int
+     */
+    public function countEspecialistasDisponibles(int $idServicio): int
     {
         try {
             $stmt = $this->db->prepare("
@@ -403,6 +455,10 @@ class EspecialistaRepository
         }
     }
 
+    /**
+     * @param int $id
+     * @return void
+     */
     public function deleteEspecialista(int $id): void
     {
         try {

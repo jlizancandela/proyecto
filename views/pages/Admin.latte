@@ -7,7 +7,7 @@ content}
 </div>
 
 <div class="row mt-4">
-  <div class="col-md-4">
+  <div class="col-md-6">
     <div class="card">
       <div class="card-body">
         <h5 class="card-title">
@@ -20,7 +20,7 @@ content}
     </div>
   </div>
 
-  <div class="col-md-4">
+  <div class="col-md-6">
     <div class="card">
       <div class="card-body">
         <h5 class="card-title">
@@ -32,24 +32,18 @@ content}
       </div>
     </div>
   </div>
-
-  <div class="col-md-4">
-    <div class="card">
-      <div class="card-body">
-        <h5 class="card-title">
-          <i class="bi bi-gear me-2"></i>
-          Configuración
-        </h5>
-        <p class="card-text">Configura el sistema.</p>
-        <a href="#" class="btn btn-secondary btn-sm disabled">Próximamente</a>
-      </div>
-    </div>
-  </div>
 </div>
 
+{* KPIs del día *}
+<div class="mt-4">{include '../components/today-kpis.latte'}</div>
+
+{* Gráficos estadísticos *}
 <div class="row mt-4">
   <div class="col-md-6">{include '../components/specialist-occupancy-chart.latte'}</div>
+  <div class="col-md-6">{include '../components/popular-services-chart.latte'}</div>
 </div>
 
+<script src="/public/js/admin/charts/todayKpis.js"></script>
 <script src="/public/js/admin/charts/specialistOccupancy.js"></script>
+<script src="/public/js/admin/charts/popularServices.js"></script>
 {/block}

@@ -1,0 +1,43 @@
+{* Today's KPIs Component *}
+<div class="row">
+  <div class="col-md-6">
+    <div class="card shadow-sm border-primary">
+      <div class="card-body py-4">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <h6 class="text-muted mb-1">Reservas de Hoy</h6>
+            <h2 class="mb-0" id="todayBookingsCount">
+              <span class="spinner-border spinner-border-sm text-primary" role="status"></span>
+            </h2>
+          </div>
+          <div class="text-primary">
+            <i class="bi bi-calendar-check" style="font-size: 2.5rem"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-6">
+    <div class="card shadow-sm border-success">
+      <div class="card-body py-4">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <h6 class="text-muted mb-1">Ganancias Estimadas Hoy</h6>
+            <h2 class="mb-0" id="todayRevenueAmount">
+              <span class="spinner-border spinner-border-sm text-success" role="status"></span>
+            </h2>
+          </div>
+          <div class="text-success">
+            <i class="bi bi-currency-euro" style="font-size: 2.5rem"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="kpisError" class="alert alert-danger d-none mt-3" role="alert">
+  <i class="bi bi-exclamation-triangle me-2"></i>
+  Error al cargar las estadísticas del día
+</div>

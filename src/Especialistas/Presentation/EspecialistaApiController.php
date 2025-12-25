@@ -45,8 +45,7 @@ class EspecialistaApiController
 
             // Obtener total de especialistas disponibles
             $total = $this->repository->countEspecialistasDisponibles(
-                (int)$idServicio,
-                $fecha
+                (int)$idServicio
             );
 
             // Obtener especialistas disponibles con paginación
