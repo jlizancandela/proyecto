@@ -6,11 +6,7 @@
 │   └── js/
 │       ├── admin/
 │       │   └── bookings/
-│       │       ├── bookingsManager.js        # Refactored - Main manager
-│       │       ├── uiHelpers.js              # New - UI utilities
-│       │       ├── filterManager.js          # New - Filter/URL management
-│       │       ├── tableRenderer.js          # New - Table rendering
-│       │       └── paginationRenderer.js     # New - Pagination rendering
+│       │       └── bookingsManager.js        # Simplified - Only modals & AJAX
 │       └── user/
 │           └── bookings/
 │               ├── context/
