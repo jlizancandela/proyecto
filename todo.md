@@ -13,11 +13,11 @@
 
 #### `bookings.js` (109 líneas)
 
-- [ ] Auditar para verificar que no duplique SSR
-- [ ] Extraer fetch calls a `api.js` si existen
-- [ ] Aplicar patrón `form.elements`
-- [ ] Añadir JSDoc
-- [ ] Crear tests unitarios
+- [x] Auditar para verificar que no duplique SSR
+- [x] Extraer fetch calls a `api.js` si existen (No aplica)
+- [x] Aplicar patrón `form.elements` (No aplica, usa creación dinámica de form)
+- [x] Añadir JSDoc
+- [x] Crear tests unitarios
 
 ### 🟡 Media Prioridad
 
@@ -93,7 +93,7 @@
 
 #### Falta Testear
 
-- [ ] `bookings.js` - Tests para lógica pública
+- [x] `bookings.js` - Tests para lógica pública
 - [ ] `booking-filters.js` - Tests si tiene lógica
 - [ ] `specialist/bookings-filters.js` - Tests si tiene lógica
 
@@ -139,9 +139,9 @@
 
 ### 🔥 Día 1-2: JavaScript Crítico
 
-- [ ] `bookings.js` - Auditar SSR y refactorizar
+- [x] `bookings.js` - Auditar SSR y refactorizar
 - [x] `registerForm.js` - Verificar form.elements y JSDoc
-- [ ] Tests para bookings.js si tiene lógica
+- [x] Tests para bookings.js si tiene lógica
 
 ### 📝 Día 3-4: Documentación Rápida
 
