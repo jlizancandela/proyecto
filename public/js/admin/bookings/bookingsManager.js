@@ -1,31 +1,8 @@
-// Manages the bookings admin panel including table display, filters, and CRUD operations.
+// Handles booking modals and delete operations for admin panel.
 
-import { showError, showSuccess } from "./uiHelpers.js";
-import {
-  updateUrlParams,
-  updatePdfExportLink,
-  loadFiltersFromUrl,
-  buildFiltersFromInputs,
-  clearFilterInputs,
-} from "./filterManager.js";
-import { renderBookingsTable } from "./tableRenderer.js";
-import { renderPagination } from "./paginationRenderer.js";
-
-const filterEstado = document.getElementById("filterEstado");
-const filterCliente = document.getElementById("filterCliente");
-const filterEspecialista = document.getElementById("filterEspecialista");
-const filterFechaDesde = document.getElementById("filterFechaDesde");
-const filterFechaHasta = document.getElementById("filterFechaHasta");
-const btnApplyFilters = document.getElementById("btnApplyFilters");
-const btnClearFilters = document.getElementById("btnClearFilters");
-
-const bookingsTableContainer = document.getElementById("bookingsTableContainer");
-const paginationContainer = document.getElementById("paginationContainer");
-
-const createBookingModal = document.getElementById("createBookingModal");
-const editBookingModal = document.getElementById("editBookingModal");
 const createBookingForm = document.getElementById("createBookingForm");
 const editBookingForm = document.getElementById("editBookingForm");
+const editBookingModal = document.getElementById("editBookingModal");
 
 const editBookingId = document.getElementById("editBookingId");
 const editFecha = document.getElementById("editFecha");
@@ -37,49 +14,21 @@ const editEspecialista = document.getElementById("editEspecialista");
 const editServicio = document.getElementById("editServicio");
 const editDuracion = document.getElementById("editDuracion");
 
-let currentPage = 1;
-let currentFilters = {};
-
 /**
- * Fetches bookings from the API based on page and filters.
+ * Shows a temporary success message alert.
  *
- * @param {number} page - Page number to fetch.
- * @param {object} filters - Filter criteria.
+ * @param {string} message - Success message to display.
  */
-const fetchBookings = async (page = 1, filters = {}) => {
-  try {
-    const params = new URLSearchParams({
-      page: page,
-      limit: 10,
-      ...filters,
-    });
-
-    const response = await fetch(`/admin/api/reservas?${params}`);
-    const data = await response.json();
-
-    if (data.success) {
-      renderBookingsTable(bookingsTableContainer, data.reservas, currentFilters);
-      renderPagination(paginationContainer, data.page, data.totalPages, handlePageChange);
-      attachDeleteHandlers();
-      attachEditHandlers();
-      attachSortHandlers();
-    } else {
-      showError(bookingsTableContainer, "Error al cargar las reservas");
-    }
-  } catch (error) {
-    console.error("Error fetching bookings:", error);
-    showError(bookingsTableContainer, "Error al conectar con el servidor");
-  }
-};
-
-/**
- * Handles page change in pagination.
- *
- * @param {number} page - New page number.
- */
-const handlePageChange = (page) => {
-  currentPage = page;
-  fetchBookings(page, currentFilters);
+const showSuccess = (message) => {
+  const alertDiv = document.createElement("div");
+  alertDiv.className = "alert alert-success alert-dismissible fade show";
+  alertDiv.innerHTML = `
+    <i class="bi bi-check-circle me-2"></i>
+    ${message}
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  `;
+  document.querySelector(".mb-4").prepend(alertDiv);
+  setTimeout(() => alertDiv.remove(), 3000);
 };
 
 /**
@@ -103,13 +52,13 @@ const handleDeleteBooking = async (e) => {
 
     if (data.success) {
       showSuccess("Reserva eliminada correctamente");
-      fetchBookings(currentPage, currentFilters);
+      setTimeout(() => window.location.reload(), 1000);
     } else {
-      showError(bookingsTableContainer, data.error || "Error al eliminar la reserva");
+      alert(data.error || "Error al eliminar la reserva");
     }
   } catch (error) {
     console.error("Error deleting booking:", error);
-    showError(bookingsTableContainer, "Error al conectar con el servidor");
+    alert("Error al conectar con el servidor");
   }
 };
 
@@ -177,15 +126,13 @@ const handleCreateBooking = async (e) => {
 
     if (result.success) {
       showSuccess("Reserva creada correctamente");
-      bootstrap.Modal.getInstance(createBookingModal).hide();
-      e.target.reset();
-      fetchBookings(currentPage, currentFilters);
+      setTimeout(() => window.location.reload(), 1000);
     } else {
-      showError(bookingsTableContainer, result.error || "Error al crear la reserva");
+      alert(result.error || "Error al crear la reserva");
     }
   } catch (error) {
     console.error("Error creating booking:", error);
-    showError(bookingsTableContainer, "Error al conectar con el servidor");
+    alert("Error al conectar con el servidor");
   }
 };
 
@@ -214,124 +161,31 @@ const handleUpdateBooking = async (e) => {
 
     if (result.success) {
       showSuccess("Reserva actualizada correctamente");
-      bootstrap.Modal.getInstance(editBookingModal).hide();
-      fetchBookings(currentPage, currentFilters);
+      setTimeout(() => window.location.reload(), 1000);
     } else {
-      showError(bookingsTableContainer, result.error || "Error al actualizar la reserva");
+      alert(result.error || "Error al actualizar la reserva");
     }
   } catch (error) {
     console.error("Error updating booking:", error);
-    showError(bookingsTableContainer, "Error al conectar con el servidor");
+    alert("Error al conectar con el servidor");
   }
 };
 
 /**
- * Attaches delete event listeners to buttons.
+ * Attaches event listeners to booking action buttons.
  */
-const attachDeleteHandlers = () => {
+const attachHandlers = () => {
   document.querySelectorAll(".btn-delete-booking").forEach((btn) => {
-    btn.addEventListener("click", handleDeleteBooking);
+    if (!btn.disabled) {
+      btn.addEventListener("click", handleDeleteBooking);
+    }
   });
-};
 
-/**
- * Attaches edit event listeners to buttons.
- */
-const attachEditHandlers = () => {
   document.querySelectorAll(".btn-edit-booking").forEach((btn) => {
     btn.addEventListener("click", handleEditBooking);
   });
 };
 
-/**
- * Attaches sort event listeners to table headers.
- */
-const attachSortHandlers = () => {
-  document.querySelectorAll(".sort-link").forEach((link) => {
-    link.addEventListener("click", (e) => {
-      e.preventDefault();
-      const sortField = e.currentTarget.dataset.sort;
-
-      if (currentFilters.sort === sortField) {
-        currentFilters.order = currentFilters.order === "asc" ? "desc" : "asc";
-      } else {
-        currentFilters.sort = sortField;
-        currentFilters.order = "asc";
-      }
-
-      fetchBookings(1, currentFilters);
-      updateUrlParams(currentFilters);
-      updatePdfExportLink(new URLSearchParams(currentFilters));
-    });
-  });
-};
-
-/**
- * Handles apply filters button click.
- */
-const handleApplyFilters = () => {
-  const filterInputs = {
-    cliente: filterCliente,
-    especialista: filterEspecialista,
-    estado: filterEstado,
-    fecha_desde: filterFechaDesde,
-    fecha_hasta: filterFechaHasta,
-  };
-
-  const filters = buildFiltersFromInputs(filterInputs);
-
-  if (currentFilters.sort) filters.sort = currentFilters.sort;
-  if (currentFilters.order) filters.order = currentFilters.order;
-
-  currentFilters = filters;
-  fetchBookings(1, filters);
-  updateUrlParams(filters);
-  updatePdfExportLink(new URLSearchParams(filters));
-};
-
-/**
- * Handles clear filters button click.
- */
-const handleClearFilters = () => {
-  const filterInputs = {
-    cliente: filterCliente,
-    especialista: filterEspecialista,
-    estado: filterEstado,
-    fecha_desde: filterFechaDesde,
-    fecha_hasta: filterFechaHasta,
-  };
-
-  clearFilterInputs(filterInputs);
-
-  currentFilters = {};
-  fetchBookings(1, {});
-  window.history.pushState({}, "", window.location.pathname);
-  updatePdfExportLink(new URLSearchParams());
-};
-
-/**
- * Initializes the bookings manager.
- */
-const init = () => {
-  attachDeleteHandlers();
-  attachEditHandlers();
-
-  const fields = [
-    "cliente",
-    "especialista",
-    "estado",
-    "fecha_desde",
-    "fecha_hasta",
-    "sort",
-    "order",
-  ];
-
-  currentFilters = loadFiltersFromUrl(fields);
-};
-
-btnApplyFilters.addEventListener("click", handleApplyFilters);
-btnClearFilters.addEventListener("click", handleClearFilters);
 createBookingForm.addEventListener("submit", handleCreateBooking);
 editBookingForm.addEventListener("submit", handleUpdateBooking);
-
-init();
+attachHandlers();
