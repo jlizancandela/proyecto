@@ -135,17 +135,42 @@
 - [ ] Verificar que no haya magic numbers
 - [ ] Verificar que constantes estén en UPPER_CASE
 
-## Priorización Sugerida
+## Priorización - 1 SEMANA ⏰
 
-1. **Semana 1**: Refactorizar JS pendientes (bookings.js, filters)
-2. **Semana 2**: Revisar y dividir ReservaRepository (955 líneas)
-3. **Semana 3**: Revisar y dividir UserRepository (600 líneas)
-4. **Semana 4**: Tests PHP con Pest para servicios críticos
-5. **Semana 5**: Documentación completa (JSDoc/PHPDoc)
+### 🔥 Día 1-2: JavaScript Crítico
+
+- [ ] `bookings.js` - Auditar SSR y refactorizar
+- [ ] `registerForm.js` - Verificar form.elements y JSDoc
+- [ ] Tests para bookings.js si tiene lógica
+
+### 📝 Día 3-4: Documentación Rápida
+
+- [ ] File headers en todos los JS (2-3 líneas)
+- [ ] JSDoc en funciones principales
+- [ ] PHPDoc en archivos críticos (ReservaRepository, UserRepository)
+
+### 🧹 Día 5: Limpieza de Código
+
+- [ ] Eliminar comentarios redundantes
+- [ ] Verificar nombres en inglés
+- [ ] Eliminar magic numbers
+
+### 🎯 Día 6-7: Lo Más Crítico
+
+- [ ] Revisar ReservaRepository (955 líneas) - Solo documentar, NO refactorizar
+- [ ] Añadir PHPDoc a métodos públicos principales
+- [ ] Verificar que todo compile y funcione
+
+## ⚠️ NO HACER (por falta de tiempo)
+
+- ❌ NO dividir archivos grandes PHP (muy arriesgado)
+- ❌ NO refactorizar lógica compleja PHP
+- ❌ NO crear tests PHP nuevos (solo si ya existen)
+- ❌ NO tocar Preact components
 
 ## Notas
 
 - **KISS**: No sobre-ingenierizar, mantener simple
 - **SSR First**: JS solo para AJAX necesario
-- **Tests**: 100% coverage para APIs y servicios críticos
-- **Documentación**: Breve pero completa
+- **Documentación > Refactoring**: Priorizar documentar sobre cambiar
+- **No romper nada**: Mejor documentado que roto
