@@ -2,12 +2,6 @@
 
 import { fetchBooking, createBooking, updateBooking, deleteBooking } from "./api.js";
 
-const SELECTORS = {
-  alertContainer: ".mb-4",
-  deleteButton: ".btn-delete-booking",
-  editButton: ".btn-edit-booking",
-};
-
 const createBookingForm = document.getElementById("createBookingForm");
 const editBookingForm = document.getElementById("editBookingForm");
 const editBookingModal = document.getElementById("editBookingModal");
@@ -45,7 +39,7 @@ const showSuccess = (message) => {
   alertDiv.appendChild(messageText);
   alertDiv.appendChild(closeButton);
 
-  document.querySelector(SELECTORS.alertContainer).prepend(alertDiv);
+  document.querySelector(".mb-4").prepend(alertDiv);
   setTimeout(() => alertDiv.remove(), 3000);
 };
 
@@ -172,8 +166,8 @@ const handleUpdateBooking = async (e) => {
  * Attaches event listeners to booking action buttons.
  */
 const attachHandlers = () => {
-  const deleteButtons = document.querySelectorAll(SELECTORS.deleteButton);
-  const editButtons = document.querySelectorAll(SELECTORS.editButton);
+  const deleteButtons = document.querySelectorAll(".btn-delete-booking");
+  const editButtons = document.querySelectorAll(".btn-edit-booking");
 
   deleteButtons.forEach((btn) => {
     if (!btn.disabled) {
