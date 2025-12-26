@@ -1,5 +1,7 @@
 // Handles booking modals and delete operations for admin panel.
 
+import { fetchBooking, createBooking, updateBooking, deleteBooking } from "./api.js";
+
 const createBookingForm = document.getElementById("createBookingForm");
 const editBookingForm = document.getElementById("editBookingForm");
 const editBookingModal = document.getElementById("editBookingModal");
