@@ -38,11 +38,11 @@
 
 ### 🔴 Crítico - Archivos >500 líneas
 
-#### `ReservaRepository.php` (955 líneas) ⚠️
+#### `ReservaRepository.php` (Refactored & Tested using DRY) ✅
 
-- [ ] Revisar si se puede dividir en clases más pequeñas
-- [ ] Extraer queries complejas a métodos privados
-- [ ] Verificar PHPDoc en todos los métodos
+- [x] Extraer queries complejas a métodos privados (applyFilters)
+- [x] Crear tests unitarios (Covered by Pest/Mockery)
+- [ ] Verificar PHPDoc en todos los métodos restantes
 - [ ] Considerar extraer lógica de reportes a clase separada
 
 #### `UserRepository.php` (600 líneas)
@@ -157,7 +157,7 @@
 
 ### 🎯 Día 6-7: Lo Más Crítico
 
-- [ ] Revisar ReservaRepository (955 líneas) - Solo documentar, NO refactorizar
+- [x] Revisar ReservaRepository (Refactorizado con éxito)
 - [ ] Añadir PHPDoc a métodos públicos principales
 - [ ] Verificar que todo compile y funcione
 
