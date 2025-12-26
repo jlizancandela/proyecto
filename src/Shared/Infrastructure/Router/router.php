@@ -21,6 +21,10 @@ require_once __DIR__ . '/../dependencies.php';
 
 $router = new Router();
 
+$router->before('GET|POST|PUT|DELETE', '/admin/api/.*', function () {
+    AuthMiddleware::apiRequireAdmin();
+});
+
 $router->before('GET|POST|PUT|DELETE', '/admin/.*', function () {
     AuthMiddleware::requireAdmin();
 });
@@ -31,6 +35,14 @@ $router->before('GET|POST|PUT|DELETE', '/user/.*', function () {
 
 $router->before('GET|POST|PUT|DELETE', '/specialist/.*', function () {
     AuthMiddleware::requireSpecialist();
+});
+
+$router->before('GET|POST|PUT|DELETE', '/api/me', function () {
+    AuthMiddleware::apiRequireAuth();
+});
+
+$router->before('GET|POST|PUT|DELETE', '/api/reservas.*', function () {
+    AuthMiddleware::apiRequireAuth();
 });
 
 $router->get('/', function () use ($latte, $emailService) {
