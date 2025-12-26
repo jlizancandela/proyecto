@@ -1,6 +1,6 @@
 /**
  * Popular Services Bar Chart Module
- * Fetches and displays bar chart showing most requested services
+ * I use chart.js to create the bar chart
  */
 
 const servicesChartCanvas = document.getElementById("popularServicesChart");
@@ -105,6 +105,7 @@ const showServicesChart = () => {
 
 /**
  * Shows error state
+ * @return {void}
  */
 const showServicesError = () => {
   servicesLoadingElement.classList.add("d-none");
@@ -114,6 +115,7 @@ const showServicesError = () => {
 
 /**
  * Loads and renders the chart
+ * @return {void}
  */
 const loadServicesChart = async () => {
   try {
@@ -127,7 +129,6 @@ const loadServicesChart = async () => {
   }
 };
 
-// Initialize chart on page load
 if (servicesChartCanvas) {
   loadServicesChart();
 }

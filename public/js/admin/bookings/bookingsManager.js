@@ -2,14 +2,11 @@
 
 import { fetchBooking, createBooking, updateBooking, deleteBooking } from "./api.js";
 
-// DOM Elements - Forms
 const createBookingForm = document.getElementById("createBookingForm");
 const editBookingForm = document.getElementById("editBookingForm");
 
-// DOM Elements - Modals
 const editBookingModal = document.getElementById("editBookingModal");
 
-// DOM Elements - Edit Form Fields
 const editBookingId = document.getElementById("editBookingId");
 const editFecha = document.getElementById("editFecha");
 const editHora = document.getElementById("editHora");
@@ -20,7 +17,6 @@ const editEspecialista = document.getElementById("editEspecialista");
 const editServicio = document.getElementById("editServicio");
 const editDuracion = document.getElementById("editDuracion");
 
-// DOM Elements - Buttons
 const deleteButtons = document.querySelectorAll(".btn-delete-booking");
 const editButtons = document.querySelectorAll(".btn-edit-booking");
 
@@ -41,7 +37,7 @@ const showSuccess = (message) => {
   const closeButton = document.createElement("button");
   closeButton.type = "button";
   closeButton.className = "btn-close";
-  closeButton.setAttribute("data-bs-dismiss", "alert");
+  closeButton.dataset.bsDismiss = "alert";
 
   alertDiv.appendChild(icon);
   alertDiv.appendChild(messageText);
@@ -170,18 +166,15 @@ const handleUpdateBooking = async (e) => {
   }
 };
 
-// Event Listeners - Delete Buttons
 deleteButtons.forEach((btn) => {
   if (!btn.disabled) {
     btn.addEventListener("click", handleDeleteBooking);
   }
 });
 
-// Event Listeners - Edit Buttons
 editButtons.forEach((btn) => {
   btn.addEventListener("click", handleEditBooking);
 });
 
-// Event Listeners - Forms
 createBookingForm.addEventListener("submit", handleCreateBooking);
 editBookingForm.addEventListener("submit", handleUpdateBooking);
