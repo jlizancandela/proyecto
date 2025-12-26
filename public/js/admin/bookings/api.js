@@ -6,7 +6,7 @@
  * @param {number} bookingId - The booking ID.
  * @return {Promise<object>} The booking data.
  */
-const fetchBooking = async (bookingId) => {
+export const fetchBooking = async (bookingId) => {
   const response = await fetch(`/admin/api/reservas/${bookingId}`);
   return response.json();
 };
@@ -17,7 +17,7 @@ const fetchBooking = async (bookingId) => {
  * @param {object} bookingData - The booking data to create.
  * @return {Promise<object>} The API response.
  */
-const createBooking = async (bookingData) => {
+export const createBooking = async (bookingData) => {
   const response = await fetch("/admin/api/reservas", {
     method: "POST",
     headers: {
@@ -35,7 +35,7 @@ const createBooking = async (bookingData) => {
  * @param {object} bookingData - The booking data to update.
  * @return {Promise<object>} The API response.
  */
-const updateBooking = async (bookingId, bookingData) => {
+export const updateBooking = async (bookingId, bookingData) => {
   const response = await fetch(`/admin/api/reservas/${bookingId}`, {
     method: "PUT",
     headers: {
@@ -52,7 +52,7 @@ const updateBooking = async (bookingId, bookingData) => {
  * @param {number} bookingId - The booking ID.
  * @return {Promise<object>} The API response.
  */
-const deleteBooking = async (bookingId) => {
+export const deleteBooking = async (bookingId) => {
   const response = await fetch(`/admin/api/reservas/${bookingId}`, {
     method: "DELETE",
   });
