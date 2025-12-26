@@ -1,7 +1,6 @@
+// Handles registration form validation and password visibility toggle.
+
 const registerForm = document.getElementById("register-form");
-const togglePasswordButton = document.getElementById("toggle-password");
-const passwordInput = document.getElementById("password");
-const passwordConfirmInput = document.getElementById("password-confirm");
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const MIN_NAME_LENGTH = 2;
@@ -9,8 +8,9 @@ const MIN_PASSWORD_LENGTH = 6;
 
 /**
  * Validates form data and returns validation errors.
- * @param {Object} formData - The form data to validate.
- * @returns {Object} Object containing validation errors.
+ *
+ * @param {object} formData - The form data to validate.
+ * @return {object} Object containing validation errors.
  */
 const validateForm = (formData) => {
   const errors = {};
@@ -40,7 +40,8 @@ const validateForm = (formData) => {
 
 /**
  * Displays validation errors in the form.
- * @param {Object} errors - Object containing validation errors.
+ *
+ * @param {object} errors - Object containing validation errors.
  */
 const displayErrors = (errors) => {
   Object.keys(errors).forEach((field) => {
@@ -69,17 +70,19 @@ const clearErrors = () => {
 /**
  * Handles register form submission with validation.
  */
-const handleRegisterFormSubmit = async (e) => {
+const handleRegisterFormSubmit = (e) => {
   e.preventDefault();
   clearErrors();
 
+  const form = e.target.elements;
+
   const formData = {
-    nombre: registerForm.querySelector('[name="nombre"]').value,
-    apellidos: registerForm.querySelector('[name="apellidos"]').value,
-    email: registerForm.querySelector('[name="email"]').value,
-    telefono: registerForm.querySelector('[name="telefono"]').value,
-    password: registerForm.querySelector('[name="password"]').value,
-    "password-confirm": registerForm.querySelector('[name="password-confirm"]').value,
+    nombre: form.nombre.value,
+    apellidos: form.apellidos.value,
+    email: form.email.value,
+    telefono: form.telefono.value,
+    password: form.password.value,
+    "password-confirm": form["password-confirm"].value,
   };
 
   const errors = validateForm(formData);
@@ -96,30 +99,26 @@ const handleRegisterFormSubmit = async (e) => {
  * Handles password visibility toggle for both password fields.
  */
 const handlePasswordToggle = () => {
-  const icon = togglePasswordButton.querySelector("i");
-  const isPassword = passwordInput.type === "password";
+  const form = registerForm.elements;
+  const toggleButton = document.getElementById("toggle-password");
 
-  passwordInput.type = isPassword ? "text" : "password";
-  passwordConfirmInput.type = isPassword ? "text" : "password";
+  if (!toggleButton || !form.password || !form["password-confirm"]) return;
+
+  const icon = toggleButton.querySelector("i");
+  const isPassword = form.password.type === "password";
+
+  form.password.type = isPassword ? "text" : "password";
+  form["password-confirm"].type = isPassword ? "text" : "password";
 
   icon.className = isPassword ? "bi bi-eye-slash" : "bi bi-eye";
-  togglePasswordButton.setAttribute(
-    "aria-label",
-    isPassword ? "Ocultar contraseña" : "Mostrar contraseña"
-  );
+  toggleButton.setAttribute("aria-label", isPassword ? "Ocultar contraseña" : "Mostrar contraseña");
 };
 
-/**
- * Initializes register form with validation and password toggle.
- */
-const initializeRegisterForm = () => {
-  if (registerForm) {
-    registerForm.addEventListener("submit", handleRegisterFormSubmit);
-  }
+if (registerForm) {
+  registerForm.addEventListener("submit", handleRegisterFormSubmit);
+}
 
-  if (togglePasswordButton && passwordInput && passwordConfirmInput) {
-    togglePasswordButton.addEventListener("click", handlePasswordToggle);
-  }
-};
-
-document.addEventListener("DOMContentLoaded", initializeRegisterForm);
+const toggleButton = document.getElementById("toggle-password");
+if (toggleButton) {
+  toggleButton.addEventListener("click", handlePasswordToggle);
+}
