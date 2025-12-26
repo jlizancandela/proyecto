@@ -28,24 +28,45 @@ const updateKpis = (data) => {
     throw new Error(data.error || "Unknown error");
   }
 
-  // Update bookings count
-  todayBookingsElement.innerHTML = `
-    <span class="text-primary">${data.totalBookings}</span>
-    <small class="text-muted ms-2">reserva${data.totalBookings === 1 ? "" : "s"}</small>
-  `;
+  todayBookingsElement.textContent = "";
 
-  // Update revenue amount
-  todayRevenueElement.innerHTML = `
-    <span class="text-success">${data.estimatedRevenue}€</span>
-  `;
+  const bookingsCount = document.createElement("span");
+  bookingsCount.className = "text-primary";
+  bookingsCount.textContent = data.totalBookings;
+
+  const bookingsLabel = document.createElement("small");
+  bookingsLabel.className = "text-muted ms-2";
+  bookingsLabel.textContent = `reserva${data.totalBookings === 1 ? "" : "s"}`;
+
+  todayBookingsElement.appendChild(bookingsCount);
+  todayBookingsElement.appendChild(bookingsLabel);
+
+  todayRevenueElement.textContent = "";
+
+  const revenueAmount = document.createElement("span");
+  revenueAmount.className = "text-success";
+  revenueAmount.textContent = `${data.estimatedRevenue}€`;
+
+  todayRevenueElement.appendChild(revenueAmount);
 };
 
 /**
  * Shows error state
  */
 const showKpisError = () => {
-  todayBookingsElement.innerHTML = '<span class="text-danger">--</span>';
-  todayRevenueElement.innerHTML = '<span class="text-danger">--</span>';
+  todayBookingsElement.textContent = "";
+  todayRevenueElement.textContent = "";
+
+  const bookingsError = document.createElement("span");
+  bookingsError.className = "text-danger";
+  bookingsError.textContent = "--";
+
+  const revenueError = document.createElement("span");
+  revenueError.className = "text-danger";
+  revenueError.textContent = "--";
+
+  todayBookingsElement.appendChild(bookingsError);
+  todayRevenueElement.appendChild(revenueError);
   kpisErrorElement.classList.remove("d-none");
 };
 

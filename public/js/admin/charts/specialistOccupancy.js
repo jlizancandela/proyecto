@@ -1,6 +1,7 @@
 /**
  * Specialist Occupancy Chart Module
  * Fetches and displays pie chart showing booking distribution across specialists
+ * I use chart.js to create the pie chart
  */
 
 const chartCanvas = document.getElementById("specialistOccupancyChart");
@@ -117,7 +118,6 @@ const loadChart = async () => {
   }
 };
 
-// Initialize chart on page load
 if (chartCanvas) {
   loadChart();
 }
