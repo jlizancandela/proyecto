@@ -2,6 +2,12 @@
 
 import { fetchBooking, createBooking, updateBooking, deleteBooking } from "./api.js";
 
+const SELECTORS = {
+  alertContainer: ".mb-4",
+  deleteButton: ".btn-delete-booking",
+  editButton: ".btn-edit-booking",
+};
+
 const createBookingForm = document.getElementById("createBookingForm");
 const editBookingForm = document.getElementById("editBookingForm");
 const editBookingModal = document.getElementById("editBookingModal");
@@ -39,7 +45,7 @@ const showSuccess = (message) => {
   alertDiv.appendChild(messageText);
   alertDiv.appendChild(closeButton);
 
-  document.querySelector(".mb-4").prepend(alertDiv);
+  document.querySelector(SELECTORS.alertContainer).prepend(alertDiv);
   setTimeout(() => alertDiv.remove(), 3000);
 };
 
@@ -166,13 +172,13 @@ const handleUpdateBooking = async (e) => {
  * Attaches event listeners to booking action buttons.
  */
 const attachHandlers = () => {
-  document.querySelectorAll(".btn-delete-booking").forEach((btn) => {
+  document.querySelectorAll(SELECTORS.deleteButton).forEach((btn) => {
     if (!btn.disabled) {
       btn.addEventListener("click", handleDeleteBooking);
     }
   });
 
-  document.querySelectorAll(".btn-edit-booking").forEach((btn) => {
+  document.querySelectorAll(SELECTORS.editButton).forEach((btn) => {
     btn.addEventListener("click", handleEditBooking);
   });
 };
