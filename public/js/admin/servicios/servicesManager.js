@@ -8,19 +8,8 @@ import {
   deactivateService,
 } from "./api.js";
 
-const editServiceIdInput = document.getElementById("editServiceId");
-const editNombreServicioInput = document.getElementById("editNombreServicio");
-const editDescripcionInput = document.getElementById("editDescripcion");
-const editDuracionInput = document.getElementById("editDuracion");
-const editPrecioInput = document.getElementById("editPrecio");
-const editActivoInput = document.getElementById("editActivo");
 const editServiceModal = document.getElementById("editServiceModal");
 const editServiceForm = document.getElementById("editServiceForm");
-
-const createNombreServicioInput = document.getElementById("createNombreServicio");
-const createDescripcionInput = document.getElementById("createDescripcion");
-const createDuracionInput = document.getElementById("createDuracion");
-const createPrecioInput = document.getElementById("createPrecio");
 const createServiceForm = document.getElementById("createServiceForm");
 const createServiceModal = document.getElementById("createServiceModal");
 
@@ -35,12 +24,14 @@ const editService = async (serviceId) => {
 
     if (result.success) {
       const service = result.data;
-      editServiceIdInput.value = service.id;
-      editNombreServicioInput.value = service.nombre_servicio;
-      editDescripcionInput.value = service.descripcion;
-      editDuracionInput.value = service.duracion_minutos;
-      editPrecioInput.value = service.precio;
-      editActivoInput.checked = service.activo;
+      const form = editServiceForm.elements;
+
+      form.editServiceId.value = service.id;
+      form.editNombreServicio.value = service.nombre_servicio;
+      form.editDescripcion.value = service.descripcion;
+      form.editDuracion.value = service.duracion_minutos;
+      form.editPrecio.value = service.precio;
+      form.editActivo.checked = service.activo;
 
       const modal = new bootstrap.Modal(editServiceModal);
       modal.show();
@@ -97,11 +88,13 @@ const handleDocumentClick = (e) => {
 const handleCreateServiceFormSubmit = async (e) => {
   e.preventDefault();
 
+  const form = e.target.elements;
+
   const formData = {
-    nombre_servicio: createNombreServicioInput.value,
-    descripcion: createDescripcionInput.value,
-    duracion_minutos: Number.parseInt(createDuracionInput.value),
-    precio: Number.parseFloat(createPrecioInput.value),
+    nombre_servicio: form.createNombreServicio.value,
+    descripcion: form.createDescripcion.value,
+    duracion_minutos: Number.parseInt(form.createDuracion.value),
+    precio: Number.parseFloat(form.createPrecio.value),
   };
 
   try {
@@ -125,18 +118,18 @@ const handleCreateServiceFormSubmit = async (e) => {
 const handleEditServiceFormSubmit = async (e) => {
   e.preventDefault();
 
-  const serviceId = editServiceIdInput.value;
+  const form = e.target.elements;
 
   const formData = {
-    nombre_servicio: editNombreServicioInput.value,
-    descripcion: editDescripcionInput.value,
-    duracion_minutos: Number.parseInt(editDuracionInput.value),
-    precio: Number.parseFloat(editPrecioInput.value),
-    activo: editActivoInput.checked,
+    nombre_servicio: form.editNombreServicio.value,
+    descripcion: form.editDescripcion.value,
+    duracion_minutos: Number.parseInt(form.editDuracion.value),
+    precio: Number.parseFloat(form.editPrecio.value),
+    activo: form.editActivo.checked,
   };
 
   try {
-    const result = await updateService(serviceId, formData);
+    const result = await updateService(form.editServiceId.value, formData);
 
     if (result.success) {
       alert("Servicio actualizado correctamente");
@@ -150,22 +143,8 @@ const handleEditServiceFormSubmit = async (e) => {
   }
 };
 
-/**
- * Handles create service modal hidden event to reset the form.
- */
-const handleCreateServiceModalHidden = () => {
-  createServiceForm.reset();
-};
-
-/**
- * Handles edit service modal hidden event to reset the form.
- */
-const handleEditServiceModalHidden = () => {
-  editServiceForm.reset();
-};
-
 document.addEventListener("click", handleDocumentClick);
 createServiceForm.addEventListener("submit", handleCreateServiceFormSubmit);
 editServiceForm.addEventListener("submit", handleEditServiceFormSubmit);
-createServiceModal.addEventListener("hidden.bs.modal", handleCreateServiceModalHidden);
-editServiceModal.addEventListener("hidden.bs.modal", handleEditServiceModalHidden);
+createServiceModal.addEventListener("hidden.bs.modal", () => createServiceForm.reset());
+editServiceModal.addEventListener("hidden.bs.modal", () => editServiceForm.reset());

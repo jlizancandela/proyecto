@@ -57,8 +57,11 @@
 │   │   │   └── Servicio.php
 │   │   ├── Infrastructure/
 │   │   │   └── ServicioRepository.php
-│   │   └── Presentation/
-│   │       └── ServiceApiController.php     # Endpoints CRUD servicios
+│   │   ├── Presentation/
+│   │   │   └── ServiceApiController.php     # Endpoints CRUD servicios
+│   │   └── public/js/admin/servicios/
+│   │       ├── api.js                        # API utilities
+│   │       └── servicesManager.js            # UI logic
 │   ├── Shared/
 │   │   ├── Domain/
 │   │   │   └── Exceptions/
