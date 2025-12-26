@@ -33,9 +33,14 @@ $router->before('GET|POST|PUT|DELETE', '/specialist/.*', function () {
     AuthMiddleware::requireSpecialist();
 });
 
-$router->get('/', function () use ($latte) {
-    $controller = new HomeController($latte);
+$router->get('/', function () use ($latte, $emailService) {
+    $controller = new HomeController($latte, $emailService);
     echo $controller->index();
+});
+
+$router->post('/contacto', function () use ($latte, $emailService) {
+    $controller = new HomeController($latte, $emailService);
+    $controller->contact();
 });
 
 $router->get('/login', function () use ($latte, $authService, $emailService, $userService) {
