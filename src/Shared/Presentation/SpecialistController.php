@@ -68,6 +68,7 @@ class SpecialistController
             __DIR__ . '/../../../views/pages/Specialist.latte',
             [
                 'userName' => ucfirst($_SESSION['name'] ?? 'Especialista'),
+                'userPhoto' => $this->getSpecialistPhoto($userId),
                 'currentUrl' => $_SERVER['REQUEST_URI'] ?? '/specialist',
                 'totalBookings' => $totalBookings,
                 'upcomingBookings' => $upcomingBookings,
@@ -126,6 +127,7 @@ class SpecialistController
             __DIR__ . '/../../../views/pages/SpecialistBookings.latte',
             [
                 'userName' => ucfirst($_SESSION['name'] ?? 'Especialista'),
+                'userPhoto' => $this->getSpecialistPhoto($userId),
                 'currentUrl' => $_SERVER['REQUEST_URI'] ?? '/specialist/bookings',
                 'reservas' => $reservasData,
                 'page' => $page,
@@ -160,9 +162,21 @@ class SpecialistController
             __DIR__ . '/../../../views/pages/SpecialistProfile.latte',
             [
                 'userName' => ucfirst($_SESSION['name'] ?? 'Especialista'),
+                'userPhoto' => $profileData['foto_url'] ?? null,
                 'currentUrl' => $_SERVER['REQUEST_URI'] ?? '/specialist/profile',
                 'profile' => $profileData
             ]
         );
+    }
+
+    /**
+     * Gets specialist photo URL
+     * @param int $userId
+     * @return string|null
+     */
+    private function getSpecialistPhoto(int $userId): ?string
+    {
+        $profile = $this->especialistaRepository->getEspecialistaProfileWithServices($userId);
+        return $profile['foto_url'] ?? null;
     }
 }

@@ -13,32 +13,50 @@
 
   <nav class="nav flex-column flex-grow-1 p-3">
     <a
-      class="nav-link d-flex align-items-center gap-2 text-dark bg-light rounded mb-1 py-2"
+      class="nav-link d-flex align-items-center gap-2 {if $currentUrl === '/specialist'}text-dark bg-light{else}text-secondary{/if} rounded mb-1 py-2"
       href="/specialist"
     >
       <i class="bi bi-speedometer2"></i>
       <span>Dashboard</span>
     </a>
     <a
-      class="nav-link d-flex align-items-center gap-2 text-secondary rounded mb-1 py-2"
+      class="nav-link d-flex align-items-center gap-2 {if $currentUrl === '/specialist/bookings'}text-dark bg-light{else}text-secondary{/if} rounded mb-1 py-2"
       href="/specialist/bookings"
     >
       <i class="bi bi-calendar-check"></i>
       <span>Mis Reservas</span>
     </a>
     <a
-      class="nav-link d-flex align-items-center gap-2 text-secondary rounded mb-1 py-2"
+      class="nav-link d-flex align-items-center gap-2 {if $currentUrl === '/specialist/profile'}text-dark bg-light{else}text-secondary{/if} rounded mb-1 py-2"
       href="/specialist/profile"
     >
       <i class="bi bi-person"></i>
       <span>Mi Perfil</span>
     </a>
+    <div class="mt-auto">
+      <a
+        class="nav-link d-flex align-items-center gap-2 text-danger rounded mb-1 py-2"
+        href="/logout"
+      >
+        <i class="bi bi-box-arrow-right"></i>
+        <span>Cerrar Sesión</span>
+      </a>
+    </div>
   </nav>
 
-  <div class="p-3 border-top mt-auto">
+  <div class="p-3 border-top">
     <div class="d-flex align-items-center">
       <div class="me-3">
+        {if isset($userPhoto) && $userPhoto}
+        <img
+          src="{$userPhoto}"
+          alt="Foto de perfil"
+          class="rounded-circle"
+          style="width: 32px; height: 32px; object-fit: cover"
+        />
+        {else}
         <i class="bi bi-person-circle fs-2 text-secondary"></i>
+        {/if}
       </div>
       <div>
         <div class="fw-semibold small">{$userName}</div>
@@ -66,32 +84,50 @@
   <div class="offcanvas-body d-flex flex-column">
     <nav class="nav flex-column flex-grow-1">
       <a
-        class="nav-link d-flex align-items-center gap-2 text-dark bg-light rounded mb-1 py-2"
+        class="nav-link d-flex align-items-center gap-2 {if $currentUrl === '/specialist'}text-dark bg-light{else}text-secondary{/if} rounded mb-1 py-2"
         href="/specialist"
       >
         <i class="bi bi-speedometer2"></i>
         <span>Dashboard</span>
       </a>
       <a
-        class="nav-link d-flex align-items-center gap-2 text-secondary rounded mb-1 py-2"
+        class="nav-link d-flex align-items-center gap-2 {if $currentUrl === '/specialist/bookings'}text-dark bg-light{else}text-secondary{/if} rounded mb-1 py-2"
         href="/specialist/bookings"
       >
         <i class="bi bi-calendar-check"></i>
         <span>Mis Reservas</span>
       </a>
       <a
-        class="nav-link d-flex align-items-center gap-2 text-secondary rounded mb-1 py-2"
+        class="nav-link d-flex align-items-center gap-2 {if $currentUrl === '/specialist/profile'}text-dark bg-light{else}text-secondary{/if} rounded mb-1 py-2"
         href="/specialist/profile"
       >
         <i class="bi bi-person"></i>
         <span>Mi Perfil</span>
       </a>
+      <div class="mt-auto">
+        <a
+          class="nav-link d-flex align-items-center gap-2 text-danger rounded mb-1 py-2"
+          href="/logout"
+        >
+          <i class="bi bi-box-arrow-right"></i>
+          <span>Cerrar Sesión</span>
+        </a>
+      </div>
     </nav>
 
-    <div class="border-top pt-3 mt-auto">
+    <div class="border-top pt-3">
       <div class="d-flex align-items-center">
         <div class="me-3">
+          {if isset($userPhoto) && $userPhoto}
+          <img
+            src="{$userPhoto}"
+            alt="Foto de perfil"
+            class="rounded-circle"
+            style="width: 32px; height: 32px; object-fit: cover"
+          />
+          {else}
           <i class="bi bi-person-circle fs-2 text-secondary"></i>
+          {/if}
         </div>
         <div>
           <div class="fw-semibold small">{$userName}</div>
