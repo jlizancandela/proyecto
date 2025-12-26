@@ -43,7 +43,7 @@
 - [x] Extraer queries complejas a métodos privados (applyFilters)
 - [x] Crear tests unitarios (Covered by Pest/Mockery)
 - [x] Verificar PHPDoc en todos los métodos restantes
-- [ ] Considerar extraer lógica de reportes a clase separada
+- [x] Considerar extraer lógica de reportes a clase separada (Descartado por simplicidad/KISS)
 
 #### `UserRepository.php` (600 líneas)
 
