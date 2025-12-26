@@ -112,7 +112,8 @@ class AdminController
                 'nombre_servicio' => $servicio->getNombreServicio(),
                 'descripcion' => $servicio->getDescripcion(),
                 'duracion_minutos' => $servicio->getDuracionMinutos(),
-                'precio' => $servicio->getPrecio()
+                'precio' => $servicio->getPrecio(),
+                'activo' => $servicio->isActivo()
             ];
         }, $servicios);
 
