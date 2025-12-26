@@ -1,4 +1,7 @@
-// Handles registration form validation and password visibility toggle.
+/**
+ * Manages the registration form interactions.
+ * Handles input validation and password visibility toggling.
+ */
 
 const registerForm = document.getElementById("register-form");
 
@@ -44,14 +47,20 @@ const validateForm = (formData) => {
  * @param {object} errors - Object containing validation errors.
  */
 const displayErrors = (errors) => {
+  const form = registerForm.elements;
+
   Object.keys(errors).forEach((field) => {
-    const input = document.querySelector(`[name="${field}"]`);
+    const input = form[field];
     if (input) {
       const errorDiv = document.createElement("div");
       errorDiv.className = "form-text text-danger";
       errorDiv.textContent = errors[field];
-      input.classList.add("is-invalid");
-      input.parentElement.appendChild(errorDiv);
+
+      // Handle radio/checkbox groups where input might be a NodeList
+      const targetInput = input instanceof NodeList ? input[0] : input;
+
+      targetInput.classList.add("is-invalid");
+      targetInput.parentElement.appendChild(errorDiv);
     }
   });
 };
