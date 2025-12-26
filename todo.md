@@ -6,10 +6,10 @@
 
 #### `registerForm.js` (124 líneas)
 
-- [ ] Revisar y simplificar validaciones
-- [ ] Verificar que use `form.elements`
-- [ ] Añadir file header comment
-- [ ] Verificar JSDoc en todas las funciones
+- [x] Revisar y simplificar validaciones
+- [x] Verificar que use `form.elements`
+- [x] Añadir file header comment
+- [x] Verificar JSDoc en todas las funciones
 
 #### `bookings.js` (109 líneas)
 
@@ -140,7 +140,7 @@
 ### 🔥 Día 1-2: JavaScript Crítico
 
 - [ ] `bookings.js` - Auditar SSR y refactorizar
-- [ ] `registerForm.js` - Verificar form.elements y JSDoc
+- [x] `registerForm.js` - Verificar form.elements y JSDoc
 - [ ] Tests para bookings.js si tiene lógica
 
 ### 📝 Día 3-4: Documentación Rápida
