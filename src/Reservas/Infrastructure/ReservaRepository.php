@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Repository for handling booking data and database operations.
+ * Allows managing reservations, including creating, updating, and searching with filters.
+ */
+
 namespace Reservas\Infrastructure;
 
 use Reservas\Domain\Reserva;
@@ -15,33 +20,36 @@ class ReservaRepository
         $this->db = $db;
     }
 
+    private const BASE_QUERY = "
+        SELECT
+            r.*,
+            c.nombre as cliente_nombre,
+            c.apellidos as cliente_apellidos,
+            c.email as cliente_email,
+            c.telefono as cliente_telefono,
+            u.nombre as especialista_nombre,
+            u.apellidos as especialista_apellidos,
+            u.email as especialista_email,
+            u.telefono as especialista_telefono,
+            e.descripcion as especialista_descripcion,
+            e.foto_url as especialista_foto_url,
+            s.nombre_servicio,
+            s.duracion_minutos,
+            s.precio,
+            s.descripcion as servicio_descripcion
+        FROM RESERVA r
+        INNER JOIN USUARIO c ON r.id_cliente = c.id_usuario
+        INNER JOIN ESPECIALISTA e ON r.id_especialista = e.id_especialista
+        INNER JOIN USUARIO u ON e.id_usuario = u.id_usuario
+        INNER JOIN SERVICIO s ON r.id_servicio = s.id_servicio
+    ";
+
     public function getAllReservasCompletas(
         int $limit = 50,
         int $offset = 0,
     ): array {
         try {
-            $stmt = $this->db->prepare("
-                SELECT 
-                    r.*,
-                    c.nombre as cliente_nombre, 
-                    c.apellidos as cliente_apellidos, 
-                    c.email as cliente_email, 
-                    c.telefono as cliente_telefono,
-                    u.nombre as especialista_nombre, 
-                    u.apellidos as especialista_apellidos,
-                    u.email as especialista_email, 
-                    u.telefono as especialista_telefono,
-                    e.descripcion as especialista_descripcion, 
-                    e.foto_url as especialista_foto_url,
-                    s.nombre_servicio, 
-                    s.duracion_minutos, 
-                    s.precio, 
-                    s.descripcion as servicio_descripcion
-                FROM RESERVA r
-                INNER JOIN USUARIO c ON r.id_cliente = c.id_usuario
-                INNER JOIN ESPECIALISTA e ON r.id_especialista = e.id_especialista
-                INNER JOIN USUARIO u ON e.id_usuario = u.id_usuario
-                INNER JOIN SERVICIO s ON r.id_servicio = s.id_servicio
+            $stmt = $this->db->prepare(self::BASE_QUERY . "
                 ORDER BY r.fecha_reserva DESC, r.hora_inicio DESC
                 LIMIT :limit OFFSET :offset
             ");
@@ -64,28 +72,7 @@ class ReservaRepository
     public function getReservaCompletaById(int $id): ?ReservaCompletaDTO
     {
         try {
-            $stmt = $this->db->prepare("
-                SELECT 
-                    r.*,
-                    c.nombre as cliente_nombre, 
-                    c.apellidos as cliente_apellidos, 
-                    c.email as cliente_email, 
-                    c.telefono as cliente_telefono,
-                    u.nombre as especialista_nombre, 
-                    u.apellidos as especialista_apellidos,
-                    u.email as especialista_email, 
-                    u.telefono as especialista_telefono,
-                    e.descripcion as especialista_descripcion, 
-                    e.foto_url as especialista_foto_url,
-                    s.nombre_servicio, 
-                    s.duracion_minutos, 
-                    s.precio, 
-                    s.descripcion as servicio_descripcion
-                FROM RESERVA r
-                INNER JOIN USUARIO c ON r.id_cliente = c.id_usuario
-                INNER JOIN ESPECIALISTA e ON r.id_especialista = e.id_especialista
-                INNER JOIN USUARIO u ON e.id_usuario = u.id_usuario
-                INNER JOIN SERVICIO s ON r.id_servicio = s.id_servicio
+            $stmt = $this->db->prepare(self::BASE_QUERY . "
                 WHERE r.id_reserva = :id
             ");
 
@@ -103,11 +90,11 @@ class ReservaRepository
     {
         try {
             $stmt = $this->db->prepare(
-                "INSERT INTO RESERVA 
-                (id_cliente, id_especialista, id_servicio, fecha_reserva, 
-                 hora_inicio, hora_fin, estado, observaciones) 
-                VALUES 
-                (:id_cliente, :id_especialista, :id_servicio, :fecha_reserva, 
+                "INSERT INTO RESERVA
+                (id_cliente, id_especialista, id_servicio, fecha_reserva,
+                 hora_inicio, hora_fin, estado, observaciones)
+                VALUES
+                (:id_cliente, :id_especialista, :id_servicio, :fecha_reserva,
                  :hora_inicio, :hora_fin, :estado, :observaciones)",
             );
 
@@ -133,7 +120,7 @@ class ReservaRepository
     {
         try {
             $stmt = $this->db->prepare(
-                "UPDATE RESERVA 
+                "UPDATE RESERVA
                 SET id_cliente = :id_cliente,
                     id_especialista = :id_especialista,
                     id_servicio = :id_servicio,
@@ -181,28 +168,7 @@ class ReservaRepository
         int $offset = 0,
     ): array {
         try {
-            $stmt = $this->db->prepare("
-                SELECT 
-                    r.*,
-                    c.nombre as cliente_nombre, 
-                    c.apellidos as cliente_apellidos, 
-                    c.email as cliente_email, 
-                    c.telefono as cliente_telefono,
-                    u.nombre as especialista_nombre, 
-                    u.apellidos as especialista_apellidos,
-                    u.email as especialista_email, 
-                    u.telefono as especialista_telefono,
-                    e.descripcion as especialista_descripcion, 
-                    e.foto_url as especialista_foto_url,
-                    s.nombre_servicio, 
-                    s.duracion_minutos, 
-                    s.precio, 
-                    s.descripcion as servicio_descripcion
-                FROM RESERVA r
-                INNER JOIN USUARIO c ON r.id_cliente = c.id_usuario
-                INNER JOIN ESPECIALISTA e ON r.id_especialista = e.id_especialista
-                INNER JOIN USUARIO u ON e.id_usuario = u.id_usuario
-                INNER JOIN SERVICIO s ON r.id_servicio = s.id_servicio
+            $stmt = $this->db->prepare(self::BASE_QUERY . "
                 WHERE r.id_cliente = :id_cliente
                 ORDER BY r.fecha_reserva DESC, r.hora_inicio DESC
                 LIMIT :limit OFFSET :offset
@@ -230,28 +196,7 @@ class ReservaRepository
         int $offset = 0,
     ): array {
         try {
-            $sql = "
-                SELECT 
-                    r.*,
-                    c.nombre as cliente_nombre, 
-                    c.apellidos as cliente_apellidos, 
-                    c.email as cliente_email, 
-                    c.telefono as cliente_telefono,
-                    u.nombre as especialista_nombre, 
-                    u.apellidos as especialista_apellidos,
-                    u.email as especialista_email, 
-                    u.telefono as especialista_telefono,
-                    e.descripcion as especialista_descripcion, 
-                    e.foto_url as especialista_foto_url,
-                    s.nombre_servicio, 
-                    s.duracion_minutos, 
-                    s.precio, 
-                    s.descripcion as servicio_descripcion
-                FROM RESERVA r
-                INNER JOIN USUARIO c ON r.id_cliente = c.id_usuario
-                INNER JOIN ESPECIALISTA e ON r.id_especialista = e.id_especialista
-                INNER JOIN USUARIO u ON e.id_usuario = u.id_usuario
-                INNER JOIN SERVICIO s ON r.id_servicio = s.id_servicio
+            $sql = self::BASE_QUERY . "
                 WHERE 1=1
             ";
 
@@ -304,6 +249,9 @@ class ReservaRepository
                     case 'fecha':
                         $orderBy = "r.fecha_reserva $order, r.hora_inicio $order";
                         break;
+                    default:
+                        $orderBy = "r.fecha_reserva $order, r.hora_inicio $order";
+                        break;
                 }
             }
 
@@ -342,10 +290,10 @@ class ReservaRepository
     ): bool {
         try {
             $sql = "
-                SELECT COUNT(*) as count 
-                FROM RESERVA 
-                WHERE id_especialista = :id_especialista 
-                AND fecha_reserva = :fecha_reserva 
+                SELECT COUNT(*) as count
+                FROM RESERVA
+                WHERE id_especialista = :id_especialista
+                AND fecha_reserva = :fecha_reserva
                 AND estado != 'Cancelada'
                 AND (hora_inicio < :hora_fin AND hora_fin > :hora_inicio)
             ";
@@ -424,28 +372,7 @@ class ReservaRepository
     public function findByUserId(int $userId, int $limit = 50, int $offset = 0): array
     {
         try {
-            $stmt = $this->db->prepare("
-                SELECT 
-                    r.*,
-                    c.nombre as cliente_nombre, 
-                    c.apellidos as cliente_apellidos, 
-                    c.email as cliente_email, 
-                    c.telefono as cliente_telefono,
-                    u.nombre as especialista_nombre, 
-                    u.apellidos as especialista_apellidos,
-                    u.email as especialista_email, 
-                    u.telefono as especialista_telefono,
-                    e.descripcion as especialista_descripcion, 
-                    e.foto_url as especialista_foto_url,
-                    s.nombre_servicio, 
-                    s.duracion_minutos, 
-                    s.precio, 
-                    s.descripcion as servicio_descripcion
-                FROM RESERVA r
-                INNER JOIN USUARIO c ON r.id_cliente = c.id_usuario
-                INNER JOIN ESPECIALISTA e ON r.id_especialista = e.id_especialista
-                INNER JOIN USUARIO u ON e.id_usuario = u.id_usuario
-                INNER JOIN SERVICIO s ON r.id_servicio = s.id_servicio
+            $stmt = $this->db->prepare(self::BASE_QUERY . "
                 WHERE r.id_cliente = :userId
                 ORDER BY r.fecha_reserva DESC, r.hora_inicio DESC
                 LIMIT :limit OFFSET :offset
@@ -491,28 +418,7 @@ class ReservaRepository
     public function findById(int $reservaId): ?ReservaCompletaDTO
     {
         try {
-            $stmt = $this->db->prepare("
-                SELECT 
-                    r.*,
-                    c.nombre as cliente_nombre, 
-                    c.apellidos as cliente_apellidos, 
-                    c.email as cliente_email, 
-                    c.telefono as cliente_telefono,
-                    u.nombre as especialista_nombre, 
-                    u.apellidos as especialista_apellidos,
-                    u.email as especialista_email, 
-                    u.telefono as especialista_telefono,
-                    e.descripcion as especialista_descripcion, 
-                    e.foto_url as especialista_foto_url,
-                    s.nombre_servicio, 
-                    s.duracion_minutos, 
-                    s.precio, 
-                    s.descripcion as servicio_descripcion
-                FROM RESERVA r
-                INNER JOIN USUARIO c ON r.id_cliente = c.id_usuario
-                INNER JOIN ESPECIALISTA e ON r.id_especialista = e.id_especialista
-                INNER JOIN USUARIO u ON e.id_usuario = u.id_usuario
-                INNER JOIN SERVICIO s ON r.id_servicio = s.id_servicio
+            $stmt = $this->db->prepare(self::BASE_QUERY . "
                 WHERE r.id_reserva = :reservaId
             ");
 
@@ -535,8 +441,8 @@ class ReservaRepository
     {
         try {
             $stmt = $this->db->prepare("
-                UPDATE RESERVA 
-                SET estado = :status 
+                UPDATE RESERVA
+                SET estado = :status
                 WHERE id_reserva = :reservaId
             ");
 
@@ -552,7 +458,7 @@ class ReservaRepository
 
     /**
      * Finds bookings for a user with optional filters
-     * 
+     *
      * @param int $userId User/Client ID
      * @param int $limit Maximum number of results
      * @param int $offset Pagination offset
@@ -570,21 +476,7 @@ class ReservaRepository
         ?string $estado = null
     ): array {
         try {
-            $sql = "
-                SELECT 
-                    r.*,
-                    u.nombre as especialista_nombre, 
-                    u.apellidos as especialista_apellidos,
-                    e.descripcion as especialista_descripcion, 
-                    e.foto_url as especialista_foto_url,
-                    s.nombre_servicio, 
-                    s.duracion_minutos, 
-                    s.precio, 
-                    s.descripcion as servicio_descripcion
-                FROM RESERVA r
-                INNER JOIN ESPECIALISTA e ON r.id_especialista = e.id_especialista
-                INNER JOIN USUARIO u ON e.id_usuario = u.id_usuario
-                INNER JOIN SERVICIO s ON r.id_servicio = s.id_servicio
+            $sql = self::BASE_QUERY . "
                 WHERE r.id_cliente = :userId
             ";
 
@@ -633,7 +525,7 @@ class ReservaRepository
 
     /**
      * Counts bookings for a user with optional filters
-     * 
+     *
      * @param int $userId User/Client ID
      * @param string|null $fechaDesde Start date (Y-m-d format)
      * @param string|null $fechaHasta End date (Y-m-d format)
@@ -688,7 +580,7 @@ class ReservaRepository
 
     /**
      * Gets the latest booking for a user
-     * 
+     *
      * @param int $userId User/Client ID
      * @return ReservaCompletaDTO|null The latest booking or null if none found
      */
@@ -696,19 +588,19 @@ class ReservaRepository
     {
         try {
             $sql = "
-                SELECT 
+                SELECT
                     r.*,
                     uc.nombre as cliente_nombre,
                     uc.apellidos as cliente_apellidos,
                     uc.email as cliente_email,
                     uc.telefono as cliente_telefono,
-                    ue.nombre as especialista_nombre, 
+                    ue.nombre as especialista_nombre,
                     ue.apellidos as especialista_apellidos,
-                    e.descripcion as especialista_descripcion, 
+                    e.descripcion as especialista_descripcion,
                     e.foto_url as especialista_foto_url,
-                    s.nombre_servicio, 
-                    s.duracion_minutos, 
-                    s.precio, 
+                    s.nombre_servicio,
+                    s.duracion_minutos,
+                    s.precio,
                     s.descripcion as servicio_descripcion
                 FROM RESERVA r
                 INNER JOIN USUARIO uc ON r.id_cliente = uc.id_usuario
@@ -741,7 +633,7 @@ class ReservaRepository
 
     /**
      * Counts all bookings with optional filters
-     * 
+     *
      * @param array $filtros Filters (cliente, especialista, estado, fecha_desde, fecha_hasta)
      * @return int Total count of bookings matching filters
      */
@@ -818,28 +710,7 @@ class ReservaRepository
         ?string $clienteSearch = null
     ): array {
         try {
-            $sql = "
-                SELECT 
-                    r.*,
-                    c.nombre as cliente_nombre, 
-                    c.apellidos as cliente_apellidos, 
-                    c.email as cliente_email, 
-                    c.telefono as cliente_telefono,
-                    u.nombre as especialista_nombre, 
-                    u.apellidos as especialista_apellidos,
-                    u.email as especialista_email, 
-                    u.telefono as especialista_telefono,
-                    e.descripcion as especialista_descripcion, 
-                    e.foto_url as especialista_foto_url,
-                    s.nombre_servicio, 
-                    s.duracion_minutos, 
-                    s.precio, 
-                    s.descripcion as servicio_descripcion
-                FROM RESERVA r
-                INNER JOIN USUARIO c ON r.id_cliente = c.id_usuario
-                INNER JOIN ESPECIALISTA e ON r.id_especialista = e.id_especialista
-                INNER JOIN USUARIO u ON e.id_usuario = u.id_usuario
-                INNER JOIN SERVICIO s ON r.id_servicio = s.id_servicio
+            $sql = self::BASE_QUERY . "
                 WHERE r.id_especialista = :especialista_id
             ";
 
