@@ -15,6 +15,11 @@ class ReservaRepository
 {
     private PDO $db;
 
+    /**
+     * Initializes the repository with the database connection.
+     *
+     * @param PDO $db The database connection.
+     */
     public function __construct(PDO $db)
     {
         $this->db = $db;
@@ -44,6 +49,13 @@ class ReservaRepository
         INNER JOIN SERVICIO s ON r.id_servicio = s.id_servicio
     ";
 
+    /**
+     * Applies dynamic filters to the SQL query.
+     *
+     * @param array $filtros List of filters to apply (client, specialist, service, etc.).
+     * @param string $sql The SQL query string to be modified.
+     * @param array $params The parameters array to be populated.
+     */
     private function applyFilters(array $filtros, string &$sql, array &$params): void
     {
         if (isset($filtros['cliente'])) {
@@ -84,6 +96,12 @@ class ReservaRepository
 
 
 
+    /**
+     * Retrieves a complete booking with details by its ID.
+     *
+     * @param int $id The booking ID.
+     * @return ReservaCompletaDTO|null The booking data or null if not found.
+     */
     public function getReservaCompletaById(int $id): ?ReservaCompletaDTO
     {
         try {
@@ -101,6 +119,12 @@ class ReservaRepository
         }
     }
 
+    /**
+     * Adds a new booking to the database.
+     *
+     * @param Reserva $reserva The booking entity.
+     * @return int|null The ID of the created booking or null on failure.
+     */
     public function addReserva(Reserva $reserva): ?int
     {
         try {
@@ -131,6 +155,12 @@ class ReservaRepository
         }
     }
 
+    /**
+     * Updates an existing booking.
+     *
+     * @param Reserva $reserva The booking entity with updated data.
+     * @return bool True if successful, false otherwise.
+     */
     public function updateReserva(Reserva $reserva): bool
     {
         try {
@@ -164,6 +194,12 @@ class ReservaRepository
         }
     }
 
+    /**
+     * Deletes a booking by its ID.
+     *
+     * @param int $id The booking ID.
+     * @return bool True if successful, false otherwise.
+     */
     public function deleteReserva(int $id): bool
     {
         try {
@@ -177,6 +213,14 @@ class ReservaRepository
         }
     }
 
+    /**
+     * Finds bookings associated with a specific client.
+     *
+     * @param int $id_cliente The client's user ID.
+     * @param int $limit Max number of results.
+     * @param int $offset Offset for pagination.
+     * @return array List of bookings.
+     */
     public function findByClient(
         int $id_cliente,
         int $limit = 50,
@@ -205,6 +249,14 @@ class ReservaRepository
         }
     }
 
+    /**
+     * Retrieves all bookings matching the specified filters.
+     *
+     * @param array $filtros Filters to apply (client, specialist, service, state, date range).
+     * @param int $limit Max number of results.
+     * @param int $offset Offset for pagination.
+     * @return array List of matching bookings.
+     */
     public function findAllFiltered(
         array $filtros = [],
         int $limit = 50,
@@ -267,6 +319,16 @@ class ReservaRepository
         }
     }
 
+    /**
+     * Checks for scheduling conflicts for a specialist.
+     *
+     * @param string $fecha Date of the booking.
+     * @param string $hora_inicio Start time.
+     * @param string $hora_fin End time.
+     * @param int $id_especialista Specialist ID.
+     * @param int|null $exclude_id_reserva Booking ID to exclude (for updates).
+     * @return bool True if a conflict exists, false otherwise.
+     */
     public function findConflicts(
         string $fecha,
         string $hora_inicio,
@@ -311,6 +373,16 @@ class ReservaRepository
         }
     }
 
+    /**
+     * Checks for scheduling conflicts for a client.
+     *
+     * @param string $fecha Date of the booking.
+     * @param string $hora_inicio Start time.
+     * @param string $hora_fin End time.
+     * @param int $id_cliente Client ID.
+     * @param int|null $exclude_id_reserva Booking ID to exclude.
+     * @return bool True if a conflict exists, false otherwise.
+     */
     public function findClientConflicts(
         string $fecha,
         string $hora_inicio,
@@ -355,6 +427,14 @@ class ReservaRepository
         }
     }
 
+    /**
+     * Finds bookings for a specific user ID (client).
+     *
+     * @param int $userId The user ID.
+     * @param int $limit Max results.
+     * @param int $offset Pagination offset.
+     * @return array List of bookings.
+     */
     public function findByUserId(int $userId, int $limit = 50, int $offset = 0): array
     {
         try {
@@ -381,6 +461,12 @@ class ReservaRepository
         }
     }
 
+    /**
+     * Counts the total number of bookings for a specific user.
+     *
+     * @param int $userId The user ID.
+     * @return int Total count.
+     */
     public function countByUserId(int $userId): int
     {
         try {
@@ -401,6 +487,12 @@ class ReservaRepository
         }
     }
 
+    /**
+     * Finds a booking by its ID and returns a DTO.
+     *
+     * @param int $reservaId The booking ID.
+     * @return ReservaCompletaDTO|null The booking DTO or null if not found.
+     */
     public function findById(int $reservaId): ?ReservaCompletaDTO
     {
         try {
@@ -423,6 +515,13 @@ class ReservaRepository
         }
     }
 
+    /**
+     * Updates the status of a booking.
+     *
+     * @param int $reservaId The booking ID.
+     * @param string $newStatus The new status.
+     * @return bool True if successful, false otherwise.
+     */
     public function updateStatus(int $reservaId, string $newStatus): bool
     {
         try {
