@@ -4,18 +4,7 @@ import { fetchBooking, createBooking, updateBooking, deleteBooking } from "./api
 
 const createBookingForm = document.getElementById("createBookingForm");
 const editBookingForm = document.getElementById("editBookingForm");
-
 const editBookingModal = document.getElementById("editBookingModal");
-
-const editBookingId = document.getElementById("editBookingId");
-const editFecha = document.getElementById("editFecha");
-const editHora = document.getElementById("editHora");
-const editEstado = document.getElementById("editEstado");
-const editObservaciones = document.getElementById("editObservaciones");
-const editCliente = document.getElementById("editCliente");
-const editEspecialista = document.getElementById("editEspecialista");
-const editServicio = document.getElementById("editServicio");
-const editDuracion = document.getElementById("editDuracion");
 
 const deleteButtons = document.querySelectorAll(".btn-delete-booking");
 const editButtons = document.querySelectorAll(".btn-edit-booking");
@@ -87,20 +76,21 @@ const handleEditBooking = async (e) => {
 
     if (data.success) {
       const booking = data.data;
+      const form = editBookingForm.elements;
 
-      editBookingId.value = booking.id_reserva;
-      editFecha.value = booking.fecha_reserva;
-      editHora.value = booking.hora_inicio;
-      editEstado.value = booking.estado;
-      editObservaciones.value = booking.observaciones || "";
-      editCliente.value = booking.id_cliente;
-      editEspecialista.value = booking.id_especialista;
-      editServicio.value = booking.id_servicio;
+      form.editBookingId.value = booking.id_reserva;
+      form.editFecha.value = booking.fecha_reserva;
+      form.editHora.value = booking.hora_inicio;
+      form.editEstado.value = booking.estado;
+      form.editObservaciones.value = booking.observaciones || "";
+      form.editCliente.value = booking.id_cliente;
+      form.editEspecialista.value = booking.id_especialista;
+      form.editServicio.value = booking.id_servicio;
 
       const inicio = new Date(`2000-01-01T${booking.hora_inicio}`);
       const fin = new Date(`2000-01-01T${booking.hora_fin}`);
       const duracion = (fin - inicio) / (1000 * 60);
-      editDuracion.value = duracion;
+      form.editDuracion.value = duracion;
 
       const modal = new bootstrap.Modal(editBookingModal);
       modal.show();
