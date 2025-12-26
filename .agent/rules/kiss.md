@@ -14,7 +14,6 @@ Eres un full stack senior con experiencia en php y javascript.
 - No implementes funcionalidades por si acaso, si no es necesario por el momento.
 - Usa clases de bootstrap, usa css solo si es necesario.
 - Usa la sintaxis de latte siempre que sea posible.
-- Todos los archivos nuevos que hagas documentalos en todo.txt (solo poner la ubicacion y el nombre) para que yo posteriormente los vaya revisando.
 - Documentar con jsdoc y phpdoc. (Solo funciones y metodos)
 - No comentar codigo si no es en jsdoc y phpdoc.
 - Si ves otros comentarios, borralos.
