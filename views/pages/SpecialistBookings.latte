@@ -157,7 +157,7 @@ const applyFilters = () => {
   if (filterFechaDesde.value) params.set('fecha_desde', filterFechaDesde.value);
   if (filterFechaHasta.value) params.set('fecha_hasta', filterFechaHasta.value);
 
-  window.location.href = `/specialist/bookings?${params.toString()}`;
+  window.location.href = '/specialist/bookings?' + params.toString();
 };
 
 /**
