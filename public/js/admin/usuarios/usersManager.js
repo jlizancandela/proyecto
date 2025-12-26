@@ -1,153 +1,118 @@
-const editUserIdInput = document.getElementById("editUserId");
-const editNombreInput = document.getElementById("editNombre");
-const editApellidosInput = document.getElementById("editApellidos");
-const editEmailInput = document.getElementById("editEmail");
-const editTelefonoInput = document.getElementById("editTelefono");
-const editRolInput = document.getElementById("editRol");
-const editServiciosCheckboxes = document.getElementById("editServiciosCheckboxes");
-const editServiciosContainer = document.getElementById("editServicesContainer");
-const editAvatarContainer = document.getElementById("editAvatarContainer");
-const editDescriptionContainer = document.getElementById("editDescriptionContainer");
-const editAvatarInput = document.getElementById("editAvatar");
-const editDescripcionInput = document.getElementById("editDescripcion");
-const editActivoCheckbox = document.getElementById("editActivo");
-const editPasswordInput = document.getElementById("editPassword");
-const editPasswordConfirmInput = document.getElementById("editPasswordConfirm");
+// Manages user creation, editing, and status toggling in the admin panel.
+
+import { fetchUser, createUser, updateUser, toggleUserStatus as toggleStatus } from "./api.js";
+
 const editUserModal = document.getElementById("editUserModal");
 const editUserForm = document.getElementById("editUserForm");
-
-const createNombreInput = document.getElementById("createNombre");
-const createApellidosInput = document.getElementById("createApellidos");
-const createEmailInput = document.getElementById("createEmail");
-const createTelefonoInput = document.getElementById("createTelefono");
-const createPasswordInput = document.getElementById("createPassword");
-const createPasswordConfirmInput = document.getElementById("createPasswordConfirm");
-const createRolInput = document.getElementById("createRol");
-const createServiciosContainer = document.getElementById("createServicesContainer");
-const createServiciosCheckboxes = document.getElementById("createServiciosCheckboxes");
-const createAvatarContainer = document.getElementById("createAvatarContainer");
-const createDescriptionContainer = document.getElementById("createDescriptionContainer");
-const createAvatarInput = document.getElementById("createAvatar");
-const createDescripcionInput = document.getElementById("createDescripcion");
 const createUserForm = document.getElementById("createUserForm");
 const createUserModal = document.getElementById("createUserModal");
 
-// Variable para almacenar servicios del usuario actual en edición (para manejar condiciones de carrera)
+const editServiciosContainer = document.getElementById("editServicesContainer");
+const editAvatarContainer = document.getElementById("editAvatarContainer");
+const editDescriptionContainer = document.getElementById("editDescriptionContainer");
+const createServiciosContainer = document.getElementById("createServicesContainer");
+const createAvatarContainer = document.getElementById("createAvatarContainer");
+const createDescriptionContainer = document.getElementById("createDescriptionContainer");
+
 let currentEditUserServices = [];
 
 /**
- * Toggles services, avatar and description containers visibility based on role
- * @param {string} role - Selected role
- * @param {HTMLElement} servicesContainer - Services container element
- * @param {HTMLElement} avatarContainer - Avatar container element
- * @param {HTMLElement} descriptionContainer - Description container element
+ * Toggles services, avatar and description containers visibility based on role.
+ *
+ * @param {string} role - Selected role.
+ * @param {HTMLElement} servicesContainer - Services container element.
+ * @param {HTMLElement} avatarContainer - Avatar container element.
+ * @param {HTMLElement} descriptionContainer - Description container element.
  */
 const toggleSpecialistFields = (role, servicesContainer, avatarContainer, descriptionContainer) => {
-  if (role === "Especialista") {
-    servicesContainer.style.display = "block";
-    avatarContainer.style.display = "block";
-    descriptionContainer.style.display = "block";
-  } else {
-    servicesContainer.style.display = "none";
-    avatarContainer.style.display = "none";
-    descriptionContainer.style.display = "none";
-  }
+  const isSpecialist = role === "Especialista";
+  servicesContainer.style.display = isSpecialist ? "block" : "none";
+  avatarContainer.style.display = isSpecialist ? "block" : "none";
+  descriptionContainer.style.display = isSpecialist ? "block" : "none";
 };
 
 /**
  * Fetches and displays user data in the edit modal.
+ *
  * @param {string} userId - The ID of the user to edit.
  */
-const editUser = (userId) => {
-  // Resetear servicios actuales antes de cargar usuario
+const editUser = async (userId) => {
   currentEditUserServices = [];
 
-  fetch("/admin/api/users/" + userId)
-    .then((response) => response.json())
-    .then((result) => {
-      if (result.success) {
-        const user = result.data;
-        editUserIdInput.value = user.id;
-        editNombreInput.value = user.nombre;
-        editApellidosInput.value = user.apellidos;
-        editEmailInput.value = user.email;
-        editTelefonoInput.value = user.telefono || "";
-        editRolInput.value = user.rol;
-        editActivoCheckbox.checked = user.activo;
+  try {
+    const result = await fetchUser(userId);
 
-        // Proteger admin: deshabilitar cambio de rol y estado si es Admin
-        if (user.rol === "Admin") {
-          editRolInput.disabled = true;
-          editActivoCheckbox.disabled = true;
-        } else {
-          editRolInput.disabled = false;
-          editActivoCheckbox.disabled = false;
-        }
+    if (result.success) {
+      const user = result.data;
+      const form = editUserForm.elements;
 
-        // Mostrar/ocultar servicios y campos de especialista según rol
-        toggleSpecialistFields(
-          user.rol,
-          editServiciosContainer,
-          editAvatarContainer,
-          editDescriptionContainer
-        );
+      form.editUserId.value = user.id;
+      form.editNombre.value = user.nombre;
+      form.editApellidos.value = user.apellidos;
+      form.editEmail.value = user.email;
+      form.editTelefono.value = user.telefono || "";
+      form.editRol.value = user.rol;
+      form.editActivo.checked = user.activo;
 
-        // Cargar datos de especialista
-        if (user.rol === "Especialista") {
-          currentEditUserServices = user.servicios || [];
-          editDescripcionInput.value = user.descripcion || "";
+      const isAdmin = user.rol === "Admin";
+      form.editRol.disabled = isAdmin;
+      form.editActivo.disabled = isAdmin;
 
-          // Resetear todos los checkboxes
-          const checkboxes = editServiciosCheckboxes.querySelectorAll('input[type="checkbox"]');
-          checkboxes.forEach((cb) => (cb.checked = false));
+      toggleSpecialistFields(
+        user.rol,
+        editServiciosContainer,
+        editAvatarContainer,
+        editDescriptionContainer
+      );
 
-          // Marcar los que tiene el usuario
-          currentEditUserServices.forEach((serviceId) => {
-            const cb = document.getElementById(`editService${serviceId}`);
-            if (cb) cb.checked = true;
-          });
-        } else {
-          editDescripcionInput.value = "";
-        }
+      if (user.rol === "Especialista") {
+        currentEditUserServices = user.servicios || [];
+        form.editDescripcion.value = user.descripcion || "";
 
-        const modal = new bootstrap.Modal(editUserModal);
-        modal.show();
+        const checkboxes = document
+          .getElementById("editServiciosCheckboxes")
+          .querySelectorAll('input[type="checkbox"]');
+        checkboxes.forEach((cb) => (cb.checked = false));
+
+        currentEditUserServices.forEach((serviceId) => {
+          const cb = document.getElementById(`editService${serviceId}`);
+          if (cb) cb.checked = true;
+        });
       } else {
-        alert("Error al cargar usuario: " + result.error);
+        form.editDescripcion.value = "";
       }
-    })
-    .catch((error) => {
-      alert("Error: " + error.message);
-    });
+
+      const modal = new bootstrap.Modal(editUserModal);
+      modal.show();
+    } else {
+      alert("Error al cargar usuario: " + result.error);
+    }
+  } catch (error) {
+    alert("Error: " + error.message);
+  }
 };
 
 /**
  * Toggles a user's active status.
+ *
  * @param {string} userId - The ID of the user.
  * @param {string} userName - The name of the user.
  * @param {string} currentStatus - Current active status ("1" or "0").
  */
-const toggleUserStatus = (userId, userName, currentStatus) => {
+const handleToggleUserStatus = async (userId, userName, currentStatus) => {
   const newStatus = currentStatus === "1" ? "0" : "1";
 
-  const formData = new FormData();
-  formData.append("activo", newStatus);
+  try {
+    const result = await toggleStatus(userId, newStatus);
 
-  fetch("/admin/api/users/" + userId, {
-    method: "POST",
-    body: formData,
-  })
-    .then((response) => response.json())
-    .then((result) => {
-      if (result.success) {
-        window.location.reload();
-      } else {
-        alert("Error al cambiar estado: " + result.error);
-      }
-    })
-    .catch((error) => {
-      alert("Error: " + error.message);
-    });
+    if (result.success) {
+      globalThis.location.reload();
+    } else {
+      alert("Error al cambiar estado: " + result.error);
+    }
+  } catch (error) {
+    alert("Error: " + error.message);
+  }
 };
 
 /**
@@ -164,18 +129,19 @@ const handleDocumentClick = (e) => {
     const userId = badge.dataset.userId;
     const userName = badge.dataset.userName;
     const currentStatus = badge.dataset.currentStatus;
-    toggleUserStatus(userId, userName, currentStatus);
+    handleToggleUserStatus(userId, userName, currentStatus);
   }
 };
 
 /**
  * Handles create user form submission.
  */
-const handleCreateUserFormSubmit = (e) => {
+const handleCreateUserFormSubmit = async (e) => {
   e.preventDefault();
 
-  const password = createPasswordInput.value;
-  const passwordConfirm = createPasswordConfirmInput.value;
+  const form = e.target.elements;
+  const password = form.createPassword.value;
+  const passwordConfirm = form.createPasswordConfirm.value;
 
   if (password !== passwordConfirm) {
     alert("Las contraseñas no coinciden");
@@ -183,63 +149,57 @@ const handleCreateUserFormSubmit = (e) => {
   }
 
   const formData = new FormData();
-  formData.append("nombre", createNombreInput.value);
-  formData.append("apellidos", createApellidosInput.value);
-  formData.append("email", createEmailInput.value);
-  formData.append("telefono", createTelefonoInput.value);
+  formData.append("nombre", form.createNombre.value);
+  formData.append("apellidos", form.createApellidos.value);
+  formData.append("email", form.createEmail.value);
+  formData.append("telefono", form.createTelefono.value);
   formData.append("password", password);
-  formData.append("rol", createRolInput.value);
+  formData.append("rol", form.createRol.value);
 
-  // Añadir servicios y descripción si es especialista
-  if (createRolInput.value === "Especialista") {
-    const checkboxes = createServiciosCheckboxes.querySelectorAll("input[type=checkbox]:checked");
+  if (form.createRol.value === "Especialista") {
+    const checkboxes = document
+      .getElementById("createServiciosCheckboxes")
+      .querySelectorAll("input[type=checkbox]:checked");
     const selectedIds = Array.from(checkboxes).map((cb) => cb.value);
-
-    selectedIds.forEach((id) => {
-      formData.append("servicios[]", id);
-    });
 
     if (selectedIds.length === 0) {
       alert("Debes seleccionar al menos un servicio para el especialista");
       return;
     }
 
-    formData.append("descripcion", createDescripcionInput.value);
+    selectedIds.forEach((id) => formData.append("servicios[]", id));
+    formData.append("descripcion", form.createDescripcion.value);
 
-    // Añadir avatar si existe
-    if (createAvatarInput.files.length > 0) {
-      formData.append("avatar", createAvatarInput.files[0]);
+    if (form.createAvatar.files.length > 0) {
+      formData.append("avatar", form.createAvatar.files[0]);
     }
   }
 
-  fetch("/admin/api/users", {
-    method: "POST",
-    body: formData,
-  })
-    .then((response) => response.json())
-    .then((result) => {
-      if (result.success) {
-        alert("Usuario creado correctamente");
-        bootstrap.Modal.getInstance(createUserModal).hide();
-        window.location.reload();
-      } else {
-        alert("Error: " + result.error);
-      }
-    })
-    .catch((error) => {
-      alert("Error: " + error.message);
-    });
+  try {
+    const result = await createUser(formData);
+
+    if (result.success) {
+      alert("Usuario creado correctamente");
+      bootstrap.Modal.getInstance(createUserModal).hide();
+      globalThis.location.reload();
+    } else {
+      alert("Error: " + result.error);
+    }
+  } catch (error) {
+    alert("Error: " + error.message);
+  }
 };
 
 /**
  * Handles edit user form submission.
  */
-const handleEditUserFormSubmit = (e) => {
+const handleEditUserFormSubmit = async (e) => {
   e.preventDefault();
 
-  const userId = editUserIdInput.value;
-  const password = editPasswordInput.value;
-  const passwordConfirm = editPasswordConfirmInput.value;
+  const form = e.target.elements;
+  const userId = form.editUserId.value;
+  const password = form.editPassword.value;
+  const passwordConfirm = form.editPasswordConfirm.value;
 
   if (password && password !== passwordConfirm) {
     alert("Las contraseñas no coinciden");
@@ -247,84 +207,58 @@ const handleEditUserFormSubmit = (e) => {
   }
 
   const formData = new FormData();
-  formData.append("nombre", editNombreInput.value);
-  formData.append("apellidos", editApellidosInput.value);
-  formData.append("email", editEmailInput.value);
-  formData.append("telefono", editTelefonoInput.value);
-  formData.append("rol", editRolInput.value);
-  formData.append("activo", editActivoCheckbox.checked ? "1" : "0");
+  formData.append("nombre", form.editNombre.value);
+  formData.append("apellidos", form.editApellidos.value);
+  formData.append("email", form.editEmail.value);
+  formData.append("telefono", form.editTelefono.value);
+  formData.append("rol", form.editRol.value);
+  formData.append("activo", form.editActivo.checked ? "1" : "0");
 
   if (password) {
     formData.append("password", password);
   }
 
-  // Añadir servicios y descripción si es especialista
-  if (editRolInput.value === "Especialista") {
-    const checkboxes = editServiciosCheckboxes.querySelectorAll("input[type=checkbox]:checked");
+  if (form.editRol.value === "Especialista") {
+    const checkboxes = document
+      .getElementById("editServiciosCheckboxes")
+      .querySelectorAll("input[type=checkbox]:checked");
     const selectedIds = Array.from(checkboxes).map((cb) => cb.value);
-
-    selectedIds.forEach((id) => {
-      formData.append("servicios[]", id);
-    });
 
     if (selectedIds.length === 0) {
       alert("Debes seleccionar al menos un servicio para el especialista");
       return;
     }
 
-    formData.append("descripcion", editDescripcionInput.value);
+    selectedIds.forEach((id) => formData.append("servicios[]", id));
+    formData.append("descripcion", form.editDescripcion.value);
 
-    // Añadir avatar si existe (si se seleccionó uno nuevo)
-    if (editAvatarInput.files.length > 0) {
-      formData.append("avatar", editAvatarInput.files[0]);
+    if (form.editAvatar.files.length > 0) {
+      formData.append("avatar", form.editAvatar.files[0]);
     }
   }
 
-  fetch("/admin/api/users/" + userId, {
-    method: "POST", // Change to POST for file upload support (method spoofing used if API requires PUT, but PHP native file upload generally works better with POST properly handled, or we keep PUT if we parse input stream manually, but FormData with PUT is tricky in PHP. Best practice: POST usually used for files or spoof method)
-    // Actually, PHP doesn't populate $_FILES on PUT requests easily.
-    // Usually one uses POST with _method=PUT.
-    // Let's use POST but send _method field.
-    body: formData,
-  })
-    .then((response) => response.json())
-    .then((result) => {
-      if (result.success) {
-        alert("Usuario actualizado correctamente");
-        bootstrap.Modal.getInstance(editUserModal).hide();
-        window.location.reload();
-      } else {
-        alert("Error: " + result.error);
-      }
-    })
-    .catch((error) => {
-      alert("Error: " + error.message);
-    });
+  try {
+    const result = await updateUser(userId, formData);
+
+    if (result.success) {
+      alert("Usuario actualizado correctamente");
+      bootstrap.Modal.getInstance(editUserModal).hide();
+      globalThis.location.reload();
+    } else {
+      alert("Error: " + result.error);
+    }
+  } catch (error) {
+    alert("Error: " + error.message);
+  }
 };
 
 /**
- * Handles create user modal hidden event to reset the form.
- */
-const handleCreateUserModalHidden = () => {
-  createUserForm.reset();
-};
-
-/**
- * Handles edit user modal hidden event to reset the form.
- */
-const handleEditUserModalHidden = () => {
-  editUserForm.reset();
-  editServiciosContainer.style.display = "none";
-  editAvatarContainer.style.display = "none";
-  editDescriptionContainer.style.display = "none";
-};
-
-/**
- * Handles create rol change to show/hide specialist fields
+ * Handles create rol change to show/hide specialist fields.
  */
 const handleCreateRolChange = () => {
+  const form = createUserForm.elements;
   toggleSpecialistFields(
-    createRolInput.value,
+    form.createRol.value,
     createServiciosContainer,
     createAvatarContainer,
     createDescriptionContainer
@@ -332,11 +266,12 @@ const handleCreateRolChange = () => {
 };
 
 /**
- * Handles edit rol change to show/hide specialist fields
+ * Handles edit rol change to show/hide specialist fields.
  */
 const handleEditRolChange = () => {
+  const form = editUserForm.elements;
   toggleSpecialistFields(
-    editRolInput.value,
+    form.editRol.value,
     editServiciosContainer,
     editAvatarContainer,
     editDescriptionContainer
@@ -346,9 +281,12 @@ const handleEditRolChange = () => {
 document.addEventListener("click", handleDocumentClick);
 createUserForm.addEventListener("submit", handleCreateUserFormSubmit);
 editUserForm.addEventListener("submit", handleEditUserFormSubmit);
-createUserModal.addEventListener("hidden.bs.modal", handleCreateUserModalHidden);
-editUserModal.addEventListener("hidden.bs.modal", handleEditUserModalHidden);
-createRolInput.addEventListener("change", handleCreateRolChange);
-editRolInput.addEventListener("change", handleEditRolChange);
-
-// Cargar servicios al iniciar
+createUserModal.addEventListener("hidden.bs.modal", () => createUserForm.reset());
+editUserModal.addEventListener("hidden.bs.modal", () => {
+  editUserForm.reset();
+  editServiciosContainer.style.display = "none";
+  editAvatarContainer.style.display = "none";
+  editDescriptionContainer.style.display = "none";
+});
+createUserForm.elements.createRol.addEventListener("change", handleCreateRolChange);
+editUserForm.elements.editRol.addEventListener("change", handleEditRolChange);
