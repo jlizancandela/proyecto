@@ -61,7 +61,7 @@ const toggleServiceStatus = (serviceId, currentStatus) => {
     .then((response) => response.json())
     .then((result) => {
       if (result.success) {
-        window.location.reload();
+        globalThis.location.reload();
       } else {
         alert("Error: " + result.error);
       }
@@ -97,8 +97,8 @@ const handleCreateServiceFormSubmit = (e) => {
   const formData = {
     nombre_servicio: createNombreServicioInput.value,
     descripcion: createDescripcionInput.value,
-    duracion_minutos: parseInt(createDuracionInput.value),
-    precio: parseFloat(createPrecioInput.value),
+    duracion_minutos: Number.parseInt(createDuracionInput.value),
+    precio: Number.parseFloat(createPrecioInput.value),
   };
 
   fetch("/admin/api/services", {
@@ -113,7 +113,7 @@ const handleCreateServiceFormSubmit = (e) => {
       if (result.success) {
         alert("Servicio creado correctamente");
         bootstrap.Modal.getInstance(createServiceModal).hide();
-        window.location.reload();
+        globalThis.location.reload();
       } else {
         alert("Error: " + result.error);
       }
@@ -134,8 +134,8 @@ const handleEditServiceFormSubmit = (e) => {
   const formData = {
     nombre_servicio: editNombreServicioInput.value,
     descripcion: editDescripcionInput.value,
-    duracion_minutos: parseInt(editDuracionInput.value),
-    precio: parseFloat(editPrecioInput.value),
+    duracion_minutos: Number.parseInt(editDuracionInput.value),
+    precio: Number.parseFloat(editPrecioInput.value),
     activo: editActivoInput.checked,
   };
 
@@ -151,7 +151,7 @@ const handleEditServiceFormSubmit = (e) => {
       if (result.success) {
         alert("Servicio actualizado correctamente");
         bootstrap.Modal.getInstance(editServiceModal).hide();
-        window.location.reload();
+        globalThis.location.reload();
       } else {
         alert("Error: " + result.error);
       }
