@@ -53,6 +53,6 @@ Thumbs.db
 /documentos/*
 
 /test
-/tests/
+# /tests/
 /open-spec
 
