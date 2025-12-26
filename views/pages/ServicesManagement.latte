@@ -24,6 +24,7 @@
           <th>Descripción</th>
           <th>Duración (min)</th>
           <th>Precio (€)</th>
+          <th>Estado</th>
           <th class="text-end">Acciones</th>
         </tr>
       </thead>
@@ -35,23 +36,35 @@
           <td>{$servicio['descripcion']|truncate:50}</td>
           <td>{$servicio['duracion_minutos']}</td>
           <td>{$servicio['precio']|number:2}</td>
+          <td>
+            {if $servicio['activo']}
+            <span
+              class="badge bg-success cursor-pointer btn-toggle-status"
+              data-service-id="{$servicio['id']}"
+              data-current-status="1"
+              title="Click para desactivar"
+            >
+              Activo
+            </span>
+            {else}
+            <span
+              class="badge bg-secondary cursor-pointer btn-toggle-status"
+              data-service-id="{$servicio['id']}"
+              data-current-status="0"
+              title="Click para activar"
+            >
+              Inactivo
+            </span>
+            {/if}
+          </td>
           <td class="text-end">
             <button
               type="button"
-              class="btn btn-sm btn-outline-primary me-1 btn-edit-service"
+              class="btn btn-sm btn-outline-primary btn-edit-service"
               data-service-id="{$servicio['id']}"
               title="Editar"
             >
               <i class="bi bi-pencil"></i>
-            </button>
-            <button
-              type="button"
-              class="btn btn-sm btn-outline-danger btn-delete-service"
-              data-service-id="{$servicio['id']}"
-              data-service-name="{$servicio['nombre_servicio']}"
-              title="Eliminar"
-            >
-              <i class="bi bi-trash"></i>
             </button>
           </td>
         </tr>
@@ -67,6 +80,12 @@
   {/if} {* Modales *} {include '../components/modals/CreateServiceModal.latte'} {include
   '../components/modals/EditServiceModal.latte'}
 </div>
+
+<style>
+  .cursor-pointer {
+    cursor: pointer;
+  }
+</style>
 
 <script src="/public/js/admin/servicios/servicesManager.js"></script>
 {/block}

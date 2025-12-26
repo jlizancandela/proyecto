@@ -83,11 +83,11 @@ class ServicioService
     }
 
     /**
-     * Deletes a service
+     * Deactivates a service (soft delete)
      * @param int $id Service ID
      * @throws \Exception If service not found
      */
-    public function deleteService(int $id): void
+    public function deactivateService(int $id): void
     {
         $existingService = $this->repository->getServicioById($id);
 
@@ -95,10 +95,30 @@ class ServicioService
             throw new \Exception('Service not found');
         }
 
-        $success = $this->repository->delete($id);
+        $success = $this->repository->deactivate($id);
 
         if (!$success) {
-            throw new \Exception('Error deleting service');
+            throw new \Exception('Error deactivating service');
+        }
+    }
+
+    /**
+     * Activates a service
+     * @param int $id Service ID
+     * @throws \Exception If service not found
+     */
+    public function activateService(int $id): void
+    {
+        $existingService = $this->repository->getServicioById($id);
+
+        if (!$existingService) {
+            throw new \Exception('Service not found');
+        }
+
+        $success = $this->repository->activate($id);
+
+        if (!$success) {
+            throw new \Exception('Error activating service');
         }
     }
 
@@ -113,12 +133,13 @@ class ServicioService
     }
 
     /**
-     * Gets all services
+     * Gets all services, optionally filtered by active status
+     * @param bool|null $activo Filter by active status (null = all)
      * @return array Array of Servicio objects
      */
-    public function getAllServices(): array
+    public function getAllServices(?bool $activo = null): array
     {
-        return $this->repository->getAllServicios();
+        return $this->repository->getAllServicios($activo);
     }
 
     /**

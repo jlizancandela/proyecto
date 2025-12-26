@@ -14,10 +14,21 @@ class ServicioRepository
         $this->db = $db;
     }
 
-    public function getAllServicios(): array
+    /**
+     * Gets all services, optionally filtered by active status
+     * @param bool|null $activo Filter by active status (null = all)
+     * @return array Array of Servicio objects
+     */
+    public function getAllServicios(?bool $activo = null): array
     {
         try {
-            $stmt = $this->db->query("SELECT * FROM SERVICIO ORDER BY nombre_servicio ASC");
+            $query = "SELECT * FROM SERVICIO";
+            if ($activo !== null) {
+                $query .= " WHERE activo = " . ($activo ? '1' : '0');
+            }
+            $query .= " ORDER BY nombre_servicio ASC";
+
+            $stmt = $this->db->query($query);
 
             $servicios = [];
             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
@@ -48,8 +59,8 @@ class ServicioRepository
     {
         try {
             $stmt = $this->db->prepare(
-                "INSERT INTO SERVICIO (nombre_servicio, duracion_minutos, precio, descripcion) 
-                VALUES (:nombre_servicio, :duracion_minutos, :precio, :descripcion)"
+                "INSERT INTO SERVICIO (nombre_servicio, duracion_minutos, precio, descripcion, activo)
+                VALUES (:nombre_servicio, :duracion_minutos, :precio, :descripcion, :activo)"
             );
 
             $stmt->execute([
@@ -57,6 +68,7 @@ class ServicioRepository
                 'duracion_minutos' => $servicio->getDuracionMinutos(),
                 'precio' => $servicio->getPrecio(),
                 'descripcion' => $servicio->getDescripcion(),
+                'activo' => $servicio->isActivo() ? 1 : 0,
             ]);
 
             return (int) $this->db->lastInsertId();
@@ -74,7 +86,8 @@ class ServicioRepository
                 SET nombre_servicio = :nombre_servicio,
                     duracion_minutos = :duracion_minutos,
                     precio = :precio,
-                    descripcion = :descripcion
+                    descripcion = :descripcion,
+                    activo = :activo
                 WHERE id_servicio = :id_servicio"
             );
 
@@ -84,6 +97,7 @@ class ServicioRepository
                 'duracion_minutos' => $servicio->getDuracionMinutos(),
                 'precio' => $servicio->getPrecio(),
                 'descripcion' => $servicio->getDescripcion(),
+                'activo' => $servicio->isActivo() ? 1 : 0,
             ]);
         } catch (\Exception $e) {
             error_log("Error al actualizar servicio: " . $e->getMessage());
@@ -91,13 +105,34 @@ class ServicioRepository
         }
     }
 
-    public function delete(int $id): bool
+    /**
+     * Deactivates a service (soft delete)
+     * @param int $id Service ID
+     * @return bool Success status
+     */
+    public function deactivate(int $id): bool
     {
         try {
-            $stmt = $this->db->prepare("DELETE FROM SERVICIO WHERE id_servicio = :id");
+            $stmt = $this->db->prepare("UPDATE SERVICIO SET activo = 0 WHERE id_servicio = :id");
             return $stmt->execute(['id' => $id]);
         } catch (\Exception $e) {
-            error_log("Error al eliminar servicio: " . $e->getMessage());
+            error_log("Error al desactivar servicio: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Activates a service
+     * @param int $id Service ID
+     * @return bool Success status
+     */
+    public function activate(int $id): bool
+    {
+        try {
+            $stmt = $this->db->prepare("UPDATE SERVICIO SET activo = 1 WHERE id_servicio = :id");
+            return $stmt->execute(['id' => $id]);
+        } catch (\Exception $e) {
+            error_log("Error al activar servicio: " . $e->getMessage());
             return false;
         }
     }

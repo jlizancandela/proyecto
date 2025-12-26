@@ -367,9 +367,14 @@ $router->put('/admin/api/services/(\d+)', function ($id) use ($servicioService) 
     $controller->updateService((int)$id);
 });
 
-$router->delete('/admin/api/services/(\d+)', function ($id) use ($servicioService) {
+$router->post('/admin/api/services/(\d+)/activate', function ($id) use ($servicioService) {
     $controller = new ServiceApiController($servicioService);
-    $controller->deleteService((int)$id);
+    $controller->activateService((int)$id);
+});
+
+$router->post('/admin/api/services/(\d+)/deactivate', function ($id) use ($servicioService) {
+    $controller = new ServiceApiController($servicioService);
+    $controller->deactivateService((int)$id);
 });
 
 $router->get('/api/especialistas/disponibles', function () use ($especialistaRepository) {

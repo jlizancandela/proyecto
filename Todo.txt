@@ -1,5 +1,7 @@
 .
 ├── index.php
+├── database/
+│   └── add_activo_to_servicios.sql      # Nuevo - Migración soft delete
 ├── public/
 │   └── js/
 │       ├── admin/
