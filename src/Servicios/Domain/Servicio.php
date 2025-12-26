@@ -9,18 +9,21 @@ class Servicio
     private int $duracion_minutos;
     private string $descripcion;
     private float $precio;
+    private bool $activo;
 
     public function __construct(
         string $nombre_servicio,
         int $duracion_minutos,
         string $descripcion,
         float $precio,
-        ?int $id_servicio = null
+        ?int $id_servicio = null,
+        bool $activo = true
     ) {
         $this->nombre_servicio = $nombre_servicio;
         $this->duracion_minutos = $duracion_minutos;
         $this->descripcion = $descripcion;
         $this->precio = $precio;
+        $this->activo = $activo;
         if ($id_servicio !== null) {
             $this->id_servicio = $id_servicio;
         }
@@ -51,6 +54,11 @@ class Servicio
         return $this->precio;
     }
 
+    public function isActivo(): bool
+    {
+        return $this->activo;
+    }
+
     public static function fromDatabase(array $data): self
     {
         return new self(
@@ -58,7 +66,8 @@ class Servicio
             (int) $data["duracion_minutos"],
             $data["descripcion"],
             (float) $data["precio"],
-            $data["id_servicio"] ?? null
+            $data["id_servicio"] ?? null,
+            (bool) ($data["activo"] ?? true)
         );
     }
 }

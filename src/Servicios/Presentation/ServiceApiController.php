@@ -25,7 +25,8 @@ class ServiceApiController
                     'nombre_servicio' => $servicio->getNombreServicio(),
                     'duracion_minutos' => $servicio->getDuracionMinutos(),
                     'precio' => $servicio->getPrecio(),
-                    'descripcion' => $servicio->getDescripcion()
+                    'descripcion' => $servicio->getDescripcion(),
+                    'activo' => $servicio->isActivo()
                 ];
             }, $servicios);
 
@@ -68,7 +69,8 @@ class ServiceApiController
                     'nombre_servicio' => $servicio->getNombreServicio(),
                     'descripcion' => $servicio->getDescripcion(),
                     'duracion_minutos' => $servicio->getDuracionMinutos(),
-                    'precio' => $servicio->getPrecio()
+                    'precio' => $servicio->getPrecio(),
+                    'activo' => $servicio->isActivo()
                 ]
             ], JSON_PRETTY_PRINT);
         } catch (\Exception $e) {
@@ -109,7 +111,8 @@ class ServiceApiController
                     'nombre_servicio' => $servicio->getNombreServicio(),
                     'descripcion' => $servicio->getDescripcion(),
                     'duracion_minutos' => $servicio->getDuracionMinutos(),
-                    'precio' => $servicio->getPrecio()
+                    'precio' => $servicio->getPrecio(),
+                    'activo' => $servicio->isActivo()
                 ]
             ], JSON_PRETTY_PRINT);
         } catch (\Exception $e) {
@@ -150,7 +153,8 @@ class ServiceApiController
                     'nombre_servicio' => $servicio->getNombreServicio(),
                     'descripcion' => $servicio->getDescripcion(),
                     'duracion_minutos' => $servicio->getDuracionMinutos(),
-                    'precio' => $servicio->getPrecio()
+                    'precio' => $servicio->getPrecio(),
+                    'activo' => $servicio->isActivo()
                 ]
             ], JSON_PRETTY_PRINT);
         } catch (\Exception $e) {
@@ -163,18 +167,41 @@ class ServiceApiController
     }
 
     /**
-     * Deletes a service
+     * Deactivates a service (soft delete)
      */
-    public function deleteService(int $id): void
+    public function deactivateService(int $id): void
     {
         header('Content-Type: application/json');
 
         try {
-            $this->service->deleteService($id);
+            $this->service->deactivateService($id);
 
             echo json_encode([
                 'success' => true,
-                'message' => 'Servicio eliminado correctamente'
+                'message' => 'Servicio desactivado correctamente'
+            ], JSON_PRETTY_PRINT);
+        } catch (\Exception $e) {
+            http_response_code(500);
+            echo json_encode([
+                'success' => false,
+                'error' => $e->getMessage()
+            ], JSON_PRETTY_PRINT);
+        }
+    }
+
+    /**
+     * Activates a service
+     */
+    public function activateService(int $id): void
+    {
+        header('Content-Type: application/json');
+
+        try {
+            $this->service->activateService($id);
+
+            echo json_encode([
+                'success' => true,
+                'message' => 'Servicio activado correctamente'
             ], JSON_PRETTY_PRINT);
         } catch (\Exception $e) {
             http_response_code(500);

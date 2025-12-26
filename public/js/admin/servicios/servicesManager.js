@@ -1,8 +1,11 @@
+// Manages service creation, editing, and status toggling in the admin panel
+
 const editServiceIdInput = document.getElementById("editServiceId");
 const editNombreServicioInput = document.getElementById("editNombreServicio");
 const editDescripcionInput = document.getElementById("editDescripcion");
 const editDuracionInput = document.getElementById("editDuracion");
 const editPrecioInput = document.getElementById("editPrecio");
+const editActivoInput = document.getElementById("editActivo");
 const editServiceModal = document.getElementById("editServiceModal");
 const editServiceForm = document.getElementById("editServiceForm");
 
@@ -28,6 +31,7 @@ const editService = (serviceId) => {
         editDescripcionInput.value = service.descripcion;
         editDuracionInput.value = service.duracion_minutos;
         editPrecioInput.value = service.precio;
+        editActivoInput.checked = service.activo;
 
         const modal = new bootstrap.Modal(editServiceModal);
         modal.show();
@@ -41,25 +45,25 @@ const editService = (serviceId) => {
 };
 
 /**
- * Deletes a service after confirmation.
- * @param {string} serviceId - The ID of the service to delete.
- * @param {string} serviceName - The name of the service to delete.
+ * Toggles service active status.
+ * @param {string} serviceId - The ID of the service to toggle.
+ * @param {string} currentStatus - Current status (0 or 1).
  */
-const deleteService = (serviceId, serviceName) => {
-  if (!confirm("¿Estás seguro de eliminar el servicio '" + serviceName + "'?")) {
-    return;
-  }
+const toggleServiceStatus = (serviceId, currentStatus) => {
+  const isActive = currentStatus === "1";
+  const endpoint = isActive
+    ? "/admin/api/services/" + serviceId + "/deactivate"
+    : "/admin/api/services/" + serviceId + "/activate";
 
-  fetch("/admin/api/services/" + serviceId, {
-    method: "DELETE",
+  fetch(endpoint, {
+    method: "POST",
   })
     .then((response) => response.json())
     .then((result) => {
       if (result.success) {
-        alert("Servicio eliminado correctamente");
         window.location.reload();
       } else {
-        alert("Error al eliminar: " + result.error);
+        alert("Error: " + result.error);
       }
     })
     .catch((error) => {
@@ -68,7 +72,7 @@ const deleteService = (serviceId, serviceName) => {
 };
 
 /**
- * Handles document click events for edit and delete service buttons.
+ * Handles document click events for edit and toggle status buttons.
  */
 const handleDocumentClick = (e) => {
   if (e.target.closest(".btn-edit-service")) {
@@ -76,11 +80,11 @@ const handleDocumentClick = (e) => {
     editService(serviceId);
   }
 
-  if (e.target.closest(".btn-delete-service")) {
-    const button = e.target.closest(".btn-delete-service");
-    const serviceId = button.dataset.serviceId;
-    const serviceName = button.dataset.serviceName;
-    deleteService(serviceId, serviceName);
+  if (e.target.closest(".btn-toggle-status")) {
+    const badge = e.target.closest(".btn-toggle-status");
+    const serviceId = badge.dataset.serviceId;
+    const currentStatus = badge.dataset.currentStatus;
+    toggleServiceStatus(serviceId, currentStatus);
   }
 };
 
@@ -132,6 +136,7 @@ const handleEditServiceFormSubmit = (e) => {
     descripcion: editDescripcionInput.value,
     duracion_minutos: parseInt(editDuracionInput.value),
     precio: parseFloat(editPrecioInput.value),
+    activo: editActivoInput.checked,
   };
 
   fetch("/admin/api/services/" + serviceId, {
