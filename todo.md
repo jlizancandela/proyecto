@@ -42,7 +42,7 @@
 
 - [x] Extraer queries complejas a métodos privados (applyFilters)
 - [x] Crear tests unitarios (Covered by Pest/Mockery)
-- [ ] Verificar PHPDoc en todos los métodos restantes
+- [x] Verificar PHPDoc en todos los métodos restantes
 - [ ] Considerar extraer lógica de reportes a clase separada
 
 #### `UserRepository.php` (600 líneas)
@@ -158,7 +158,7 @@
 ### 🎯 Día 6-7: Lo Más Crítico
 
 - [x] Revisar ReservaRepository (Refactorizado con éxito)
-- [ ] Añadir PHPDoc a métodos públicos principales
+- [x] Añadir PHPDoc a métodos públicos principales
 - [ ] Verificar que todo compile y funcione
 
 ## ⚠️ NO HACER (por falta de tiempo)
