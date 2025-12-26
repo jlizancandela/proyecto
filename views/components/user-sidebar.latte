@@ -45,7 +45,12 @@
   <div class="p-3 border-top mt-auto">
     <div class="d-flex align-items-center">
       <div class="me-3">
-        <i class="bi bi-person-circle fs-2 text-secondary"></i>
+        <div
+          class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center fw-bold"
+          style="width: 42px; height: 42px; font-size: 1.2rem"
+        >
+          {substr($userName ?? 'U', 0, 1)|upper}
+        </div>
       </div>
       <div>
         <div class="fw-semibold small">{$userName}</div>
@@ -109,7 +114,12 @@
     <div class="border-top pt-3 mt-auto">
       <div class="d-flex align-items-center">
         <div class="me-3">
-          <i class="bi bi-person-circle fs-2 text-secondary"></i>
+          <div
+            class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center fw-bold"
+            style="width: 42px; height: 42px; font-size: 1.2rem"
+          >
+            {substr($userName ?? 'U', 0, 1)|upper}
+          </div>
         </div>
         <div>
           <div class="fw-semibold small">{$userName}</div>
