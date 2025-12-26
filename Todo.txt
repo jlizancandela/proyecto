@@ -6,6 +6,7 @@
 │   └── js/
 │       ├── admin/
 │       │   └── bookings/
+│       │       ├── api.js                    # New - API utilities
 │       │       └── bookingsManager.js        # Simplified - Only modals & AJAX
 │       └── user/
 │           └── bookings/
