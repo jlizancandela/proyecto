@@ -1,3 +1,8 @@
+/**
+ * Manages booking actions (modify, cancel) in the user interface.
+ * Handles modal updates and form submissions for booking management.
+ */
+
 let currentBookingId = null;
 let currentAction = null;
 
@@ -107,3 +112,12 @@ const confirmAction = () => {
 };
 
 document.addEventListener("DOMContentLoaded", initializeBookingListeners);
+
+// Expose functions for testing
+if (typeof window !== "undefined") {
+  window.modifyBooking = modifyBooking;
+  window.cancelBooking = cancelBooking;
+  window.updateModal = updateModal;
+  window.confirmAction = confirmAction;
+  window.initializeBookingListeners = initializeBookingListeners;
+}
