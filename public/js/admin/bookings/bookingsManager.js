@@ -172,13 +172,16 @@ const handleUpdateBooking = async (e) => {
  * Attaches event listeners to booking action buttons.
  */
 const attachHandlers = () => {
-  document.querySelectorAll(SELECTORS.deleteButton).forEach((btn) => {
+  const deleteButtons = document.querySelectorAll(SELECTORS.deleteButton);
+  const editButtons = document.querySelectorAll(SELECTORS.editButton);
+
+  deleteButtons.forEach((btn) => {
     if (!btn.disabled) {
       btn.addEventListener("click", handleDeleteBooking);
     }
   });
 
-  document.querySelectorAll(SELECTORS.editButton).forEach((btn) => {
+  editButtons.forEach((btn) => {
     btn.addEventListener("click", handleEditBooking);
   });
 };
