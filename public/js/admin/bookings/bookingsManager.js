@@ -2,10 +2,14 @@
 
 import { fetchBooking, createBooking, updateBooking, deleteBooking } from "./api.js";
 
+// DOM Elements - Forms
 const createBookingForm = document.getElementById("createBookingForm");
 const editBookingForm = document.getElementById("editBookingForm");
+
+// DOM Elements - Modals
 const editBookingModal = document.getElementById("editBookingModal");
 
+// DOM Elements - Edit Form Fields
 const editBookingId = document.getElementById("editBookingId");
 const editFecha = document.getElementById("editFecha");
 const editHora = document.getElementById("editHora");
@@ -15,6 +19,10 @@ const editCliente = document.getElementById("editCliente");
 const editEspecialista = document.getElementById("editEspecialista");
 const editServicio = document.getElementById("editServicio");
 const editDuracion = document.getElementById("editDuracion");
+
+// DOM Elements - Buttons
+const deleteButtons = document.querySelectorAll(".btn-delete-booking");
+const editButtons = document.querySelectorAll(".btn-edit-booking");
 
 /**
  * Shows a temporary success message alert.
@@ -162,24 +170,18 @@ const handleUpdateBooking = async (e) => {
   }
 };
 
-/**
- * Attaches event listeners to booking action buttons.
- */
-const attachHandlers = () => {
-  const deleteButtons = document.querySelectorAll(".btn-delete-booking");
-  const editButtons = document.querySelectorAll(".btn-edit-booking");
+// Event Listeners - Delete Buttons
+deleteButtons.forEach((btn) => {
+  if (!btn.disabled) {
+    btn.addEventListener("click", handleDeleteBooking);
+  }
+});
 
-  deleteButtons.forEach((btn) => {
-    if (!btn.disabled) {
-      btn.addEventListener("click", handleDeleteBooking);
-    }
-  });
+// Event Listeners - Edit Buttons
+editButtons.forEach((btn) => {
+  btn.addEventListener("click", handleEditBooking);
+});
 
-  editButtons.forEach((btn) => {
-    btn.addEventListener("click", handleEditBooking);
-  });
-};
-
+// Event Listeners - Forms
 createBookingForm.addEventListener("submit", handleCreateBooking);
 editBookingForm.addEventListener("submit", handleUpdateBooking);
-attachHandlers();
