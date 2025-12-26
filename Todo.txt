@@ -5,8 +5,12 @@
 ├── public/
 │   └── js/
 │       ├── admin/
-│       │   └── reservas/
-│       │       └── bookingsManager.js        # Nuevo - Gestión admin reservas
+│       │   └── bookings/
+│       │       ├── bookingsManager.js        # Refactored - Main manager
+│       │       ├── uiHelpers.js              # New - UI utilities
+│       │       ├── filterManager.js          # New - Filter/URL management
+│       │       ├── tableRenderer.js          # New - Table rendering
+│       │       └── paginationRenderer.js     # New - Pagination rendering
 │       └── user/
 │           └── bookings/
 │               ├── context/
