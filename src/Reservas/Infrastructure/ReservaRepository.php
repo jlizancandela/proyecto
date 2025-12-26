@@ -551,15 +551,15 @@ class ReservaRepository
     }
 
     /**
-     * Busca reservas de un usuario con filtros opcionales
+     * Finds bookings for a user with optional filters
      * 
-     * @param int $userId ID del usuario/cliente
-     * @param int $limit Número máximo de resultados
-     * @param int $offset Desplazamiento para paginación
-     * @param string|null $fechaDesde Fecha desde (formato Y-m-d)
-     * @param string|null $fechaHasta Fecha hasta (formato Y-m-d)
-     * @param string|null $estado Estado de la reserva
-     * @return array Array de ReservaCompletaDTO
+     * @param int $userId User/Client ID
+     * @param int $limit Maximum number of results
+     * @param int $offset Pagination offset
+     * @param string|null $fechaDesde Start date (Y-m-d format)
+     * @param string|null $fechaHasta End date (Y-m-d format)
+     * @param string|null $estado Booking status
+     * @return array Array of ReservaCompletaDTO
      */
     public function findByUserIdWithFilters(
         int $userId,
@@ -626,19 +626,19 @@ class ReservaRepository
 
             return $reservas;
         } catch (\Exception $e) {
-            error_log("Error al obtener reservas del usuario con filtros: " . $e->getMessage());
+            error_log("Error getting user bookings with filters: " . $e->getMessage());
             return [];
         }
     }
 
     /**
-     * Cuenta las reservas de un usuario con filtros opcionales
+     * Counts bookings for a user with optional filters
      * 
-     * @param int $userId ID del usuario/cliente
-     * @param string|null $fechaDesde Fecha desde (formato Y-m-d)
-     * @param string|null $fechaHasta Fecha hasta (formato Y-m-d)
-     * @param string|null $estado Estado de la reserva
-     * @return int Número total de reservas que cumplen los criterios
+     * @param int $userId User/Client ID
+     * @param string|null $fechaDesde Start date (Y-m-d format)
+     * @param string|null $fechaHasta End date (Y-m-d format)
+     * @param string|null $estado Booking status
+     * @return int Total number of bookings matching criteria
      */
     public function countByUserIdWithFilters(
         int $userId,
@@ -687,10 +687,10 @@ class ReservaRepository
     }
 
     /**
-     * Obtiene la última reserva de un usuario
+     * Gets the latest booking for a user
      * 
-     * @param int $userId ID del usuario/cliente
-     * @return ReservaCompletaDTO|null La última reserva o null si no tiene reservas
+     * @param int $userId User/Client ID
+     * @return ReservaCompletaDTO|null The latest booking or null if none found
      */
     public function findLatestByUserId(int $userId): ?ReservaCompletaDTO
     {

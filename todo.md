@@ -165,7 +165,6 @@
 
 - ❌ NO dividir archivos grandes PHP (muy arriesgado)
 - ❌ NO refactorizar lógica compleja PHP
-- ❌ NO crear tests PHP nuevos (solo si ya existen)
 - ❌ NO tocar Preact components
 
 ## Notas
