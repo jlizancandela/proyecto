@@ -1,8 +1,9 @@
 /**
- * Admin bookings management
+ * This script helps managing the bookings in the admin panel.
+ * It handles the table list, filters, and modals to edit or delete reservations.
  */
 
-// DOM elements
+// DOM Elements - Filters
 const filterEstado = document.getElementById("filterEstado");
 const filterCliente = document.getElementById("filterCliente");
 const filterEspecialista = document.getElementById("filterEspecialista");
@@ -10,18 +11,123 @@ const filterFechaDesde = document.getElementById("filterFechaDesde");
 const filterFechaHasta = document.getElementById("filterFechaHasta");
 const btnApplyFilters = document.getElementById("btnApplyFilters");
 const btnClearFilters = document.getElementById("btnClearFilters");
+
+// DOM Elements - Table and Pagination
 const bookingsTableContainer = document.getElementById("bookingsTableContainer");
 const paginationContainer = document.getElementById("paginationContainer");
 
+// DOM Elements - Modals and Forms
+const createBookingModal = document.getElementById("createBookingModal");
+const editBookingModal = document.getElementById("editBookingModal");
+const createBookingForm = document.getElementById("createBookingForm");
+const editBookingForm = document.getElementById("editBookingForm");
+
+// DOM Elements - Edit Form Fields
+const editBookingId = document.getElementById("editBookingId");
+const editFecha = document.getElementById("editFecha");
+const editHora = document.getElementById("editHora");
+const editEstado = document.getElementById("editEstado");
+const editObservaciones = document.getElementById("editObservaciones");
+const editCliente = document.getElementById("editCliente");
+const editEspecialista = document.getElementById("editEspecialista");
+const editServicio = document.getElementById("editServicio");
+const editDuracion = document.getElementById("editDuracion");
+
+// State
 let currentPage = 1;
 let currentFilters = {};
 
 /**
- * Fetches bookings from API
+ * Gets bootstrap color class based on booking status.
  *
- * @param {number} page - Page number
- * @param {object} filters - Filter parameters
- * @return {Promise<void>}
+ * @param {string} status - The booking status.
+ * @return {string} Bootstrap color class.
+ */
+const getStatusColor = (status) => {
+  const colors = {
+    Pendiente: "warning",
+    Confirmada: "success",
+    Completada: "info",
+    Cancelada: "secondary",
+  };
+  return colors[status] || "secondary";
+};
+
+/**
+ * Formats a date string to a readable format (DD/MM/YYYY).
+ *
+ * @param {string} dateStr - Date string.
+ * @return {string} Formatted date.
+ */
+const formatDate = (dateStr) => {
+  const date = new Date(dateStr + "T00:00:00");
+  return date.toLocaleDateString("es-ES", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  });
+};
+
+/**
+ * Updates the URL parameters without reloading the page.
+ *
+ * @param {object} filters - Current filter parameters.
+ */
+const updateUrlParams = (filters) => {
+  const params = new URLSearchParams(filters);
+  const newUrl = `${window.location.pathname}?${params.toString()}`;
+  window.history.pushState({}, "", newUrl);
+};
+
+/**
+ * Updates the PDF export link with current filter parameters.
+ *
+ * @param {URLSearchParams} params - Current URL parameters.
+ */
+const updatePdfExportLink = (params) => {
+  const pdfLink = document.querySelector('a[href^="/admin/bookings/pdf"]');
+  if (pdfLink) {
+    pdfLink.href = `/admin/bookings/pdf?${params.toString()}`;
+  }
+};
+
+/**
+ * Shows an error message in the table container.
+ *
+ * @param {string} message - Error message to display.
+ */
+const showError = (message) => {
+  bookingsTableContainer.innerHTML = `
+    <div class="alert alert-danger">
+      <i class="bi bi-exclamation-triangle me-2"></i>
+      ${message}
+    </div>
+  `;
+};
+
+/**
+ * Shows a temporary success message alert.
+ *
+ * @param {string} message - Success message to display.
+ */
+const showSuccess = (message) => {
+  const alertDiv = document.createElement("div");
+  alertDiv.className = "alert alert-success alert-dismissible fade show";
+  alertDiv.innerHTML = `
+    <i class="bi bi-check-circle me-2"></i>
+    ${message}
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  `;
+  document.querySelector(".mb-4").prepend(alertDiv);
+
+  setTimeout(() => alertDiv.remove(), 3000);
+};
+
+/**
+ * Fetches bookings from the API based on page and filters.
+ *
+ * @param {number} page - Page number to fetch.
+ * @param {object} filters - Filter criteria.
  */
 const fetchBookings = async (page = 1, filters = {}) => {
   try {
@@ -36,7 +142,7 @@ const fetchBookings = async (page = 1, filters = {}) => {
 
     if (data.success) {
       renderBookingsTable(data.reservas);
-      renderPagination(data.page, data.totalPages, filters);
+      renderPagination(data.page, data.totalPages);
     } else {
       showError("Error al cargar las reservas");
     }
@@ -47,10 +153,193 @@ const fetchBookings = async (page = 1, filters = {}) => {
 };
 
 /**
- * Renders bookings table
+ * Handles the deletion of a booking.
  *
- * @param {Array} bookings - Array of bookings
- * @return {void}
+ * @param {Event} e - Click event.
+ */
+const handleDeleteBooking = async (e) => {
+  const bookingId = e.currentTarget.dataset.bookingId;
+
+  if (!confirm("¿Estás seguro de que deseas eliminar esta reserva?")) {
+    return;
+  }
+
+  try {
+    const response = await fetch(`/admin/api/reservas/${bookingId}`, {
+      method: "DELETE",
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
+      showSuccess("Reserva eliminada correctamente");
+      fetchBookings(currentPage, currentFilters);
+    } else {
+      showError(data.error || "Error al eliminar la reserva");
+    }
+  } catch (error) {
+    console.error("Error deleting booking:", error);
+    showError("Error al conectar con el servidor");
+  }
+};
+
+/**
+ * Opens the edit modal and populates it with booking data.
+ *
+ * @param {Event} e - Click event.
+ */
+const handleEditBooking = async (e) => {
+  const bookingId = e.currentTarget.dataset.bookingId;
+
+  try {
+    const response = await fetch(`/admin/api/reservas/${bookingId}`);
+    const data = await response.json();
+
+    if (data.success) {
+      const booking = data.data;
+
+      editBookingId.value = booking.id_reserva;
+      editFecha.value = booking.fecha_reserva;
+      editHora.value = booking.hora_inicio;
+      editEstado.value = booking.estado;
+      editObservaciones.value = booking.observaciones || "";
+      editCliente.value = booking.id_cliente;
+      editEspecialista.value = booking.id_especialista;
+      editServicio.value = booking.id_servicio;
+
+      const inicio = new Date(`2000-01-01T${booking.hora_inicio}`);
+      const fin = new Date(`2000-01-01T${booking.hora_fin}`);
+      const duracion = (fin - inicio) / (1000 * 60);
+      editDuracion.value = duracion;
+
+      const modal = new bootstrap.Modal(editBookingModal);
+      modal.show();
+    } else {
+      alert("Error al cargar los datos de la reserva");
+    }
+  } catch (error) {
+    console.error("Error fetching booking:", error);
+    alert("Error al conectar con el servidor");
+  }
+};
+
+/**
+ * Handles create booking form submission.
+ *
+ * @param {Event} e - Submit event.
+ */
+const handleCreateBooking = async (e) => {
+  e.preventDefault();
+
+  const formData = new FormData(e.target);
+  const data = Object.fromEntries(formData.entries());
+
+  try {
+    const response = await fetch("/admin/api/reservas", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+
+    const result = await response.json();
+
+    if (result.success) {
+      showSuccess("Reserva creada correctamente");
+      bootstrap.Modal.getInstance(createBookingModal).hide();
+      e.target.reset();
+      fetchBookings(currentPage, currentFilters);
+    } else {
+      showError(result.error || "Error al crear la reserva");
+    }
+  } catch (error) {
+    console.error("Error creating booking:", error);
+    showError("Error al conectar con el servidor");
+  }
+};
+
+/**
+ * Handles update booking form submission.
+ *
+ * @param {Event} e - Submit event.
+ */
+const handleUpdateBooking = async (e) => {
+  e.preventDefault();
+
+  const formData = new FormData(e.target);
+  const data = Object.fromEntries(formData.entries());
+  const bookingId = data.id_reserva;
+
+  try {
+    const response = await fetch(`/admin/api/reservas/${bookingId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+
+    const result = await response.json();
+
+    if (result.success) {
+      showSuccess("Reserva actualizada correctamente");
+      bootstrap.Modal.getInstance(editBookingModal).hide();
+      fetchBookings(currentPage, currentFilters);
+    } else {
+      showError(result.error || "Error al actualizar la reserva");
+    }
+  } catch (error) {
+    console.error("Error updating booking:", error);
+    showError("Error al conectar con el servidor");
+  }
+};
+
+/**
+ * Attaches delete event listeners to buttons.
+ */
+const attachDeleteHandlers = () => {
+  document.querySelectorAll(".btn-delete-booking").forEach((btn) => {
+    btn.addEventListener("click", handleDeleteBooking);
+  });
+};
+
+/**
+ * Attaches edit event listeners to buttons.
+ */
+const attachEditHandlers = () => {
+  document.querySelectorAll(".btn-edit-booking").forEach((btn) => {
+    btn.addEventListener("click", handleEditBooking);
+  });
+};
+
+/**
+ * Attaches sort event listeners to table headers.
+ */
+const attachSortHandlers = () => {
+  document.querySelectorAll(".sort-link").forEach((link) => {
+    link.addEventListener("click", (e) => {
+      e.preventDefault();
+      const sortField = e.currentTarget.dataset.sort;
+
+      if (currentFilters.sort === sortField) {
+        currentFilters.order = currentFilters.order === "asc" ? "desc" : "asc";
+      } else {
+        currentFilters.sort = sortField;
+        currentFilters.order = "asc";
+      }
+
+      fetchBookings(1, currentFilters);
+      updateUrlParams(currentFilters);
+      updatePdfExportLink(new URLSearchParams(currentFilters));
+    });
+  });
+};
+
+/**
+ * Renders the bookings table with the provided data.
+ *
+ * @param {Array} bookings - Array of booking objects.
  */
 const renderBookingsTable = (bookings) => {
   if (bookings.length === 0) {
@@ -157,42 +446,13 @@ const renderBookingsTable = (bookings) => {
   attachSortHandlers();
 };
 
-const attachSortHandlers = () => {
-  document.querySelectorAll(".sort-link").forEach((link) => {
-    link.addEventListener("click", (e) => {
-      e.preventDefault();
-      const sortField = e.currentTarget.dataset.sort;
-
-      // Toggle order
-      if (currentFilters.sort === sortField) {
-        currentFilters.order = currentFilters.order === "asc" ? "desc" : "asc";
-      } else {
-        currentFilters.sort = sortField;
-        currentFilters.order = "asc";
-      }
-
-      fetchBookings(1, currentFilters);
-      updateUrlParams(currentFilters);
-      updatePdfExportLink(new URLSearchParams(currentFilters));
-    });
-  });
-};
-
-const updateUrlParams = (filters) => {
-  const params = new URLSearchParams(filters);
-  const newUrl = `${window.location.pathname}?${params.toString()}`;
-  window.history.pushState({}, "", newUrl);
-};
-
 /**
- * Renders pagination
+ * Renders the pagination controls.
  *
- * @param {number} currentPage - Current page number
- * @param {number} totalPages - Total pages
- * @param {object} filters - Current filters
- * @return {void}
+ * @param {number} currentPage - Current active page.
+ * @param {number} totalPages - Total number of pages.
  */
-const renderPagination = (currentPage, totalPages, filters) => {
+const renderPagination = (currentPage, totalPages) => {
   if (totalPages <= 1) {
     paginationContainer.innerHTML = "";
     return;
@@ -238,7 +498,6 @@ const renderPagination = (currentPage, totalPages, filters) => {
   paginationHTML += "</ul>";
   paginationContainer.innerHTML = paginationHTML;
 
-  // Attach pagination handlers
   paginationContainer.querySelectorAll("a.page-link").forEach((link) => {
     link.addEventListener("click", (e) => {
       e.preventDefault();
@@ -250,260 +509,7 @@ const renderPagination = (currentPage, totalPages, filters) => {
   });
 };
 
-/**
- * Attaches delete handlers to buttons
- *
- * @return {void}
- */
-const attachDeleteHandlers = () => {
-  document.querySelectorAll(".btn-delete-booking").forEach((btn) => {
-    btn.addEventListener("click", handleDeleteBooking);
-  });
-};
-
-/**
- * Attaches edit handlers to buttons
- *
- * @return {void}
- */
-const attachEditHandlers = () => {
-  document.querySelectorAll(".btn-edit-booking").forEach((btn) => {
-    btn.addEventListener("click", handleEditBooking);
-  });
-};
-
-/**
- * Handles edit booking button click
- *
- * @param {Event} e - Click event
- * @return {Promise<void>}
- */
-const handleEditBooking = async (e) => {
-  const bookingId = e.currentTarget.dataset.bookingId;
-
-  try {
-    // Fetch booking data
-    const response = await fetch(`/admin/api/reservas/${bookingId}`);
-    const data = await response.json();
-
-    if (data.success) {
-      const booking = data.data;
-
-      // Form populate with booking data
-      document.getElementById("editBookingId").value = booking.id_reserva;
-      document.getElementById("editFecha").value = booking.fecha_reserva;
-      document.getElementById("editHora").value = booking.hora_inicio;
-      document.getElementById("editEstado").value = booking.estado;
-      document.getElementById("editObservaciones").value = booking.observaciones || "";
-
-      // Direct value assignment without wait (options already in DOM)
-      document.getElementById("editCliente").value = booking.id_cliente;
-      document.getElementById("editEspecialista").value = booking.id_especialista;
-      document.getElementById("editServicio").value = booking.id_servicio;
-
-      // Calculate duration from hora_inicio and hora_fin
-      const inicio = new Date(`2000-01-01T${booking.hora_inicio}`);
-      const fin = new Date(`2000-01-01T${booking.hora_fin}`);
-      const duracion = (fin - inicio) / (1000 * 60);
-      document.getElementById("editDuracion").value = duracion;
-
-      // Show modal after everything is loaded
-      const modal = new bootstrap.Modal(document.getElementById("editBookingModal"));
-      modal.show();
-    } else {
-      alert("Error al cargar los datos de la reserva");
-    }
-  } catch (error) {
-    console.error("Error fetching booking:", error);
-    alert("Error al conectar con el servidor");
-  }
-};
-
-/**
- * Handles create booking form submission
- *
- * @param {Event} e - Submit event
- * @return {Promise<void>}
- */
-const handleCreateBooking = async (e) => {
-  e.preventDefault();
-
-  const formData = new FormData(e.target);
-  const data = Object.fromEntries(formData.entries());
-
-  try {
-    const response = await fetch("/admin/api/reservas", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
-
-    const result = await response.json();
-
-    if (result.success) {
-      showSuccess("Reserva creada correctamente");
-      bootstrap.Modal.getInstance(document.getElementById("createBookingModal")).hide();
-      e.target.reset();
-      fetchBookings(currentPage, currentFilters);
-    } else {
-      showError(result.error || "Error al crear la reserva");
-    }
-  } catch (error) {
-    console.error("Error creating booking:", error);
-    showError("Error al conectar con el servidor");
-  }
-};
-
-/**
- * Handles edit booking form submission
- *
- * @param {Event} e - Submit event
- * @return {Promise<void>}
- */
-const handleUpdateBooking = async (e) => {
-  e.preventDefault();
-
-  const formData = new FormData(e.target);
-  const data = Object.fromEntries(formData.entries());
-  const bookingId = data.id_reserva;
-
-  try {
-    const response = await fetch(`/admin/api/reservas/${bookingId}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
-
-    const result = await response.json();
-
-    if (result.success) {
-      showSuccess("Reserva actualizada correctamente");
-      bootstrap.Modal.getInstance(document.getElementById("editBookingModal")).hide();
-      fetchBookings(currentPage, currentFilters);
-    } else {
-      showError(result.error || "Error al actualizar la reserva");
-    }
-  } catch (error) {
-    console.error("Error updating booking:", error);
-    showError("Error al conectar con el servidor");
-  }
-};
-
-/**
- * Handles booking deletion
- *
- * @param {Event} e - Click event
- * @return {Promise<void>}
- */
-const handleDeleteBooking = async (e) => {
-  const bookingId = e.currentTarget.dataset.bookingId;
-
-  if (!confirm("¿Estás seguro de que deseas eliminar esta reserva?")) {
-    return;
-  }
-
-  try {
-    const response = await fetch(`/admin/api/reservas/${bookingId}`, {
-      method: "DELETE",
-    });
-
-    const data = await response.json();
-
-    if (data.success) {
-      showSuccess("Reserva eliminada correctamente");
-      fetchBookings(currentPage, currentFilters);
-    } else {
-      showError(data.error || "Error al eliminar la reserva");
-    }
-  } catch (error) {
-    console.error("Error deleting booking:", error);
-    showError("Error al conectar con el servidor");
-  }
-};
-
-/**
- * Gets bootstrap color for status
- *
- * @param {string} status - Booking status
- * @return {string} Bootstrap color class
- */
-const getStatusColor = (status) => {
-  const colors = {
-    Pendiente: "warning",
-    Confirmada: "success",
-    Completada: "info",
-    Cancelada: "secondary",
-  };
-  return colors[status] || "secondary";
-};
-
-/**
- * Formats date to readable format
- *
- * @param {string} dateStr - Date string
- * @return {string} Formatted date
- */
-const formatDate = (dateStr) => {
-  const date = new Date(dateStr + "T00:00:00");
-  return date.toLocaleDateString("es-ES", {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  });
-};
-
-/**
- * Shows error message
- *
- * @param {string} message - Error message
- * @return {void}
- */
-const showError = (message) => {
-  bookingsTableContainer.innerHTML = `
-    <div class="alert alert-danger">
-      <i class="bi bi-exclamation-triangle me-2"></i>
-      ${message}
-    </div>
-  `;
-};
-
-/**
- * Shows success message
- *
- * @param {string} message - Success message
- * @return {void}
- */
-const showSuccess = (message) => {
-  const alertDiv = document.createElement("div");
-  alertDiv.className = "alert alert-success alert-dismissible fade show";
-  alertDiv.innerHTML = `
-    <i class="bi bi-check-circle me-2"></i>
-    ${message}
-    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-  `;
-  document.querySelector(".mb-4").prepend(alertDiv);
-
-  setTimeout(() => alertDiv.remove(), 3000);
-};
-
-// Form handlers
-document.getElementById("createBookingForm").addEventListener("submit", handleCreateBooking);
-document.getElementById("editBookingForm").addEventListener("submit", handleUpdateBooking);
-
-// Attach handlers to existing table rows (server-rendered)
-document.querySelectorAll(".btn-delete-booking").forEach((btn) => {
-  btn.addEventListener("click", handleDeleteBooking);
-});
-
-document.querySelectorAll(".btn-edit-booking").forEach((btn) => {
-  btn.addEventListener("click", handleEditBooking);
-});
-
-// Filter handlers
+// Event Listeners - Filters
 btnApplyFilters.addEventListener("click", () => {
   const filters = {
     cliente: filterCliente.value,
@@ -513,22 +519,16 @@ btnApplyFilters.addEventListener("click", () => {
     fecha_hasta: filterFechaHasta.value,
   };
 
-  // Remove empty filters
   Object.keys(filters).forEach((key) => {
     if (!filters[key]) delete filters[key];
   });
 
-  // Preserve existing sort order
   if (currentFilters.sort) filters.sort = currentFilters.sort;
   if (currentFilters.order) filters.order = currentFilters.order;
 
   currentFilters = filters;
   fetchBookings(1, filters);
-
-  // Update URL parameters without reloading
   updateUrlParams(filters);
-
-  // Update PDF Export Link dinamically
   updatePdfExportLink(new URLSearchParams(filters));
 });
 
@@ -541,37 +541,34 @@ btnClearFilters.addEventListener("click", () => {
 
   currentFilters = {};
   fetchBookings(1, {});
-
-  // Clean URL params
   window.history.pushState({}, "", window.location.pathname);
-
-  // Reset PDF Export Link
   updatePdfExportLink(new URLSearchParams());
 });
 
-const updatePdfExportLink = (params) => {
-  const pdfLink = document.querySelector('a[href^="/admin/bookings/pdf"]');
-  if (pdfLink) {
-    pdfLink.href = `/admin/bookings/pdf?${params.toString()}`;
-  }
-};
+// Event Listeners - Forms
+createBookingForm.addEventListener("submit", handleCreateBooking);
+editBookingForm.addEventListener("submit", handleUpdateBooking);
 
-// Initialize filters state on page load
+// Initialization
 (() => {
-  const urlParams = new URLSearchParams(window.location.search);
-  const clienteParam = urlParams.get("cliente");
-  const especialistaParam = urlParams.get("especialista");
-  const estadoParam = urlParams.get("estado");
-  const fechaDesdeParam = urlParams.get("fecha_desde");
-  const fechaHastaParam = urlParams.get("fecha_hasta");
-  const sortParam = urlParams.get("sort");
-  const orderParam = urlParams.get("order");
+  // Attach handlers to server-rendered rows
+  attachDeleteHandlers();
+  attachEditHandlers();
 
-  if (clienteParam) currentFilters.cliente = clienteParam;
-  if (especialistaParam) currentFilters.especialista = especialistaParam;
-  if (estadoParam) currentFilters.estado = estadoParam;
-  if (fechaDesdeParam) currentFilters.fecha_desde = fechaDesdeParam;
-  if (fechaHastaParam) currentFilters.fecha_hasta = fechaHastaParam;
-  if (sortParam) currentFilters.sort = sortParam;
-  if (orderParam) currentFilters.order = orderParam;
+  // Load state from URL
+  const urlParams = new URLSearchParams(window.location.search);
+  const fields = [
+    "cliente",
+    "especialista",
+    "estado",
+    "fecha_desde",
+    "fecha_hasta",
+    "sort",
+    "order",
+  ];
+
+  fields.forEach((field) => {
+    const value = urlParams.get(field);
+    if (value) currentFilters[field] = value;
+  });
 })();
