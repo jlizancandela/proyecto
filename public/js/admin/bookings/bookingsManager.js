@@ -24,11 +24,21 @@ const editDuracion = document.getElementById("editDuracion");
 const showSuccess = (message) => {
   const alertDiv = document.createElement("div");
   alertDiv.className = "alert alert-success alert-dismissible fade show";
-  alertDiv.innerHTML = `
-    <i class="bi bi-check-circle me-2"></i>
-    ${message}
-    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-  `;
+
+  const icon = document.createElement("i");
+  icon.className = "bi bi-check-circle me-2";
+
+  const messageText = document.createTextNode(message);
+
+  const closeButton = document.createElement("button");
+  closeButton.type = "button";
+  closeButton.className = "btn-close";
+  closeButton.setAttribute("data-bs-dismiss", "alert");
+
+  alertDiv.appendChild(icon);
+  alertDiv.appendChild(messageText);
+  alertDiv.appendChild(closeButton);
+
   document.querySelector(".mb-4").prepend(alertDiv);
   setTimeout(() => alertDiv.remove(), 3000);
 };
