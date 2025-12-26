@@ -46,9 +46,8 @@
       </div>
 
       <!-- Acciones -->
-      {if isset($showActions) && $showActions && $booking->estado !== 'Cancelada' &&
-      $booking->estado !== 'Completada'} {var $isPastBooking = strtotime($booking->fecha_reserva) <
-      strtotime(date('Y-m-d'))}
+      {if isset($showActions) && $showActions} {var $isPastBooking =
+      strtotime($booking->fecha_reserva) < strtotime(date('Y-m-d'))}
       <div class="col-12 col-lg-2">
         <div class="d-flex flex-column gap-2">
           <button
