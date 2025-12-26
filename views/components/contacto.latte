@@ -9,19 +9,19 @@
     </div>
     <div class="col-12 col-md-6">
       <div
-        n:if="isset($_SESSION['success'])"
+        n:if="isset($success) && $success"
         class="alert alert-success alert-dismissible fade show"
         role="alert"
       >
-        {$_SESSION['success']} {php unset($_SESSION['success'])}
+        {$success}
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
       </div>
       <div
-        n:if="isset($_SESSION['error'])"
+        n:if="isset($error) && $error"
         class="alert alert-danger alert-dismissible fade show"
         role="alert"
       >
-        {$_SESSION['error']} {php unset($_SESSION['error'])}
+        {$error}
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
       </div>
 

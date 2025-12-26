@@ -19,10 +19,17 @@ class HomeController
 
     public function index(): string
     {
+        $success = $_SESSION['success'] ?? null;
+        $error = $_SESSION['error'] ?? null;
+
+        unset($_SESSION['success'], $_SESSION['error']);
+
         return $this->latte->renderToString(
             __DIR__ . '/../../../views/pages/Home.latte',
             [
-                'currentUrl' => $_SERVER['REQUEST_URI'] ?? '/'
+                'currentUrl' => $_SERVER['REQUEST_URI'] ?? '/',
+                'success' => $success,
+                'error' => $error
             ]
         );
     }
