@@ -9,9 +9,11 @@
     "test:coverage": "vitest --coverage"
   },
   "devDependencies": {
-    "vitest": "^1.1.0",
-    "@vitest/ui": "^1.1.0",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/preact": "^3.2.4",
     "@vitest/coverage-v8": "^1.1.0",
-    "jsdom": "^23.0.0"
+    "@vitest/ui": "^1.1.0",
+    "jsdom": "^23.0.0",
+    "vitest": "^1.1.0"
   }
 }
