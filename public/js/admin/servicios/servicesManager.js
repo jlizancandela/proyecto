@@ -1,4 +1,12 @@
-// Manages service creation, editing, and status toggling in the admin panel
+// Manages service creation, editing, and status toggling in the admin panel.
+
+import {
+  fetchService,
+  createService,
+  updateService,
+  activateService,
+  deactivateService,
+} from "./api.js";
 
 const editServiceIdInput = document.getElementById("editServiceId");
 const editNombreServicioInput = document.getElementById("editNombreServicio");
@@ -18,57 +26,52 @@ const createServiceModal = document.getElementById("createServiceModal");
 
 /**
  * Fetches and displays service data in the edit modal.
+ *
  * @param {string} serviceId - The ID of the service to edit.
  */
-const editService = (serviceId) => {
-  fetch("/admin/api/services/" + serviceId)
-    .then((response) => response.json())
-    .then((result) => {
-      if (result.success) {
-        const service = result.data;
-        editServiceIdInput.value = service.id;
-        editNombreServicioInput.value = service.nombre_servicio;
-        editDescripcionInput.value = service.descripcion;
-        editDuracionInput.value = service.duracion_minutos;
-        editPrecioInput.value = service.precio;
-        editActivoInput.checked = service.activo;
+const editService = async (serviceId) => {
+  try {
+    const result = await fetchService(serviceId);
 
-        const modal = new bootstrap.Modal(editServiceModal);
-        modal.show();
-      } else {
-        alert("Error al cargar servicio: " + result.error);
-      }
-    })
-    .catch((error) => {
-      alert("Error: " + error.message);
-    });
+    if (result.success) {
+      const service = result.data;
+      editServiceIdInput.value = service.id;
+      editNombreServicioInput.value = service.nombre_servicio;
+      editDescripcionInput.value = service.descripcion;
+      editDuracionInput.value = service.duracion_minutos;
+      editPrecioInput.value = service.precio;
+      editActivoInput.checked = service.activo;
+
+      const modal = new bootstrap.Modal(editServiceModal);
+      modal.show();
+    } else {
+      alert("Error al cargar servicio: " + result.error);
+    }
+  } catch (error) {
+    alert("Error: " + error.message);
+  }
 };
 
 /**
  * Toggles service active status.
+ *
  * @param {string} serviceId - The ID of the service to toggle.
  * @param {string} currentStatus - Current status (0 or 1).
  */
-const toggleServiceStatus = (serviceId, currentStatus) => {
+const toggleServiceStatus = async (serviceId, currentStatus) => {
   const isActive = currentStatus === "1";
-  const endpoint = isActive
-    ? "/admin/api/services/" + serviceId + "/deactivate"
-    : "/admin/api/services/" + serviceId + "/activate";
 
-  fetch(endpoint, {
-    method: "POST",
-  })
-    .then((response) => response.json())
-    .then((result) => {
-      if (result.success) {
-        globalThis.location.reload();
-      } else {
-        alert("Error: " + result.error);
-      }
-    })
-    .catch((error) => {
-      alert("Error: " + error.message);
-    });
+  try {
+    const result = isActive ? await deactivateService(serviceId) : await activateService(serviceId);
+
+    if (result.success) {
+      globalThis.location.reload();
+    } else {
+      alert("Error: " + result.error);
+    }
+  } catch (error) {
+    alert("Error: " + error.message);
+  }
 };
 
 /**
@@ -91,7 +94,7 @@ const handleDocumentClick = (e) => {
 /**
  * Handles create service form submission.
  */
-const handleCreateServiceFormSubmit = (e) => {
+const handleCreateServiceFormSubmit = async (e) => {
   e.preventDefault();
 
   const formData = {
@@ -101,32 +104,25 @@ const handleCreateServiceFormSubmit = (e) => {
     precio: Number.parseFloat(createPrecioInput.value),
   };
 
-  fetch("/admin/api/services", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(formData),
-  })
-    .then((response) => response.json())
-    .then((result) => {
-      if (result.success) {
-        alert("Servicio creado correctamente");
-        bootstrap.Modal.getInstance(createServiceModal).hide();
-        globalThis.location.reload();
-      } else {
-        alert("Error: " + result.error);
-      }
-    })
-    .catch((error) => {
-      alert("Error: " + error.message);
-    });
+  try {
+    const result = await createService(formData);
+
+    if (result.success) {
+      alert("Servicio creado correctamente");
+      bootstrap.Modal.getInstance(createServiceModal).hide();
+      globalThis.location.reload();
+    } else {
+      alert("Error: " + result.error);
+    }
+  } catch (error) {
+    alert("Error: " + error.message);
+  }
 };
 
 /**
  * Handles edit service form submission.
  */
-const handleEditServiceFormSubmit = (e) => {
+const handleEditServiceFormSubmit = async (e) => {
   e.preventDefault();
 
   const serviceId = editServiceIdInput.value;
@@ -139,26 +135,19 @@ const handleEditServiceFormSubmit = (e) => {
     activo: editActivoInput.checked,
   };
 
-  fetch("/admin/api/services/" + serviceId, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(formData),
-  })
-    .then((response) => response.json())
-    .then((result) => {
-      if (result.success) {
-        alert("Servicio actualizado correctamente");
-        bootstrap.Modal.getInstance(editServiceModal).hide();
-        globalThis.location.reload();
-      } else {
-        alert("Error: " + result.error);
-      }
-    })
-    .catch((error) => {
-      alert("Error: " + error.message);
-    });
+  try {
+    const result = await updateService(serviceId, formData);
+
+    if (result.success) {
+      alert("Servicio actualizado correctamente");
+      bootstrap.Modal.getInstance(editServiceModal).hide();
+      globalThis.location.reload();
+    } else {
+      alert("Error: " + result.error);
+    }
+  } catch (error) {
+    alert("Error: " + error.message);
+  }
 };
 
 /**

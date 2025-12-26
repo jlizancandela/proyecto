@@ -83,7 +83,6 @@ const loadTodayKpis = async () => {
   }
 };
 
-// Initialize KPIs on page load
 if (todayBookingsElement && todayRevenueElement) {
   loadTodayKpis();
 }
