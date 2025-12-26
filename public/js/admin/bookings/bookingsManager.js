@@ -44,15 +44,11 @@ const handleDeleteBooking = async (e) => {
   }
 
   try {
-    const response = await fetch(`/admin/api/reservas/${bookingId}`, {
-      method: "DELETE",
-    });
-
-    const data = await response.json();
+    const data = await deleteBooking(bookingId);
 
     if (data.success) {
       showSuccess("Reserva eliminada correctamente");
-      setTimeout(() => window.location.reload(), 1000);
+      setTimeout(() => globalThis.location.reload(), 1000);
     } else {
       alert(data.error || "Error al eliminar la reserva");
     }
@@ -71,8 +67,7 @@ const handleEditBooking = async (e) => {
   const bookingId = e.currentTarget.dataset.bookingId;
 
   try {
-    const response = await fetch(`/admin/api/reservas/${bookingId}`);
-    const data = await response.json();
+    const data = await fetchBooking(bookingId);
 
     if (data.success) {
       const booking = data.data;
@@ -114,19 +109,11 @@ const handleCreateBooking = async (e) => {
   const data = Object.fromEntries(formData.entries());
 
   try {
-    const response = await fetch("/admin/api/reservas", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
-
-    const result = await response.json();
+    const result = await createBooking(data);
 
     if (result.success) {
       showSuccess("Reserva creada correctamente");
-      setTimeout(() => window.location.reload(), 1000);
+      setTimeout(() => globalThis.location.reload(), 1000);
     } else {
       alert(result.error || "Error al crear la reserva");
     }
@@ -149,19 +136,11 @@ const handleUpdateBooking = async (e) => {
   const bookingId = data.id_reserva;
 
   try {
-    const response = await fetch(`/admin/api/reservas/${bookingId}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
-
-    const result = await response.json();
+    const result = await updateBooking(bookingId, data);
 
     if (result.success) {
       showSuccess("Reserva actualizada correctamente");
-      setTimeout(() => window.location.reload(), 1000);
+      setTimeout(() => globalThis.location.reload(), 1000);
     } else {
       alert(result.error || "Error al actualizar la reserva");
     }
