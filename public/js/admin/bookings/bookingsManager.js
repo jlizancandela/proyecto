@@ -1,9 +1,16 @@
-/**
- * This script helps managing the bookings in the admin panel.
- * It handles the table list, filters, and modals to edit or delete reservations.
- */
+// Manages the bookings admin panel including table display, filters, and CRUD operations.
 
-// DOM Elements - Filters
+import { showError, showSuccess } from "./uiHelpers.js";
+import {
+  updateUrlParams,
+  updatePdfExportLink,
+  loadFiltersFromUrl,
+  buildFiltersFromInputs,
+  clearFilterInputs,
+} from "./filterManager.js";
+import { renderBookingsTable } from "./tableRenderer.js";
+import { renderPagination } from "./paginationRenderer.js";
+
 const filterEstado = document.getElementById("filterEstado");
 const filterCliente = document.getElementById("filterCliente");
 const filterEspecialista = document.getElementById("filterEspecialista");
@@ -12,17 +19,14 @@ const filterFechaHasta = document.getElementById("filterFechaHasta");
 const btnApplyFilters = document.getElementById("btnApplyFilters");
 const btnClearFilters = document.getElementById("btnClearFilters");
 
-// DOM Elements - Table and Pagination
 const bookingsTableContainer = document.getElementById("bookingsTableContainer");
 const paginationContainer = document.getElementById("paginationContainer");
 
-// DOM Elements - Modals and Forms
 const createBookingModal = document.getElementById("createBookingModal");
 const editBookingModal = document.getElementById("editBookingModal");
 const createBookingForm = document.getElementById("createBookingForm");
 const editBookingForm = document.getElementById("editBookingForm");
 
-// DOM Elements - Edit Form Fields
 const editBookingId = document.getElementById("editBookingId");
 const editFecha = document.getElementById("editFecha");
 const editHora = document.getElementById("editHora");
@@ -33,95 +37,8 @@ const editEspecialista = document.getElementById("editEspecialista");
 const editServicio = document.getElementById("editServicio");
 const editDuracion = document.getElementById("editDuracion");
 
-// State
 let currentPage = 1;
 let currentFilters = {};
-
-/**
- * Gets bootstrap color class based on booking status.
- *
- * @param {string} status - The booking status.
- * @return {string} Bootstrap color class.
- */
-const getStatusColor = (status) => {
-  const colors = {
-    Pendiente: "warning",
-    Confirmada: "success",
-    Completada: "info",
-    Cancelada: "secondary",
-  };
-  return colors[status] || "secondary";
-};
-
-/**
- * Formats a date string to a readable format (DD/MM/YYYY).
- *
- * @param {string} dateStr - Date string.
- * @return {string} Formatted date.
- */
-const formatDate = (dateStr) => {
-  const date = new Date(dateStr + "T00:00:00");
-  return date.toLocaleDateString("es-ES", {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  });
-};
-
-/**
- * Updates the URL parameters without reloading the page.
- *
- * @param {object} filters - Current filter parameters.
- */
-const updateUrlParams = (filters) => {
-  const params = new URLSearchParams(filters);
-  const newUrl = `${window.location.pathname}?${params.toString()}`;
-  window.history.pushState({}, "", newUrl);
-};
-
-/**
- * Updates the PDF export link with current filter parameters.
- *
- * @param {URLSearchParams} params - Current URL parameters.
- */
-const updatePdfExportLink = (params) => {
-  const pdfLink = document.querySelector('a[href^="/admin/bookings/pdf"]');
-  if (pdfLink) {
-    pdfLink.href = `/admin/bookings/pdf?${params.toString()}`;
-  }
-};
-
-/**
- * Shows an error message in the table container.
- *
- * @param {string} message - Error message to display.
- */
-const showError = (message) => {
-  bookingsTableContainer.innerHTML = `
-    <div class="alert alert-danger">
-      <i class="bi bi-exclamation-triangle me-2"></i>
-      ${message}
-    </div>
-  `;
-};
-
-/**
- * Shows a temporary success message alert.
- *
- * @param {string} message - Success message to display.
- */
-const showSuccess = (message) => {
-  const alertDiv = document.createElement("div");
-  alertDiv.className = "alert alert-success alert-dismissible fade show";
-  alertDiv.innerHTML = `
-    <i class="bi bi-check-circle me-2"></i>
-    ${message}
-    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-  `;
-  document.querySelector(".mb-4").prepend(alertDiv);
-
-  setTimeout(() => alertDiv.remove(), 3000);
-};
 
 /**
  * Fetches bookings from the API based on page and filters.
@@ -141,15 +58,28 @@ const fetchBookings = async (page = 1, filters = {}) => {
     const data = await response.json();
 
     if (data.success) {
-      renderBookingsTable(data.reservas);
-      renderPagination(data.page, data.totalPages);
+      renderBookingsTable(bookingsTableContainer, data.reservas, currentFilters);
+      renderPagination(paginationContainer, data.page, data.totalPages, handlePageChange);
+      attachDeleteHandlers();
+      attachEditHandlers();
+      attachSortHandlers();
     } else {
-      showError("Error al cargar las reservas");
+      showError(bookingsTableContainer, "Error al cargar las reservas");
     }
   } catch (error) {
     console.error("Error fetching bookings:", error);
-    showError("Error al conectar con el servidor");
+    showError(bookingsTableContainer, "Error al conectar con el servidor");
   }
+};
+
+/**
+ * Handles page change in pagination.
+ *
+ * @param {number} page - New page number.
+ */
+const handlePageChange = (page) => {
+  currentPage = page;
+  fetchBookings(page, currentFilters);
 };
 
 /**
@@ -175,11 +105,11 @@ const handleDeleteBooking = async (e) => {
       showSuccess("Reserva eliminada correctamente");
       fetchBookings(currentPage, currentFilters);
     } else {
-      showError(data.error || "Error al eliminar la reserva");
+      showError(bookingsTableContainer, data.error || "Error al eliminar la reserva");
     }
   } catch (error) {
     console.error("Error deleting booking:", error);
-    showError("Error al conectar con el servidor");
+    showError(bookingsTableContainer, "Error al conectar con el servidor");
   }
 };
 
@@ -251,11 +181,11 @@ const handleCreateBooking = async (e) => {
       e.target.reset();
       fetchBookings(currentPage, currentFilters);
     } else {
-      showError(result.error || "Error al crear la reserva");
+      showError(bookingsTableContainer, result.error || "Error al crear la reserva");
     }
   } catch (error) {
     console.error("Error creating booking:", error);
-    showError("Error al conectar con el servidor");
+    showError(bookingsTableContainer, "Error al conectar con el servidor");
   }
 };
 
@@ -287,11 +217,11 @@ const handleUpdateBooking = async (e) => {
       bootstrap.Modal.getInstance(editBookingModal).hide();
       fetchBookings(currentPage, currentFilters);
     } else {
-      showError(result.error || "Error al actualizar la reserva");
+      showError(bookingsTableContainer, result.error || "Error al actualizar la reserva");
     }
   } catch (error) {
     console.error("Error updating booking:", error);
-    showError("Error al conectar con el servidor");
+    showError(bookingsTableContainer, "Error al conectar con el servidor");
   }
 };
 
@@ -337,191 +267,18 @@ const attachSortHandlers = () => {
 };
 
 /**
- * Renders the bookings table with the provided data.
- *
- * @param {Array} bookings - Array of booking objects.
+ * Handles apply filters button click.
  */
-const renderBookingsTable = (bookings) => {
-  if (bookings.length === 0) {
-    bookingsTableContainer.innerHTML = `
-      <div class="alert alert-info">
-        <i class="bi bi-info-circle me-2"></i>
-        No se encontraron reservas con los filtros aplicados.
-      </div>
-    `;
-    return;
-  }
-
-  const getSortIcon = (field) => {
-    if (currentFilters.sort !== field) return '<i class="bi bi-arrow-down-up text-muted"></i>';
-    return currentFilters.order === "asc"
-      ? '<i class="bi bi-caret-up-fill"></i>'
-      : '<i class="bi bi-caret-down-fill"></i>';
+const handleApplyFilters = () => {
+  const filterInputs = {
+    cliente: filterCliente,
+    especialista: filterEspecialista,
+    estado: filterEstado,
+    fecha_desde: filterFechaDesde,
+    fecha_hasta: filterFechaHasta,
   };
 
-  const tableHTML = `
-    <table class="table table-hover align-middle">
-      <thead class="table-light">
-        <tr>
-          <th>ID</th>
-          <th>
-            <a href="#" class="text-decoration-none text-dark sort-link" data-sort="cliente">
-              Cliente ${getSortIcon("cliente")}
-            </a>
-          </th>
-          <th>
-            <a href="#" class="text-decoration-none text-dark sort-link" data-sort="especialista">
-              Especialista ${getSortIcon("especialista")}
-            </a>
-          </th>
-          <th>Servicio</th>
-          <th>
-            <a href="#" class="text-decoration-none text-dark sort-link" data-sort="fecha">
-              Fecha ${getSortIcon("fecha")}
-            </a>
-          </th>
-          <th>Hora</th>
-          <th>Estado</th>
-          <th class="text-end">Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        ${bookings
-          .map(
-            (booking) => `
-          <tr>
-            <td>${booking.id_reserva}</td>
-            <td>
-              <div>${booking.cliente.nombre} ${booking.cliente.apellidos}</div>
-              <small class="text-muted">${booking.cliente.email}</small>
-            </td>
-            <td>
-              <div>${booking.especialista.nombre} ${booking.especialista.apellidos}</div>
-            </td>
-            <td>
-              <div>${booking.servicio.nombre}</div>
-              <small class="text-muted">${booking.servicio.duracion_minutos} min - €${
-              booking.servicio.precio
-            }</small>
-            </td>
-            <td class="text-nowrap">${formatDate(booking.fecha_reserva)}</td>
-            <td class="text-nowrap">${booking.hora_inicio} - ${booking.hora_fin}</td>
-            <td>
-              <span class="badge bg-${getStatusColor(booking.estado)}">
-                ${booking.estado}
-              </span>
-            </td>
-            <td class="text-end text-nowrap">
-              <button
-                type="button"
-                class="btn btn-sm btn-outline-primary btn-edit-booking"
-                data-booking-id="${booking.id_reserva}"
-                title="Editar"
-              >
-                <i class="bi bi-pencil"></i>
-              </button>
-              ${
-                booking.estado !== "Pendiente"
-                  ? `<span class="d-inline-block" title="Solo se pueden eliminar reservas pendientes" style="cursor: not-allowed">
-                     <button type="button" class="btn btn-sm btn-outline-danger btn-delete-booking" disabled style="pointer-events: none">
-                       <i class="bi bi-trash"></i>
-                     </button>
-                   </span>`
-                  : `<button type="button" class="btn btn-sm btn-outline-danger btn-delete-booking" data-booking-id="${booking.id_reserva}" title="Eliminar">
-                     <i class="bi bi-trash"></i>
-                   </button>`
-              }
-            </td>
-          </tr>
-        `
-          )
-          .join("")}
-      </tbody>
-    </table>
-  `;
-
-  bookingsTableContainer.innerHTML = tableHTML;
-  attachDeleteHandlers();
-  attachEditHandlers();
-  attachSortHandlers();
-};
-
-/**
- * Renders the pagination controls.
- *
- * @param {number} currentPage - Current active page.
- * @param {number} totalPages - Total number of pages.
- */
-const renderPagination = (currentPage, totalPages) => {
-  if (totalPages <= 1) {
-    paginationContainer.innerHTML = "";
-    return;
-  }
-
-  let paginationHTML = '<ul class="pagination justify-content-center">';
-
-  // Previous button
-  paginationHTML += `
-    <li class="page-item ${currentPage <= 1 ? "disabled" : ""}">
-      <a class="page-link" href="#" data-page="${currentPage - 1}">
-        <span aria-hidden="true">&laquo;</span>
-      </a>
-    </li>
-  `;
-
-  // Page numbers
-  for (let i = 1; i <= totalPages; i++) {
-    if (i === 1 || i === totalPages || (i >= currentPage - 2 && i <= currentPage + 2)) {
-      paginationHTML += `
-        <li class="page-item ${i === currentPage ? "active" : ""}">
-          <a class="page-link" href="#" data-page="${i}">${i}</a>
-        </li>
-      `;
-    } else if (i === currentPage - 3 || i === currentPage + 3) {
-      paginationHTML += `
-        <li class="page-item disabled">
-          <span class="page-link">...</span>
-        </li>
-      `;
-    }
-  }
-
-  // Next button
-  paginationHTML += `
-    <li class="page-item ${currentPage >= totalPages ? "disabled" : ""}">
-      <a class="page-link" href="#" data-page="${currentPage + 1}">
-        <span aria-hidden="true">&raquo;</span>
-      </a>
-    </li>
-  `;
-
-  paginationHTML += "</ul>";
-  paginationContainer.innerHTML = paginationHTML;
-
-  paginationContainer.querySelectorAll("a.page-link").forEach((link) => {
-    link.addEventListener("click", (e) => {
-      e.preventDefault();
-      const page = parseInt(e.currentTarget.dataset.page);
-      if (page && page !== currentPage) {
-        fetchBookings(page, currentFilters);
-      }
-    });
-  });
-};
-
-// Event Listeners - Filters
-btnApplyFilters.addEventListener("click", () => {
-  const filters = {
-    cliente: filterCliente.value,
-    especialista: filterEspecialista.value,
-    estado: filterEstado.value,
-    fecha_desde: filterFechaDesde.value,
-    fecha_hasta: filterFechaHasta.value,
-  };
-
-  Object.keys(filters).forEach((key) => {
-    if (!filters[key]) delete filters[key];
-  });
+  const filters = buildFiltersFromInputs(filterInputs);
 
   if (currentFilters.sort) filters.sort = currentFilters.sort;
   if (currentFilters.order) filters.order = currentFilters.order;
@@ -530,33 +287,35 @@ btnApplyFilters.addEventListener("click", () => {
   fetchBookings(1, filters);
   updateUrlParams(filters);
   updatePdfExportLink(new URLSearchParams(filters));
-});
+};
 
-btnClearFilters.addEventListener("click", () => {
-  filterCliente.value = "";
-  filterEspecialista.value = "";
-  filterEstado.value = "";
-  filterFechaDesde.value = "";
-  filterFechaHasta.value = "";
+/**
+ * Handles clear filters button click.
+ */
+const handleClearFilters = () => {
+  const filterInputs = {
+    cliente: filterCliente,
+    especialista: filterEspecialista,
+    estado: filterEstado,
+    fecha_desde: filterFechaDesde,
+    fecha_hasta: filterFechaHasta,
+  };
+
+  clearFilterInputs(filterInputs);
 
   currentFilters = {};
   fetchBookings(1, {});
   window.history.pushState({}, "", window.location.pathname);
   updatePdfExportLink(new URLSearchParams());
-});
+};
 
-// Event Listeners - Forms
-createBookingForm.addEventListener("submit", handleCreateBooking);
-editBookingForm.addEventListener("submit", handleUpdateBooking);
-
-// Initialization
-(() => {
-  // Attach handlers to server-rendered rows
+/**
+ * Initializes the bookings manager.
+ */
+const init = () => {
   attachDeleteHandlers();
   attachEditHandlers();
 
-  // Load state from URL
-  const urlParams = new URLSearchParams(window.location.search);
   const fields = [
     "cliente",
     "especialista",
@@ -567,8 +326,12 @@ editBookingForm.addEventListener("submit", handleUpdateBooking);
     "order",
   ];
 
-  fields.forEach((field) => {
-    const value = urlParams.get(field);
-    if (value) currentFilters[field] = value;
-  });
-})();
+  currentFilters = loadFiltersFromUrl(fields);
+};
+
+btnApplyFilters.addEventListener("click", handleApplyFilters);
+btnClearFilters.addEventListener("click", handleClearFilters);
+createBookingForm.addEventListener("submit", handleCreateBooking);
+editBookingForm.addEventListener("submit", handleUpdateBooking);
+
+init();
