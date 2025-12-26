@@ -68,3 +68,22 @@ test('findByUserIdWithFilters applies status filter', function () {
 
     $this->repository->findByUserIdWithFilters(1, 50, 0, null, null, 'confirmada');
 });
+
+test('findByEspecialistaIdWithFilters applies client search filter', function () {
+    $this->pdo->shouldReceive('prepare')
+        ->once()
+        ->with(Mockery::on(function ($sql) {
+            return str_contains($sql, 'WHERE r.id_especialista = :especialista_id')
+                && str_contains($sql, 'AND (c.nombre LIKE :cliente_search OR c.apellidos LIKE :cliente_search)');
+        }))
+        ->andReturn($this->stmt);
+
+    $this->stmt->shouldReceive('bindValue')->with(':especialista_id', 99);
+    $this->stmt->shouldReceive('bindValue')->with(':cliente_search', '%John%');
+    $this->stmt->shouldReceive('bindValue')->with(':limit', 50, PDO::PARAM_INT);
+    $this->stmt->shouldReceive('bindValue')->with(':offset', 0, PDO::PARAM_INT);
+    $this->stmt->shouldReceive('execute')->once();
+    $this->stmt->shouldReceive('fetch')->andReturn(false);
+
+    $this->repository->findByEspecialistaIdWithFilters(99, 50, 0, null, null, null, 'John');
+});

@@ -44,30 +44,45 @@ class ReservaRepository
         INNER JOIN SERVICIO s ON r.id_servicio = s.id_servicio
     ";
 
-    public function getAllReservasCompletas(
-        int $limit = 50,
-        int $offset = 0,
-    ): array {
-        try {
-            $stmt = $this->db->prepare(self::BASE_QUERY . "
-                ORDER BY r.fecha_reserva DESC, r.hora_inicio DESC
-                LIMIT :limit OFFSET :offset
-            ");
+    private function applyFilters(array $filtros, string &$sql, array &$params): void
+    {
+        if (isset($filtros['cliente'])) {
+            $sql .= " AND r.id_cliente = :id_cliente";
+            $params['id_cliente'] = $filtros['cliente'];
+        }
 
-            $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
-            $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
-            $stmt->execute();
+        if (isset($filtros['especialista'])) {
+            $sql .= " AND r.id_especialista = :id_especialista";
+            $params['id_especialista'] = $filtros['especialista'];
+        }
 
-            $reservas = [];
-            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                $reservas[] = ReservaCompletaDTO::fromDatabase($row);
-            }
-            return $reservas;
-        } catch (\Exception $e) {
-            error_log("Error al obtener reservas: " . $e->getMessage());
-            return [];
+        if (isset($filtros['servicio'])) {
+            $sql .= " AND r.id_servicio = :id_servicio";
+            $params['id_servicio'] = $filtros['servicio'];
+        }
+
+        if (isset($filtros['estado'])) {
+            $sql .= " AND r.estado = :estado";
+            $params['estado'] = $filtros['estado'];
+        }
+
+        if (isset($filtros['fecha_desde'])) {
+            $sql .= " AND r.fecha_reserva >= :fecha_desde";
+            $params['fecha_desde'] = $filtros['fecha_desde'];
+        }
+
+        if (isset($filtros['fecha_hasta'])) {
+            $sql .= " AND r.fecha_reserva <= :fecha_hasta";
+            $params['fecha_hasta'] = $filtros['fecha_hasta'];
+        }
+
+        if (isset($filtros['cliente_search']) && $filtros['cliente_search'] !== '') {
+            $sql .= " AND (c.nombre LIKE :cliente_search OR c.apellidos LIKE :cliente_search)";
+            $params['cliente_search'] = "%{$filtros['cliente_search']}%";
         }
     }
+
+
 
     public function getReservaCompletaById(int $id): ?ReservaCompletaDTO
     {
@@ -201,36 +216,7 @@ class ReservaRepository
             ";
 
             $params = [];
-
-            if (isset($filtros['cliente'])) {
-                $sql .= " AND r.id_cliente = :id_cliente";
-                $params['id_cliente'] = $filtros['cliente'];
-            }
-
-            if (isset($filtros['especialista'])) {
-                $sql .= " AND r.id_especialista = :id_especialista";
-                $params['id_especialista'] = $filtros['especialista'];
-            }
-
-            if (isset($filtros['servicio'])) {
-                $sql .= " AND r.id_servicio = :id_servicio";
-                $params['id_servicio'] = $filtros['servicio'];
-            }
-
-            if (isset($filtros['estado'])) {
-                $sql .= " AND r.estado = :estado";
-                $params['estado'] = $filtros['estado'];
-            }
-
-            if (isset($filtros['fecha_desde'])) {
-                $sql .= " AND r.fecha_reserva >= :fecha_desde";
-                $params['fecha_desde'] = $filtros['fecha_desde'];
-            }
-
-            if (isset($filtros['fecha_hasta'])) {
-                $sql .= " AND r.fecha_reserva <= :fecha_hasta";
-                $params['fecha_hasta'] = $filtros['fecha_hasta'];
-            }
+            $this->applyFilters($filtros, $sql, $params);
 
 
             // Dynamic ORDER BY based on sort parameter
@@ -481,21 +467,12 @@ class ReservaRepository
             ";
 
             $params = ['userId' => $userId];
-
-            if ($fechaDesde !== null) {
-                $sql .= " AND r.fecha_reserva >= :fecha_desde";
-                $params['fecha_desde'] = $fechaDesde;
-            }
-
-            if ($fechaHasta !== null) {
-                $sql .= " AND r.fecha_reserva <= :fecha_hasta";
-                $params['fecha_hasta'] = $fechaHasta;
-            }
-
-            if ($estado !== null) {
-                $sql .= " AND r.estado = :estado";
-                $params['estado'] = $estado;
-            }
+            $filtros = [
+                'fecha_desde' => $fechaDesde,
+                'fecha_hasta' => $fechaHasta,
+                'estado' => $estado
+            ];
+            $this->applyFilters($filtros, $sql, $params);
 
             $sql .= " ORDER BY r.fecha_reserva DESC, r.hora_inicio DESC";
             $sql .= " LIMIT :limit OFFSET :offset";
@@ -546,21 +523,12 @@ class ReservaRepository
             ";
 
             $params = ['userId' => $userId];
-
-            if ($fechaDesde !== null) {
-                $sql .= " AND r.fecha_reserva >= :fecha_desde";
-                $params['fecha_desde'] = $fechaDesde;
-            }
-
-            if ($fechaHasta !== null) {
-                $sql .= " AND r.fecha_reserva <= :fecha_hasta";
-                $params['fecha_hasta'] = $fechaHasta;
-            }
-
-            if ($estado !== null) {
-                $sql .= " AND r.estado = :estado";
-                $params['estado'] = $estado;
-            }
+            $filtros = [
+                'fecha_desde' => $fechaDesde,
+                'fecha_hasta' => $fechaHasta,
+                'estado' => $estado
+            ];
+            $this->applyFilters($filtros, $sql, $params);
 
             $stmt = $this->db->prepare($sql);
 
@@ -642,36 +610,7 @@ class ReservaRepository
         try {
             $sql = "SELECT COUNT(*) as total FROM RESERVA r WHERE 1=1";
             $params = [];
-
-            if (isset($filtros['cliente'])) {
-                $sql .= " AND r.id_cliente = :id_cliente";
-                $params['id_cliente'] = $filtros['cliente'];
-            }
-
-            if (isset($filtros['especialista'])) {
-                $sql .= " AND r.id_especialista = :id_especialista";
-                $params['id_especialista'] = $filtros['especialista'];
-            }
-
-            if (isset($filtros['servicio'])) {
-                $sql .= " AND r.id_servicio = :id_servicio";
-                $params['id_servicio'] = $filtros['servicio'];
-            }
-
-            if (isset($filtros['estado'])) {
-                $sql .= " AND r.estado = :estado";
-                $params['estado'] = $filtros['estado'];
-            }
-
-            if (isset($filtros['fecha_desde'])) {
-                $sql .= " AND r.fecha_reserva >= :fecha_desde";
-                $params['fecha_desde'] = $filtros['fecha_desde'];
-            }
-
-            if (isset($filtros['fecha_hasta'])) {
-                $sql .= " AND r.fecha_reserva <= :fecha_hasta";
-                $params['fecha_hasta'] = $filtros['fecha_hasta'];
-            }
+            $this->applyFilters($filtros, $sql, $params);
 
             $stmt = $this->db->prepare($sql);
 
@@ -715,26 +654,13 @@ class ReservaRepository
             ";
 
             $params = ['especialista_id' => $especialistaId];
-
-            if ($fechaDesde !== null) {
-                $sql .= " AND r.fecha_reserva >= :fecha_desde";
-                $params['fecha_desde'] = $fechaDesde;
-            }
-
-            if ($fechaHasta !== null) {
-                $sql .= " AND r.fecha_reserva <= :fecha_hasta";
-                $params['fecha_hasta'] = $fechaHasta;
-            }
-
-            if ($estado !== null) {
-                $sql .= " AND r.estado = :estado";
-                $params['estado'] = $estado;
-            }
-
-            if ($clienteSearch !== null && $clienteSearch !== '') {
-                $sql .= " AND (c.nombre LIKE :cliente_search OR c.apellidos LIKE :cliente_search)";
-                $params['cliente_search'] = "%{$clienteSearch}%";
-            }
+            $filtros = [
+                'fecha_desde' => $fechaDesde,
+                'fecha_hasta' => $fechaHasta,
+                'estado' => $estado,
+                'cliente_search' => $clienteSearch
+            ];
+            $this->applyFilters($filtros, $sql, $params);
 
             $sql .= " ORDER BY r.fecha_reserva DESC, r.hora_inicio DESC";
             $sql .= " LIMIT :limit OFFSET :offset";
@@ -787,26 +713,13 @@ class ReservaRepository
             ";
 
             $params = ['especialista_id' => $especialistaId];
-
-            if ($fechaDesde !== null) {
-                $sql .= " AND r.fecha_reserva >= :fecha_desde";
-                $params['fecha_desde'] = $fechaDesde;
-            }
-
-            if ($fechaHasta !== null) {
-                $sql .= " AND r.fecha_reserva <= :fecha_hasta";
-                $params['fecha_hasta'] = $fechaHasta;
-            }
-
-            if ($estado !== null) {
-                $sql .= " AND r.estado = :estado";
-                $params['estado'] = $estado;
-            }
-
-            if ($clienteSearch !== null && $clienteSearch !== '') {
-                $sql .= " AND (c.nombre LIKE :cliente_search OR c.apellidos LIKE :cliente_search)";
-                $params['cliente_search'] = "%{$clienteSearch}%";
-            }
+            $filtros = [
+                'fecha_desde' => $fechaDesde,
+                'fecha_hasta' => $fechaHasta,
+                'estado' => $estado,
+                'cliente_search' => $clienteSearch
+            ];
+            $this->applyFilters($filtros, $sql, $params);
 
             $stmt = $this->db->prepare($sql);
 
