@@ -26,7 +26,12 @@
       <div class="card border-0 shadow-sm mb-4">
         <div class="card-header bg-white border-bottom py-3">
           <h5 class="mb-0 fw-semibold">
-            <i class="bi bi-person-circle me-2 text-primary"></i>
+            <div
+              class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center fw-bold me-2"
+              style="width: 32px; height: 32px; font-size: 0.9rem"
+            >
+              {substr($user->getNombre() ?? 'U', 0, 1)|upper}
+            </div>
             Información Personal
           </h5>
         </div>
