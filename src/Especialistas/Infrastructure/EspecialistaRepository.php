@@ -468,4 +468,51 @@ class EspecialistaRepository
             error_log("Error al eliminar especialista: " . $e->getMessage());
         }
     }
+
+    /**
+     * Gets specialist profile with user data and services by user ID
+     * @param int $userId User ID
+     * @return array|null Profile data with services or null if not found
+     */
+    public function getEspecialistaProfileWithServices(int $userId): ?array
+    {
+        try {
+            $stmt = $this->db->prepare("
+                SELECT 
+                    e.id_especialista,
+                    e.descripcion,
+                    e.foto_url,
+                    u.nombre,
+                    u.apellidos,
+                    u.email,
+                    u.telefono
+                FROM ESPECIALISTA e
+                INNER JOIN USUARIO u ON e.id_usuario = u.id_usuario
+                WHERE e.id_usuario = :user_id
+            ");
+            $stmt->execute(['user_id' => $userId]);
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if (!$result) {
+                return null;
+            }
+
+            $stmtServices = $this->db->prepare("
+                SELECT s.*
+                FROM SERVICIO s
+                INNER JOIN ESPECIALISTA_SERVICIO es ON s.id_servicio = es.id_servicio
+                WHERE es.id_especialista = :especialista_id
+                AND s.activo = 1
+                ORDER BY s.nombre_servicio
+            ");
+            $stmtServices->execute(['especialista_id' => $result['id_especialista']]);
+            $services = $stmtServices->fetchAll(PDO::FETCH_ASSOC);
+
+            $result['servicios'] = $services;
+            return $result;
+        } catch (\Exception $e) {
+            error_log("Error getting specialist profile with services: " . $e->getMessage());
+            return null;
+        }
+    }
 }

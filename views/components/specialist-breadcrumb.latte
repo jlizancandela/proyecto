@@ -1,0 +1,33 @@
+{* Breadcrumb para el panel de especialista *}
+<nav aria-label="breadcrumb" class="bg-white border-bottom mb-3">
+  <div class="container-fluid px-4 py-2">
+    <ol class="breadcrumb mb-0">
+      <li class="breadcrumb-item">
+        <a href="/specialist" class="text-decoration-none">
+          <i class="bi bi-speedometer2 me-1"></i>
+          Panel de Especialista
+        </a>
+      </li>
+
+      {* Breadcrumb para Reservas *}
+      <li
+        n:if="str_contains($currentUrl, '/specialist/bookings')"
+        class="breadcrumb-item active"
+        aria-current="page"
+      >
+        <i class="bi bi-calendar-check me-1"></i>
+        Mis Reservas
+      </li>
+
+      {* Breadcrumb para Perfil *}
+      <li
+        n:if="$currentUrl === '/specialist/profile'"
+        class="breadcrumb-item active"
+        aria-current="page"
+      >
+        <i class="bi bi-person me-1"></i>
+        Mi Perfil
+      </li>
+    </ol>
+  </div>
+</nav>

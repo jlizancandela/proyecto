@@ -76,7 +76,8 @@
 │   │   │   └── dependencies.php             # DI de ServicioService
 │   │   └── Presentation/
 │   │       ├── AdminController.php          # Gestión de servicios añadida
-│   │       └── HomeController.php
+│   │       ├── HomeController.php
+│   │       └── SpecialistController.php     # Nuevo - Panel especialista
 │   └── Usuarios/
 │       ├── Application/
 │       │   ├── AuthService.php
@@ -117,6 +118,7 @@
     │   ├── paginator.latte
     │   ├── services.latte
     │   ├── sidebar.latte                  # Link a servicios añadido
+    │   ├── specialist-sidebar.latte       # Nuevo - Sidebar especialista
     │   ├── user-breadcrumb.latte
     │   ├── user-offers.latte
     │   ├── user-quick-actions.latte
@@ -133,11 +135,15 @@
     │   ├── landpage.latte
     │   ├── panel-layout.latte
     │   ├── panelScripts.latte
+    │   ├── specialist-panel-layout.latte  # Nuevo - Layout especialista
     │   ├── user-panel-layout.latte
     │   └── userPanelScripts.latte
     ├── pages/
     │   ├── BookingsManagement.latte       # Nueva página - Admin reservas
     │   ├── ServicesManagement.latte       # Nueva página
+    │   ├── Specialist.latte               # Nuevo - Dashboard especialista
+    │   ├── SpecialistBookings.latte       # Nuevo - Reservas especialista
+    │   ├── SpecialistProfile.latte        # Nuevo - Perfil especialista
     │   ├── Reactivate.latte               # Nueva página
     │   ├── Admin.latte
     │   ├── Bookings.latte

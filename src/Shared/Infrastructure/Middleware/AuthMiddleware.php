@@ -47,9 +47,9 @@ class AuthMiddleware
             exit;
         }
     }
- 
- 
- 
+
+
+
     public static function requireClient(): void
     {
         if (!isset($_SESSION['user_id'])) {
@@ -65,4 +65,22 @@ class AuthMiddleware
         }
     }
 
+    /**
+     * Requires user to be authenticated and have Especialista role
+     * @return void
+     */
+    public static function requireSpecialist(): void
+    {
+        if (!isset($_SESSION['user_id'])) {
+            $_SESSION['error'] = 'Debes iniciar sesión para acceder al panel de especialista';
+            header('Location: /login');
+            exit;
+        }
+
+        if ($_SESSION['role'] !== 'Especialista') {
+            $_SESSION['error'] = 'No tienes permisos para acceder al panel de especialista';
+            header('Location: /');
+            exit;
+        }
+    }
 }

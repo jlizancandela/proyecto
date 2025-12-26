@@ -1,0 +1,99 @@
+{layout '../layouts/specialist-panel-layout.latte'} {block title}Mi Perfil - Panel de
+Especialista{/block} {block content}
+<div class="mb-4">
+  <h1 class="mb-4">Mi Perfil</h1>
+
+  <div class="row g-4">
+    <div class="col-md-4">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body text-center">
+          {if $profile['foto_url']}
+          <img
+            src="{$profile['foto_url']}"
+            alt="Foto de perfil"
+            class="rounded-circle mb-3"
+            style="width: 150px; height: 150px; object-fit: cover"
+          />
+          {else}
+          <i class="bi bi-person-circle fs-1 text-secondary mb-3" style="font-size: 150px"></i>
+          {/if}
+          <h4 class="mb-1">{$profile['nombre']} {$profile['apellidos']}</h4>
+          <p class="text-muted mb-0">Especialista</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-8">
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-white">
+          <h5 class="mb-0">
+            <i class="bi bi-person me-2 text-primary"></i>
+            Información Personal
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Nombre</label>
+              <p class="form-control-plaintext">{$profile['nombre']}</p>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Apellidos</label>
+              <p class="form-control-plaintext">{$profile['apellidos']}</p>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Email</label>
+              <p class="form-control-plaintext">{$profile['email']}</p>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Teléfono</label>
+              <p class="form-control-plaintext">{$profile['telefono'] ?: 'No especificado'}</p>
+            </div>
+            <div class="col-12">
+              <label class="form-label fw-semibold">Descripción</label>
+              <p class="form-control-plaintext">{$profile['descripcion'] ?: 'Sin descripción'}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white">
+          <h5 class="mb-0">
+            <i class="bi bi-scissors me-2 text-success"></i>
+            Servicios Ofrecidos
+          </h5>
+        </div>
+        <div class="card-body">
+          {if count($profile['servicios']) > 0}
+          <div class="row g-3">
+            {foreach $profile['servicios'] as $servicio}
+            <div class="col-md-6">
+              <div class="card h-100 border">
+                <div class="card-body">
+                  <h6 class="card-title">{$servicio['nombre_servicio']}</h6>
+                  <p class="card-text text-muted small mb-2">{$servicio['descripcion']}</p>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <span class="badge bg-primary">
+                      <i class="bi bi-clock me-1"></i>
+                      {$servicio['duracion_minutos']} min
+                    </span>
+                    <span class="fw-bold text-success">€{$servicio['precio']}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {/foreach}
+          </div>
+          {else}
+          <div class="alert alert-info mb-0">
+            <i class="bi bi-info-circle me-2"></i>
+            No tienes servicios asignados actualmente.
+          </div>
+          {/if}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{/block}
