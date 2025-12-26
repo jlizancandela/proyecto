@@ -1,7 +1,7 @@
 {* Parámetros esperados: - $booking: objeto con datos de la reserva - $showActions: boolean
 (opcional) - mostrar botones de acción *}
 
-<div class="card border-0 shadow-sm shadow-hover mb-3" style="transition: box-shadow 0.3s ease;">
+<div class="card border-0 shadow-sm shadow-hover mb-3" style="transition: box-shadow 0.3s ease">
   <div class="card-body p-4">
     <div class="row align-items-center">
       <!-- Estado y servicio -->
@@ -46,8 +46,8 @@
       </div>
 
       <!-- Acciones -->
-      {if isset($showActions) && $showActions && $booking->estado !== 'Cancelada' &&
-      $booking->estado !== 'Completada'}
+      {if isset($showActions) && $showActions} {var $isPastBooking =
+      strtotime($booking->fecha_reserva) < strtotime(date('Y-m-d'))}
       <div class="col-12 col-lg-2">
         <div class="d-flex flex-column gap-2">
           <button
@@ -57,6 +57,22 @@
             <i class="bi bi-pencil me-1"></i>
             Modificar
           </button>
+          {if $isPastBooking}
+          <span
+            class="d-inline-block"
+            title="No se pueden cancelar citas pasadas"
+            style="cursor: not-allowed"
+          >
+            <button
+              class="btn btn-sm btn-outline-danger rounded-pill"
+              disabled
+              style="pointer-events: none"
+            >
+              <i class="bi bi-x-circle me-1"></i>
+              Cancelar
+            </button>
+          </span>
+          {else}
           <button
             class="btn btn-sm btn-outline-danger rounded-pill btn-cancel"
             data-booking-id="{$booking->id_reserva}"
@@ -64,6 +80,7 @@
             <i class="bi bi-x-circle me-1"></i>
             Cancelar
           </button>
+          {/if}
         </div>
       </div>
       {/if}

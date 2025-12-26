@@ -78,6 +78,12 @@
                 Panel
               </a>
             </li>
+            <li n:if="$_SESSION['role'] === 'Especialista'" class="nav-item">
+              <a class="nav-link d-lg-none" href="/specialist">Panel</a>
+              <a class="btn btn-outline-primary me-2 d-none d-lg-inline-block" href="/specialist">
+                Panel
+              </a>
+            </li>
             <li n:if="$_SESSION['role'] === 'Cliente'" class="nav-item">
               <a class="nav-link d-lg-none" href="/user/reservas/nueva">Reservas</a>
               <a

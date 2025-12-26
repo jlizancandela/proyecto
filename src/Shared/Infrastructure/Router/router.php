@@ -8,6 +8,7 @@ use Usuarios\Presentation\ProfileController;
 use Usuarios\Presentation\AuthController;
 use Shared\Presentation\HomeController;
 use Shared\Presentation\AdminController;
+use Shared\Presentation\SpecialistController;
 use Reservas\Presentation\BookingController;
 use Reservas\Presentation\BookingApiController;
 use Reservas\Presentation\BookingAdminApiController;
@@ -20,6 +21,10 @@ require_once __DIR__ . '/../dependencies.php';
 
 $router = new Router();
 
+$router->before('GET|POST|PUT|DELETE', '/admin/api/.*', function () {
+    AuthMiddleware::apiRequireAdmin();
+});
+
 $router->before('GET|POST|PUT|DELETE', '/admin/.*', function () {
     AuthMiddleware::requireAdmin();
 });
@@ -28,9 +33,26 @@ $router->before('GET|POST|PUT|DELETE', '/user/.*', function () {
     AuthMiddleware::requireAuth();
 });
 
-$router->get('/', function () use ($latte) {
-    $controller = new HomeController($latte);
+$router->before('GET|POST|PUT|DELETE', '/specialist/.*', function () {
+    AuthMiddleware::requireSpecialist();
+});
+
+$router->before('GET|POST|PUT|DELETE', '/api/me', function () {
+    AuthMiddleware::apiRequireAuth();
+});
+
+$router->before('GET|POST|PUT|DELETE', '/api/reservas.*', function () {
+    AuthMiddleware::apiRequireAuth();
+});
+
+$router->get('/', function () use ($latte, $emailService) {
+    $controller = new HomeController($latte, $emailService);
     echo $controller->index();
+});
+
+$router->post('/contacto', function () use ($latte, $emailService) {
+    $controller = new HomeController($latte, $emailService);
+    $controller->contact();
 });
 
 $router->get('/login', function () use ($latte, $authService, $emailService, $userService) {
@@ -151,6 +173,21 @@ $router->get('/user/reservas/modify/(\d+)', function ($bookingId) use ($latte, $
 $router->get('/user/reservas/pdf', function () use ($latte, $reservaService) {
     $controller = new PdfExportController($latte, $reservaService);
     $controller->exportReservas();
+});
+
+$router->get('/specialist', function () use ($latte, $especialistaRepository, $reservaRepository) {
+    $controller = new SpecialistController($latte, $especialistaRepository, $reservaRepository);
+    echo $controller->index();
+});
+
+$router->get('/specialist/bookings', function () use ($latte, $especialistaRepository, $reservaRepository) {
+    $controller = new SpecialistController($latte, $especialistaRepository, $reservaRepository);
+    echo $controller->bookings();
+});
+
+$router->get('/specialist/profile', function () use ($latte, $especialistaRepository, $reservaRepository) {
+    $controller = new SpecialistController($latte, $especialistaRepository, $reservaRepository);
+    echo $controller->profile();
 });
 
 $router->get('/admin/bookings/pdf', function () use ($latte, $reservaService) {

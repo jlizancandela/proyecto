@@ -1,0 +1,147 @@
+{* Sidebar visible en desktop, offcanvas en móvil *}
+<aside
+  class="d-none d-md-flex col-md-2 bg-white border-end min-vh-100 flex-column sticky-md-top overflow-auto"
+>
+  <div class="p-4 border-bottom">
+    <div class="d-flex align-items-center">
+      <a href="/" class="text-decoration-none d-flex align-items-center">
+        <i class="bi bi-scissors text-primary fs-4 me-2"></i>
+        <h5 class="mb-0 fw-bold">SR-Peluquería</h5>
+      </a>
+    </div>
+  </div>
+
+  <nav class="nav flex-column flex-grow-1 p-3">
+    <a
+      class="nav-link d-flex align-items-center gap-2 {if $currentUrl === '/specialist'}text-dark bg-light{else}text-secondary{/if} rounded mb-1 py-2"
+      href="/specialist"
+    >
+      <i class="bi bi-speedometer2"></i>
+      <span>Dashboard</span>
+    </a>
+    <a
+      class="nav-link d-flex align-items-center gap-2 {if $currentUrl === '/specialist/bookings'}text-dark bg-light{else}text-secondary{/if} rounded mb-1 py-2"
+      href="/specialist/bookings"
+    >
+      <i class="bi bi-calendar-check"></i>
+      <span>Mis Reservas</span>
+    </a>
+    <a
+      class="nav-link d-flex align-items-center gap-2 {if $currentUrl === '/specialist/profile'}text-dark bg-light{else}text-secondary{/if} rounded mb-1 py-2"
+      href="/specialist/profile"
+    >
+      <i class="bi bi-person"></i>
+      <span>Mi Perfil</span>
+    </a>
+  </nav>
+
+  <div class="p-3 border-top dropup">
+    <div
+      class="d-flex align-items-center dropdown-toggle"
+      data-bs-toggle="dropdown"
+      aria-expanded="false"
+      style="cursor: pointer"
+    >
+      <div class="me-2">
+        {if isset($userPhoto) && $userPhoto}
+        <img
+          src="{$userPhoto}"
+          alt="Foto de perfil"
+          class="rounded-circle"
+          style="width: 32px; height: 32px; object-fit: cover"
+        />
+        {else}
+        <i class="bi bi-person-circle fs-2 text-secondary"></i>
+        {/if}
+      </div>
+      <div class="flex-grow-1 min-w-0">
+        <div class="fw-semibold small text-truncate">{$userName}</div>
+        <div class="text-muted small">Especialista</div>
+      </div>
+    </div>
+    <ul class="dropdown-menu shadow w-100 mb-2">
+      <li>
+        <a class="dropdown-item text-danger d-flex align-items-center gap-2" href="/logout">
+          <i class="bi bi-box-arrow-right"></i>
+          <span>Cerrar Sesión</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+</aside>
+
+{* Offcanvas para móvil *}
+<div
+  class="offcanvas offcanvas-start d-md-none"
+  tabindex="-1"
+  id="sidebarOffcanvas"
+  aria-labelledby="sidebarOffcanvasLabel"
+>
+  <div class="offcanvas-header border-bottom">
+    <div class="d-flex align-items-center">
+      <i class="bi bi-scissors text-primary fs-4 me-2"></i>
+      <h5 class="mb-0 fw-bold" id="sidebarOffcanvasLabel">SR-Peluquería</h5>
+    </div>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+
+  <div class="offcanvas-body d-flex flex-column">
+    <nav class="nav flex-column flex-grow-1">
+      <a
+        class="nav-link d-flex align-items-center gap-2 {if $currentUrl === '/specialist'}text-dark bg-light{else}text-secondary{/if} rounded mb-1 py-2"
+        href="/specialist"
+      >
+        <i class="bi bi-speedometer2"></i>
+        <span>Dashboard</span>
+      </a>
+      <a
+        class="nav-link d-flex align-items-center gap-2 {if $currentUrl === '/specialist/bookings'}text-dark bg-light{else}text-secondary{/if} rounded mb-1 py-2"
+        href="/specialist/bookings"
+      >
+        <i class="bi bi-calendar-check"></i>
+        <span>Mis Reservas</span>
+      </a>
+      <a
+        class="nav-link d-flex align-items-center gap-2 {if $currentUrl === '/specialist/profile'}text-dark bg-light{else}text-secondary{/if} rounded mb-1 py-2"
+        href="/specialist/profile"
+      >
+        <i class="bi bi-person"></i>
+        <span>Mi Perfil</span>
+      </a>
+    </nav>
+
+    <div class="border-top pt-3 dropup">
+      <div
+        class="d-flex align-items-center dropdown-toggle"
+        data-bs-toggle="dropdown"
+        aria-expanded="false"
+        style="cursor: pointer"
+      >
+        <div class="me-3">
+          {if isset($userPhoto) && $userPhoto}
+          <img
+            src="{$userPhoto}"
+            alt="Foto de perfil"
+            class="rounded-circle"
+            style="width: 32px; height: 32px; object-fit: cover"
+          />
+          {else}
+          <i class="bi bi-person-circle fs-2 text-secondary"></i>
+          {/if}
+        </div>
+        <div>
+          <div class="fw-semibold small">{$userName}</div>
+          <div class="text-muted small">Especialista</div>
+        </div>
+      </div>
+      <ul class="dropdown-menu shadow w-100 mb-2">
+        <li>
+          <a class="dropdown-item text-danger d-flex align-items-center gap-2" href="/logout">
+            <i class="bi bi-box-arrow-right"></i>
+            <span>Cerrar Sesión</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>

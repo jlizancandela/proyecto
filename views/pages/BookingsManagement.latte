@@ -201,10 +201,11 @@
               >
                 <i class="bi bi-pencil"></i>
               </button>
-              {if $reserva['estado'] !== 'Pendiente'}
+              {var $isPastBooking = strtotime($reserva['fecha_reserva']) < strtotime(date('Y-m-d'))}
+              {if $isPastBooking}
               <span
                 class="d-inline-block"
-                title="Solo se pueden eliminar reservas pendientes"
+                title="No se pueden eliminar reservas pasadas"
                 style="cursor: not-allowed"
               >
                 <button

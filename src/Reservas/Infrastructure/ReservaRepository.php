@@ -796,4 +796,160 @@ class ReservaRepository
             return 0;
         }
     }
+
+    /**
+     * Finds bookings for a specific specialist with optional filters
+     * @param int $especialistaId Specialist ID
+     * @param int $limit Maximum results
+     * @param int $offset Pagination offset
+     * @param string|null $fechaDesde Start date (Y-m-d format)
+     * @param string|null $fechaHasta End date (Y-m-d format)
+     * @param string|null $estado Booking status
+     * @param string|null $clienteSearch Client name search
+     * @return array Array of ReservaCompletaDTO
+     */
+    public function findByEspecialistaIdWithFilters(
+        int $especialistaId,
+        int $limit = 50,
+        int $offset = 0,
+        ?string $fechaDesde = null,
+        ?string $fechaHasta = null,
+        ?string $estado = null,
+        ?string $clienteSearch = null
+    ): array {
+        try {
+            $sql = "
+                SELECT 
+                    r.*,
+                    c.nombre as cliente_nombre, 
+                    c.apellidos as cliente_apellidos, 
+                    c.email as cliente_email, 
+                    c.telefono as cliente_telefono,
+                    u.nombre as especialista_nombre, 
+                    u.apellidos as especialista_apellidos,
+                    u.email as especialista_email, 
+                    u.telefono as especialista_telefono,
+                    e.descripcion as especialista_descripcion, 
+                    e.foto_url as especialista_foto_url,
+                    s.nombre_servicio, 
+                    s.duracion_minutos, 
+                    s.precio, 
+                    s.descripcion as servicio_descripcion
+                FROM RESERVA r
+                INNER JOIN USUARIO c ON r.id_cliente = c.id_usuario
+                INNER JOIN ESPECIALISTA e ON r.id_especialista = e.id_especialista
+                INNER JOIN USUARIO u ON e.id_usuario = u.id_usuario
+                INNER JOIN SERVICIO s ON r.id_servicio = s.id_servicio
+                WHERE r.id_especialista = :especialista_id
+            ";
+
+            $params = ['especialista_id' => $especialistaId];
+
+            if ($fechaDesde !== null) {
+                $sql .= " AND r.fecha_reserva >= :fecha_desde";
+                $params['fecha_desde'] = $fechaDesde;
+            }
+
+            if ($fechaHasta !== null) {
+                $sql .= " AND r.fecha_reserva <= :fecha_hasta";
+                $params['fecha_hasta'] = $fechaHasta;
+            }
+
+            if ($estado !== null) {
+                $sql .= " AND r.estado = :estado";
+                $params['estado'] = $estado;
+            }
+
+            if ($clienteSearch !== null && $clienteSearch !== '') {
+                $sql .= " AND (c.nombre LIKE :cliente_search OR c.apellidos LIKE :cliente_search)";
+                $params['cliente_search'] = "%{$clienteSearch}%";
+            }
+
+            $sql .= " ORDER BY r.fecha_reserva DESC, r.hora_inicio DESC";
+            $sql .= " LIMIT :limit OFFSET :offset";
+
+            $stmt = $this->db->prepare($sql);
+
+            foreach ($params as $key => $value) {
+                $stmt->bindValue(":$key", $value);
+            }
+
+            $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+            $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+
+            $stmt->execute();
+
+            $reservas = [];
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                $reservas[] = ReservaCompletaDTO::fromDatabase($row);
+            }
+
+            return $reservas;
+        } catch (\Exception $e) {
+            error_log("Error getting specialist bookings with filters: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Counts bookings for a specific specialist with optional filters
+     * @param int $especialistaId Specialist ID
+     * @param string|null $fechaDesde Start date (Y-m-d format)
+     * @param string|null $fechaHasta End date (Y-m-d format)
+     * @param string|null $estado Booking status
+     * @param string|null $clienteSearch Client name search
+     * @return int Total count
+     */
+    public function countByEspecialistaIdWithFilters(
+        int $especialistaId,
+        ?string $fechaDesde = null,
+        ?string $fechaHasta = null,
+        ?string $estado = null,
+        ?string $clienteSearch = null
+    ): int {
+        try {
+            $sql = "
+                SELECT COUNT(*) as total
+                FROM RESERVA r
+                INNER JOIN USUARIO c ON r.id_cliente = c.id_usuario
+                WHERE r.id_especialista = :especialista_id
+            ";
+
+            $params = ['especialista_id' => $especialistaId];
+
+            if ($fechaDesde !== null) {
+                $sql .= " AND r.fecha_reserva >= :fecha_desde";
+                $params['fecha_desde'] = $fechaDesde;
+            }
+
+            if ($fechaHasta !== null) {
+                $sql .= " AND r.fecha_reserva <= :fecha_hasta";
+                $params['fecha_hasta'] = $fechaHasta;
+            }
+
+            if ($estado !== null) {
+                $sql .= " AND r.estado = :estado";
+                $params['estado'] = $estado;
+            }
+
+            if ($clienteSearch !== null && $clienteSearch !== '') {
+                $sql .= " AND (c.nombre LIKE :cliente_search OR c.apellidos LIKE :cliente_search)";
+                $params['cliente_search'] = "%{$clienteSearch}%";
+            }
+
+            $stmt = $this->db->prepare($sql);
+
+            foreach ($params as $key => $value) {
+                $stmt->bindValue(":$key", $value);
+            }
+
+            $stmt->execute();
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            return (int)$result['total'];
+        } catch (\Exception $e) {
+            error_log("Error counting specialist bookings with filters: " . $e->getMessage());
+            return 0;
+        }
+    }
 }

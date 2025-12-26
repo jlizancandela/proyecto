@@ -1,0 +1,97 @@
+{layout '../layouts/specialist-panel-layout.latte'} {block title}Dashboard - Panel de
+Especialista{/block} {block content}
+<div class="container-fluid">
+  <div class="row mb-4">
+    <div class="col-12">
+      <h2 class="mb-0">Bienvenido, {$userName}</h2>
+      <p class="text-muted">Panel de control del especialista</p>
+    </div>
+  </div>
+
+  <div class="row g-3 mb-4">
+    <div class="col-md-4">
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-body">
+          <div class="d-flex align-items-center">
+            <div class="flex-shrink-0">
+              <i class="bi bi-calendar-check fs-1 text-primary"></i>
+            </div>
+            <div class="flex-grow-1 ms-3">
+              <h6 class="text-muted mb-1">Total Reservas</h6>
+              <h3 class="mb-0">{$totalBookings}</h3>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-body">
+          <div class="d-flex align-items-center">
+            <div class="flex-shrink-0">
+              <i class="bi bi-clock-history fs-1 text-success"></i>
+            </div>
+            <div class="flex-grow-1 ms-3">
+              <h6 class="text-muted mb-1">Próximas Reservas</h6>
+              <h3 class="mb-0">{$upcomingBookings}</h3>
+              <small class="text-muted">Próximos 30 días</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-body">
+          <div class="d-flex align-items-center">
+            <div class="flex-shrink-0">
+              <i class="bi bi-currency-euro fs-1 text-warning"></i>
+            </div>
+            <div class="flex-grow-1 ms-3">
+              <h6 class="text-muted mb-1">Ingresos Estimados</h6>
+              <h3 class="mb-0">{$estimatedRevenue}€</h3>
+              <small class="text-muted">Próximos 30 días</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-3">
+    <div class="col-md-6">
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-body">
+          <h5 class="card-title mb-3">
+            <i class="bi bi-calendar-check me-2 text-primary"></i>
+            Mis Reservas
+          </h5>
+          <p class="card-text text-muted">Gestiona y visualiza todas tus reservas programadas</p>
+          <a href="/specialist/bookings" class="btn btn-primary">
+            <i class="bi bi-arrow-right me-1"></i>
+            Ver Reservas
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-body">
+          <h5 class="card-title mb-3">
+            <i class="bi bi-person me-2 text-success"></i>
+            Mi Perfil
+          </h5>
+          <p class="card-text text-muted">Consulta tu información personal y servicios ofrecidos</p>
+          <a href="/specialist/profile" class="btn btn-success">
+            <i class="bi bi-arrow-right me-1"></i>
+            Ver Perfil
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{/block}
