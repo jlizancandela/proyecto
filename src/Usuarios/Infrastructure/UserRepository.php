@@ -244,7 +244,15 @@ class UserRepository
     }
 
     /**
-     * Obtiene usuarios por rol con paginación
+     * Retrieves users by role with pagination and sorting.
+     *
+     * @param string $rol The role to filter by.
+     * @param int $limit The maximum number of users to retrieve.
+     * @param int $offset The number of users to skip for pagination.
+     * @param string $sort The column to sort by.
+     * @param string $order The sorting order ('asc' or 'desc').
+     * @return array An array of Usuario objects matching the specified role.
+     * @throws PDOException If there is a database error.
      */
     public function getUsersByRole(string $rol, int $limit = 10, int $offset = 0, $sort = '', $order = 'asc'): array
     {
@@ -271,7 +279,11 @@ class UserRepository
     }
 
     /**
-     * Cuenta usuarios por rol
+     * Counts the total number of users with a specific role.
+     *
+     * @param string $rol The role to count.
+     * @return int The total number of users with the specified role.
+     * @throws PDOException If there is a database error.
      */
     public function getTotalUsersByRole(string $rol): int
     {
@@ -289,6 +301,13 @@ class UserRepository
         }
     }
 
+    /**
+     * Retrieves a user by their email address.
+     *
+     * @param string $email The email address of the user to retrieve.
+     * @return Usuario|null The Usuario object if found, null otherwise.
+     * @throws PDOException If there is a database error.
+     */
     public function getUserByEmail(string $email): ?Usuario
     {
         try {
