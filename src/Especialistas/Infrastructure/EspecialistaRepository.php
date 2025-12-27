@@ -187,9 +187,12 @@ class EspecialistaRepository
     }
 
     /**
-     * @param int $id
-     * @param string $fotoUrl
+     * Updates the photo URL of a specialist.
+     *
+     * @param int $id The specialist ID.
+     * @param string $fotoUrl The new photo URL.
      * @return void
+     * @throws \Exception If there is a database error.
      */
     public function updateEspecialistaPhoto(int $id, string $fotoUrl): void
     {
@@ -207,9 +210,12 @@ class EspecialistaRepository
     }
 
     /**
-     * @param int $id
-     * @param string $descripcion
+     * Updates the description of a specialist.
+     *
+     * @param int $id The specialist ID.
+     * @param string $descripcion The new description.
      * @return void
+     * @throws \Exception If there is a database error.
      */
     public function updateEspecialistaDescription(int $id, string $descripcion): void
     {
