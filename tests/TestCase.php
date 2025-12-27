@@ -7,9 +7,9 @@ use Mockery;
 
 /**
  * Base TestCase class.
- * @property \PDO|\Mockery\MockInterface $pdo
- * @property \PDOStatement|\Mockery\MockInterface $stmt
- * @property \Reservas\Infrastructure\ReservaRepository|\Mockery\MockInterface $repository
+ * @property \PDO&\Mockery\MockInterface $pdo
+ * @property \PDOStatement&\Mockery\MockInterface $stmt
+ * @property \Reservas\Infrastructure\ReservaRepository&\Mockery\MockInterface $repository
  * @property \Reservas\Application\ReservaService $service
  */
 abstract class TestCase extends BaseTestCase
