@@ -97,8 +97,8 @@
 #### Falta Testear
 
 - [x] `bookings.js` - Tests para lógica pública
-- [x] `booking-filters.js` - Tests completados (5 tests)
-- [x] `specialist/bookings-filters.js` - Tests completados (9 tests)
+- [x] `booking-filters.js` - Tests completados (5 tests) ✅ ES6 Module
+- [x] `specialist/bookings-filters.js` - Tests completados (9 tests) ✅ ES6 Module
 
 #### Preact Components (Opcional)
 
