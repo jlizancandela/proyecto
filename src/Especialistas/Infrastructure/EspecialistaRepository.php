@@ -89,41 +89,6 @@ class EspecialistaRepository
         }
     }
 
-    /**
-     * Retrieves a specialist and their associated user data by the specialist's ID.
-     *
-     * @param int $id The ID of the specialist.
-     * @return EspecialistaUsuarioDTO|null The EspecialistaUsuarioDTO object if found, null otherwise.
-     */
-    public function getEspecialistaConUsuarioById(int $id): ?EspecialistaUsuarioDTO
-    {
-        try {
-            $stmt = $this->db->prepare("
-                SELECT
-                    u.id_usuario,
-                    u.rol,
-                    u.nombre,
-                    u.apellidos,
-                    u.email,
-                    u.telefono,
-                    u.fecha_registro,
-                    u.activo,
-                    e.id_especialista,
-                    e.descripcion,
-                    e.foto_url
-                FROM USUARIO u
-                INNER JOIN ESPECIALISTA e ON u.id_usuario = e.id_usuario
-                WHERE e.id_especialista = :id
-            ");
-            $stmt->execute(["id" => $id]);
-
-            $row = $stmt->fetch(PDO::FETCH_ASSOC);
-            return $row ? EspecialistaUsuarioDTO::fromDatabase($row) : null;
-        } catch (\Exception $e) {
-            error_log("Error al obtener especialista: " . $e->getMessage());
-            return null;
-        }
-    }
 
     /**
      * Adds a new specialist entry to the database.
@@ -196,26 +161,6 @@ class EspecialistaRepository
         }
     }
 
-    /**
-     * Checks if an especialista entry exists for a given user ID.
-     *
-     * @param int $userId User ID.
-     * @return bool True if a specialist exists for the user, false otherwise.
-     */
-    public function especialistaExists(int $userId): bool
-    {
-        try {
-            $stmt = $this->db->prepare(
-                "SELECT COUNT(*) as count FROM ESPECIALISTA WHERE id_usuario = :id_usuario"
-            );
-            $stmt->execute(["id_usuario" => $userId]);
-            $result = $stmt->fetch(PDO::FETCH_ASSOC);
-            return $result['count'] > 0;
-        } catch (\Exception $e) {
-            error_log("Error checking especialista: " . $e->getMessage());
-            return false;
-        }
-    }
 
     /**
      * Updates an existing especialista entry.
@@ -473,21 +418,6 @@ class EspecialistaRepository
         }
     }
 
-    /**
-     * Deletes a specialist by their ID.
-     *
-     * @param int $id The ID of the specialist to delete.
-     * @return void
-     */
-    public function deleteEspecialista(int $id): void
-    {
-        try {
-            $stmt = $this->db->prepare("DELETE FROM ESPECIALISTA WHERE id_especialista = :id");
-            $stmt->execute(["id" => $id]);
-        } catch (\Exception $e) {
-            error_log("Error al eliminar especialista: " . $e->getMessage());
-        }
-    }
 
     /**
      * Gets specialist profile with user data and services by user ID
