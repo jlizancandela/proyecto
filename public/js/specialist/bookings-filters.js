@@ -18,7 +18,7 @@ const filterFechaHasta = document.getElementById("filterFechaHasta");
  * Applies the selected filters by constructing a URL with query parameters
  * and navigating to it.
  */
-const applyFilters = () => {
+export const applyFilters = () => {
   const params = new URLSearchParams();
 
   const estado = filterEstado?.value?.trim();
@@ -37,7 +37,7 @@ const applyFilters = () => {
 /**
  * Clears all filters by navigating to the base specialist bookings URL.
  */
-const clearFilters = () => {
+export const clearFilters = () => {
   globalThis.location.href = "/specialist/bookings";
 };
 

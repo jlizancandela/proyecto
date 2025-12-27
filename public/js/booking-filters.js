@@ -11,7 +11,7 @@ const filterForm = document.getElementById("filterForm");
  * Handles estado filter button clicks using event delegation.
  * @param {Event} e - Click event
  */
-const handleEstadoClick = (e) => {
+export const handleEstadoClick = (e) => {
   const button = e.target.closest("[data-estado]");
   if (!button) return;
 
