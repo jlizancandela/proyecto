@@ -77,12 +77,42 @@
 - [x] Documentar con PHPDoc ✅ COMPLETADO (60+ rutas)
 - [x] Agrupar rutas por módulo ✅ COMPLETADO (11 grupos)
 
-#### `ReservaService.php` (395 líneas)
+#### `ReservaService.php` (431 líneas) ✅ Refactored & Tested
 
-- [ ] Revisar lógica de negocio
-- [ ] Extraer validaciones complejas
-- [ ] PHPDoc completo
+- [x] Extraer código duplicado (2 métodos privados)
+- [x] Estandarizar comentarios a inglés ✅ COMPLETADO
+- [x] PHPDoc completo ✅ COMPLETADO
+- [x] Tests unitarios ✅ 15 tests, 22 assertions
+#### `ReservaService.php` (431 líneas) ✅ Refactored & Tested
 
+- [x] Extraer código duplicado (2 métodos privados)
+- [x] Estandarizar comentarios a inglés ✅ COMPLETADO
+- [x] PHPDoc completo ✅ COMPLETADO
+- [x] Tests unitarios ✅ 15 tests, 22 assertions
+#### `ReservaService.php` (431 líneas) ✅ Refactored & Tested
+
+- [x] Extraer código duplicado (2 métodos privados)
+- [x] Estandarizar comentarios a inglés ✅ COMPLETADO
+- [x] PHPDoc completo ✅ COMPLETADO
+- [x] Tests unitarios ✅ 15 tests, 22 assertions
+#### `ReservaService.php` (431 líneas) ✅ Refactored & Tested
+
+- [x] Extraer código duplicado (2 métodos privados)
+- [x] Estandarizar comentarios a inglés ✅ COMPLETADO
+- [x] PHPDoc completo ✅ COMPLETADO
+- [x] Tests unitarios ✅ 15 tests, 22 assertions
+#### `ReservaService.php` (431 líneas) ✅ Refactored & Tested
+
+- [x] Extraer código duplicado (2 métodos privados)
+- [x] Estandarizar comentarios a inglés ✅ COMPLETADO
+- [x] PHPDoc completo ✅ COMPLETADO
+- [x] Tests unitarios ✅ 15 tests, 22 assertions
+#### `ReservaService.php` (431 líneas) ✅ Refactored & Tested
+
+- [x] Extraer código duplicado (2 métodos privados)
+- [x] Estandarizar comentarios a inglés ✅ COMPLETADO
+- [x] PHPDoc completo ✅ COMPLETADO
+- [x] Tests unitarios ✅ 15 tests, 22 assertions
 #### `AuthService.php` (363 líneas)
 
 - [ ] Revisar lógica de autenticación
