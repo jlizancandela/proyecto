@@ -14,7 +14,6 @@ import {
   setDiaAction,
   selectEspecialistaAction,
   changePageAction,
-  goToConfirmationAction,
 } from "../context/bookingsStore.js";
 
 const html = htm.bind(h);
