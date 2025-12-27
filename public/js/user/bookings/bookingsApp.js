@@ -1,3 +1,8 @@
+/**
+ * @file Main application file for user bookings.
+ * @project app-reservas
+ */
+
 import { h, render } from "https://esm.sh/preact@10.19.3";
 import { useEffect } from "https://esm.sh/preact@10.19.3/hooks";
 import { useStore } from "https://esm.sh/@nanostores/preact@0.5.1?deps=preact@10.19.3";
@@ -10,6 +15,10 @@ import { BookingNavigation } from "./components/BookingNavigation.js";
 
 const html = htm.bind(h);
 
+/**
+ * Main application component for user bookings.
+ * Manages the overall booking flow and displays different forms based on the current state.
+ */
 const BookingsApp = () => {
   const estado = useStore($estado);
 
@@ -29,7 +38,12 @@ const BookingsApp = () => {
   `;
 };
 
-function renderCurrentStep(estado) {
+/**
+ * Renders the appropriate booking form component based on the current state.
+ * @param {string} estado - The current state of the booking process (e.g., "ServiceForm", "DateForm", "ConfirmationForm").
+ * @returns {Object} Preact component for the current step.
+ */
+const renderCurrentStep = (estado) => {
   if (!estado) {
     return html`
       <div class="alert alert-warning">Cargando...</div>
@@ -51,7 +65,7 @@ function renderCurrentStep(estado) {
   return html`
     <${ServiceForm} />
   `;
-}
+};
 
 render(
   html`

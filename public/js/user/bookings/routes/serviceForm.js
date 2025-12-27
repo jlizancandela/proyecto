@@ -1,4 +1,6 @@
-// Presentational component for service selection, displays available services as cards.
+/**
+ * @file Service selection form component.
+ */
 
 import { h } from "https://esm.sh/preact@10.19.3";
 import { useStore } from "https://esm.sh/@nanostores/preact@0.5.1?deps=preact@10.19.3";
