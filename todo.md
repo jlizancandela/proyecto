@@ -55,11 +55,12 @@
 - [x] Verificar PHPDoc completo ✅ COMPLETADO
 - [x] Tests unitarios ✅ 12 tests, 28 assertions
 
-#### `EspecialistaRepository.php` (518 líneas)
+#### `EspecialistaRepository.php` (468 líneas) ✅ Cleaned
 
-- [ ] Revisar complejidad
-- [ ] Extraer queries complejas
-- [ ] Verificar PHPDoc
+- [x] Eliminar métodos no utilizados (3 métodos)
+- [x] Reducido de 539 a 468 líneas (-13%)
+- [ ] Verificar PHPDoc completo (opcional)
+- [ ] Tests unitarios (opcional)
 
 #### `UserApiController.php` (496 líneas)
 
