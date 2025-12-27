@@ -1,5 +1,6 @@
 /**
- * Specialist Occupancy Chart Module
+ * @file Specialist Occupancy Chart Module
+ * @project app-reservas
  * Fetches and displays pie chart showing booking distribution across specialists
  * I use chart.js to create the pie chart
  */

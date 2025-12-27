@@ -1,4 +1,7 @@
-// API utilities for booking operations.
+/**
+ * @file API utilities for booking operations in the admin panel.
+ * @project app-reservas
+ */
 
 /**
  * Fetches a single booking by ID.

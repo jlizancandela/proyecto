@@ -1,5 +1,6 @@
 /**
- * BookingNavigation Component
+ * @file BookingNavigation Component
+ * @project app-reservas
  *
  * Displays a sticky navigation bar with step indicator and navigation buttons
  * for multi-step booking form. Shows current step progress and allows users

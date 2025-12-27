@@ -1,5 +1,6 @@
 /**
- * Calendario Component
+ * @file Calendario Component
+ * @project app-reservas
  *
  * Interactive calendar component for date selection in booking.
  * Displays current month with navigation to previous/next months.

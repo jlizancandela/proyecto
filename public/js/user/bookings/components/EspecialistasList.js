@@ -1,5 +1,6 @@
 /**
- * EspecialistasList Component
+ * @file EspecialistasList Component
+ * @project app-reservas
  *
  * Displays a paginated list of available specialists for a selected service and date.
  * Shows specialist photos, descriptions, and available time slots with past times disabled.

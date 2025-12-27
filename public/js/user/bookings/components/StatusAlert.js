@@ -1,5 +1,6 @@
 /**
- * StatusAlert Component
+ * @file StatusAlert Component
+ * @project app-reservas
  *
  * Displays status messages for the booking process.
  * Shows loading indicator during confirmation and error messages if issues occur.

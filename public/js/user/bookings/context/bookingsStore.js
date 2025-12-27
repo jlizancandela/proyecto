@@ -1,4 +1,7 @@
 /**
+ * @file Bookings Store - Centralized State
+ * @project app-reservas
+ *
  * ========================================
  * BOOKINGS STORE - Centralized State
  * ========================================

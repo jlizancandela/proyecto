@@ -1,5 +1,6 @@
 /**
- * Pagination Component
+ * @file Pagination Component
+ * @project app-reservas
  *
  * Displays pagination controls for navigating between pages of results.
  * Shows previous/next buttons and numbered page buttons with current page highlighted.

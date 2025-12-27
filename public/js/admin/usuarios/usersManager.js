@@ -1,4 +1,7 @@
-// Manages user creation, editing, and status toggling in the admin panel.
+/**
+ * @file Manages user creation, editing, and status toggling in the admin panel.
+ * @project app-reservas
+ */
 
 import { fetchUser, createUser, updateUser, toggleUserStatus as toggleStatus } from "./api.js";
 

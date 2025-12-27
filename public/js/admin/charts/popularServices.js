@@ -1,5 +1,6 @@
 /**
- * Popular Services Bar Chart Module
+ * @file Popular Services Bar Chart Module
+ * @project app-reservas
  * I use chart.js to create the bar chart
  */
 

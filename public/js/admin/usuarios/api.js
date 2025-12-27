@@ -1,4 +1,7 @@
-// API utilities for user operations.
+/**
+ * @file API utilities for user operations in the admin panel.
+ * @project app-reservas
+ */
 
 /**
  * Fetches a single user by ID.

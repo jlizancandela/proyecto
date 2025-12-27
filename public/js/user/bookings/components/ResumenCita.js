@@ -1,5 +1,6 @@
 /**
- * ResumenCita Component
+ * @file ResumenCita Component
+ * @project app-reservas
  *
  * Displays a summary of the booking appointment including service,
  * specialist, date, time, and duration information.

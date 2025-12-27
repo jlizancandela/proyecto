@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * HomeController
+ *
+ * Handles the main public-facing pages of the application, such as the homepage and contact form.
+ */
+
 namespace Shared\Presentation;
 
 use Latte\Engine;
@@ -11,12 +17,23 @@ class HomeController
     private Engine $latte;
     private EmailService $emailService;
 
+    /**
+     * HomeController constructor.
+     *
+     * @param Engine $latte The Latte templating engine instance.
+     * @param EmailService $emailService The email service instance.
+     */
     public function __construct(Engine $latte, EmailService $emailService)
     {
         $this->latte = $latte;
         $this->emailService = $emailService;
     }
 
+    /**
+     * Displays the homepage.
+     *
+     * @return string The rendered homepage content.
+     */
     public function index(): string
     {
         $success = $_SESSION['success'] ?? null;
@@ -35,7 +52,10 @@ class HomeController
     }
 
     /**
-     * Handles contact form submissions
+     * Handles contact form submissions.
+     * Validates input, sends an email to the administrator, and redirects the user.
+     *
+     * @return void
      */
     public function contact(): void
     {

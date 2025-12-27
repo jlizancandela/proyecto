@@ -1,5 +1,6 @@
 /**
- * ResumenItem Component
+ * @file ResumenItem Component
+ * @project app-reservas
  *
  * Displays a single item in the booking summary with icon, label, and value.
  * Used to show appointment details like service, specialist, date, and time.

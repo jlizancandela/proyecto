@@ -19,6 +19,12 @@ class PdfExportController
     private  ?\Usuarios\Application\UserService $userService = null;
     private ReservaService $reservaService;
 
+    /**
+     * PdfExportController constructor.
+     * @param Engine $latte The Latte templating engine instance.
+     * @param ReservaService $reservaService The booking service instance.
+     * @param \Usuarios\Application\UserService|null $userService The user service instance (optional).
+     */
     public function __construct(Engine $latte, ReservaService $reservaService, ?\Usuarios\Application\UserService $userService = null)
     {
         $this->latte = $latte;

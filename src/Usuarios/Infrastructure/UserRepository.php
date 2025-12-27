@@ -11,6 +11,10 @@ class UserRepository
 {
     private $db;
 
+    /**
+     * UserRepository constructor.
+     * @param PDO $db The PDO database connection.
+     */
     public function __construct(PDO $db)
     {
         $this->db = $db;
@@ -26,6 +30,16 @@ class UserRepository
         return $this->db;
     }
 
+    /**
+     * Retrieves all users from the database with pagination and sorting.
+     *
+     * @param int $limit The maximum number of users to retrieve.
+     * @param int $offset The number of users to skip for pagination.
+     * @param string $sort The column to sort by (e.g., 'nombre', 'email', 'rol', 'fecha').
+     * @param string $order The sorting order ('asc' or 'desc').
+     * @return array An array of Usuario objects.
+     * @throws PDOException If there is a database error.
+     */
     public function getAllUsers($limit = 10, $offset = 0, $sort = '', $order = 'asc'): array
     {
         try {
@@ -67,6 +81,12 @@ class UserRepository
         }
     }
 
+    /**
+     * Counts the total number of users in the database.
+     *
+     * @return int The total number of users.
+     * @throws PDOException If there is a database error.
+     */
     public function getTotalUsers(): int
     {
         try {
@@ -82,6 +102,17 @@ class UserRepository
         }
     }
 
+    /**
+     * Searches for users based on a search term with pagination and sorting.
+     *
+     * @param string $search The search term.
+     * @param int $limit The maximum number of users to retrieve.
+     * @param int $offset The number of users to skip for pagination.
+     * @param string $sort The column to sort by.
+     * @param string $order The sorting order ('asc' or 'desc').
+     * @return array An array of Usuario objects matching the search criteria.
+     * @throws PDOException If there is a database error.
+     */
     public function searchUsers(string $search, int $limit = 10, int $offset = 0, $sort = '', $order = 'asc'): array
     {
         try {
@@ -134,6 +165,13 @@ class UserRepository
         }
     }
 
+    /**
+     * Counts the total number of users matching a search term.
+     *
+     * @param string $search The search term.
+     * @return int The total number of search results.
+     * @throws PDOException If there is a database error.
+     */
     public function getTotalSearchResults(string $search): int
     {
         try {
@@ -158,6 +196,13 @@ class UserRepository
         }
     }
 
+    /**
+     * Retrieves a user by their ID.
+     *
+     * @param int $id The ID of the user to retrieve.
+     * @return Usuario|null The Usuario object if found, null otherwise.
+     * @throws PDOException If there is a database error.
+     */
     public function getUserById(int $id): ?Usuario
     {
         try {
@@ -174,6 +219,13 @@ class UserRepository
         }
     }
 
+    /**
+     * Retrieves users by their role.
+     *
+     * @param UserRole $role The role to filter by.
+     * @return array An array of Usuario objects matching the specified role.
+     * @throws PDOException If there is a database error.
+     */
     public function getUserByRole(UserRole $role): array
     {
         try {
@@ -275,6 +327,13 @@ class UserRepository
         }
     }
 
+    /**
+     * Adds a new user to the database.
+     *
+     * @param Usuario $user The Usuario object to add.
+     * @return int The ID of the newly created user.
+     * @throws PDOException If there is a database error.
+     */
     public function addUser(Usuario $user): int
     {
         try {
@@ -310,6 +369,13 @@ class UserRepository
         }
     }
 
+    /**
+     * Updates an existing user in the database.
+     *
+     * @param Usuario $user The Usuario object with updated data.
+     * @return void
+     * @throws PDOException If there is a database error.
+     */
     public function updateUser(Usuario $user): void
     {
         try {
@@ -345,6 +411,14 @@ class UserRepository
         }
     }
 
+    /**
+     * Changes the role of a specific user.
+     *
+     * @param int $id The ID of the user.
+     * @param UserRole $newRole The new role to assign.
+     * @return void
+     * @throws PDOException If there is a database error.
+     */
     public function changeUserRole(int $id, UserRole $newRole): void
     {
         try {
@@ -361,6 +435,14 @@ class UserRepository
         }
     }
 
+    /**
+     * Sets the active status of a user.
+     *
+     * @param int $id The ID of the user.
+     * @param bool $active The new active status (true for active, false for inactive).
+     * @return void
+     * @throws PDOException If there is a database error.
+     */
     public function setUserStatus(int $id, bool $active): void
     {
         try {
@@ -378,6 +460,13 @@ class UserRepository
         }
     }
 
+    /**
+     * Deletes a user from the database.
+     *
+     * @param int $id The ID of the user to delete.
+     * @return void
+     * @throws PDOException If there is a database error.
+     */
     public function deleteUser(int $id): void
     {
         try {

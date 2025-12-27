@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * Database
+ *
+ * Handles the database connection for the application.
+ * Provides a singleton-like access to the PDO instance.
+ */
+
 namespace Shared\Infrastructure\Database;
 
 use PDO;
@@ -9,6 +16,11 @@ class Database
 {
     private PDO $db;
 
+    /**
+     * Database constructor.
+     * Initializes the PDO database connection using environment variables.
+     * @throws \Exception If the database connection fails.
+     */
     public function __construct()
     {
         $host = $_ENV["DB_HOST"] ?? "localhost";
@@ -30,6 +42,10 @@ class Database
         }
     }
 
+    /**
+     * Retrieves the PDO database connection instance.
+     * @return PDO The PDO database connection.
+     */
     public function getConnection(): PDO
     {
         return $this->db;

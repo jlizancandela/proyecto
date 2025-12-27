@@ -14,7 +14,8 @@ class EspecialistaService
     private EspecialistaRepository $especialistaRepository;
 
     /**
-     * @param EspecialistaRepository $especialistaRepository
+     * EspecialistaService constructor.
+     * @param EspecialistaRepository $especialistaRepository The specialist repository instance.
      */
     public function __construct(EspecialistaRepository $especialistaRepository)
     {
@@ -22,7 +23,8 @@ class EspecialistaService
     }
 
     /**
-     * @return EspecialistaUsuarioDTO[]
+     * Retrieves all specialists with their associated user data.
+     * @return EspecialistaUsuarioDTO[] An array of EspecialistaUsuarioDTO objects.
      */
     public function getAllEspecialistas(): array
     {

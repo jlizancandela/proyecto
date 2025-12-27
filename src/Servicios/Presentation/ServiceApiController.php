@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * ServiceApiController
+ *
+ * Handles API requests related to service management, allowing to retrieve, create, update,
+ * activate, and deactivate services.
+ */
+
 namespace Servicios\Presentation;
 
 use Servicios\Application\ServicioService;
@@ -8,11 +15,19 @@ class ServiceApiController
 {
     private ServicioService $service;
 
+    /**
+     * ServiceApiController constructor.
+     * @param ServicioService $service The service application service instance.
+     */
     public function __construct(ServicioService $service)
     {
         $this->service = $service;
     }
 
+    /**
+     * Retrieves all services.
+     * @return void
+     */
     public function getAll(): void
     {
         header('Content-Type: application/json');
@@ -44,7 +59,9 @@ class ServiceApiController
     }
 
     /**
-     * Gets a single service by ID
+     * Retrieves a single service by its ID.
+     * @param int $id The ID of the service to retrieve.
+     * @return void
      */
     public function getServiceById(int $id): void
     {
@@ -83,7 +100,8 @@ class ServiceApiController
     }
 
     /**
-     * Creates a new service
+     * Creates a new service.
+     * @return void
      */
     public function createService(): void
     {
@@ -125,7 +143,9 @@ class ServiceApiController
     }
 
     /**
-     * Updates an existing service
+     * Updates an existing service.
+     * @param int $id The ID of the service to update.
+     * @return void
      */
     public function updateService(int $id): void
     {
@@ -167,7 +187,9 @@ class ServiceApiController
     }
 
     /**
-     * Deactivates a service (soft delete)
+     * Deactivates a service (sets its 'activo' status to false).
+     * @param int $id The ID of the service to deactivate.
+     * @return void
      */
     public function deactivateService(int $id): void
     {
@@ -190,7 +212,9 @@ class ServiceApiController
     }
 
     /**
-     * Activates a service
+     * Activates a service (sets its 'activo' status to true).
+     * @param int $id The ID of the service to activate.
+     * @return void
      */
     public function activateService(int $id): void
     {

@@ -1,4 +1,7 @@
-// Handles password visibility toggle for login form.
+/**
+ * @file Handles login form interactions, specifically password visibility.
+ * @project app-reservas
+ */
 
 const loginForm = document.getElementById("login-form");
 

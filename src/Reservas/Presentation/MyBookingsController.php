@@ -16,6 +16,11 @@ class MyBookingsController
     private Engine $latte;
     private ReservaService $reservaService;
 
+    /**
+     * MyBookingsController constructor.
+     * @param Engine $latte The Latte templating engine instance.
+     * @param ReservaService $reservaService The booking service instance.
+     */
     public function __construct(Engine $latte, ReservaService $reservaService)
     {
         $this->latte = $latte;

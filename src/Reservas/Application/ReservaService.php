@@ -16,6 +16,10 @@ class ReservaService
 {
     private ReservaRepository $reservaRepository;
 
+    /**
+     * ReservaService constructor.
+     * @param ReservaRepository $reservaRepository The booking repository instance.
+     */
     public function __construct(ReservaRepository $reservaRepository)
     {
         $this->reservaRepository = $reservaRepository;
