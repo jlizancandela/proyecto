@@ -86,7 +86,6 @@ isset($filters['fecha_hasta']) || isset($filters['estado'])}
                 type="button"
                 class="btn btn-sm {if !isset($filters['estado'])}btn-primary{else}btn-outline-secondary{/if}"
                 data-estado=""
-                onclick="selectEstado('')"
               >
                 <i class="bi bi-list-ul me-1"></i>
                 Todas
@@ -96,7 +95,6 @@ isset($filters['fecha_hasta']) || isset($filters['estado'])}
                 type="button"
                 class="btn btn-sm {if isset($filters['estado']) && $filters['estado'] === 'Pendiente'}btn-warning text-dark{else}btn-outline-warning{/if}"
                 data-estado="Pendiente"
-                onclick="selectEstado('Pendiente')"
               >
                 <i class="bi bi-clock-history me-1"></i>
                 Pendiente
@@ -106,7 +104,6 @@ isset($filters['fecha_hasta']) || isset($filters['estado'])}
                 type="button"
                 class="btn btn-sm {if isset($filters['estado']) && $filters['estado'] === 'Confirmada'}btn-success{else}btn-outline-success{/if}"
                 data-estado="Confirmada"
-                onclick="selectEstado('Confirmada')"
               >
                 <i class="bi bi-check-circle me-1"></i>
                 Confirmada
@@ -116,7 +113,6 @@ isset($filters['fecha_hasta']) || isset($filters['estado'])}
                 type="button"
                 class="btn btn-sm {if isset($filters['estado']) && $filters['estado'] === 'Completada'}btn-info{else}btn-outline-info{/if}"
                 data-estado="Completada"
-                onclick="selectEstado('Completada')"
               >
                 <i class="bi bi-check-all me-1"></i>
                 Completada
@@ -126,7 +122,6 @@ isset($filters['fecha_hasta']) || isset($filters['estado'])}
                 type="button"
                 class="btn btn-sm {if isset($filters['estado']) && $filters['estado'] === 'Cancelada'}btn-danger{else}btn-outline-danger{/if}"
                 data-estado="Cancelada"
-                onclick="selectEstado('Cancelada')"
               >
                 <i class="bi bi-x-circle me-1"></i>
                 Cancelada
