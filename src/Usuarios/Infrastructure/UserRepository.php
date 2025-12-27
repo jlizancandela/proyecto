@@ -31,6 +31,38 @@ class UserRepository
     }
 
     /**
+     * Builds the ORDER BY clause for queries.
+     * 
+     * @param string $sort The column to sort by ('nombre', 'email', 'rol', 'fecha').
+     * @param string $order The sorting order ('asc' or 'desc').
+     * @return string The ORDER BY clause.
+     */
+    private function buildOrderBy(string $sort = '', string $order = 'asc'): string
+    {
+        $orderBy = "id_usuario DESC";
+
+        if (!empty($sort)) {
+            $orderDirection = strtoupper($order) === 'DESC' ? 'DESC' : 'ASC';
+            switch ($sort) {
+                case 'nombre':
+                    $orderBy = "nombre $orderDirection, apellidos $orderDirection";
+                    break;
+                case 'email':
+                    $orderBy = "email $orderDirection";
+                    break;
+                case 'rol':
+                    $orderBy = "rol $orderDirection";
+                    break;
+                case 'fecha':
+                    $orderBy = "fecha_registro $orderDirection";
+                    break;
+            }
+        }
+
+        return $orderBy;
+    }
+
+    /**
      * Retrieves all users from the database with pagination and sorting.
      *
      * @param int $limit The maximum number of users to retrieve.
@@ -43,25 +75,7 @@ class UserRepository
     public function getAllUsers($limit = 10, $offset = 0, $sort = '', $order = 'asc'): array
     {
         try {
-            // Dynamic ORDER BY
-            $orderBy = "id_usuario DESC";
-            if (!empty($sort)) {
-                $orderDirection = strtoupper($order) === 'DESC' ? 'DESC' : 'ASC';
-                switch ($sort) {
-                    case 'nombre':
-                        $orderBy = "nombre $orderDirection, apellidos $orderDirection";
-                        break;
-                    case 'email':
-                        $orderBy = "email $orderDirection";
-                        break;
-                    case 'rol':
-                        $orderBy = "rol $orderDirection";
-                        break;
-                    case 'fecha':
-                        $orderBy = "fecha_registro $orderDirection";
-                        break;
-                }
-            }
+            $orderBy = $this->buildOrderBy($sort, $order);
 
             $query = "SELECT * FROM USUARIO ORDER BY $orderBy LIMIT :limit OFFSET :offset";
             $stmt = $this->db->prepare($query);
@@ -116,25 +130,7 @@ class UserRepository
     public function searchUsers(string $search, int $limit = 10, int $offset = 0, $sort = '', $order = 'asc'): array
     {
         try {
-            // Dynamic ORDER BY
-            $orderBy = "id_usuario DESC";
-            if (!empty($sort)) {
-                $orderDirection = strtoupper($order) === 'DESC' ? 'DESC' : 'ASC';
-                switch ($sort) {
-                    case 'nombre':
-                        $orderBy = "nombre $orderDirection, apellidos $orderDirection";
-                        break;
-                    case 'email':
-                        $orderBy = "email $orderDirection";
-                        break;
-                    case 'rol':
-                        $orderBy = "rol $orderDirection";
-                        break;
-                    case 'fecha':
-                        $orderBy = "fecha_registro $orderDirection";
-                        break;
-                }
-            }
+            $orderBy = $this->buildOrderBy($sort, $order);
 
             $query = "SELECT * FROM USUARIO 
                       WHERE nombre LIKE :search1 
@@ -253,25 +249,7 @@ class UserRepository
     public function getUsersByRole(string $rol, int $limit = 10, int $offset = 0, $sort = '', $order = 'asc'): array
     {
         try {
-            // Dynamic ORDER BY
-            $orderBy = "id_usuario DESC";
-            if (!empty($sort)) {
-                $orderDirection = strtoupper($order) === 'DESC' ? 'DESC' : 'ASC';
-                switch ($sort) {
-                    case 'nombre':
-                        $orderBy = "nombre $orderDirection, apellidos $orderDirection";
-                        break;
-                    case 'email':
-                        $orderBy = "email $orderDirection";
-                        break;
-                    case 'rol':
-                        $orderBy = "rol $orderDirection";
-                        break;
-                    case 'fecha':
-                        $orderBy = "fecha_registro $orderDirection";
-                        break;
-                }
-            }
+            $orderBy = $this->buildOrderBy($sort, $order);
 
             $query = "SELECT * FROM USUARIO WHERE rol = :rol ORDER BY $orderBy LIMIT :limit OFFSET :offset";
             $stmt = $this->db->prepare($query);
@@ -411,29 +389,6 @@ class UserRepository
         }
     }
 
-    /**
-     * Changes the role of a specific user.
-     *
-     * @param int $id The ID of the user.
-     * @param UserRole $newRole The new role to assign.
-     * @return void
-     * @throws PDOException If there is a database error.
-     */
-    public function changeUserRole(int $id, UserRole $newRole): void
-    {
-        try {
-            $query = "UPDATE USUARIO SET rol = :rol WHERE id_usuario = :id";
-            $stmt = $this->db->prepare($query);
-            $roleValue = $newRole->value;
-            $stmt->bindParam(":rol", $roleValue);
-            $stmt->bindParam(":id", $id);
-            $stmt->execute();
-        } catch (PDOException $e) {
-            throw new PDOException(
-                "Error al cambiar el rol del usuario: " . $e->getMessage(),
-            );
-        }
-    }
 
     /**
      * Sets the active status of a user.
@@ -588,25 +543,8 @@ class UserRepository
 
             // Order By
             $sort = $filters['sort'] ?? '';
-            $order = strtoupper($filters['order'] ?? 'ASC') === 'DESC' ? 'DESC' : 'ASC';
-            $orderBy = "id_usuario DESC";
-
-            if (!empty($sort)) {
-                switch ($sort) {
-                    case 'nombre':
-                        $orderBy = "nombre $order, apellidos $order";
-                        break;
-                    case 'email':
-                        $orderBy = "email $order";
-                        break;
-                    case 'rol':
-                        $orderBy = "rol $order";
-                        break;
-                    case 'fecha':
-                        $orderBy = "fecha_registro $order";
-                        break;
-                }
-            }
+            $order = $filters['order'] ?? 'asc';
+            $orderBy = $this->buildOrderBy($sort, $order);
             $sql .= " ORDER BY $orderBy";
 
             // Pagination
