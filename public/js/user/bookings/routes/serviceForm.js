@@ -1,16 +1,4 @@
-/**
- * ========================================
- * SERVICE FORM - Componente Presentacional
- * ========================================
- *
- * Componente puramente presentacional para la selección de servicio.
- * Sin lógica de negocio, sin useEffect, sin cálculos.
- *
- * Responsabilidades:
- * - Mostrar la lista de servicios disponibles
- * - Conectar el componente Service con la acción de selección
- * - Renderizar la UI de forma reactiva
- */
+// Presentational component for service selection, displays available services as cards.
 
 import { h } from "https://esm.sh/preact@10.19.3";
 import { useStore } from "https://esm.sh/@nanostores/preact@0.5.1?deps=preact@10.19.3";
@@ -21,11 +9,10 @@ import { $services, $bookingDraft, selectServiceAction } from "../context/bookin
 const html = htm.bind(h);
 
 /**
- * Formulario de selección de servicio
- * Componente presentacional puro
+ * Renders the service selection form
+ * @returns {import("preact").VNode} Service form component
  */
 export const ServiceForm = () => {
-  // Suscribirse a los stores necesarios
   const services = useStore($services);
   const booking = useStore($bookingDraft);
 
