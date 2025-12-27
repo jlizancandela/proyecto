@@ -1,24 +1,20 @@
 <?php
 
-/**
- * Main application router configuration.
+//
+ * Router - Where all the app URLs live
  *
- * This file defines all HTTP routes for the application using Bramus Router.
- * Routes are organized by functionality and protected with authentication middleware.
+ * This file connects URLs to their controllers. When someone visits a page,
+ * the router decides which controller handles it.
  *
- * Route Groups:
- * - Public Routes: Landing page, contact form
- * - Authentication Routes: Login, register, password reset, reactivation
- * - Admin Routes: User management, service management, booking management
- * - User Routes: Profile, bookings, new booking
- * - Specialist Routes: Dashboard, bookings, profile
- * - PDF Export Routes: Admin reports
- * - Admin API Routes: CRUD operations for users, services, bookings
- * - Public API Routes: Services, specialists, bookings
- * - Stats API Routes: Dashboard statistics and KPIs
- *
- * @package app-reservas
- */
+ * What's inside:
+ * - Public stuff (home, contact)
+ * - Login and registration
+ * - Admin panel (users, services, bookings)
+ * - User area (profile, my bookings)
+ * - Specialist area (their bookings, profile)
+ * - PDF exports
+ * - API endpoints for the frontend
+
 
 use Bramus\Router\Router;
 use Shared\Infrastructure\Middleware\AuthMiddleware;
@@ -42,554 +38,538 @@ require_once __DIR__ . '/../dependencies.php';
 
 $router = new Router();
 
-// =============================================================================
-//  GLOBAL MIDDLEWARE (Applied before route handlers)
-// =============================================================================
+// ============================================================================
+//  Security checks (run before everything else)
+// ============================================================================
 
-/**
- * Protect all /admin/api/* routes - Require admin authentication for API
- */
+// Only admins can use the admin API
 $router->before('GET|POST|PUT|DELETE', '/admin/api/.*', function () {
     AuthMiddleware::apiRequireAdmin();
 });
 
-/**
- * Protect all /admin/* routes - Require admin authentication for web pages
- */
+// Only admins can access admin pages
 $router->before('GET|POST|PUT|DELETE', '/admin/.*', function () {
     AuthMiddleware::requireAdmin();
 });
 
-/**
- * Protect all /user/* routes - Require user authentication
- */
+// You need to be logged in to access user pages
 $router->before('GET|POST|PUT|DELETE', '/user/.*', function () {
     AuthMiddleware::requireAuth();
 });
 
-/**
- * Protect all /specialist/* routes - Require specialist role
- */
+// Only specialists can access specialist pages
 $router->before('GET|POST|PUT|DELETE', '/specialist/.*', function () {
     AuthMiddleware::requireSpecialist();
 });
 
-/**
- * Protect /api/me endpoint - Require authentication for current user data
- */
+// You need to be logged in to get your own data
 $router->before('GET|POST|PUT|DELETE', '/api/me', function () {
     AuthMiddleware::apiRequireAuth();
 });
 
-/**
- * Protect /api/reservas* endpoints - Require authentication for bookings API
- */
+// You need to be logged in to manage bookings
 $router->before('GET|POST|PUT|DELETE', '/api/reservas.*', function () {
     AuthMiddleware::apiRequireAuth();
 });
 
-// =============================================================================
-//  PUBLIC ROUTES
-// =============================================================================
+// ============================================================================
+//  Public pages (anyone can visit)
+// ============================================================================
 
-/**
- * GET / - Landing page
- */
+// Home page
 $router->get('/', function () use ($latte, $emailService) {
     $controller = new HomeController($latte, $emailService);
     echo $controller->index();
 });
 
-/**
- * POST /contacto - Contact form submission
- */
+// Send contact form
 $router->post('/contacto', function () use ($latte, $emailService) {
     $controller = new HomeController($latte, $emailService);
     $controller->contact();
 });
 
-// =============================================================================
-//  AUTHENTICATION ROUTES
-// =============================================================================
+// ============================================================================
+//  Login, register, and password stuff
+// ============================================================================
 
-/**
- * GET /login - Show login form
- */
+//
+ Show login page
+
 $router->get('/login', function () use ($latte, $authService, $emailService, $userService) {
     $controller = new AuthController($latte, $authService, $emailService, $userService);
     echo $controller->showLogin();
 });
 
-/**
- * POST /login - Process login
- */
+//
+ Log in
+
 $router->post('/login', function () use ($latte, $authService, $emailService, $userService) {
     $controller = new AuthController($latte, $authService, $emailService, $userService);
     $controller->login();
 });
 
-/**
- * GET /register - Show registration form
- */
+//
+ Show registration page
+
 $router->get('/register', function () use ($latte, $authService, $emailService, $userService) {
     $controller = new AuthController($latte, $authService, $emailService, $userService);
     echo $controller->showRegister();
 });
 
-/**
- * POST /register - Process registration
- */
+//
+ Create new account
+
 $router->post('/register', function () use ($latte, $authService, $emailService, $userService) {
     $controller = new AuthController($latte, $authService, $emailService, $userService);
     $controller->register();
 });
 
-/**
- * GET /logout - Logout user
- */
+//
+ Log out
+
 $router->get('/logout', function () use ($latte, $authService, $emailService, $userService) {
     $controller = new AuthController($latte, $authService, $emailService, $userService);
     $controller->logout();
 });
 
-/**
- * GET /forgot-password - Show forgot password form
- */
+//
+ Forgot password page
+
 $router->get('/forgot-password', function () use ($latte, $authService, $emailService, $userService) {
     $controller = new AuthController($latte, $authService, $emailService, $userService);
     echo $controller->showForgotPasswordForm();
 });
 
-/**
- * POST /forgot-password - Send password reset link
- */
+//
+ Send password reset email
+
 $router->post('/forgot-password', function () use ($latte, $authService, $emailService, $userService) {
     $controller = new AuthController($latte, $authService, $emailService, $userService);
     $controller->sendResetLink();
 });
 
-/**
- * GET /reset-password - Show reset password form
- */
+//
+ Reset password page
+
 $router->get('/reset-password', function () use ($latte, $authService, $emailService, $userService) {
     $controller = new AuthController($latte, $authService, $emailService, $userService);
     echo $controller->showResetPasswordForm();
 });
 
-/**
- * POST /reset-password - Process password reset
- */
+//
+ Change password
+
 $router->post('/reset-password', function () use ($latte, $authService, $emailService, $userService) {
     $controller = new AuthController($latte, $authService, $emailService, $userService);
     $controller->resetPassword();
 });
 
-/**
- * GET /reactivate - Show account reactivation form
- */
+//
+ Reactivate account page
+
 $router->get('/reactivate', function () use ($latte, $authService, $emailService, $userService) {
     $controller = new AuthController($latte, $authService, $emailService, $userService);
     echo $controller->showReactivate();
 });
 
-/**
- * POST /reactivate - Process account reactivation
- */
+//
+ Reactivate account
+
 $router->post('/reactivate', function () use ($latte, $authService, $emailService, $userService) {
     $controller = new AuthController($latte, $authService, $emailService, $userService);
     $controller->reactivate();
 });
 
-// =============================================================================
-//  ADMIN ROUTES (Web Pages)
-// =============================================================================
+// ============================================================================
+//  Admin panel pages
+// ============================================================================
 
-/**
- * GET /admin - Admin dashboard
- */
+//
+ Admin dashboard
+
 $router->get('/admin', function () use ($latte) {
     $controller = new AdminController($latte);
     echo $controller->index();
 });
 
-/**
- * GET /admin/users - User management page
- */
+//
+ Manage users
+
 $router->get('/admin/users', function () use ($latte, $userService, $servicioService, $especialistaServicioRepository, $especialistaRepository) {
     $controller = new AdminController($latte, $userService, $servicioService, null, $especialistaServicioRepository, $especialistaRepository);
     echo $controller->usersManagement();
 });
 
-/**
- * GET /admin/services - Service management page
- */
+//
+ Manage services
+
 $router->get('/admin/services', function () use ($latte, $servicioService) {
     $controller = new AdminController($latte, null, $servicioService);
     echo $controller->servicesManagement();
 });
 
-/**
- * GET /admin/bookings - Booking management page
- */
+//
+ Manage bookings
+
 $router->get('/admin/bookings', function () use ($latte, $userService, $servicioService, $reservaService, $especialistaRepository) {
     $controller = new AdminController($latte, $userService, $servicioService, $reservaService, null, $especialistaRepository);
     echo $controller->bookingsManagement();
 });
 
-// =============================================================================
-//  USER ROUTES
-// =============================================================================
+// ============================================================================
+//  User area
+// ============================================================================
 
-/**
- * GET /user - User dashboard
- */
+//
+ User dashboard
+
 $router->get('/user', function () use ($latte, $reservaService) {
     $controller = new UserController($latte, $reservaService);
     echo $controller->index();
 });
 
-/**
- * GET /user/profile - User profile page
- */
+//
+ User profile
+
 $router->get('/user/profile', function () use ($latte, $userService) {
     $controller = new ProfileController($latte, $userService);
     echo $controller->index();
 });
 
-/**
- * POST /user/profile/update - Update user profile
- */
+//
+ Update profile
+
 $router->post('/user/profile/update', function () use ($latte, $userService) {
     $controller = new ProfileController($latte, $userService);
     $controller->update();
 });
 
-/**
- * POST /user/profile/delete - Delete user account
- */
+//
+ Delete account
+
 $router->post('/user/profile/delete', function () use ($latte, $userService) {
     $controller = new ProfileController($latte, $userService);
     $controller->delete();
 });
 
-/**
- * GET /user/reservas - User bookings list
- */
+//
+ My bookings
+
 $router->get('/user/reservas', function () use ($latte, $reservaService) {
     $controller = new MyBookingsController($latte, $reservaService);
     echo $controller->index();
 });
 
-/**
- * GET /user/reservas/nueva - New booking form (Preact app)
- */
+//
+ Make a new booking
+
 $router->get('/user/reservas/nueva', function () use ($latte) {
     $controller = new BookingController($latte);
     echo $controller->index();
 });
 
-/**
- * POST /user/reservas/cancel/{id} - Cancel a booking
- */
+//
+ Cancel a booking
+
 $router->post('/user/reservas/cancel/(\\d+)', function ($bookingId) use ($latte, $reservaService) {
     $controller = new MyBookingsController($latte, $reservaService);
     $controller->cancel((int)$bookingId);
 });
 
-/**
- * GET /user/reservas/modify/{id} - Modify a booking
- */
+//
+ Modify a booking
+
 $router->get('/user/reservas/modify/(\\d+)', function ($bookingId) use ($latte, $reservaService) {
     $controller = new MyBookingsController($latte, $reservaService);
     $controller->modify((int)$bookingId);
 });
 
-/**
- * GET /user/reservas/pdf - Export user bookings to PDF
- */
+//
+ Download my bookings as PDF
+
 $router->get('/user/reservas/pdf', function () use ($latte, $reservaService) {
     $controller = new PdfExportController($latte, $reservaService);
     $controller->exportReservas();
 });
 
-// =============================================================================
-//  SPECIALIST ROUTES
-// =============================================================================
+// ============================================================================
+//  Specialist area
+// ============================================================================
 
-/**
- * GET /specialist - Specialist dashboard
- */
+//
+ Specialist dashboard
+
 $router->get('/specialist', function () use ($latte, $especialistaRepository, $reservaRepository) {
     $controller = new SpecialistController($latte, $especialistaRepository, $reservaRepository);
     echo $controller->index();
 });
 
-/**
- * GET /specialist/bookings - Specialist bookings management
- */
+//
+ Specialist bookings
+
 $router->get('/specialist/bookings', function () use ($latte, $especialistaRepository, $reservaRepository) {
     $controller = new SpecialistController($latte, $especialistaRepository, $reservaRepository);
     echo $controller->bookings();
 });
 
-/**
- * GET /specialist/profile - Specialist profile page
- */
+//
+ Specialist profile
+
 $router->get('/specialist/profile', function () use ($latte, $especialistaRepository, $reservaRepository) {
     $controller = new SpecialistController($latte, $especialistaRepository, $reservaRepository);
     echo $controller->profile();
 });
 
-// =============================================================================
-//  PDF EXPORT ROUTES (Admin)
-// =============================================================================
+// ============================================================================
+//  PDF exports (admin only)
+// ============================================================================
 
-/**
- * GET /admin/bookings/pdf - Export admin bookings to PDF
- */
+//
+ Export bookings to PDF
+
 $router->get('/admin/bookings/pdf', function () use ($latte, $reservaService) {
     $controller = new PdfExportController($latte, $reservaService);
     $controller->exportAdminReservas();
 });
 
-/**
- * GET /admin/users/pdf - Export users list to PDF
- */
+//
+ Export users to PDF
+
 $router->get('/admin/users/pdf', function () use ($latte, $reservaService, $userService) {
     $controller = new PdfExportController($latte, $reservaService, $userService);
     $controller->exportAdminUsers();
 });
 
-// =============================================================================
-//  ADMIN API ROUTES - Users
-// =============================================================================
+// ============================================================================
+//  Admin API - Users
+// ============================================================================
 
-/**
- * GET /admin/api/users - Get all users with pagination
- */
+//
+ Get all users
+
 $router->get('/admin/api/users', function () use ($latte, $userService, $especialistaServicioRepository, $especialistaRepository) {
     $controller = new UserApiController($latte, $userService, $especialistaServicioRepository, $especialistaRepository);
     $controller->getAllUsers();
 });
 
-/**
- * POST /admin/api/users - Create new user
- */
+//
+ Create user
+
 $router->post('/admin/api/users', function () use ($latte, $userService, $especialistaServicioRepository, $especialistaRepository) {
     $controller = new UserApiController($latte, $userService, $especialistaServicioRepository, $especialistaRepository);
     $controller->createUser();
 });
 
-/**
- * GET /admin/api/users/{id} - Get user by ID
- */
+//
+ Get one user
+
 $router->get('/admin/api/users/(\\d+)', function ($id) use ($latte, $userService, $especialistaServicioRepository, $especialistaRepository) {
     $controller = new UserApiController($latte, $userService, $especialistaServicioRepository, $especialistaRepository);
     $controller->getUserById((int)$id);
 });
 
-/**
- * POST /admin/api/users/{id} - Update user (POST method)
- */
+//
+ Update user (POST)
+
 $router->post('/admin/api/users/(\\d+)', function ($id) use ($latte, $userService, $especialistaServicioRepository, $especialistaRepository) {
     $controller = new UserApiController($latte, $userService, $especialistaServicioRepository, $especialistaRepository);
     $controller->updateUser((int)$id);
 });
 
-/**
- * PUT /admin/api/users/{id} - Update user (PUT method)
- */
+//
+ Update user (PUT)
+
 $router->put('/admin/api/users/(\\d+)', function ($id) use ($latte, $userService, $especialistaServicioRepository, $especialistaRepository) {
     $controller = new UserApiController($latte, $userService, $especialistaServicioRepository, $especialistaRepository);
     $controller->updateUser((int)$id);
 });
 
-/**
- * DELETE /admin/api/users/{id} - Delete (deactivate) user
- */
+//
+ Delete user
+
 $router->delete('/admin/api/users/(\\d+)', function ($id) use ($latte, $userService, $especialistaServicioRepository, $especialistaRepository) {
     $controller = new UserApiController($latte, $userService, $especialistaServicioRepository, $especialistaRepository);
     $controller->deleteUser((int)$id);
 });
 
-// =============================================================================
-//  ADMIN API ROUTES - Services
-// =============================================================================
+// ============================================================================
+//  Admin API - Services
+// ============================================================================
 
-/**
- * GET /admin/api/services - Get all services
- */
+//
+ Get all services
+
 $router->get('/admin/api/services', function () use ($servicioService) {
     $controller = new ServiceApiController($servicioService);
     $controller->getAll();
 });
 
-/**
- * GET /admin/api/services/{id} - Get service by ID
- */
+//
+ Get one service
+
 $router->get('/admin/api/services/(\\d+)', function ($id) use ($servicioService) {
     $controller = new ServiceApiController($servicioService);
     $controller->getServiceById((int)$id);
 });
 
-/**
- * POST /admin/api/services - Create new service
- */
+//
+ Create service
+
 $router->post('/admin/api/services', function () use ($servicioService) {
     $controller = new ServiceApiController($servicioService);
     $controller->createService();
 });
 
-/**
- * PUT /admin/api/services/{id} - Update service
- */
+//
+ Update service
+
 $router->put('/admin/api/services/(\\d+)', function ($id) use ($servicioService) {
     $controller = new ServiceApiController($servicioService);
     $controller->updateService((int)$id);
 });
 
-/**
- * POST /admin/api/services/{id}/activate - Activate service
- */
+//
+ Activate service
+
 $router->post('/admin/api/services/(\\d+)/activate', function ($id) use ($servicioService) {
     $controller = new ServiceApiController($servicioService);
     $controller->activateService((int)$id);
 });
 
-/**
- * POST /admin/api/services/{id}/deactivate - Deactivate service
- */
+//
+ Deactivate service
+
 $router->post('/admin/api/services/(\\d+)/deactivate', function ($id) use ($servicioService) {
     $controller = new ServiceApiController($servicioService);
     $controller->deactivateService((int)$id);
 });
 
-// =============================================================================
-//  ADMIN API ROUTES - Bookings
-// =============================================================================
+// ============================================================================
+//  Admin API - Bookings
+// ============================================================================
 
-/**
- * GET /admin/api/reservas - Get all bookings with filters
- */
+//
+ Get all bookings
+
 $router->get('/admin/api/reservas', function () use ($reservaService) {
     $controller = new BookingAdminApiController($reservaService);
     $controller->getAllBookings();
 });
 
-/**
- * GET /admin/api/reservas/{id} - Get booking by ID
- */
+//
+ Get one booking
+
 $router->get('/admin/api/reservas/(\\d+)', function ($id) use ($reservaService) {
     $controller = new BookingAdminApiController($reservaService);
     $controller->getBookingById((int)$id);
 });
 
-/**
- * POST /admin/api/reservas - Create new booking
- */
+//
+ Create booking
+
 $router->post('/admin/api/reservas', function () use ($reservaService) {
     $controller = new BookingAdminApiController($reservaService);
     $controller->createBooking();
 });
 
-/**
- * PUT /admin/api/reservas/{id} - Update booking
- */
+//
+ Update booking
+
 $router->put('/admin/api/reservas/(\\d+)', function ($id) use ($reservaService) {
     $controller = new BookingAdminApiController($reservaService);
     $controller->updateBooking((int)$id);
 });
 
-/**
- * DELETE /admin/api/reservas/{id} - Delete booking
- */
+//
+ Delete booking
+
 $router->delete('/admin/api/reservas/(\\d+)', function ($id) use ($reservaService) {
     $controller = new BookingAdminApiController($reservaService);
     $controller->deleteBooking((int)$id);
 });
 
-// =============================================================================
-//  ADMIN API ROUTES - Statistics
-// =============================================================================
+// ============================================================================
+//  Admin API - Statistics (for dashboard charts)
+// ============================================================================
 
-/**
- * GET /admin/api/especialistas - Get all specialists with user data
- */
+//
+ Get all specialists
+
 $router->get('/admin/api/especialistas', function () use ($especialistaRepository, $reservaService, $servicioService) {
     $controller = new StatsApiController($especialistaRepository, $reservaService, $servicioService);
     $controller->getEspecialistas();
 });
 
-/**
- * GET /admin/api/stats/specialist-occupancy - Get specialist occupancy statistics
- */
+//
+ Specialist occupancy stats
+
 $router->get('/admin/api/stats/specialist-occupancy', function () use ($especialistaRepository, $reservaService, $servicioService) {
     $controller = new StatsApiController($especialistaRepository, $reservaService, $servicioService);
     $controller->getSpecialistOccupancy();
 });
 
-/**
- * GET /admin/api/stats/popular-services - Get popular services statistics
- */
+//
+ Popular services stats
+
 $router->get('/admin/api/stats/popular-services', function () use ($especialistaRepository, $reservaService, $servicioService) {
     $controller = new StatsApiController($especialistaRepository, $reservaService, $servicioService);
     $controller->getPopularServices();
 });
 
-/**
- * GET /admin/api/stats/today-kpis - Get today's KPIs (bookings, revenue)
- */
+//
+ Today's numbers (bookings and revenue)
+
 $router->get('/admin/api/stats/today-kpis', function () use ($especialistaRepository, $reservaService, $servicioService) {
     $controller = new StatsApiController($especialistaRepository, $reservaService, $servicioService);
     $controller->getTodayKpis();
 });
 
-// =============================================================================
-//  PUBLIC API ROUTES
-// =============================================================================
+// ============================================================================
+//  Public API (for the booking app)
+// ============================================================================
 
-/**
- * GET /api/services - Get all active services
- */
+//
+ Get available services
+
 $router->get('/api/services', function () use ($servicioService) {
     $controller = new ServiceApiController($servicioService);
     $controller->getAll();
 });
 
-/**
- * GET /api/especialistas/disponibles - Get available specialists for service/date
- */
+//
+ Get available specialists for a service
+
 $router->get('/api/especialistas/disponibles', function () use ($especialistaRepository) {
     $controller = new EspecialistaApiController($especialistaRepository);
     $controller->getDisponibles();
 });
 
-/**
- * GET /api/reservas - Get user bookings
- */
+//
+ Get my bookings
+
 $router->get('/api/reservas', function () use ($reservaService) {
     $controller = new BookingApiController($reservaService);
     $controller->getReservas();
 });
 
-/**
- * POST /api/reservas - Create new booking
- */
+//
+ Create a booking
+
 $router->post('/api/reservas', function () use ($reservaService) {
     $controller = new BookingApiController($reservaService);
     $controller->createReserva();
 });
 
-/**
- * GET /api/me - Get current authenticated user data
- */
+//
+ Get my user data
+
 $router->get('/api/me', function () use ($latte, $userService, $especialistaServicioRepository, $especialistaRepository) {
     $controller = new UserApiController($latte, $userService, $especialistaServicioRepository, $especialistaRepository);
     $controller->getCurrentUser();
 });
 
-// =============================================================================
-//  RUN ROUTER
-// =============================================================================
+// ============================================================================
+//  Start the router
+// ============================================================================
 
 $router->run();
