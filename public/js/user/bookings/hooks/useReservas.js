@@ -2,10 +2,6 @@
  * @file useReservas Hook - Bridge to Store
  * @project app-reservas
  *
- * ========================================
- * USE RESERVAS HOOK - Bridge to Store
- * ========================================
- *
  * Simplified hook that acts as a bridge between components
  * and the centralized store. Does NOT contain business logic.
  *
