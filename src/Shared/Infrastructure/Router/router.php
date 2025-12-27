@@ -93,7 +93,7 @@ $router->before('GET|POST|PUT|DELETE', '/api/reservas.*', function () {
 // =============================================================================
 
 /**
- * GET / - Landing page
+ * Home page
  */
 $router->get('/', function () use ($latte, $emailService) {
     $controller = new HomeController($latte, $emailService);
@@ -101,7 +101,7 @@ $router->get('/', function () use ($latte, $emailService) {
 });
 
 /**
- * POST /contacto - Contact form submission
+ * Send contact form
  */
 $router->post('/contacto', function () use ($latte, $emailService) {
     $controller = new HomeController($latte, $emailService);
@@ -113,7 +113,7 @@ $router->post('/contacto', function () use ($latte, $emailService) {
 // =============================================================================
 
 /**
- * GET /login - Show login form
+ * Show login page
  */
 $router->get('/login', function () use ($latte, $authService, $emailService, $userService) {
     $controller = new AuthController($latte, $authService, $emailService, $userService);
@@ -121,7 +121,7 @@ $router->get('/login', function () use ($latte, $authService, $emailService, $us
 });
 
 /**
- * POST /login - Process login
+ * Log in
  */
 $router->post('/login', function () use ($latte, $authService, $emailService, $userService) {
     $controller = new AuthController($latte, $authService, $emailService, $userService);
@@ -129,7 +129,7 @@ $router->post('/login', function () use ($latte, $authService, $emailService, $u
 });
 
 /**
- * GET /register - Show registration form
+ * Show registration page
  */
 $router->get('/register', function () use ($latte, $authService, $emailService, $userService) {
     $controller = new AuthController($latte, $authService, $emailService, $userService);
@@ -137,7 +137,7 @@ $router->get('/register', function () use ($latte, $authService, $emailService, 
 });
 
 /**
- * POST /register - Process registration
+ * Create new account
  */
 $router->post('/register', function () use ($latte, $authService, $emailService, $userService) {
     $controller = new AuthController($latte, $authService, $emailService, $userService);
@@ -145,7 +145,7 @@ $router->post('/register', function () use ($latte, $authService, $emailService,
 });
 
 /**
- * GET /logout - Logout user
+ * Log out
  */
 $router->get('/logout', function () use ($latte, $authService, $emailService, $userService) {
     $controller = new AuthController($latte, $authService, $emailService, $userService);
@@ -153,7 +153,7 @@ $router->get('/logout', function () use ($latte, $authService, $emailService, $u
 });
 
 /**
- * GET /forgot-password - Show forgot password form
+ * Forgot password page
  */
 $router->get('/forgot-password', function () use ($latte, $authService, $emailService, $userService) {
     $controller = new AuthController($latte, $authService, $emailService, $userService);
@@ -161,7 +161,7 @@ $router->get('/forgot-password', function () use ($latte, $authService, $emailSe
 });
 
 /**
- * POST /forgot-password - Send password reset link
+ * Send password reset email
  */
 $router->post('/forgot-password', function () use ($latte, $authService, $emailService, $userService) {
     $controller = new AuthController($latte, $authService, $emailService, $userService);
@@ -169,7 +169,7 @@ $router->post('/forgot-password', function () use ($latte, $authService, $emailS
 });
 
 /**
- * GET /reset-password - Show reset password form
+ * Reset password page
  */
 $router->get('/reset-password', function () use ($latte, $authService, $emailService, $userService) {
     $controller = new AuthController($latte, $authService, $emailService, $userService);
@@ -177,7 +177,7 @@ $router->get('/reset-password', function () use ($latte, $authService, $emailSer
 });
 
 /**
- * POST /reset-password - Process password reset
+ * Change password
  */
 $router->post('/reset-password', function () use ($latte, $authService, $emailService, $userService) {
     $controller = new AuthController($latte, $authService, $emailService, $userService);
@@ -185,7 +185,7 @@ $router->post('/reset-password', function () use ($latte, $authService, $emailSe
 });
 
 /**
- * GET /reactivate - Show account reactivation form
+ * Reactivate account page
  */
 $router->get('/reactivate', function () use ($latte, $authService, $emailService, $userService) {
     $controller = new AuthController($latte, $authService, $emailService, $userService);
@@ -193,7 +193,7 @@ $router->get('/reactivate', function () use ($latte, $authService, $emailService
 });
 
 /**
- * POST /reactivate - Process account reactivation
+ * Reactivate account
  */
 $router->post('/reactivate', function () use ($latte, $authService, $emailService, $userService) {
     $controller = new AuthController($latte, $authService, $emailService, $userService);
@@ -205,7 +205,7 @@ $router->post('/reactivate', function () use ($latte, $authService, $emailServic
 // =============================================================================
 
 /**
- * GET /admin - Admin dashboard
+ * Admin dashboard
  */
 $router->get('/admin', function () use ($latte) {
     $controller = new AdminController($latte);
@@ -213,7 +213,7 @@ $router->get('/admin', function () use ($latte) {
 });
 
 /**
- * GET /admin/users - User management page
+ * Manage users
  */
 $router->get('/admin/users', function () use ($latte, $userService, $servicioService, $especialistaServicioRepository, $especialistaRepository) {
     $controller = new AdminController($latte, $userService, $servicioService, null, $especialistaServicioRepository, $especialistaRepository);
@@ -221,7 +221,7 @@ $router->get('/admin/users', function () use ($latte, $userService, $servicioSer
 });
 
 /**
- * GET /admin/services - Service management page
+ * Manage services
  */
 $router->get('/admin/services', function () use ($latte, $servicioService) {
     $controller = new AdminController($latte, null, $servicioService);
@@ -229,7 +229,7 @@ $router->get('/admin/services', function () use ($latte, $servicioService) {
 });
 
 /**
- * GET /admin/bookings - Booking management page
+ * Manage bookings
  */
 $router->get('/admin/bookings', function () use ($latte, $userService, $servicioService, $reservaService, $especialistaRepository) {
     $controller = new AdminController($latte, $userService, $servicioService, $reservaService, null, $especialistaRepository);
@@ -241,7 +241,7 @@ $router->get('/admin/bookings', function () use ($latte, $userService, $servicio
 // =============================================================================
 
 /**
- * GET /user - User dashboard
+ * User dashboard
  */
 $router->get('/user', function () use ($latte, $reservaService) {
     $controller = new UserController($latte, $reservaService);
@@ -249,7 +249,7 @@ $router->get('/user', function () use ($latte, $reservaService) {
 });
 
 /**
- * GET /user/profile - User profile page
+ * User profile
  */
 $router->get('/user/profile', function () use ($latte, $userService) {
     $controller = new ProfileController($latte, $userService);
@@ -257,7 +257,7 @@ $router->get('/user/profile', function () use ($latte, $userService) {
 });
 
 /**
- * POST /user/profile/update - Update user profile
+ * Update profile
  */
 $router->post('/user/profile/update', function () use ($latte, $userService) {
     $controller = new ProfileController($latte, $userService);
@@ -265,7 +265,7 @@ $router->post('/user/profile/update', function () use ($latte, $userService) {
 });
 
 /**
- * POST /user/profile/delete - Delete user account
+ * Delete account
  */
 $router->post('/user/profile/delete', function () use ($latte, $userService) {
     $controller = new ProfileController($latte, $userService);
@@ -273,7 +273,7 @@ $router->post('/user/profile/delete', function () use ($latte, $userService) {
 });
 
 /**
- * GET /user/reservas - User bookings list
+ * My bookings
  */
 $router->get('/user/reservas', function () use ($latte, $reservaService) {
     $controller = new MyBookingsController($latte, $reservaService);
@@ -281,7 +281,7 @@ $router->get('/user/reservas', function () use ($latte, $reservaService) {
 });
 
 /**
- * GET /user/reservas/nueva - New booking form (Preact app)
+ * Make a new booking
  */
 $router->get('/user/reservas/nueva', function () use ($latte) {
     $controller = new BookingController($latte);
@@ -289,7 +289,7 @@ $router->get('/user/reservas/nueva', function () use ($latte) {
 });
 
 /**
- * POST /user/reservas/cancel/{id} - Cancel a booking
+ * Cancel a booking
  */
 $router->post('/user/reservas/cancel/(\\d+)', function ($bookingId) use ($latte, $reservaService) {
     $controller = new MyBookingsController($latte, $reservaService);
@@ -297,7 +297,7 @@ $router->post('/user/reservas/cancel/(\\d+)', function ($bookingId) use ($latte,
 });
 
 /**
- * GET /user/reservas/modify/{id} - Modify a booking
+ * Modify a booking
  */
 $router->get('/user/reservas/modify/(\\d+)', function ($bookingId) use ($latte, $reservaService) {
     $controller = new MyBookingsController($latte, $reservaService);
@@ -305,7 +305,7 @@ $router->get('/user/reservas/modify/(\\d+)', function ($bookingId) use ($latte, 
 });
 
 /**
- * GET /user/reservas/pdf - Export user bookings to PDF
+ * Download my bookings as PDF
  */
 $router->get('/user/reservas/pdf', function () use ($latte, $reservaService) {
     $controller = new PdfExportController($latte, $reservaService);
@@ -317,7 +317,7 @@ $router->get('/user/reservas/pdf', function () use ($latte, $reservaService) {
 // =============================================================================
 
 /**
- * GET /specialist - Specialist dashboard
+ * Specialist dashboard
  */
 $router->get('/specialist', function () use ($latte, $especialistaRepository, $reservaRepository) {
     $controller = new SpecialistController($latte, $especialistaRepository, $reservaRepository);
@@ -325,7 +325,7 @@ $router->get('/specialist', function () use ($latte, $especialistaRepository, $r
 });
 
 /**
- * GET /specialist/bookings - Specialist bookings management
+ * Specialist bookings
  */
 $router->get('/specialist/bookings', function () use ($latte, $especialistaRepository, $reservaRepository) {
     $controller = new SpecialistController($latte, $especialistaRepository, $reservaRepository);
@@ -333,7 +333,7 @@ $router->get('/specialist/bookings', function () use ($latte, $especialistaRepos
 });
 
 /**
- * GET /specialist/profile - Specialist profile page
+ * Specialist profile
  */
 $router->get('/specialist/profile', function () use ($latte, $especialistaRepository, $reservaRepository) {
     $controller = new SpecialistController($latte, $especialistaRepository, $reservaRepository);
@@ -345,7 +345,7 @@ $router->get('/specialist/profile', function () use ($latte, $especialistaReposi
 // =============================================================================
 
 /**
- * GET /admin/bookings/pdf - Export admin bookings to PDF
+ * Export bookings to PDF
  */
 $router->get('/admin/bookings/pdf', function () use ($latte, $reservaService) {
     $controller = new PdfExportController($latte, $reservaService);
@@ -353,7 +353,7 @@ $router->get('/admin/bookings/pdf', function () use ($latte, $reservaService) {
 });
 
 /**
- * GET /admin/users/pdf - Export users list to PDF
+ * Export users to PDF
  */
 $router->get('/admin/users/pdf', function () use ($latte, $reservaService, $userService) {
     $controller = new PdfExportController($latte, $reservaService, $userService);
@@ -365,7 +365,7 @@ $router->get('/admin/users/pdf', function () use ($latte, $reservaService, $user
 // =============================================================================
 
 /**
- * GET /admin/api/users - Get all users with pagination
+ * Get all users
  */
 $router->get('/admin/api/users', function () use ($latte, $userService, $especialistaServicioRepository, $especialistaRepository) {
     $controller = new UserApiController($latte, $userService, $especialistaServicioRepository, $especialistaRepository);
@@ -373,7 +373,7 @@ $router->get('/admin/api/users', function () use ($latte, $userService, $especia
 });
 
 /**
- * POST /admin/api/users - Create new user
+ * Create user
  */
 $router->post('/admin/api/users', function () use ($latte, $userService, $especialistaServicioRepository, $especialistaRepository) {
     $controller = new UserApiController($latte, $userService, $especialistaServicioRepository, $especialistaRepository);
@@ -381,7 +381,7 @@ $router->post('/admin/api/users', function () use ($latte, $userService, $especi
 });
 
 /**
- * GET /admin/api/users/{id} - Get user by ID
+ * Get one user
  */
 $router->get('/admin/api/users/(\\d+)', function ($id) use ($latte, $userService, $especialistaServicioRepository, $especialistaRepository) {
     $controller = new UserApiController($latte, $userService, $especialistaServicioRepository, $especialistaRepository);
@@ -389,7 +389,7 @@ $router->get('/admin/api/users/(\\d+)', function ($id) use ($latte, $userService
 });
 
 /**
- * POST /admin/api/users/{id} - Update user (POST method)
+ * Update user (POST)
  */
 $router->post('/admin/api/users/(\\d+)', function ($id) use ($latte, $userService, $especialistaServicioRepository, $especialistaRepository) {
     $controller = new UserApiController($latte, $userService, $especialistaServicioRepository, $especialistaRepository);
@@ -397,7 +397,7 @@ $router->post('/admin/api/users/(\\d+)', function ($id) use ($latte, $userServic
 });
 
 /**
- * PUT /admin/api/users/{id} - Update user (PUT method)
+ * Update user (PUT)
  */
 $router->put('/admin/api/users/(\\d+)', function ($id) use ($latte, $userService, $especialistaServicioRepository, $especialistaRepository) {
     $controller = new UserApiController($latte, $userService, $especialistaServicioRepository, $especialistaRepository);
@@ -405,7 +405,7 @@ $router->put('/admin/api/users/(\\d+)', function ($id) use ($latte, $userService
 });
 
 /**
- * DELETE /admin/api/users/{id} - Delete (deactivate) user
+ * Delete user
  */
 $router->delete('/admin/api/users/(\\d+)', function ($id) use ($latte, $userService, $especialistaServicioRepository, $especialistaRepository) {
     $controller = new UserApiController($latte, $userService, $especialistaServicioRepository, $especialistaRepository);
@@ -417,7 +417,7 @@ $router->delete('/admin/api/users/(\\d+)', function ($id) use ($latte, $userServ
 // =============================================================================
 
 /**
- * GET /admin/api/services - Get all services
+ * Get all services
  */
 $router->get('/admin/api/services', function () use ($servicioService) {
     $controller = new ServiceApiController($servicioService);
@@ -425,7 +425,7 @@ $router->get('/admin/api/services', function () use ($servicioService) {
 });
 
 /**
- * GET /admin/api/services/{id} - Get service by ID
+ * Get one service
  */
 $router->get('/admin/api/services/(\\d+)', function ($id) use ($servicioService) {
     $controller = new ServiceApiController($servicioService);
@@ -433,7 +433,7 @@ $router->get('/admin/api/services/(\\d+)', function ($id) use ($servicioService)
 });
 
 /**
- * POST /admin/api/services - Create new service
+ * Create service
  */
 $router->post('/admin/api/services', function () use ($servicioService) {
     $controller = new ServiceApiController($servicioService);
@@ -441,7 +441,7 @@ $router->post('/admin/api/services', function () use ($servicioService) {
 });
 
 /**
- * PUT /admin/api/services/{id} - Update service
+ * Update service
  */
 $router->put('/admin/api/services/(\\d+)', function ($id) use ($servicioService) {
     $controller = new ServiceApiController($servicioService);
@@ -449,7 +449,7 @@ $router->put('/admin/api/services/(\\d+)', function ($id) use ($servicioService)
 });
 
 /**
- * POST /admin/api/services/{id}/activate - Activate service
+ * Activate service
  */
 $router->post('/admin/api/services/(\\d+)/activate', function ($id) use ($servicioService) {
     $controller = new ServiceApiController($servicioService);
@@ -457,7 +457,7 @@ $router->post('/admin/api/services/(\\d+)/activate', function ($id) use ($servic
 });
 
 /**
- * POST /admin/api/services/{id}/deactivate - Deactivate service
+ * Deactivate service
  */
 $router->post('/admin/api/services/(\\d+)/deactivate', function ($id) use ($servicioService) {
     $controller = new ServiceApiController($servicioService);
@@ -469,7 +469,7 @@ $router->post('/admin/api/services/(\\d+)/deactivate', function ($id) use ($serv
 // =============================================================================
 
 /**
- * GET /admin/api/reservas - Get all bookings with filters
+ * Get all bookings
  */
 $router->get('/admin/api/reservas', function () use ($reservaService) {
     $controller = new BookingAdminApiController($reservaService);
@@ -477,7 +477,7 @@ $router->get('/admin/api/reservas', function () use ($reservaService) {
 });
 
 /**
- * GET /admin/api/reservas/{id} - Get booking by ID
+ * Get one booking
  */
 $router->get('/admin/api/reservas/(\\d+)', function ($id) use ($reservaService) {
     $controller = new BookingAdminApiController($reservaService);
@@ -485,7 +485,7 @@ $router->get('/admin/api/reservas/(\\d+)', function ($id) use ($reservaService) 
 });
 
 /**
- * POST /admin/api/reservas - Create new booking
+ * Create booking
  */
 $router->post('/admin/api/reservas', function () use ($reservaService) {
     $controller = new BookingAdminApiController($reservaService);
@@ -493,7 +493,7 @@ $router->post('/admin/api/reservas', function () use ($reservaService) {
 });
 
 /**
- * PUT /admin/api/reservas/{id} - Update booking
+ * Update booking
  */
 $router->put('/admin/api/reservas/(\\d+)', function ($id) use ($reservaService) {
     $controller = new BookingAdminApiController($reservaService);
@@ -501,7 +501,7 @@ $router->put('/admin/api/reservas/(\\d+)', function ($id) use ($reservaService) 
 });
 
 /**
- * DELETE /admin/api/reservas/{id} - Delete booking
+ * Delete booking
  */
 $router->delete('/admin/api/reservas/(\\d+)', function ($id) use ($reservaService) {
     $controller = new BookingAdminApiController($reservaService);
@@ -513,7 +513,7 @@ $router->delete('/admin/api/reservas/(\\d+)', function ($id) use ($reservaServic
 // =============================================================================
 
 /**
- * GET /admin/api/especialistas - Get all specialists with user data
+ * Get all specialists
  */
 $router->get('/admin/api/especialistas', function () use ($especialistaRepository, $reservaService, $servicioService) {
     $controller = new StatsApiController($especialistaRepository, $reservaService, $servicioService);
@@ -521,7 +521,7 @@ $router->get('/admin/api/especialistas', function () use ($especialistaRepositor
 });
 
 /**
- * GET /admin/api/stats/specialist-occupancy - Get specialist occupancy statistics
+ * Specialist occupancy stats
  */
 $router->get('/admin/api/stats/specialist-occupancy', function () use ($especialistaRepository, $reservaService, $servicioService) {
     $controller = new StatsApiController($especialistaRepository, $reservaService, $servicioService);
@@ -529,7 +529,7 @@ $router->get('/admin/api/stats/specialist-occupancy', function () use ($especial
 });
 
 /**
- * GET /admin/api/stats/popular-services - Get popular services statistics
+ * Popular services stats
  */
 $router->get('/admin/api/stats/popular-services', function () use ($especialistaRepository, $reservaService, $servicioService) {
     $controller = new StatsApiController($especialistaRepository, $reservaService, $servicioService);
@@ -537,7 +537,7 @@ $router->get('/admin/api/stats/popular-services', function () use ($especialista
 });
 
 /**
- * GET /admin/api/stats/today-kpis - Get today's KPIs (bookings, revenue)
+ * Today's numbers
  */
 $router->get('/admin/api/stats/today-kpis', function () use ($especialistaRepository, $reservaService, $servicioService) {
     $controller = new StatsApiController($especialistaRepository, $reservaService, $servicioService);
@@ -549,7 +549,7 @@ $router->get('/admin/api/stats/today-kpis', function () use ($especialistaReposi
 // =============================================================================
 
 /**
- * GET /api/services - Get all active services
+ * Get available services
  */
 $router->get('/api/services', function () use ($servicioService) {
     $controller = new ServiceApiController($servicioService);
@@ -557,7 +557,7 @@ $router->get('/api/services', function () use ($servicioService) {
 });
 
 /**
- * GET /api/especialistas/disponibles - Get available specialists for service/date
+ * Get available specialists
  */
 $router->get('/api/especialistas/disponibles', function () use ($especialistaRepository) {
     $controller = new EspecialistaApiController($especialistaRepository);
@@ -565,7 +565,7 @@ $router->get('/api/especialistas/disponibles', function () use ($especialistaRep
 });
 
 /**
- * GET /api/reservas - Get user bookings
+ * Get my bookings
  */
 $router->get('/api/reservas', function () use ($reservaService) {
     $controller = new BookingApiController($reservaService);
@@ -573,7 +573,7 @@ $router->get('/api/reservas', function () use ($reservaService) {
 });
 
 /**
- * POST /api/reservas - Create new booking
+ * Create a booking
  */
 $router->post('/api/reservas', function () use ($reservaService) {
     $controller = new BookingApiController($reservaService);
@@ -581,7 +581,7 @@ $router->post('/api/reservas', function () use ($reservaService) {
 });
 
 /**
- * GET /api/me - Get current authenticated user data
+ * Get my user data
  */
 $router->get('/api/me', function () use ($latte, $userService, $especialistaServicioRepository, $especialistaRepository) {
     $controller = new UserApiController($latte, $userService, $especialistaServicioRepository, $especialistaRepository);
