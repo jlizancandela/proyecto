@@ -25,3 +25,6 @@ const clearFecha = () => {
   fechaInput.value = "";
   filterForm.submit();
 };
+
+globalThis.selectEstado = selectEstado;
+globalThis.clearFecha = clearFecha;

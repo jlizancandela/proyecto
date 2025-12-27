@@ -30,9 +30,10 @@
 
 #### `booking-filters.js` (20 líneas)
 
-- [ ] Auditar para verificar SSR
-- [ ] Añadir JSDoc
-- [ ] File header comment
+- [x] Auditar para verificar SSR
+- [x] Añadir JSDoc
+- [x] File header comment
+- [x] Fix: Export functions to global scope
 
 ## PHP - Archivos Grandes que Revisar
 
