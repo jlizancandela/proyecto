@@ -23,10 +23,10 @@
 
 #### `specialist/bookings-filters.js` (39 líneas)
 
-- [ ] Auditar para verificar SSR
-- [ ] Refactorizar si tiene fetch calls
-- [ ] Añadir JSDoc
-- [ ] File header comment
+- [x] Auditar para verificar SSR
+- [x] Refactorizar si tiene fetch calls (No aplica - solo navegación)
+- [x] Añadir JSDoc
+- [x] File header comment
 
 #### `booking-filters.js` (20 líneas)
 

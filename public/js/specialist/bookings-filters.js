@@ -3,10 +3,6 @@
  * @project app-reservas
  */
 
-/**
- * Specialist bookings filters management
- */
-
 const btnApplyFilters = document.getElementById("btnApplyFilters");
 const btnClearFilters = document.getElementById("btnClearFilters");
 /** @type {HTMLSelectElement} */
