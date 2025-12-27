@@ -21,10 +21,15 @@ const filterFechaHasta = document.getElementById("filterFechaHasta");
 const applyFilters = () => {
   const params = new URLSearchParams();
 
-  if (filterEstado?.value) params.set("estado", filterEstado.value);
-  if (filterCliente?.value) params.set("cliente", filterCliente.value);
-  if (filterFechaDesde?.value) params.set("fecha_desde", filterFechaDesde.value);
-  if (filterFechaHasta?.value) params.set("fecha_hasta", filterFechaHasta.value);
+  const estado = filterEstado?.value?.trim();
+  const cliente = filterCliente?.value?.trim();
+  const fechaDesde = filterFechaDesde?.value?.trim();
+  const fechaHasta = filterFechaHasta?.value?.trim();
+
+  if (estado) params.set("estado", estado);
+  if (cliente) params.set("cliente", cliente);
+  if (fechaDesde) params.set("fecha_desde", fechaDesde);
+  if (fechaHasta) params.set("fecha_hasta", fechaHasta);
 
   globalThis.location.href = "/specialist/bookings?" + params.toString();
 };
