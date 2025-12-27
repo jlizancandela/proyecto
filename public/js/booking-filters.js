@@ -6,25 +6,20 @@
 const estadoInput = document.getElementById("estadoInput");
 /** @type {HTMLFormElement} */
 const filterForm = document.getElementById("filterForm");
-/** @type {HTMLInputElement} */
-const fechaInput = document.getElementById("fecha");
 
 /**
- * Sets the booking status filter and submits the form.
- * @param {string} estado - The status to filter by.
+ * Handles estado filter button clicks using event delegation.
+ * @param {Event} e - Click event
  */
-const selectEstado = (estado) => {
+const handleEstadoClick = (e) => {
+  const button = e.target.closest("[data-estado]");
+  if (!button) return;
+
+  const estado = button.dataset.estado;
   estadoInput.value = estado;
   filterForm.submit();
 };
 
-/**
- * Clears the date filter and submits the form.
- */
-const clearFecha = () => {
-  fechaInput.value = "";
-  filterForm.submit();
-};
-
-globalThis.selectEstado = selectEstado;
-globalThis.clearFecha = clearFecha;
+if (filterForm) {
+  filterForm.addEventListener("click", handleEstadoClick);
+}
