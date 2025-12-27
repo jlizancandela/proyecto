@@ -1,4 +1,6 @@
-// Presentational component for date and specialist selection, calendar and list display.
+/**
+ * @file Date and specialist selection form component.
+ */
 
 import { h } from "https://esm.sh/preact@10.19.3";
 import { useStore } from "https://esm.sh/@nanostores/preact@0.5.1?deps=preact@10.19.3";

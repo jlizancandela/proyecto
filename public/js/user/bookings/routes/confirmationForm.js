@@ -1,4 +1,6 @@
-// Presentational component for booking confirmation step, displays summary and actions.
+/**
+ * @file Booking confirmation form component.
+ */
 
 import { h } from "https://esm.sh/preact@10.19.3";
 import htm from "https://esm.sh/htm";

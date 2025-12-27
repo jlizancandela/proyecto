@@ -62,7 +62,6 @@ class AuthController
             exit;
         }
 
-        // Verificar si el usuario está activo
         if (!$user->getActivo()) {
             $_SESSION['inactive_user_id'] = $user->getId();
             $_SESSION['inactive_user_email'] = $user->getEmail();
@@ -97,29 +96,21 @@ class AuthController
 
     public function register(): void
     {
-        error_log("=== REGISTRO: Método llamado ===");
-        error_log("REQUEST_METHOD: " . $_SERVER['REQUEST_METHOD']);
-
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            error_log("No es POST, redirigiendo...");
             header('Location: /register');
             exit;
         }
-
-        error_log("POST recibido: " . print_r($_POST, true));
 
         $password = $_POST['password'] ?? '';
         $passwordConfirm = $_POST['password-confirm'] ?? '';
 
         if ($password !== $passwordConfirm) {
-            error_log("Contraseñas no coinciden");
             $_SESSION['register_error'] = 'Las contraseñas no coinciden';
             header('Location: /register');
             exit;
         }
 
         try {
-            error_log("Intentando registrar usuario...");
             $user = $this->authService->register([
                 'nombre' => $_POST['nombre'] ?? '',
                 'apellidos' => $_POST['apellidos'] ?? '',
@@ -129,15 +120,12 @@ class AuthController
                 'rol' => 'Cliente'
             ]);
 
-            error_log("Usuario registrado exitosamente: " . $user->getEmail());
             $this->authService->startSession($user);
             unset($_SESSION['register_error']);
 
-            error_log("Redirigiendo a /");
             header('Location: /');
             exit;
         } catch (\Exception $e) {
-            error_log("Error en registro: " . $e->getMessage());
             $_SESSION['register_error'] = $e->getMessage();
             header('Location: /register');
             exit;
@@ -145,7 +133,8 @@ class AuthController
     }
 
     /**
-     * Muestra el formulario de recuperación de contraseña
+     * Shows the password recovery form.
+     * @return string Rendered HTML for the forgot password page.
      */
     public function showForgotPasswordForm(): string
     {
@@ -160,7 +149,8 @@ class AuthController
     }
 
     /**
-     * Procesa el envío del enlace de recuperación
+     * Processes the password reset link request.
+     * @return void
      */
     public function sendResetLink(): void
     {
@@ -178,21 +168,14 @@ class AuthController
         }
 
         try {
-            // Generar token
             $token = $this->authService->generatePasswordResetToken($email);
-
-            // Construir URL de reset usando APP_URL del .env
             $baseUrl = $_ENV['APP_URL'] ?? 'https://proyecto.ddev.site';
             $resetUrl = "{$baseUrl}/reset-password?token={$token}";
-
-            // Enviar email
             $this->emailService->sendPasswordRecoveryEmail($email, $resetUrl);
 
-            // Mensaje genérico para prevenir enumeración de usuarios
             $_SESSION['forgot_success'] = 'Si el email existe, recibirás instrucciones para recuperar tu contraseña';
             unset($_SESSION['forgot_error']);
         } catch (\Exception $e) {
-            // No revelar si el usuario existe o no
             $_SESSION['forgot_success'] = 'Si el email existe, recibirás instrucciones para recuperar tu contraseña';
             unset($_SESSION['forgot_error']);
         }
@@ -202,13 +185,12 @@ class AuthController
     }
 
     /**
-     * Muestra el formulario de cambio de contraseña
+     * Shows the password reset form.
+     * @return string Rendered HTML for the reset password page.
      */
     public function showResetPasswordForm(): string
     {
         $token = $_GET['token'] ?? '';
-
-        // Validar token
         $user = $this->authService->validateResetToken($token);
 
         if (!$user) {
@@ -228,7 +210,8 @@ class AuthController
     }
 
     /**
-     * Procesa el cambio de contraseña
+     * Processes the password reset request.
+     * @return void
      */
     public function resetPassword(): void
     {
@@ -274,7 +257,8 @@ class AuthController
     }
 
     /**
-     * Muestra la página de reactivación de cuenta
+     * Shows the account reactivation page.
+     * @return string Rendered HTML for the reactivation page.
      */
     public function showReactivate(): string
     {
@@ -293,7 +277,8 @@ class AuthController
     }
 
     /**
-     * Procesa la reactivación de cuenta
+     * Processes the account reactivation request.
+     * @return void
      */
     public function reactivate(): void
     {
@@ -309,11 +294,7 @@ class AuthController
 
         try {
             $userId = $_SESSION['inactive_user_id'];
-
-            // Reactivar usuario usando el UserService inyectado
             $this->userService->activateUser($userId);
-
-            // Obtener usuario actualizado e iniciar sesión
             $user = $this->userService->getUserById($userId);
 
             if ($user) {
