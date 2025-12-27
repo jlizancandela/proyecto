@@ -46,6 +46,10 @@ test('createReserva throws exception for past date', function () {
         'duracion' => 60
     ];
 
+    $this->repository->shouldReceive('findConflicts')->andReturn(false);
+    $this->repository->shouldReceive('findClientConflicts')->andReturn(false);
+    $this->repository->shouldReceive('findAllFiltered')->andReturn([]);
+
     $this->service->createReserva($data);
 })->throws(\RuntimeException::class, 'La fecha de reserva debe ser futura');
 
