@@ -95,8 +95,8 @@
 #### Falta Testear
 
 - [x] `bookings.js` - Tests para lógica pública
-- [ ] `booking-filters.js` - Tests si tiene lógica
-- [ ] `specialist/bookings-filters.js` - Tests si tiene lógica
+- [x] `booking-filters.js` - Tests completados (5 tests)
+- [x] `specialist/bookings-filters.js` - Tests completados (9 tests)
 
 #### Preact Components (Opcional)
 
