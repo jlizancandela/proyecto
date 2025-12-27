@@ -46,12 +46,13 @@
 - [x] Verificar PHPDoc en todos los métodos restantes
 - [x] Considerar extraer lógica de reportes a clase separada (Descartado por simplicidad/KISS)
 
-#### `UserRepository.php` (600 líneas)
+#### `UserRepository.php` (600 líneas) ✅ Refactored
 
-- [ ] Revisar si se puede dividir
-- [ ] Extraer queries complejas
-- [ ] Verificar PHPDoc completo
-- [ ] Considerar separar lógica de especialistas
+- [x] Extraer código duplicado (buildOrderBy method)
+- [x] Eliminar método no utilizado (changeUserRole)
+- [x] Verificar que todos los métodos se usen
+- [x] Reducido de 689 a 627 líneas (-9%)
+- [ ] Verificar PHPDoc completo (opcional)
 
 #### `EspecialistaRepository.php` (518 líneas)
 
