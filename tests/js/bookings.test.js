@@ -1,9 +1,13 @@
-import { describe, it, expect, beforeEach, vi } from "vitest";
+import { describe, it, expect, beforeEach, vi, afterEach } from "vitest";
 
 describe("Bookings JS Logic", () => {
   let modalMock;
+  let initializeBookingListeners;
+  let modifyBooking;
+  let cancelBooking;
+  let confirmAction;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     document.body.innerHTML = `
       <div id="actionModal">
         <h5 id="modalTitle"></h5>
@@ -25,14 +29,21 @@ describe("Bookings JS Logic", () => {
     };
 
     vi.resetModules();
-    import("@/public/js/bookings.js").then(() => {
-      globalThis.initializeBookingListeners();
-    });
+
+    // Import the module and get the exported functions
+    const module = await import("@/public/js/bookings.js");
+    initializeBookingListeners = module.initializeBookingListeners;
+    modifyBooking = module.modifyBooking;
+    cancelBooking = module.cancelBooking;
+    confirmAction = module.confirmAction;
   });
 
-  it("should open modal for modifying booking", async () => {
-    await import("@/public/js/bookings.js");
-    globalThis.initializeBookingListeners();
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("should open modal for modifying booking", () => {
+    initializeBookingListeners();
 
     const modifyBtn = document.querySelector(".btn-modify");
     modifyBtn.click();
@@ -42,9 +53,8 @@ describe("Bookings JS Logic", () => {
     expect(document.getElementById("modalTitle").textContent).toBe("Modificar Reserva");
   });
 
-  it("should open modal for canceling booking", async () => {
-    await import("@/public/js/bookings.js");
-    globalThis.initializeBookingListeners();
+  it("should open modal for canceling booking", () => {
+    initializeBookingListeners();
 
     const cancelBtn = document.querySelector(".btn-cancel");
     cancelBtn.click();
@@ -54,15 +64,13 @@ describe("Bookings JS Logic", () => {
     expect(document.getElementById("modalTitle").textContent).toBe("Cancelar Reserva");
   });
 
-  it("should submit form when canceling confirmation is clicked", async () => {
-    await import("@/public/js/bookings.js");
-
-    globalThis.cancelBooking("123");
+  it("should submit form when canceling confirmation is clicked", () => {
+    cancelBooking("123");
 
     const submitMock = vi.fn();
     HTMLFormElement.prototype.submit = submitMock;
 
-    globalThis.confirmAction();
+    confirmAction();
 
     const form = document.querySelector("form");
     expect(form).not.toBeNull();
@@ -70,15 +78,13 @@ describe("Bookings JS Logic", () => {
     expect(submitMock).toHaveBeenCalled();
   });
 
-  it("should redirect when modifying confirmation is clicked", async () => {
-    await import("@/public/js/bookings.js");
-
-    globalThis.modifyBooking("456");
+  it("should redirect when modifying confirmation is clicked", () => {
+    modifyBooking("456");
 
     delete globalThis.location;
     globalThis.location = { href: "" };
 
-    globalThis.confirmAction();
+    confirmAction();
 
     expect(globalThis.location.href).toContain("/user/reservas/modify/456");
   });
