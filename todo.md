@@ -62,12 +62,12 @@
 - [x] Verificar PHPDoc completo ✅ COMPLETADO
 - [x] Tests unitarios ✅ 8 tests, 19 assertions
 
-#### `UserApiController.php` (496 líneas)
+#### `UserApiController.php` (596 líneas) ✅ Refactored
 
-- [ ] Considerar dividir en controladores más específicos
-- [ ] Verificar que validaciones usen Respect Validation
-- [ ] PHPDoc completo
-- [ ] Tests unitarios
+- [x] Extraer código duplicado (3 métodos privados)
+- [x] Usar Respect Validation ✅ COMPLETADO
+- [x] PHPDoc completo ✅ COMPLETADO (16 métodos)
+- [ ] Tests unitarios (opcional)
 
 ### 🟡 Revisar - Archivos >300 líneas
 
