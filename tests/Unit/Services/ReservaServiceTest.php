@@ -42,7 +42,8 @@ test('createReserva throws exception for past date', function () {
         'especialista_id' => 2,
         'servicio_id' => 3,
         'fecha' => date('Y-m-d', strtotime('-1 day')),
-        'hora' => '10:00:00'
+        'hora' => '10:00:00',
+        'duracion' => 60
     ];
 
     $this->service->createReserva($data);
@@ -54,7 +55,8 @@ test('createReserva throws exception for specialist conflict', function () {
         'especialista_id' => 2,
         'servicio_id' => 3,
         'fecha' => date('Y-m-d', strtotime('+1 day')),
-        'hora' => '10:00:00'
+        'hora' => '10:00:00',
+        'duracion' => 60
     ];
 
     $this->repository->shouldReceive('findConflicts')->andReturn(true);
@@ -68,7 +70,8 @@ test('createReserva throws exception for client conflict', function () {
         'especialista_id' => 2,
         'servicio_id' => 3,
         'fecha' => date('Y-m-d', strtotime('+1 day')),
-        'hora' => '10:00:00'
+        'hora' => '10:00:00',
+        'duracion' => 60
     ];
 
     $this->repository->shouldReceive('findConflicts')->andReturn(false);
@@ -83,7 +86,8 @@ test('createReserva throws exception for weekly limit exceeded', function () {
         'especialista_id' => 2,
         'servicio_id' => 3,
         'fecha' => date('Y-m-d', strtotime('+1 day')),
-        'hora' => '10:00:00'
+        'hora' => '10:00:00',
+        'duracion' => 60
     ];
 
     $mockReserva = new stdClass();
