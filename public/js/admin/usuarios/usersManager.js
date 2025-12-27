@@ -134,6 +134,16 @@ const handleDocumentClick = (e) => {
     const currentStatus = badge.dataset.currentStatus;
     handleToggleUserStatus(userId, userName, currentStatus);
   }
+
+  if (e.target.closest(".btn-delete-user")) {
+    const button = e.target.closest(".btn-delete-user");
+    const userId = button.dataset.userId;
+    const userName = button.dataset.userName;
+
+    if (confirm(`¿Estás seguro de que deseas desactivar al usuario ${userName}?`)) {
+      handleToggleUserStatus(userId, userName, "1");
+    }
+  }
 };
 
 /**
