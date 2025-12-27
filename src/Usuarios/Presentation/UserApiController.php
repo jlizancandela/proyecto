@@ -1,11 +1,17 @@
 <?php
 
+/**
+ * Handles user API endpoints and table rendering for admin panel.
+ */
+
 namespace Usuarios\Presentation;
 
 use Latte\Engine;
 use Shared\Infrastructure\Pagination\Paginator;
 use Usuarios\Application\UserService;
 use Usuarios\Presentation\Transformers\UserTransformer;
+use Respect\Validation\Validator as v;
+use Respect\Validation\Exceptions\ValidationException;
 
 class UserApiController
 {
@@ -26,6 +32,11 @@ class UserApiController
         $this->especialistaRepository = $especialistaRepository;
     }
 
+    /**
+     * Retrieves all users with pagination and optional search.
+     *
+     * @return void
+     */
     public function getAllUsers(): void
     {
         header('Content-Type: application/json');
@@ -62,6 +73,12 @@ class UserApiController
         }
     }
 
+    /**
+     * Retrieves a single user by ID with specialist data if applicable.
+     *
+     * @param int $id User ID
+     * @return void
+     */
     public function getUserById(int $id): void
     {
         header('Content-Type: application/json');
@@ -80,7 +97,6 @@ class UserApiController
 
             $userData = UserTransformer::toJsonApi($user);
 
-            // Si es especialista, cargar sus servicios y descripción
             if ($user->getRol() === \Usuarios\Domain\UserRole::Especialista) {
                 $especialistaData = $this->especialistaRepository->getEspecialistaDataByUserId($id);
                 if ($especialistaData) {
@@ -109,6 +125,11 @@ class UserApiController
         }
     }
 
+    /**
+     * Renders the users table HTML for admin panel.
+     *
+     * @return string HTML content
+     */
     public function getUsersTable(): string
     {
         try {
@@ -120,21 +141,7 @@ class UserApiController
             $page = Paginator::validatePage($page, $totalPages);
 
             $usersArray = UserTransformer::toArrayCollection($users);
-
-            // Agregar servicios para especialistas
-            foreach ($usersArray as &$userData) {
-                if ($userData['rol'] === 'Especialista') {
-                    $especialistaId = $this->especialistaRepository->getEspecialistaIdByUserId($userData['id']);
-                    if ($especialistaId) {
-                        $servicios = $this->especialistaServicioRepository->getServiciosForEspecialista($especialistaId);
-                        $userData['servicios'] = array_map(fn($s) => $s->getNombreServicio(), $servicios);
-                    } else {
-                        $userData['servicios'] = [];
-                    }
-                } else {
-                    $userData['servicios'] = [];
-                }
-            }
+            $this->enrichUsersWithServices($usersArray);
 
             return $this->latte->renderToString(
                 __DIR__ . '/../../../views/components/users-table-content.latte',
@@ -149,6 +156,11 @@ class UserApiController
         }
     }
 
+    /**
+     * Renders the search results table HTML for admin panel.
+     *
+     * @return string HTML content
+     */
     public function searchUsersTable(): string
     {
         try {
@@ -166,21 +178,7 @@ class UserApiController
             $page = Paginator::validatePage($page, $totalPages);
 
             $usersArray = UserTransformer::toArrayCollection($users);
-
-            // Agregar servicios para especialistas
-            foreach ($usersArray as &$userData) {
-                if ($userData['rol'] === 'Especialista') {
-                    $especialistaId = $this->especialistaRepository->getEspecialistaIdByUserId($userData['id']);
-                    if ($especialistaId) {
-                        $servicios = $this->especialistaServicioRepository->getServiciosForEspecialista($especialistaId);
-                        $userData['servicios'] = array_map(fn($s) => $s->getNombreServicio(), $servicios);
-                    } else {
-                        $userData['servicios'] = [];
-                    }
-                } else {
-                    $userData['servicios'] = [];
-                }
-            }
+            $this->enrichUsersWithServices($usersArray);
 
             return $this->latte->renderToString(
                 __DIR__ . '/../../../views/components/users-table-content.latte',
@@ -195,6 +193,12 @@ class UserApiController
         }
     }
 
+    /**
+     * Deactivates a user (soft delete).
+     *
+     * @param int $id User ID
+     * @return void
+     */
     public function deleteUser(int $id): void
     {
         header('Content-Type: application/json');
@@ -211,7 +215,6 @@ class UserApiController
                 return;
             }
 
-            // Proteger Admin: no permitir desactivación
             if ($user->getRol() === \Usuarios\Domain\UserRole::Admin) {
                 http_response_code(403);
                 echo json_encode([
@@ -221,7 +224,6 @@ class UserApiController
                 return;
             }
 
-            // Baja lógica: desactivar usuario en lugar de eliminar
             $this->userService->deactivateUser($id);
 
             echo json_encode([
@@ -237,6 +239,11 @@ class UserApiController
         }
     }
 
+    /**
+     * Creates a new user with validation.
+     *
+     * @return void
+     */
     public function createUser(): void
     {
         header('Content-Type: application/json');
@@ -253,6 +260,8 @@ class UserApiController
                 return;
             }
 
+            $this->validateUserData($data, true);
+
             $user = new \Usuarios\Domain\Usuario(
                 $data['rol'] ?? 'Cliente',
                 $data['nombre'],
@@ -267,37 +276,20 @@ class UserApiController
 
             $this->userService->setUser($user);
 
-            // Si es especialista, crear entrada en especialistas y asignar servicios
             if ($data['rol'] === 'Especialista' && !empty($data['servicios'])) {
-                $userId = $user->getId();
-
-                // Procesar avatar si existe
-                $avatarUrl = null;
-                if (isset($_FILES['avatar'])) {
-                    $avatarUrl = $this->handleAvatarUpload($_FILES['avatar']);
-                }
-
-                $descripcion = $data['descripcion'] ?? null;
-
-                // Crear entrada en tabla especialistas y obtener el ID
-                $especialistaId = $this->especialistaRepository->createBasicEspecialista($userId, $avatarUrl, $descripcion);
-
-                if ($especialistaId) {
-                    // Asignar servicios usando id_especialista
-                    foreach ($data['servicios'] as $servicioId) {
-                        $especialistaServicio = new \Especialistas\Domain\EspecialistaServicio(
-                            $especialistaId,
-                            (int) $servicioId
-                        );
-                        $this->especialistaServicioRepository->addEspecialistaServicio($especialistaServicio);
-                    }
-                }
+                $this->handleEspecialistaCreation($user->getId(), $data);
             }
 
             echo json_encode([
                 'success' => true,
                 'message' => 'Usuario creado correctamente',
                 'data' => UserTransformer::toJsonApi($user)
+            ], JSON_PRETTY_PRINT);
+        } catch (ValidationException $e) {
+            http_response_code(400);
+            echo json_encode([
+                'success' => false,
+                'error' => $e->getMessage()
             ], JSON_PRETTY_PRINT);
         } catch (\Exception $e) {
             http_response_code(500);
@@ -308,6 +300,12 @@ class UserApiController
         }
     }
 
+    /**
+     * Updates an existing user with validation.
+     *
+     * @param int $id User ID
+     * @return void
+     */
     public function updateUser(int $id): void
     {
         header('Content-Type: application/json');
@@ -335,7 +333,8 @@ class UserApiController
                 return;
             }
 
-            // Obtener datos con valores por defecto del usuario existente si no se proporcionan
+            $this->validateUserData($data, false);
+
             $rol = $data['rol'] ?? $existingUser->getRol()->value;
             $nombre = $data['nombre'] ?? $existingUser->getNombre();
             $apellidos = $data['apellidos'] ?? $existingUser->getApellidos();
@@ -343,9 +342,7 @@ class UserApiController
             $telefono = $data['telefono'] ?? $existingUser->getTelefono();
             $activo = isset($data['activo']) ? in_array($data['activo'], [true, '1', 1, 'on'], true) : $existingUser->getActivo();
 
-            // Proteger Admin: no permitir cambio de rol ni desactivación
             if ($existingUser->getRol() === \Usuarios\Domain\UserRole::Admin) {
-                // Si el usuario actual es Admin, mantener rol y estado activo
                 $rol = 'Admin';
                 $activo = true;
             }
@@ -368,46 +365,20 @@ class UserApiController
 
             $this->userService->updateUser($user);
 
-            // Si es especialista, actualizar servicios
             if ($rol === 'Especialista' && isset($data['servicios'])) {
-                // Verificar si ya existe entrada en especialistas, si no, crearla
-                $especialistaId = $this->especialistaRepository->getEspecialistaIdByUserId($id);
-
-                if (!$especialistaId) {
-                    $especialistaId = $this->especialistaRepository->createBasicEspecialista($id);
-                }
-
-                if ($especialistaId) {
-                    // Actualizar avatar si se subió uno nuevo
-                    if (isset($_FILES['avatar'])) {
-                        $avatarUrl = $this->handleAvatarUpload($_FILES['avatar']);
-                        if ($avatarUrl) {
-                            $this->especialistaRepository->updateEspecialistaPhoto($especialistaId, $avatarUrl);
-                        }
-                    }
-
-                    // Actualizar descripción si se proporciona
-                    if (isset($data['descripcion'])) {
-                        $this->especialistaRepository->updateEspecialistaDescription($especialistaId, $data['descripcion']);
-                    }
-
-                    // Eliminar servicios anteriores y agregar los nuevos
-                    $this->especialistaServicioRepository->deleteAllServiciosForEspecialista($especialistaId);
-
-                    foreach ($data['servicios'] as $servicioId) {
-                        $especialistaServicio = new \Especialistas\Domain\EspecialistaServicio(
-                            $especialistaId,
-                            (int) $servicioId
-                        );
-                        $this->especialistaServicioRepository->addEspecialistaServicio($especialistaServicio);
-                    }
-                }
+                $this->handleEspecialistaUpdate($id, $data);
             }
 
             echo json_encode([
                 'success' => true,
                 'message' => 'Usuario actualizado correctamente',
                 'data' => UserTransformer::toJsonApi($user)
+            ], JSON_PRETTY_PRINT);
+        } catch (ValidationException $e) {
+            http_response_code(400);
+            echo json_encode([
+                'success' => false,
+                'error' => $e->getMessage()
             ], JSON_PRETTY_PRINT);
         } catch (\Exception $e) {
             http_response_code(500);
@@ -417,6 +388,12 @@ class UserApiController
             ], JSON_PRETTY_PRINT);
         }
     }
+
+    /**
+     * Returns the currently authenticated user data.
+     *
+     * @return void
+     */
     public function getCurrentUser(): void
     {
         header('Content-Type: application/json');
@@ -455,6 +432,124 @@ class UserApiController
         }
     }
 
+    /**
+     * Validates user data using Respect Validation.
+     *
+     * @param array $data User data to validate
+     * @param bool $requirePassword Whether password is required
+     * @return void
+     * @throws ValidationException If validation fails
+     */
+    private function validateUserData(array $data, bool $requirePassword): void
+    {
+        $validator = v::key('nombre', v::stringType()->notEmpty()->length(2, 50), !isset($data['nombre']))
+            ->key('apellidos', v::stringType()->notEmpty()->length(2, 100), !isset($data['apellidos']))
+            ->key('email', v::email(), !isset($data['email']))
+            ->key('telefono', v::optional(v::phone()), false)
+            ->key('rol', v::optional(v::in(['Admin', 'Especialista', 'Cliente'])), false);
+
+        if ($requirePassword) {
+            $validator = $validator->key('password', v::stringType()->notEmpty()->length(6, null));
+        }
+
+        $validator->assert($data);
+    }
+
+    /**
+     * Enriches user array with specialist services.
+     *
+     * @param array &$usersArray Users array to enrich (passed by reference)
+     * @return void
+     */
+    private function enrichUsersWithServices(array &$usersArray): void
+    {
+        foreach ($usersArray as &$userData) {
+            if ($userData['rol'] === 'Especialista') {
+                $especialistaId = $this->especialistaRepository->getEspecialistaIdByUserId($userData['id']);
+                if ($especialistaId) {
+                    $servicios = $this->especialistaServicioRepository->getServiciosForEspecialista($especialistaId);
+                    $userData['servicios'] = array_map(fn($s) => $s->getNombreServicio(), $servicios);
+                } else {
+                    $userData['servicios'] = [];
+                }
+            } else {
+                $userData['servicios'] = [];
+            }
+        }
+    }
+
+    /**
+     * Handles specialist creation with services and avatar.
+     *
+     * @param int $userId User ID
+     * @param array $data Request data
+     * @return void
+     */
+    private function handleEspecialistaCreation(int $userId, array $data): void
+    {
+        $avatarUrl = null;
+        if (isset($_FILES['avatar'])) {
+            $avatarUrl = $this->handleAvatarUpload($_FILES['avatar']);
+        }
+
+        $descripcion = $data['descripcion'] ?? null;
+        $especialistaId = $this->especialistaRepository->createBasicEspecialista($userId, $avatarUrl, $descripcion);
+
+        if ($especialistaId) {
+            foreach ($data['servicios'] as $servicioId) {
+                $especialistaServicio = new \Especialistas\Domain\EspecialistaServicio(
+                    $especialistaId,
+                    (int) $servicioId
+                );
+                $this->especialistaServicioRepository->addEspecialistaServicio($especialistaServicio);
+            }
+        }
+    }
+
+    /**
+     * Handles specialist update with services and avatar.
+     *
+     * @param int $userId User ID
+     * @param array $data Request data
+     * @return void
+     */
+    private function handleEspecialistaUpdate(int $userId, array $data): void
+    {
+        $especialistaId = $this->especialistaRepository->getEspecialistaIdByUserId($userId);
+
+        if (!$especialistaId) {
+            $especialistaId = $this->especialistaRepository->createBasicEspecialista($userId);
+        }
+
+        if ($especialistaId) {
+            if (isset($_FILES['avatar'])) {
+                $avatarUrl = $this->handleAvatarUpload($_FILES['avatar']);
+                if ($avatarUrl) {
+                    $this->especialistaRepository->updateEspecialistaPhoto($especialistaId, $avatarUrl);
+                }
+            }
+
+            if (isset($data['descripcion'])) {
+                $this->especialistaRepository->updateEspecialistaDescription($especialistaId, $data['descripcion']);
+            }
+
+            $this->especialistaServicioRepository->deleteAllServiciosForEspecialista($especialistaId);
+
+            foreach ($data['servicios'] as $servicioId) {
+                $especialistaServicio = new \Especialistas\Domain\EspecialistaServicio(
+                    $especialistaId,
+                    (int) $servicioId
+                );
+                $this->especialistaServicioRepository->addEspecialistaServicio($especialistaServicio);
+            }
+        }
+    }
+
+    /**
+     * Retrieves request data from JSON or POST.
+     *
+     * @return array Request data
+     */
     private function getRequestData(): array
     {
         $input = file_get_contents('php://input');
@@ -467,6 +562,12 @@ class UserApiController
         return $_POST;
     }
 
+    /**
+     * Handles avatar file upload with validation.
+     *
+     * @param array|null $file Uploaded file data
+     * @return string|null Avatar URL or null if upload failed
+     */
     private function handleAvatarUpload(?array $file): ?string
     {
         if (!$file || $file['error'] !== UPLOAD_ERR_OK) {
@@ -478,7 +579,6 @@ class UserApiController
             return null;
         }
 
-        // Definir ruta absoluta para uploads
         $uploadDir = __DIR__ . '/../../../public/images/avatars/';
         if (!file_exists($uploadDir)) {
             mkdir($uploadDir, 0777, true);
