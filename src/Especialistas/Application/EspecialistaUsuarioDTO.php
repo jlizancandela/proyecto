@@ -24,8 +24,9 @@ class EspecialistaUsuarioDTO
     public ?string $fotoUrl;
 
     /**
-     * @param array $data
-     * @return self
+     * Creates an EspecialistaUsuarioDTO instance from database an array of data.
+     * @param array $data Associative array of data from the database.
+     * @return self A new EspecialistaUsuarioDTO instance.
      */
     public static function fromDatabase(array $data): self
     {
@@ -47,7 +48,8 @@ class EspecialistaUsuarioDTO
     }
 
     /**
-     * @return UserRole
+     * Get the user role.
+     * @return UserRole The user's role as a UserRole enum.
      */
     public function getRol(): UserRole
     {
@@ -55,7 +57,8 @@ class EspecialistaUsuarioDTO
     }
 
     /**
-     * @return \DateTime
+     * Get the registration date.
+     * @return \DateTime A DateTime object representing the registration date.
      */
     public function getFechaRegistro(): \DateTime
     {

@@ -1,5 +1,6 @@
 /**
- * Service Component
+ * @file Service Component
+ * @project app-reservas
  *
  * Displays an individual service card with name and duration.
  * Handles selection callback and shows selected state visually.

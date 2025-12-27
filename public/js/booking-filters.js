@@ -1,5 +1,12 @@
+/**
+ * @file Manages booking filters for client-side interactions.
+ * @project app-reservas
+ */
+
 const estadoInput = document.getElementById("estadoInput");
+/** @type {HTMLFormElement} */
 const filterForm = document.getElementById("filterForm");
+/** @type {HTMLInputElement} */
 const fechaInput = document.getElementById("fecha");
 
 /**

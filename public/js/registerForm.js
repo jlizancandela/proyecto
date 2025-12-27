@@ -1,4 +1,6 @@
 /**
+ * @file Manages the registration form interactions.
+ * @project app-reservas
  * Manages the registration form interactions.
  * Handles input validation and password visibility toggling.
  */

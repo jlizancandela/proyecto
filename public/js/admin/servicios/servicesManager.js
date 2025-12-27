@@ -1,4 +1,7 @@
-// Manages service creation, editing, and status toggling in the admin panel.
+/**
+ * @file Manages service creation, editing, and status toggling in the admin panel.
+ * @project app-reservas
+ */
 
 import {
   fetchService,

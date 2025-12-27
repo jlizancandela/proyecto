@@ -1,3 +1,8 @@
+/**
+ * @file API utilities for user booking operations.
+ * @project app-reservas
+ */
+
 const SERVICES_API_URL = "/api/services";
 const AVAILABLE_SPECIALISTS_API_URL = "/api/especialistas/disponibles";
 const USER_BOOKINGS_API_URL = "/api/reservas";

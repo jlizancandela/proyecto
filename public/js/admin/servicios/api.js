@@ -1,4 +1,7 @@
-// API utilities for service operations.
+/**
+ * @file API utilities for service operations in the admin panel.
+ * @project app-reservas
+ */
 
 /**
  * Fetches a single service by ID.

@@ -1,6 +1,12 @@
 <?php
 
-// Handles database operations for specialist entities and their relationships.
+/**
+ * EspecialistaRepository
+ *
+ * Repository for handling specialist data and database operations.
+ * It manages specialist entities and their relationships with users and services.
+ * Provides methods for retrieving, adding, updating, and deleting specialist information.
+ */
 
 namespace Especialistas\Infrastructure;
 
@@ -13,7 +19,8 @@ class EspecialistaRepository
     private PDO $db;
 
     /**
-     * @param PDO $db
+     * EspecialistaRepository constructor.
+     * @param PDO $db The PDO database connection.
      */
     public function __construct(PDO $db)
     {
@@ -21,7 +28,9 @@ class EspecialistaRepository
     }
 
     /**
-     * @return array
+     * Retrieves all specialists along with their associated user data.
+     *
+     * @return EspecialistaUsuarioDTO[] An array of EspecialistaUsuarioDTO objects.
      */
     public function getAllEspecialistasConUsuario(): array
     {
@@ -81,8 +90,10 @@ class EspecialistaRepository
     }
 
     /**
-     * @param int $id
-     * @return EspecialistaUsuarioDTO|null
+     * Retrieves a specialist and their associated user data by the specialist's ID.
+     *
+     * @param int $id The ID of the specialist.
+     * @return EspecialistaUsuarioDTO|null The EspecialistaUsuarioDTO object if found, null otherwise.
      */
     public function getEspecialistaConUsuarioById(int $id): ?EspecialistaUsuarioDTO
     {
@@ -291,11 +302,14 @@ class EspecialistaRepository
     }
 
     /**
-     * @param int $idServicio
-     * @param string $fecha
-     * @param int|null $limit
-     * @param int|null $offset
-     * @return array
+     * Retrieves available specialists for a given service and date, considering their booked times.
+     * Includes pagination options.
+     *
+     * @param int $idServicio The ID of the service.
+     * @param string $fecha The date for which to find available specialists (format 'YYYY-MM-DD').
+     * @param int|null $limit The maximum number of results to return.
+     * @param int|null $offset The number of results to skip.
+     * @return array An array of available specialists, each with their available time slots.
      */
     public function getEspecialistasDisponibles(int $idServicio, string $fecha, ?int $limit = null, ?int $offset = null): array
     {
@@ -385,9 +399,11 @@ class EspecialistaRepository
     }
 
     /**
-     * @param array $reservas
-     * @param int $duracionMinutos
-     * @return array
+     * Calculates available time slots for a specialist based on their existing bookings and service duration.
+     *
+     * @param array $reservas An array of existing bookings for the specialist on a given day.
+     * @param int $duracionMinutos The duration of the service in minutes.
+     * @return string[] An array of available time slots in 'HH:MM' format.
      */
     private function calcularHorasDisponibles(array $reservas, int $duracionMinutos): array
     {
@@ -431,8 +447,10 @@ class EspecialistaRepository
     }
 
     /**
-     * @param int $idServicio
-     * @return int
+     * Counts the total number of available specialists for a specific service.
+     *
+     * @param int $idServicio The ID of the service.
+     * @return int The total count of available specialists.
      */
     public function countEspecialistasDisponibles(int $idServicio): int
     {
@@ -456,7 +474,9 @@ class EspecialistaRepository
     }
 
     /**
-     * @param int $id
+     * Deletes a specialist by their ID.
+     *
+     * @param int $id The ID of the specialist to delete.
      * @return void
      */
     public function deleteEspecialista(int $id): void

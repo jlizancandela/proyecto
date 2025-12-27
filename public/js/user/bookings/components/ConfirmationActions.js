@@ -1,5 +1,6 @@
 /**
- * ConfirmationActions Component
+ * @file ConfirmationActions Component
+ * @project app-reservas
  *
  * Displays action buttons for confirming or modifying a booking.
  * Shows loading state with spinner during booking confirmation.

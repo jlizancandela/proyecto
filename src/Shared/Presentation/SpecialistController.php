@@ -1,6 +1,11 @@
 <?php
 
-// Handles specialist panel pages including dashboard, bookings, and profile views.
+/**
+ * SpecialistController
+ *
+ * Handles specialist panel pages, including dashboard, booking management, and profile views.
+ * Interacts with `EspecialistaRepository` and `ReservaRepository` to fetch and display data.
+ */
 
 namespace Shared\Presentation;
 
@@ -14,6 +19,13 @@ class SpecialistController
     private EspecialistaRepository $especialistaRepository;
     private ReservaRepository $reservaRepository;
 
+    /**
+     * SpecialistController constructor.
+     *
+     * @param Engine $latte The Latte templating engine instance.
+     * @param EspecialistaRepository $especialistaRepository The repository for specialist data.
+     * @param ReservaRepository $reservaRepository The repository for booking data.
+     */
     public function __construct(
         Engine $latte,
         EspecialistaRepository $especialistaRepository,

@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * EspecialistaServicioRepository
+ *
+ * Repository for managing the many-to-many relationship between specialists and services.
+ * Provides methods to link and unlink specialists with services they provide.
+ */
+
 namespace Especialistas\Infrastructure;
 
 use Especialistas\Domain\EspecialistaServicio;
@@ -11,16 +18,27 @@ class EspecialistaServicioRepository
 {
     private PDO $db;
 
+    /**
+     * EspecialistaServicioRepository constructor.
+     * @param PDO $db The PDO database connection.
+     */
     public function __construct(PDO $db)
     {
         $this->db = $db;
     }
 
+    /**
+     * Retrieves a specific specialist-service link.
+     *
+     * @param int $id_especialista The ID of the specialist.
+     * @param int $id_servicio The ID of the service.
+     * @return EspecialistaServicio|null The EspecialistaServicio object if found, null otherwise.
+     */
     public function getEspecialistaServicio(int $id_especialista, int $id_servicio): ?EspecialistaServicio
     {
         try {
             $stmt = $this->db->prepare(
-                "SELECT * FROM ESPECIALISTA_SERVICIO 
+                "SELECT * FROM ESPECIALISTA_SERVICIO
                  WHERE id_especialista = :id_especialista AND id_servicio = :id_servicio"
             );
             $stmt->execute([
@@ -35,6 +53,12 @@ class EspecialistaServicioRepository
         }
     }
 
+    /**
+     * Retrieves all services offered by a specific specialist.
+     *
+     * @param int $id_especialista The ID of the specialist.
+     * @return Servicio[] An array of Servicio objects.
+     */
     public function getServiciosForEspecialista(int $id_especialista): array
     {
         try {
@@ -56,6 +80,12 @@ class EspecialistaServicioRepository
         }
     }
 
+    /**
+     * Retrieves all specialists who provide a specific service.
+     *
+     * @param int $id_servicio The ID of the service.
+     * @return Especialista[] An array of Especialista objects.
+     */
     public function getEspecialistasForServicio(int $id_servicio): array
     {
         try {
@@ -77,11 +107,17 @@ class EspecialistaServicioRepository
         }
     }
 
+    /**
+     * Adds a new specialist-service link to the database.
+     *
+     * @param EspecialistaServicio $especialistaServicio The EspecialistaServicio object to add.
+     * @return void
+     */
     public function addEspecialistaServicio(EspecialistaServicio $especialistaServicio): void
     {
         try {
             $stmt = $this->db->prepare(
-                "INSERT INTO ESPECIALISTA_SERVICIO (id_especialista, id_servicio) 
+                "INSERT INTO ESPECIALISTA_SERVICIO (id_especialista, id_servicio)
                  VALUES (:id_especialista, :id_servicio)"
             );
             $stmt->execute([
@@ -93,11 +129,18 @@ class EspecialistaServicioRepository
         }
     }
 
+    /**
+     * Deletes a specific specialist-service link from the database.
+     *
+     * @param int $id_especialista The ID of the specialist.
+     * @param int $id_servicio The ID of the service.
+     * @return void
+     */
     public function deleteEspecialistaServicio(int $id_especialista, int $id_servicio): void
     {
         try {
             $stmt = $this->db->prepare(
-                "DELETE FROM ESPECIALISTA_SERVICIO 
+                "DELETE FROM ESPECIALISTA_SERVICIO
                  WHERE id_especialista = :id_especialista AND id_servicio = :id_servicio"
             );
             $stmt->execute([
@@ -109,6 +152,12 @@ class EspecialistaServicioRepository
         }
     }
 
+    /**
+     * Deletes all service links for a specific specialist.
+     *
+     * @param int $id_especialista The ID of the specialist.
+     * @return void
+     */
     public function deleteAllServiciosForEspecialista(int $id_especialista): void
     {
         try {

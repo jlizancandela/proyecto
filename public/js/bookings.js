@@ -1,4 +1,6 @@
 /**
+ * @file Manages booking actions (modify, cancel) in the user interface.
+ * @project app-reservas
  * Manages booking actions (modify, cancel) in the user interface.
  * Handles modal updates and form submissions for booking management.
  */
@@ -21,14 +23,14 @@ const modalCancelBtn = document.getElementById("modalCancelBtn");
 const initializeBookingListeners = () => {
   modifyButtons.forEach((button) => {
     button.addEventListener("click", () => {
-      const bookingId = button.getAttribute("data-booking-id");
+      const bookingId = button.dataset.bookingId;
       modifyBooking(bookingId);
     });
   });
 
   cancelButtons.forEach((button) => {
     button.addEventListener("click", () => {
-      const bookingId = button.getAttribute("data-booking-id");
+      const bookingId = button.dataset.bookingId;
       cancelBooking(bookingId);
     });
   });
@@ -106,18 +108,18 @@ const confirmAction = () => {
       document.body.appendChild(form);
       form.submit();
     } else if (currentAction === "modify") {
-      window.location.href = `/user/reservas/modify/${currentBookingId}`;
+      globalThis.location.href = `/user/reservas/modify/${currentBookingId}`;
     }
   }
 };
 
 document.addEventListener("DOMContentLoaded", initializeBookingListeners);
 
-// Expose functions for testing
-if (typeof window !== "undefined") {
-  window.modifyBooking = modifyBooking;
-  window.cancelBooking = cancelBooking;
-  window.updateModal = updateModal;
-  window.confirmAction = confirmAction;
-  window.initializeBookingListeners = initializeBookingListeners;
+// Export functions for testing purposes
+if (typeof globalThis !== "undefined") {
+  globalThis.modifyBooking = modifyBooking;
+  globalThis.cancelBooking = cancelBooking;
+  globalThis.updateModal = updateModal;
+  globalThis.confirmAction = confirmAction;
+  globalThis.initializeBookingListeners = initializeBookingListeners;
 }

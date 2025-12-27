@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * @file Router configuration for the application.
+ * @project app-reservas
+ *
+ * This file defines all the routes for the application using the Bramus\Router library.
+ * Routes are grouped by their functionality (e.g., public, authentication, admin, user, specialist).
+ * It also applies necessary authentication and authorization middleware to different route groups.
+ */
+
 use Bramus\Router\Router;
 use Shared\Infrastructure\Middleware\AuthMiddleware;
 use Usuarios\Presentation\UserApiController;
@@ -20,6 +29,10 @@ use Especialistas\Presentation\EspecialistaApiController;
 require_once __DIR__ . '/../dependencies.php';
 
 $router = new Router();
+
+// --------------------------------------------------------------------------
+//  GLOBAL MIDDLEWARE (Before all routes)
+// --------------------------------------------------------------------------
 
 $router->before('GET|POST|PUT|DELETE', '/admin/api/.*', function () {
     AuthMiddleware::apiRequireAdmin();
@@ -45,6 +58,10 @@ $router->before('GET|POST|PUT|DELETE', '/api/reservas.*', function () {
     AuthMiddleware::apiRequireAuth();
 });
 
+// --------------------------------------------------------------------------
+//  PUBLIC ROUTES
+// --------------------------------------------------------------------------
+
 $router->get('/', function () use ($latte, $emailService) {
     $controller = new HomeController($latte, $emailService);
     echo $controller->index();
@@ -54,6 +71,10 @@ $router->post('/contacto', function () use ($latte, $emailService) {
     $controller = new HomeController($latte, $emailService);
     $controller->contact();
 });
+
+// --------------------------------------------------------------------------
+//  AUTHENTICATION ROUTES
+// --------------------------------------------------------------------------
 
 $router->get('/login', function () use ($latte, $authService, $emailService, $userService) {
     $controller = new AuthController($latte, $authService, $emailService, $userService);
@@ -110,6 +131,10 @@ $router->post('/reactivate', function () use ($latte, $authService, $emailServic
     $controller->reactivate();
 });
 
+// --------------------------------------------------------------------------
+//  ADMIN ROUTES
+// --------------------------------------------------------------------------
+
 $router->get('/admin', function () use ($latte) {
     $controller = new AdminController($latte);
     echo $controller->index();
@@ -129,6 +154,10 @@ $router->get('/admin/bookings', function () use ($latte, $userService, $servicio
     $controller = new AdminController($latte, $userService, $servicioService, $reservaService, null, $especialistaRepository);
     echo $controller->bookingsManagement();
 });
+
+// --------------------------------------------------------------------------
+//  USER ROUTES
+// --------------------------------------------------------------------------
 
 $router->get('/user', function () use ($latte, $reservaService) {
     $controller = new UserController($latte, $reservaService);
@@ -175,6 +204,10 @@ $router->get('/user/reservas/pdf', function () use ($latte, $reservaService) {
     $controller->exportReservas();
 });
 
+// --------------------------------------------------------------------------
+//  SPECIALIST ROUTES
+// --------------------------------------------------------------------------
+
 $router->get('/specialist', function () use ($latte, $especialistaRepository, $reservaRepository) {
     $controller = new SpecialistController($latte, $especialistaRepository, $reservaRepository);
     echo $controller->index();
@@ -190,6 +223,10 @@ $router->get('/specialist/profile', function () use ($latte, $especialistaReposi
     echo $controller->profile();
 });
 
+// --------------------------------------------------------------------------
+//  PDF EXPORT ROUTES (Admin)
+// --------------------------------------------------------------------------
+
 $router->get('/admin/bookings/pdf', function () use ($latte, $reservaService) {
     $controller = new PdfExportController($latte, $reservaService);
     $controller->exportAdminReservas();
@@ -199,6 +236,10 @@ $router->get('/admin/users/pdf', function () use ($latte, $reservaService, $user
     $controller = new PdfExportController($latte, $reservaService, $userService);
     $controller->exportAdminUsers();
 });
+
+// --------------------------------------------------------------------------
+//  ADMIN API ROUTES
+// --------------------------------------------------------------------------
 
 $router->get('/admin/api/users', function () use ($latte, $userService, $especialistaServicioRepository, $especialistaRepository) {
     $controller = new UserApiController($latte, $userService, $especialistaServicioRepository, $especialistaRepository);
@@ -378,6 +419,10 @@ $router->delete('/admin/api/users/(\d+)', function ($id) use ($latte, $userServi
     $controller = new UserApiController($latte, $userService, $especialistaServicioRepository, $especialistaRepository);
     $controller->deleteUser((int)$id);
 });
+
+// --------------------------------------------------------------------------
+//  API ROUTES (Public/User)
+// --------------------------------------------------------------------------
 
 $router->get('/api/services', function () use ($servicioService) {
     $controller = new ServiceApiController($servicioService);

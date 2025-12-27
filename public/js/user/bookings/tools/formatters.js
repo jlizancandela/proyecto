@@ -1,4 +1,9 @@
 /**
+ * @file Utility functions for formatting dates and times.
+ * @project app-reservas
+ */
+
+/**
  * Formats a date in long Spanish format
  * @param {Date} fecha - Date to format
  * @param {boolean} capitalizar - Whether to capitalize the first letter

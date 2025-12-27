@@ -1,4 +1,7 @@
-// Handles booking modals and delete operations for admin panel.
+/**
+ * @file Handles booking modals and delete operations for the admin panel.
+ * @project app-reservas
+ */
 
 import { fetchBooking, createBooking, updateBooking, deleteBooking } from "./api.js";
 

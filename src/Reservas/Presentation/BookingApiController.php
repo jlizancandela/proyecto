@@ -1,19 +1,34 @@
 <?php
 
+/**
+ * BookingApiController
+ *
+ * Handles API requests related to user bookings, allowing clients to create and retrieve their reservations.
+ */
+
 namespace Reservas\Presentation;
 
-use Latte\Engine;
 use Reservas\Application\ReservaService;
 
 class BookingApiController
 {
     private ReservaService $reservaService;
 
+    /**
+     * BookingApiController constructor.
+     * @param ReservaService $reservaService The booking service instance.
+     */
     public function __construct(ReservaService $reservaService)
     {
         $this->reservaService = $reservaService;
     }
 
+    /**
+     * Creates a new booking for the authenticated user.
+     * Receives booking data via JSON POST request.
+     *
+     * @return void
+     */
     public function createReserva(): void
     {
         header('Content-Type: application/json');
@@ -47,6 +62,12 @@ class BookingApiController
         }
     }
 
+    /**
+     * Retrieves all bookings for the authenticated user.
+     * Supports pagination via limit and offset query parameters.
+     *
+     * @return void
+     */
     public function getReservas(): void
     {
         header('Content-Type: application/json');

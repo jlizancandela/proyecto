@@ -11,6 +11,10 @@ class BookingAdminApiController
 {
     private ReservaService $reservaService;
 
+    /**
+     * BookingAdminApiController constructor.
+     * @param ReservaService $reservaService The booking service instance.
+     */
     public function __construct(ReservaService $reservaService)
     {
         $this->reservaService = $reservaService;

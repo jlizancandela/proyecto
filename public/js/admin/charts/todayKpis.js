@@ -1,5 +1,6 @@
 /**
- * Today's KPIs Module
+ * @file Today's KPIs Module
+ * @project app-reservas
  * Fetches and displays today's key performance indicators
  */
 

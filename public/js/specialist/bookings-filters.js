@@ -1,16 +1,26 @@
 /**
+ * @file Manages filters for specialist bookings.
+ * @project app-reservas
+ */
+
+/**
  * Specialist bookings filters management
  */
 
 const btnApplyFilters = document.getElementById("btnApplyFilters");
 const btnClearFilters = document.getElementById("btnClearFilters");
+/** @type {HTMLSelectElement} */
 const filterEstado = document.getElementById("filterEstado");
+/** @type {HTMLInputElement} */
 const filterCliente = document.getElementById("filterCliente");
+/** @type {HTMLInputElement} */
 const filterFechaDesde = document.getElementById("filterFechaDesde");
+/** @type {HTMLInputElement} */
 const filterFechaHasta = document.getElementById("filterFechaHasta");
 
 /**
- * Applies the selected filters
+ * Applies the selected filters by constructing a URL with query parameters
+ * and navigating to it.
  */
 const applyFilters = () => {
   const params = new URLSearchParams();
@@ -24,7 +34,7 @@ const applyFilters = () => {
 };
 
 /**
- * Clears all filters
+ * Clears all filters by navigating to the base specialist bookings URL.
  */
 const clearFilters = () => {
   globalThis.location.href = "/specialist/bookings";

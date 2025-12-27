@@ -1,5 +1,11 @@
 <?php
-// Domain entity for specialists, extends base user with specialist-specific fields
+
+/**
+ * Especialista
+ *
+ * Domain entity for specialists, extending the base User entity with specialist-specific fields
+ * such as a description and a profile picture URL.
+ */
 
 namespace Especialistas\Domain;
 
@@ -39,21 +45,37 @@ class Especialista extends Usuario
         }
     }
 
+    /**
+     * Get the specialist's ID.
+     * @return int The specialist's unique ID.
+     */
     public function getIdEspecialista(): int
     {
         return $this->idEspecialista;
     }
 
+    /**
+     * Get the associated user's ID.
+     * @return int The ID of the user associated with this specialist.
+     */
     public function getIdUsuario(): int
     {
         return $this->idUsuario;
     }
 
+    /**
+     * Get the specialist's description.
+     * @return string|null The specialist's description, or null if not set.
+     */
     public function getDescripcion(): ?string
     {
         return $this->descripcion;
     }
 
+    /**
+     * Get the URL of the specialist's profile photo.
+     * @return string|null The URL of the profile photo, or null if not set.
+     */
     public function getFotoUrl(): ?string
     {
         return $this->fotoUrl;

@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * EspecialistaApiController
+ *
+ * Handles API requests related to specialist information, particularly for fetching available specialists.
+ */
+
 namespace Especialistas\Presentation;
 
 use Especialistas\Infrastructure\EspecialistaRepository;
@@ -8,11 +14,21 @@ class EspecialistaApiController
 {
     private EspecialistaRepository $repository;
 
+    /**
+     * EspecialistaApiController constructor.
+     * @param EspecialistaRepository $repository The specialist repository instance.
+     */
     public function __construct(EspecialistaRepository $repository)
     {
         $this->repository = $repository;
     }
 
+    /**
+     * Retrieves a list of available specialists for a given service and date.
+     * Supports pagination. Returns JSON response.
+     *
+     * @return void
+     */
     public function getDisponibles(): void
     {
         header('Content-Type: application/json');

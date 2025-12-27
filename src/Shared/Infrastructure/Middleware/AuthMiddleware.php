@@ -1,9 +1,21 @@
 <?php
 
+/**
+ * AuthMiddleware
+ *
+ * Provides static methods for authentication and authorization checks.
+ * Used to protect routes and API endpoints based on user session and role.
+ */
+
 namespace Shared\Infrastructure\Middleware;
 
 class AuthMiddleware
 {
+    /**
+     * Ensures that the current user is authenticated and has an 'Admin' role.
+     * Redirects to the login page if not authenticated, or to the home page if not an admin.
+     * @return void
+     */
     public static function requireAdmin(): void
     {
         if (!isset($_SESSION['user_id'])) {
@@ -19,6 +31,11 @@ class AuthMiddleware
         }
     }
 
+    /**
+     * Ensures that the current user is authenticated.
+     * Redirects to the login page if not authenticated.
+     * @return void
+     */
     public static function requireAuth(): void
     {
         if (!isset($_SESSION['user_id'])) {
@@ -29,6 +46,11 @@ class AuthMiddleware
     }
 
 
+    /**
+     * Ensures that the current user is authenticated for API access.
+     * Returns a 401 Unauthorized JSON response if not authenticated.
+     * @return void
+     */
     public static function apiRequireAuth(): void
     {
         if (!isset($_SESSION['user_id'])) {
@@ -39,6 +61,11 @@ class AuthMiddleware
     }
 
 
+    /**
+     * Ensures that the current user is authenticated and has an 'Admin' role for API access.
+     * Returns a 403 Forbidden JSON response if not authenticated or not an admin.
+     * @return void
+     */
     public static function apiRequireAdmin(): void
     {
         if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'Admin') {
@@ -50,6 +77,11 @@ class AuthMiddleware
 
 
 
+    /**
+     * Ensures that the current user is authenticated and has a 'Client' role.
+     * Redirects to the login page if not authenticated, or to the home page if not a client.
+     * @return void
+     */
     public static function requireClient(): void
     {
         if (!isset($_SESSION['user_id'])) {

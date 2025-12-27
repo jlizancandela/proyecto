@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * ReservaCompletaDTO
+ *
+ * Data Transfer Object for a complete booking, including details from the client,
+ * specialist, and service involved in the reservation.
+ */
+
 namespace Reservas\Application;
 
 class ReservaCompletaDTO
@@ -32,6 +39,12 @@ class ReservaCompletaDTO
     public float $servicio_precio;
     public ?string $servicio_descripcion;
 
+    /**
+     * Creates a ReservaCompletaDTO instance from an associative array, typically a database row.
+     *
+     * @param array $data Associative array containing all booking-related data.
+     * @return self A new ReservaCompletaDTO instance.
+     */
     public static function fromDatabase(array $data): self
     {
         $dto = new self();
@@ -67,6 +80,11 @@ class ReservaCompletaDTO
         return $dto;
     }
 
+    /**
+     * Converts the DTO to an associative array.
+     *
+     * @return array The DTO data as an associative array.
+     */
     public function toArray(): array
     {
         return [
