@@ -52,7 +52,7 @@
 - [x] Eliminar método no utilizado (changeUserRole)
 - [x] Verificar que todos los métodos se usen
 - [x] Reducido de 689 a 627 líneas (-9%)
-- [ ] Verificar PHPDoc completo (opcional)
+- [x] Verificar PHPDoc completo ✅ COMPLETADO
 
 #### `EspecialistaRepository.php` (518 líneas)
 
