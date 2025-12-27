@@ -71,10 +71,11 @@
 
 ### 🟡 Revisar - Archivos >300 líneas
 
-#### `router.php` (462 líneas)
+#### `router.php` (595 líneas) ✅ Refactored & Documented
 
-- [ ] Considerar agrupar rutas por módulo
-- [ ] Documentar cada grupo de rutas
+- [x] Extraer lógica a controladores (StatsApiController creado)
+- [x] Documentar con PHPDoc ✅ COMPLETADO (60+ rutas)
+- [x] Agrupar rutas por módulo ✅ COMPLETADO (11 grupos)
 
 #### `ReservaService.php` (395 líneas)
 
