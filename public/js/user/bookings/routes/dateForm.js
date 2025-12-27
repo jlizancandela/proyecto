@@ -1,19 +1,4 @@
-/**
- * ========================================
- * DATE FORM - Componente Presentacional
- * ========================================
- *
- * Componente puramente presentacional para la selección de fecha y especialista.
- * Sin useEffect, sin cálculos de paginación, sin lógica de negocio.
- *
- * Responsabilidades:
- * - Mostrar el calendario y la lista de especialistas
- * - Conectar componentes con las acciones de la store
- * - Renderizar la UI de forma reactiva
- *
- * IMPORTANTE: La carga de especialistas se dispara automáticamente
- * desde setDiaAction en la store, NO desde un useEffect aquí.
- */
+// Presentational component for date and specialist selection, calendar and list display.
 
 import { h } from "https://esm.sh/preact@10.19.3";
 import { useStore } from "https://esm.sh/@nanostores/preact@0.5.1?deps=preact@10.19.3";
@@ -35,11 +20,10 @@ import {
 const html = htm.bind(h);
 
 /**
- * Formulario de selección de fecha y especialista
- * Componente presentacional puro
+ * Renders the date and specialist selection form
+ * @returns {import("preact").VNode} Date form component
  */
 export const DateForm = () => {
-  // Suscribirse a los stores necesarios
   const booking = useStore($bookingDraft);
   const especialistas = useStore($especialistas);
   const pagination = useStore($pagination);
@@ -47,7 +31,6 @@ export const DateForm = () => {
 
   return html`
     <div class="row g-4">
-      <!-- Columna del Calendario -->
       <div class="col-12 col-lg-5">
         <div>
           <div>
@@ -63,7 +46,6 @@ export const DateForm = () => {
         </div>
       </div>
 
-      <!-- Columna de Especialistas -->
       <div class="col-12 col-lg-7">
         <div>
           <div>
