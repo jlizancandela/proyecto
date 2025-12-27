@@ -20,7 +20,7 @@ const modalCancelBtn = document.getElementById("modalCancelBtn");
 /**
  * Initializes event listeners for booking action buttons.
  */
-const initializeBookingListeners = () => {
+export const initializeBookingListeners = () => {
   modifyButtons.forEach((button) => {
     button.addEventListener("click", () => {
       const bookingId = button.dataset.bookingId;
@@ -44,7 +44,7 @@ const initializeBookingListeners = () => {
  * Opens modify booking confirmation modal.
  * @param {string} bookingId - The booking ID to modify.
  */
-const modifyBooking = (bookingId) => {
+export const modifyBooking = (bookingId) => {
   currentBookingId = bookingId;
   currentAction = "modify";
 
@@ -64,7 +64,7 @@ const modifyBooking = (bookingId) => {
  * Opens cancel booking confirmation modal.
  * @param {string} bookingId - The booking ID to cancel.
  */
-const cancelBooking = (bookingId) => {
+export const cancelBooking = (bookingId) => {
   currentBookingId = bookingId;
   currentAction = "cancel";
 
@@ -88,7 +88,7 @@ const cancelBooking = (bookingId) => {
  * @param {string} cancelText - Cancel button text.
  * @param {string} confirmText - Confirm button text.
  */
-const updateModal = (title, message, subMessage, cancelText, confirmText) => {
+export const updateModal = (title, message, subMessage, cancelText, confirmText) => {
   modalTitle.textContent = title;
   modalMessage.textContent = message;
   modalSubMessage.textContent = subMessage;
@@ -99,7 +99,7 @@ const updateModal = (title, message, subMessage, cancelText, confirmText) => {
 /**
  * Executes the current booking action (modify or cancel).
  */
-const confirmAction = () => {
+export const confirmAction = () => {
   if (currentBookingId && currentAction) {
     if (currentAction === "cancel") {
       const form = document.createElement("form");
@@ -114,12 +114,3 @@ const confirmAction = () => {
 };
 
 document.addEventListener("DOMContentLoaded", initializeBookingListeners);
-
-// Export functions for testing purposes
-if (typeof globalThis !== "undefined") {
-  globalThis.modifyBooking = modifyBooking;
-  globalThis.cancelBooking = cancelBooking;
-  globalThis.updateModal = updateModal;
-  globalThis.confirmAction = confirmAction;
-  globalThis.initializeBookingListeners = initializeBookingListeners;
-}
