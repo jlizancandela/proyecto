@@ -8,8 +8,10 @@ use Reservas\Application\ReservaService;
 use Reservas\Infrastructure\ReservaRepository;
 
 beforeEach(function () {
-    $this->repository = Mockery::mock(ReservaRepository::class)->shouldIgnoreMissing();
-    $this->service = new ReservaService($this->repository);
+    /** @var ReservaRepository|\Mockery\MockInterface $repository */
+    $repository = Mockery::mock(ReservaRepository::class)->shouldIgnoreMissing();
+    $this->repository = $repository;
+    $this->service = new ReservaService($repository);
 });
 
 afterEach(function () {
