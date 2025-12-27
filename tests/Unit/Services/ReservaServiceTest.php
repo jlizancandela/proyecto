@@ -143,7 +143,7 @@ test('getReservasByClient returns bookings', function () {
     $result = $this->service->getReservasByClient(1);
 
     expect($result)->toBe($mockBookings);
-    expect(count($result))->toBe(2);
+    expect($result)->toHaveCount(2);
 });
 
 
