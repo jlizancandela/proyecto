@@ -99,8 +99,6 @@ test('deactivateService deactivates successfully', function () {
         ->andReturn(true);
 
     $this->service->deactivateService(1);
-
-    expect(true)->toBeTrue();
 });
 
 test('deactivateService throws exception when service not found', function () {
@@ -126,8 +124,6 @@ test('activateService activates successfully', function () {
         ->andReturn(true);
 
     $this->service->activateService(1);
-
-    expect(true)->toBeTrue();
 });
 
 test('getServiceById returns service when found', function () {
@@ -164,8 +160,8 @@ test('getAllServices returns all services', function () {
 
     $result = $this->service->getAllServices();
 
-    expect($result)->toBeArray();
-    expect(count($result))->toBe(2);
+    expect($result)->toBeArray()
+        ->toHaveCount(2);
 });
 
 test('getAllServices filters by active status', function () {
@@ -178,6 +174,6 @@ test('getAllServices filters by active status', function () {
 
     $result = $this->service->getAllServices(true);
 
-    expect($result)->toBeArray();
-    expect(count($result))->toBe(1);
+    expect($result)->toBeArray()
+        ->toHaveCount(1);
 });

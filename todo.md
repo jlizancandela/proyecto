@@ -113,7 +113,7 @@
 ### PHP Unit Tests (Pest)
 
 - [x] Revisar coverage actual ✅ 79 tests, 29% file coverage, 70-75% logic
-- [ ] Identificar servicios sin tests
+- [x] Identificar servicios sin tests
 - [ ] Identificar repositorios sin tests
 
 ## Documentación

@@ -27,7 +27,7 @@ test('getAllEspecialistas returns all specialists with user data', function () {
     $result = $this->service->getAllEspecialistas();
 
     expect($result)->toBeArray();
-    expect(count($result))->toBe(2);
+    expect($result)->toHaveCount(2);
 });
 
 test('getAllEspecialistas returns empty array when no specialists', function () {
