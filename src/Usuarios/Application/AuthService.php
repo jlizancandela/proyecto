@@ -10,7 +10,7 @@ use Respect\Validation\Validator as v;
 
 /**
  * Servicio de autenticación y gestión de sesiones
- * 
+ *
  * Maneja el registro de usuarios, login, logout y validación de credenciales.
  * Implementa reglas de validación de contraseñas y gestión de sesiones PHP.
  */
@@ -32,10 +32,10 @@ class AuthService
 
     /**
      * Registra un nuevo usuario validando datos y verificando email único
-     * 
+     *
      * Valida formato de datos, verifica que el email no esté registrado,
      * hashea la contraseña y crea el usuario en la base de datos.
-     * 
+     *
      * @param array $userData Datos del usuario (nombre, apellidos, email, password, telefono, rol)
      * @return Usuario Usuario creado
      * @throws \RuntimeException Si los datos son inválidos o el email ya existe
@@ -67,10 +67,10 @@ class AuthService
 
     /**
      * Valida el formato y contenido de los datos del usuario
-     * 
+     *
      * Verifica que nombre, apellidos, email y contraseña cumplan con los requisitos.
      * Delega la validación de contraseña a validatePassword().
-     * 
+     *
      * @param array $userData Datos a validar
      * @return void
      * @throws \RuntimeException Si algún dato no cumple las reglas de validación
@@ -95,10 +95,10 @@ class AuthService
 
     /**
      * Valida que la contraseña cumpla con los requisitos de seguridad
-     * 
+     *
      * Requisitos: mínimo 8 caracteres, una mayúscula, una minúscula,
      * un número y un carácter especial.
-     * 
+     *
      * @param string $password Contraseña a validar
      * @return void
      * @throws \RuntimeException Si la contraseña no cumple los requisitos
@@ -126,10 +126,10 @@ class AuthService
 
     /**
      * Autentica un usuario verificando email y contraseña
-     * 
+     *
      * Busca el usuario por email y verifica que la contraseña coincida
      * usando password_verify().
-     * 
+     *
      * @param string $email Email del usuario
      * @param string $password Contraseña en texto plano
      * @return Usuario|null Usuario si las credenciales son correctas, null si no
@@ -147,10 +147,10 @@ class AuthService
 
     /**
      * Inicia una sesión PHP para el usuario autenticado
-     * 
+     *
      * Guarda datos del usuario en $_SESSION y regenera el ID de sesión
      * por seguridad.
-     * 
+     *
      * @param Usuario $user Usuario autenticado
      * @return void
      */
@@ -170,9 +170,9 @@ class AuthService
 
     /**
      * Cierra la sesión del usuario actual
-     * 
+     *
      * Limpia todas las variables de sesión y destruye la sesión PHP.
-     * 
+     *
      * @return void
      */
     public function logout(): void
@@ -187,9 +187,9 @@ class AuthService
 
     /**
      * Obtiene el usuario actualmente autenticado
-     * 
+     *
      * Busca el usuario en la base de datos usando el ID almacenado en sesión.
-     * 
+     *
      * @return Usuario|null Usuario actual o null si no hay sesión activa
      */
     public function getCurrentUser(): ?Usuario
@@ -205,7 +205,7 @@ class AuthService
 
     /**
      * Verifica si hay un usuario autenticado
-     * 
+     *
      * @return bool True si existe una sesión activa con user_id
      */
     public function isAuthenticated(): bool
@@ -219,10 +219,10 @@ class AuthService
 
     /**
      * Cambia la contraseña de un usuario verificando la contraseña actual
-     * 
+     *
      * Valida que la contraseña actual sea correcta antes de actualizar.
      * La nueva contraseña se hashea antes de guardar.
-     * 
+     *
      * @param int $userId ID del usuario
      * @param string $oldPassword Contraseña actual en texto plano
      * @param string $newPassword Nueva contraseña en texto plano
@@ -248,7 +248,7 @@ class AuthService
 
     /**
      * Verifica si el usuario actual tiene un rol específico
-     * 
+     *
      * @param UserRole $role Rol a verificar
      * @return bool True si el usuario tiene el rol especificado
      */
@@ -265,10 +265,10 @@ class AuthService
 
     /**
      * Genera un token de recuperación de contraseña para un usuario
-     * 
+     *
      * Crea un token único usando random_bytes y establece una expiración
      * de 1 hora. El token se guarda en la base de datos.
-     * 
+     *
      * @param string $email Email del usuario
      * @return string Token generado
      * @throws \RuntimeException Si el usuario no existe
@@ -295,9 +295,9 @@ class AuthService
 
     /**
      * Valida un token de recuperación de contraseña
-     * 
+     *
      * Verifica que el token exista y no haya expirado.
-     * 
+     *
      * @param string $token Token de recuperación
      * @return Usuario|null Usuario si el token es válido, null si no
      */
@@ -308,12 +308,10 @@ class AuthService
         }
 
         $user = $this->passwordResetRepository->getUserByResetToken($token);
-
         if (!$user) {
             return null;
         }
 
-        // Obtener expiración directamente de BD
         $db = $this->userRepository->getConnection();
         $query = "SELECT reset_expiration FROM USUARIO WHERE id_usuario = :id";
         $stmt = $db->prepare($query);
@@ -323,21 +321,17 @@ class AuthService
         $result = $stmt->fetch(\PDO::FETCH_ASSOC);
 
         $expiration = $result['reset_expiration'] ?? null;
+        $isExpired = !$expiration || strtotime($expiration) < time();
 
-        // Verificar si ha expirado
-        if (!$expiration || strtotime($expiration) < time()) {
-            return null;
-        }
-
-        return $user;
+        return $isExpired ? null : $user;
     }
 
     /**
      * Resetea la contraseña de un usuario usando un token válido
-     * 
+     *
      * Valida el token, valida la nueva contraseña, la hashea,
      * actualiza en base de datos y limpia el token.
-     * 
+     *
      * @param string $token Token de recuperación
      * @param string $newPassword Nueva contraseña en texto plano
      * @return bool True si se reseteo correctamente, false si el token es inválido
