@@ -1,6 +1,6 @@
 /**
- * Home page smoke tests.
- * This file contains basic tests to ensure the landing page is accessible.
+ * @file Home page smoke tests.
+ * @project app-reservas
  */
 
 const { test, expect } = require("@playwright/test");

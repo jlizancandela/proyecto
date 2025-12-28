@@ -3,6 +3,11 @@
  * This file contains tests for the Preact reservation interface.
  */
 
+/**
+ * @file E2E tests for booking flow.
+ * @project app-reservas
+ */
+
 const { test, expect } = require("@playwright/test");
 
 test.describe("Booking Flow", () => {

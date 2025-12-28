@@ -1,3 +1,8 @@
+/**
+ * @file Unit tests for booking UI formatters.
+ * @project app-reservas
+ */
+
 import { describe, it, expect } from "vitest";
 import {
   formatearFechaLarga,

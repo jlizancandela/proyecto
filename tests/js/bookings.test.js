@@ -1,3 +1,8 @@
+/**
+ * @file Unit tests for booking management logic.
+ * @project app-reservas
+ */
+
 import { describe, it, expect, beforeEach, vi, afterEach } from "vitest";
 
 describe("Bookings JS Logic", () => {

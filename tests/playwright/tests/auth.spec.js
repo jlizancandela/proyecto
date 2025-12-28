@@ -1,6 +1,6 @@
 /**
- * Authentication flow tests.
- * This file contains tests for login and registration.
+ * @file Authentication flow tests.
+ * @project app-reservas
  */
 
 const { test, expect } = require("@playwright/test");

@@ -129,7 +129,7 @@
 
 ### File Headers
 
-- [ ] Verificar que todos los JS tengan header comment (2-3 líneas)
+- [x] Verificar que todos los JS tengan header comment (2-3 líneas) ✅ Todos los JS de public/js y tests/js verificados
 - [ ] Verificar que todos los PHP tengan PHPDoc de clase
 
 ### JSDoc / PHPDoc

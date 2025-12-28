@@ -1,3 +1,8 @@
+/**
+ * @file Unit tests for booking validation logic.
+ * @project app-reservas
+ */
+
 import { describe, it, expect } from "vitest";
 import { hasWeeklyBookingForService } from "@/public/js/user/bookings/tools/validators.js";
 

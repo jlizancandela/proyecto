@@ -1,5 +1,6 @@
 /**
- * @file Unit tests for booking filters (user bookings page).
+ * @file Unit tests for client-side booking filters.
+ * @project app-reservas
  */
 
 import { describe, it, expect, beforeEach, vi } from "vitest";

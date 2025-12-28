@@ -1,4 +1,7 @@
-// Global test setup for Vitest.
+/**
+ * @file Global test setup for Vitest.
+ * @project app-reservas
+ */
 
 import { vi } from "vitest";
 

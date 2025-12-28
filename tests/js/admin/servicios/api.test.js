@@ -1,3 +1,8 @@
+/**
+ * @file Unit tests for admin services API utility.
+ * @project app-reservas
+ */
+
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import {
   fetchService,
