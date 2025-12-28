@@ -114,7 +114,7 @@
 
 - [x] Revisar coverage actual ✅ 79 tests, 29% file coverage, 70-75% logic
 - [x] Identificar servicios sin tests
-- [ ] Identificar repositorios sin tests
+- [x] Repositorios identificados y testeados ✅ 121 tests, 100% repos, 100% services
 
 ## Documentación
 
