@@ -15,7 +15,15 @@ beforeEach(function () {
     $this->userRepository = Mockery::mock(UserRepository::class)->shouldIgnoreMissing();
     $this->userService = Mockery::mock(UserService::class)->shouldIgnoreMissing();
     $this->passwordResetRepo = Mockery::mock(PasswordResetRepository::class)->shouldIgnoreMissing();
-    $this->authService = new AuthService($this->userRepository, $this->userService, $this->passwordResetRepo);
+
+    /** @var UserRepository $userRepository */
+    $userRepository = $this->userRepository;
+    /** @var UserService $userService */
+    $userService = $this->userService;
+    /** @var PasswordResetRepository $passwordResetRepo */
+    $passwordResetRepo = $this->passwordResetRepo;
+
+    $this->authService = new AuthService($userRepository, $userService, $passwordResetRepo);
 });
 
 afterEach(function () {
@@ -153,7 +161,7 @@ test('generatePasswordResetToken creates token', function () {
     $result = $this->authService->generatePasswordResetToken('test@example.com');
 
     expect($result)->toBeString();
-    expect(strlen($result))->toBe(64);
+    expect($result)->toMatch('/^[a-f0-9]{64}$/');
 });
 
 test('generatePasswordResetToken throws if user not found', function () {
