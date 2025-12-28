@@ -8,6 +8,7 @@ use Usuarios\Infrastructure\UserRepository;
 use Usuarios\Infrastructure\PasswordResetRepository;
 use Respect\Validation\Validator as v;
 use Usuarios\Application\InvalidPasswordException;
+use Usuarios\Application\InvalidEmailException;
 
 /**
  * Servicio de autenticación y gestión de sesiones
@@ -47,7 +48,7 @@ class AuthService
 
         $result = $this->userRepository->getUserByEmail($userData['email']);
         if ($result) {
-            throw new \RuntimeException("El email ya está registrado");
+            throw new InvalidEmailException();
         }
 
         $passwordHash = password_hash($userData['password'], PASSWORD_DEFAULT);
