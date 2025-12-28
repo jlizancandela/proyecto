@@ -8,6 +8,7 @@ use Latte\Engine;
 use Shared\Infrastructure\Database\Database;
 use Shared\Infrastructure\Email\EmailService;
 use Usuarios\Infrastructure\UserRepository;
+use Usuarios\Infrastructure\PasswordResetRepository;
 use Usuarios\Application\UserService;
 use Usuarios\Application\AuthService;
 use Servicios\Infrastructure\ServicioRepository;
@@ -25,8 +26,9 @@ $db = (new Database())->getConnection();
 $emailService = new EmailService();
 
 $userRepository = new UserRepository($db);
+$passwordResetRepository = new PasswordResetRepository($db);
 $userService = new UserService($userRepository);
-$authService = new AuthService($userRepository, $userService);
+$authService = new AuthService($userRepository, $userService, $passwordResetRepository);
 
 $servicioRepository = new ServicioRepository($db);
 $servicioService = new ServicioService($servicioRepository);
