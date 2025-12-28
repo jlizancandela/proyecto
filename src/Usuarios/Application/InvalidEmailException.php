@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Error thrown when an email address is already being used.
+ */
+
 namespace Usuarios\Application;
 
 /**

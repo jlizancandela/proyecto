@@ -1,10 +1,17 @@
 <?php
 
+/**
+ * Data access for salon services stored in the database.
+ */
+
 namespace Servicios\Infrastructure;
 
 use Servicios\Domain\Servicio;
 use PDO;
 
+/**
+ * Handles all database operations for the services table.
+ */
 class ServicioRepository
 {
     private PDO $db;

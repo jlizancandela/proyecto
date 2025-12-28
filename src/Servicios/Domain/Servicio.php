@@ -1,7 +1,14 @@
 <?php
 
+/**
+ * Domain model representing a salon service.
+ */
+
 namespace Servicios\Domain;
 
+/**
+ * Represents a single service offered by the hair salon.
+ */
 class Servicio
 {
     private int $id_servicio;

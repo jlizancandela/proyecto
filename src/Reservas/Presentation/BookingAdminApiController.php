@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Controller for administrators to manage all salon bookings via JSON.
+ */
+
 namespace Reservas\Presentation;
 
 use Reservas\Application\ReservaService;

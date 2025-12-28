@@ -1,9 +1,16 @@
 <?php
 
+/**
+ * Domain object that represents a user in the hair salon system.
+ */
+
 namespace Usuarios\Domain;
 
 use Usuarios\Domain\UserRole;
 
+/**
+ * The main user class with all basic profile information.
+ */
 class Usuario
 {
     private int $id_usuario;

@@ -1,6 +1,8 @@
 <?php
 
-// Handles password reset tokens for users.
+/**
+ * Handles temporary tokens for users who forget their passwords.
+ */
 
 namespace Usuarios\Infrastructure;
 
@@ -8,6 +10,9 @@ use PDO;
 use PDOException;
 use Usuarios\Domain\Usuario;
 
+/**
+ * Manages all database actions for password reset tokens.
+ */
 class PasswordResetRepository
 {
     private PDO $db;

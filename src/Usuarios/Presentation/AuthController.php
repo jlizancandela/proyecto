@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Controller that handles login, registration, and logout processes.
+ */
+
 namespace Usuarios\Presentation;
 
 use Latte\Engine;
@@ -7,6 +11,9 @@ use Usuarios\Application\AuthService;
 use Usuarios\Application\UserService;
 use Shared\Infrastructure\Email\EmailService;
 
+/**
+ * Manages all authentication-related HTTP requests and sessions.
+ */
 class AuthController
 {
     private Engine $latte;

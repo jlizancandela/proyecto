@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Error that happens when user information is not valid or complete.
+ */
+
 namespace Usuarios\Application;
 
 /**

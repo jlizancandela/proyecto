@@ -1,9 +1,16 @@
 <?php
 
+/**
+ * Utility to convert user objects into arrays or other formats for the API.
+ */
+
 namespace Usuarios\Presentation\Transformers;
 
 use Usuarios\Domain\Usuario;
 
+/**
+ * Transforms user domain models into presentation-friendly data structures.
+ */
 class UserTransformer
 {
     public static function toArray(Usuario $user): array

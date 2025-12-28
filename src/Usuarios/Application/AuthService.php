@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * All security and login features for users are handled in this service.
+ */
+
 namespace Usuarios\Application;
 
 use Usuarios\Domain\Usuario;

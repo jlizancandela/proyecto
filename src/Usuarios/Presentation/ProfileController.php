@@ -1,10 +1,17 @@
 <?php
 
+/**
+ * Controller for users to view and update their own profile information.
+ */
+
 namespace Usuarios\Presentation;
 
 use Latte\Engine;
 use Usuarios\Application\UserService;
 
+/**
+ * Handles profile-related actions like viewing and updating account details.
+ */
 class ProfileController
 {
     private Engine $latte;

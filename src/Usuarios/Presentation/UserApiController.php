@@ -13,6 +13,9 @@ use Usuarios\Presentation\Transformers\UserTransformer;
 use Respect\Validation\Validator as v;
 use Respect\Validation\Exceptions\ValidationException;
 
+/**
+ * Provides JSON responses for user management operations.
+ */
 class UserApiController
 {
     private UserService $userService;

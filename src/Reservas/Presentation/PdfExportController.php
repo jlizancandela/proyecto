@@ -1,17 +1,18 @@
 <?php
 
+/**
+ * Utility to generate PDF documents for salon appointments or reports.
+ */
+
 namespace Reservas\Presentation;
 
 use Dompdf\Dompdf;
 use Latte\Engine;
 use Reservas\Application\ReservaService;
+use Shared\Domain\Exceptions\MissingDependencyException;
 
 /**
- * Controlador para exportar reservas a formato PDF
- * 
- * Genera documentos PDF de las reservas del usuario usando Dompdf.
- * Respeta los filtros aplicados (fecha y estado) para exportar solo
- * las reservas seleccionadas.
+ * Utility to generate PDF documents for salon appointments or reports.
  */
 class PdfExportController
 {
@@ -34,21 +35,19 @@ class PdfExportController
 
     /**
      * Exporta las reservas del usuario a PDF aplicando filtros opcionales
-     * 
+     *
      * Genera un documento PDF con todas las reservas que cumplan los filtros.
      * El PDF se muestra en el navegador (no se descarga automáticamente).
      * Limita a 1000 reservas máximo para evitar problemas de memoria.
-     * 
+     *
      * @return void Envía el PDF directamente al navegador
      */
     public function exportReservas(): void
     {
-        // Get filter parameters
         $fechaDesde = $_GET['fecha_desde'] ?? null;
         $fechaHasta = $_GET['fecha_hasta'] ?? null;
         $estado = $_GET['estado'] ?? null;
 
-        // Get user ID from session
         $userId = $_SESSION['user_id'] ?? null;
 
         if (!$userId) {
@@ -56,17 +55,15 @@ class PdfExportController
             exit;
         }
 
-        // Get all bookings (no pagination for PDF)
         $bookings = $this->reservaService->getAllReservasByFilter(
             $userId,
-            1000, // Max bookings
+            1000,
             0,
             $fechaDesde,
             $fechaHasta,
             $estado
         );
 
-        // Render HTML using Latte
         $html = $this->latte->renderToString(
             __DIR__ . '/../../../views/pdf/reservas-pdf.latte',
             [
@@ -78,13 +75,11 @@ class PdfExportController
             ]
         );
 
-        // Generate PDF
         $dompdf = new Dompdf();
         $dompdf->loadHtml($html);
         $dompdf->setPaper('A4', 'portrait');
         $dompdf->render();
 
-        // Output PDF
         $dompdf->stream("mis-reservas.pdf", ["Attachment" => false]);
     }
 
@@ -95,7 +90,6 @@ class PdfExportController
      */
     public function exportAdminReservas(): void
     {
-        // Get filter parameters mapped from query string
         $filtros = [];
 
         if (!empty($_GET['cliente'])) {
@@ -126,14 +120,12 @@ class PdfExportController
             $filtros['order'] = $_GET['order'];
         }
 
-        // Get all bookings (limit 1000 for PDF performance)
         $bookings = $this->reservaService->getAllReservasWithFilters(
             $filtros,
             1000,
             0
         );
 
-        // Render HTML using Latte
         $html = $this->latte->renderToString(
             __DIR__ . '/../../../views/pdf/admin-reservas-pdf.latte',
             [
@@ -146,13 +138,11 @@ class PdfExportController
             ]
         );
 
-        // Generate PDF
         $dompdf = new Dompdf();
         $dompdf->loadHtml($html);
-        $dompdf->setPaper('A4', 'landscape'); // Landscape for better table fit
+        $dompdf->setPaper('A4', 'landscape');
         $dompdf->render();
 
-        // Output PDF
         $dompdf->stream("gestion-reservas.pdf", ["Attachment" => false]);
     }
 
@@ -164,7 +154,7 @@ class PdfExportController
     public function exportAdminUsers(): void
     {
         if (!$this->userService) {
-            throw new \RuntimeException('UserService is required for this action');
+            throw new MissingDependencyException('UserService is required for this action');
         }
 
         $filtros = [];
@@ -189,10 +179,8 @@ class PdfExportController
             $filtros['order'] = $_GET['order'];
         }
 
-        // Get filtered users (limit 1000)
         $users = $this->userService->getAllUsersWithFilters($filtros, 1000, 0);
 
-        // Render HTML using Latte
         $html = $this->latte->renderToString(
             __DIR__ . '/../../../views/pdf/admin-users-pdf.latte',
             [
@@ -205,13 +193,11 @@ class PdfExportController
             ]
         );
 
-        // Generate PDF
         $dompdf = new Dompdf();
         $dompdf->loadHtml($html);
         $dompdf->setPaper('A4', 'landscape');
         $dompdf->render();
 
-        // Output PDF
         $dompdf->stream("gestion-usuarios.pdf", ["Attachment" => false]);
     }
 }
