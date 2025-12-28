@@ -438,6 +438,29 @@ class UserRepository
     }
 
     /**
+     * Obtiene la fecha de expiración del token de recuperación
+     *
+     * @param int $userId ID del usuario
+     * @return string|null Fecha de expiración o null
+     * @throws PDOException Si hay un error en la base de datos
+     */
+    public function getResetTokenExpiration(int $userId): ?string
+    {
+        try {
+            $query = "SELECT reset_expiration FROM USUARIO WHERE id_usuario = :id";
+            $stmt = $this->db->prepare($query);
+            $stmt->bindParam(":id", $userId);
+            $stmt->execute();
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $result['reset_expiration'] ?? null;
+        } catch (PDOException $e) {
+            throw new PDOException(
+                "Error al obtener expiración del token: " . $e->getMessage(),
+            );
+        }
+    }
+
+    /**
      * Deletes a user from the database.
      *
      * @param int $id The ID of the user to delete.

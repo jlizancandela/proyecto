@@ -312,15 +312,7 @@ class AuthService
             return null;
         }
 
-        $db = $this->userRepository->getConnection();
-        $query = "SELECT reset_expiration FROM USUARIO WHERE id_usuario = :id";
-        $stmt = $db->prepare($query);
-        $userId = $user->getId();
-        $stmt->bindParam(":id", $userId);
-        $stmt->execute();
-        $result = $stmt->fetch(\PDO::FETCH_ASSOC);
-
-        $expiration = $result['reset_expiration'] ?? null;
+        $expiration = $this->userRepository->getResetTokenExpiration($user->getId());
         $isExpired = !$expiration || strtotime($expiration) < time();
 
         return $isExpired ? null : $user;
