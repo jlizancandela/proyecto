@@ -8,10 +8,17 @@ namespace Usuarios\Application;
 class InvalidUserException extends \RuntimeException
 {
     /**
-     * @param string $message
+     * Creates a new invalid user exception with default message
+     *
+     * @param string $message Custom error message
+     * @param int $code Error code
+     * @param \Throwable|null $previous Previous exception
      */
-    public function __construct(string $message = "Usuario no encontrado")
-    {
-        parent::__construct($message);
+    public function __construct(
+        string $message = "Usuario no encontrado",
+        int $code = 0,
+        ?\Throwable $previous = null
+    ) {
+        parent::__construct($message, $code, $previous);
     }
 }
