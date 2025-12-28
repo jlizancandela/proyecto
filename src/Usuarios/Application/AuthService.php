@@ -5,6 +5,7 @@ namespace Usuarios\Application;
 use Usuarios\Domain\Usuario;
 use Usuarios\Domain\UserRole;
 use Usuarios\Infrastructure\UserRepository;
+use Usuarios\Infrastructure\PasswordResetRepository;
 use Respect\Validation\Validator as v;
 
 /**
@@ -17,13 +18,16 @@ class AuthService
 {
     private UserRepository $userRepository;
     private UserService $userService;
+    private PasswordResetRepository $passwordResetRepository;
 
     public function __construct(
         UserRepository $userRepository,
-        UserService $userService
+        UserService $userService,
+        PasswordResetRepository $passwordResetRepository
     ) {
         $this->userRepository = $userRepository;
         $this->userService = $userService;
+        $this->passwordResetRepository = $passwordResetRepository;
     }
 
     /**
@@ -284,7 +288,7 @@ class AuthService
         $expiration = date('Y-m-d H:i:s', time() + 3600);
 
         // Guardar token y expiración en la base de datos
-        $this->userRepository->savePasswordResetToken($user->getId(), $token, $expiration);
+        $this->passwordResetRepository->savePasswordResetToken($user->getId(), $token, $expiration);
 
         return $token;
     }
@@ -303,7 +307,7 @@ class AuthService
             return null;
         }
 
-        $user = $this->userRepository->getUserByResetToken($token);
+        $user = $this->passwordResetRepository->getUserByResetToken($token);
 
         if (!$user) {
             return null;
@@ -356,7 +360,7 @@ class AuthService
         $this->userService->updateUser($user);
 
         // Limpiar token para que no pueda reutilizarse
-        $this->userRepository->clearResetToken($user->getId());
+        $this->passwordResetRepository->clearResetToken($user->getId());
 
         return true;
     }
