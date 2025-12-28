@@ -9,6 +9,8 @@ use Usuarios\Infrastructure\PasswordResetRepository;
 use Respect\Validation\Validator as v;
 use Usuarios\Application\InvalidPasswordException;
 use Usuarios\Application\InvalidEmailException;
+use Usuarios\Application\InvalidUserDataException;
+use Usuarios\Application\InvalidUserException;
 
 /**
  * Servicio de autenticación y gestión de sesiones
@@ -48,7 +50,7 @@ class AuthService
 
         $result = $this->userRepository->getUserByEmail($userData['email']);
         if ($result) {
-            throw new InvalidEmailException();
+            throw new InvalidEmailException('El email ya está registrado');
         }
 
         $passwordHash = password_hash($userData['password'], PASSWORD_DEFAULT);
@@ -89,7 +91,7 @@ class AuthService
         try {
             $validator->assert($userData);
         } catch (\Respect\Validation\Exceptions\ValidationException $e) {
-            throw new \RuntimeException($e->getMessage());
+            throw new InvalidUserDataException($e->getMessage());
         }
 
         $this->validatePassword($userData['password']);
@@ -276,7 +278,7 @@ class AuthService
         $user = $this->userRepository->getUserByEmail($email);
 
         if (!$user) {
-            throw new \RuntimeException("Usuario no encontrado");
+            throw new InvalidUserException("Usuario no encontrado");
         }
 
         // Generar token único de 32 bytes (64 caracteres hexadecimales)
