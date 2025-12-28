@@ -21,9 +21,9 @@ class UserRepository
     }
 
     /**
-     * Obtiene la conexión PDO
-     * 
-     * @return PDO Conexión a la base de datos
+     * Obtains the PDO connection
+     *
+     * @return PDO PDO connection
      */
     public function getConnection(): PDO
     {
@@ -32,7 +32,7 @@ class UserRepository
 
     /**
      * Builds the ORDER BY clause for queries.
-     * 
+     *
      * @param string $sort The column to sort by ('nombre', 'email', 'rol', 'fecha').
      * @param string $order The sorting order ('asc' or 'desc').
      * @return string The ORDER BY clause.
@@ -55,6 +55,9 @@ class UserRepository
                     break;
                 case 'fecha':
                     $orderBy = "fecha_registro $orderDirection";
+                    break;
+                default:
+                    $orderBy = "id_usuario DESC";
                     break;
             }
         }
@@ -132,11 +135,11 @@ class UserRepository
         try {
             $orderBy = $this->buildOrderBy($sort, $order);
 
-            $query = "SELECT * FROM USUARIO 
-                      WHERE nombre LIKE :search1 
-                      OR apellidos LIKE :search2 
-                      OR email LIKE :search3 
-                      OR telefono LIKE :search4 
+            $query = "SELECT * FROM USUARIO
+                      WHERE nombre LIKE :search1
+                      OR apellidos LIKE :search2
+                      OR email LIKE :search3
+                      OR telefono LIKE :search4
                       ORDER BY $orderBy
                       LIMIT :limit OFFSET :offset";
             $stmt = $this->db->prepare($query);
@@ -171,10 +174,10 @@ class UserRepository
     public function getTotalSearchResults(string $search): int
     {
         try {
-            $query = "SELECT COUNT(*) as total FROM USUARIO 
-                      WHERE nombre LIKE :search1 
-                      OR apellidos LIKE :search2 
-                      OR email LIKE :search3 
+            $query = "SELECT COUNT(*) as total FROM USUARIO
+                      WHERE nombre LIKE :search1
+                      OR apellidos LIKE :search2
+                      OR email LIKE :search3
                       OR telefono LIKE :search4";
             $stmt = $this->db->prepare($query);
             $searchParam = "%{$search}%";
@@ -334,7 +337,7 @@ class UserRepository
     public function addUser(Usuario $user): int
     {
         try {
-            $query = "INSERT INTO USUARIO (rol, nombre, apellidos, email, telefono, password_hash, fecha_registro, activo) 
+            $query = "INSERT INTO USUARIO (rol, nombre, apellidos, email, telefono, password_hash, fecha_registro, activo)
                   VALUES (:rol, :nombre, :apellidos, :email, :telefono, :password_hash, :fecha_registro, :activo)";
             $stmt = $this->db->prepare($query);
 
@@ -457,7 +460,7 @@ class UserRepository
 
     /**
      * Obtiene usuarios aplicando múltiples filtros
-     * 
+     *
      * @param array $filters Filtros (rol, search, sort, order)
      * @param int $limit Límite de resultados
      * @param int $offset Desplazamiento
@@ -526,7 +529,7 @@ class UserRepository
 
     /**
      * Cuenta usuarios aplicando múltiples filtros
-     * 
+     *
      * @param array $filters Filtros (rol, search, estado)
      * @return int Total de usuarios
      */

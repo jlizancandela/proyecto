@@ -7,6 +7,7 @@ use Usuarios\Domain\UserRole;
 use Usuarios\Infrastructure\UserRepository;
 use Usuarios\Infrastructure\PasswordResetRepository;
 use Respect\Validation\Validator as v;
+use Usuarios\Application\InvalidPasswordException;
 
 /**
  * Servicio de autenticación y gestión de sesiones
@@ -101,7 +102,7 @@ class AuthService
      *
      * @param string $password Contraseña a validar
      * @return void
-     * @throws \RuntimeException Si la contraseña no cumple los requisitos
+     * @throws InvalidPasswordException Si la contraseña no cumple los requisitos
      */
     private function validatePassword(string $password): void
     {
@@ -116,11 +117,7 @@ class AuthService
         try {
             $passwordValidator->assert($password);
         } catch (\Respect\Validation\Exceptions\ValidationException $e) {
-            throw new \RuntimeException(
-                "La contraseña debe tener al menos 8 caracteres, " .
-                    "una letra mayúscula, una letra minúscula, un número " .
-                    "y un carácter especial (@$!%*?&#.,;:-_+)"
-            );
+            throw new InvalidPasswordException();
         }
     }
 
