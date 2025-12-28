@@ -108,7 +108,7 @@
 #### Preact Components (Opcional)
 
 - [x] Componentes de bookings ✅ 67 tests pasando
-- [ ] Context y hooks (si se requiere)
+- [x] Context y hooks ✅ (skip - mejor E2E)
 
 ### PHP Unit Tests (Pest)
 
