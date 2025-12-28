@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Custom error for when a user cannot be found in the system.
+ */
+
 namespace Usuarios\Application;
 
 /**

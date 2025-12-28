@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Error used when a password doesn't meet the security requirements.
+ */
+
 namespace Usuarios\Application;
 
 /**

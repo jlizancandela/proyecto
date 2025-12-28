@@ -130,7 +130,9 @@
 ### File Headers
 
 - [x] Verificar que todos los JS tengan header comment (2-3 líneas) ✅ Todos los JS de public/js y tests/js verificados
-- [ ] Verificar que todos los PHP tengan PHPDoc de clase
+- [x] Verificar que todos los PHP tengan PHPDoc de clase. (Checked and updated ~49 files in `src/`)
+- [x] Corregir PHPDoc de clase en archivos que falten.
+- [x] Al comienzo de cada archivo, poner una breve explicación (2 líneas máx).
 
 ### JSDoc / PHPDoc
 
@@ -162,7 +164,7 @@
 
 ### 📝 Día 3-4: Documentación Rápida
 
-- [ ] File headers en todos los JS (2-3 líneas)
+- [x] File headers en todos los JS (2-3 líneas)
 - [ ] JSDoc en funciones principales
 - [ ] PHPDoc en archivos críticos (ReservaRepository, UserRepository)
 

@@ -1,9 +1,16 @@
 <?php
 
+/**
+ * Tool used to send emails to users using the Brevo service.
+ */
+
 namespace Shared\Infrastructure\Email;
 
 /**
  * Servicio para enviar emails usando Brevo API con curl
+ */
+/**
+ * Communicates with the Brevo API to deliver transactional emails.
  */
 class EmailService
 {

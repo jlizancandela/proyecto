@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Data access layer for users in the database.
+ */
+
 namespace Usuarios\Infrastructure;
 
 use PDO;
@@ -7,6 +11,9 @@ use PDOException;
 use Usuarios\Domain\Usuario;
 use Usuarios\Domain\UserRole;
 
+/**
+ * Performs all CRUD operations for the users table.
+ */
 class UserRepository
 {
     private $db;

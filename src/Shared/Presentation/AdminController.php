@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Main entrance for all admin-only pages in the hair salon app.
+ */
+
 namespace Shared\Presentation;
 
 use Latte\Engine;
@@ -8,6 +12,9 @@ use Usuarios\Presentation\Transformers\UserTransformer;
 use Shared\Infrastructure\Pagination\Paginator;
 use Servicios\Application\ServicioService;
 
+/**
+ * Controls the display of the main admin dashboard and settings.
+ */
 class AdminController
 {
     private Engine $latte;
@@ -48,44 +55,14 @@ class AdminController
     {
         $limit = 10;
         $page = (int) ($_GET['page'] ?? 1);
-        $search = trim($_GET['search'] ?? '');
-        $rol = trim($_GET['rol'] ?? '');
-        $sort = trim($_GET['sort'] ?? '');
-        $order = trim($_GET['order'] ?? 'asc');
         $offset = ($page - 1) * $limit;
+        $filters = $this->getUsersFilters();
 
-        // Construir array de filtros
-        $filters = [];
-        if (!empty($search)) $filters['search'] = $search;
-        if (!empty($rol)) $filters['rol'] = $rol;
-        if (!empty($sort)) $filters['sort'] = $sort;
-        if (!empty($order)) $filters['order'] = $order;
-        if (isset($_GET['estado']) && $_GET['estado'] !== '') $filters['estado'] = $_GET['estado'];
-
-        // Obtener usuarios filtrados y total
         $users = $this->userService->getAllUsersWithFilters($filters, $limit, $offset);
         $total = $this->userService->countAllUsersWithFilters($filters);
 
         $totalPages = (int) ceil($total / $limit);
-
-        $usersArray = UserTransformer::toArrayCollection($users);
-
-        // Agregar servicios para especialistas
-        if ($this->especialistaServicioRepository && $this->especialistaRepository) {
-            foreach ($usersArray as &$userData) {
-                if ($userData['rol'] === 'Especialista') {
-                    $especialistaId = $this->especialistaRepository->getEspecialistaIdByUserId($userData['id']);
-                    if ($especialistaId) {
-                        $servicios = $this->especialistaServicioRepository->getServiciosForEspecialista($especialistaId);
-                        $userData['servicios'] = array_map(fn($s) => $s->getNombreServicio(), $servicios);
-                    } else {
-                        $userData['servicios'] = [];
-                    }
-                } else {
-                    $userData['servicios'] = [];
-                }
-            }
-        }
+        $usersArray = $this->enrichUsersWithServices(UserTransformer::toArrayCollection($users));
 
         return $this->latte->renderToString(
             __DIR__ . '/../../../views/pages/UsersManagement.latte',
@@ -94,7 +71,7 @@ class AdminController
                 'users' => $usersArray,
                 'page' => $page,
                 'totalPages' => $totalPages,
-                'search' => $search,
+                'search' => $_GET['search'] ?? '',
                 'total' => $total,
                 'currentUrl' => $_SERVER['REQUEST_URI'] ?? '/admin/users',
                 'availableServices' => $this->servicioService->getAllServices()
@@ -132,36 +109,7 @@ class AdminController
         $limit = 10;
         $page = (int) ($_GET['page'] ?? 1);
         $offset = ($page - 1) * $limit;
-
-        $filtros = [];
-
-        if (!empty($_GET['cliente'])) {
-            $filtros['cliente'] = (int) $_GET['cliente'];
-        }
-
-        if (!empty($_GET['especialista'])) {
-            $filtros['especialista'] = (int) $_GET['especialista'];
-        }
-
-        if (!empty($_GET['estado'])) {
-            $filtros['estado'] = trim($_GET['estado']);
-        }
-
-        if (!empty($_GET['fecha_desde'])) {
-            $filtros['fecha_desde'] = trim($_GET['fecha_desde']);
-        }
-
-        if (!empty($_GET['fecha_hasta'])) {
-            $filtros['fecha_hasta'] = trim($_GET['fecha_hasta']);
-        }
-
-        if (!empty($_GET['sort'])) {
-            $filtros['sort'] = trim($_GET['sort']);
-        }
-
-        if (!empty($_GET['order'])) {
-            $filtros['order'] = trim($_GET['order']);
-        }
+        $filtros = $this->getBookingsFilters();
 
         $reservas = $this->reservaService->getAllReservasWithFilters($filtros, $limit, $offset);
         $total = $this->reservaService->countAllReservasWithFilters($filtros);
@@ -184,5 +132,79 @@ class AdminController
                 'services' => $this->servicioService->getAllServices()
             ]
         );
+    }
+
+    /**
+     * Builds the filters array from the request.
+     * @return array
+     */
+    private function getUsersFilters(): array
+    {
+        $filters = [];
+        $search = trim($_GET['search'] ?? '');
+        $rol = trim($_GET['rol'] ?? '');
+        $sort = trim($_GET['sort'] ?? '');
+        $order = trim($_GET['order'] ?? 'asc');
+
+        if (!empty($search)) {
+            $filters['search'] = $search;
+        }
+        if (!empty($rol)) {
+            $filters['rol'] = $rol;
+        }
+        if (!empty($sort)) {
+            $filters['sort'] = $sort;
+        }
+        if (!empty($order)) {
+            $filters['order'] = $order;
+        }
+        if (isset($_GET['estado']) && $_GET['estado'] !== '') {
+            $filters['estado'] = $_GET['estado'];
+        }
+
+        return $filters;
+    }
+
+    /**
+     * Enriches user data with services if they are specialists.
+     * @param array $usersArray
+     * @return array
+     */
+    private function enrichUsersWithServices(array $usersArray): array
+    {
+        if (!$this->especialistaServicioRepository || !$this->especialistaRepository) {
+            return $usersArray;
+        }
+
+        foreach ($usersArray as &$userData) {
+            $userData['servicios'] = [];
+            if ($userData['rol'] === 'Especialista') {
+                $especialistaId = $this->especialistaRepository->getEspecialistaIdByUserId($userData['id']);
+                if ($especialistaId) {
+                    $servicios = $this->especialistaServicioRepository->getServiciosForEspecialista($especialistaId);
+                    $userData['servicios'] = array_map(fn($s) => $s->getNombreServicio(), $servicios);
+                }
+            }
+        }
+
+        return $usersArray;
+    }
+
+    /**
+     * Builds the filters array for bookings from the request.
+     * @return array
+     */
+    private function getBookingsFilters(): array
+    {
+        $filtros = [];
+
+        $keys = ['cliente', 'especialista', 'estado', 'fecha_desde', 'fecha_hasta', 'sort', 'order'];
+        foreach ($keys as $key) {
+            if (!empty($_GET[$key])) {
+                $filtros[$key] = ($key === 'cliente' || $key === 'especialista') ? (int) $_GET[$key] : trim($_GET[$key]);
+            }
+        }
+
+        return $filtros;
     }
 }

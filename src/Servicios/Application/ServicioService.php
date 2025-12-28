@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Service logic for handling everything related to hair salon services.
+ */
+
 namespace Servicios\Application;
 
 use Servicios\Domain\Servicio;
@@ -7,6 +11,9 @@ use Servicios\Infrastructure\ServicioRepository;
 use Respect\Validation\Validator as v;
 use Respect\Validation\Exceptions\ValidationException;
 
+/**
+ * Service class that coordinates service-related operations.
+ */
 class ServicioService
 {
     private ServicioRepository $repository;

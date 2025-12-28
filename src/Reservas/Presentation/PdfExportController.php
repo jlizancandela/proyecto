@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Utility to generate PDF documents for salon appointments or reports.
+ */
+
 namespace Reservas\Presentation;
 
 use Dompdf\Dompdf;
@@ -12,6 +16,9 @@ use Reservas\Application\ReservaService;
  * Genera documentos PDF de las reservas del usuario usando Dompdf.
  * Respeta los filtros aplicados (fecha y estado) para exportar solo
  * las reservas seleccionadas.
+ */
+/**
+ * Handles the creation and download of PDF files.
  */
 class PdfExportController
 {

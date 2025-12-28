@@ -1,10 +1,16 @@
 <?php
-// Simple data container for creating specialist instances
+
+/**
+ * Data object used to transfer specialist information between layers.
+ */
 
 namespace Especialistas\Domain;
 
 /**
  * Data Transfer Object for Especialista creation
+ */
+/**
+ * Simple container for specialist data without much logic.
  */
 class EspecialistaDTO
 {

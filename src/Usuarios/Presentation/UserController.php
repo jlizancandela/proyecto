@@ -1,10 +1,17 @@
 <?php
 
+/**
+ * Controller for managing user-related web pages in the admin panel.
+ */
+
 namespace Usuarios\Presentation;
 
 use Latte\Engine;
 use Reservas\Application\ReservaService;
 
+/**
+ * Handles HTTP requests for listing, creating, and editing users.
+ */
 class UserController
 {
     private Engine $latte;

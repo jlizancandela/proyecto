@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Page for customers to see and manage their own hair salon appointments.
+ */
+
 namespace Reservas\Presentation;
 
 use Latte\Engine;
@@ -10,6 +14,9 @@ use Reservas\Application\ReservaService;
  * 
  * Maneja la visualización, filtrado, cancelación y modificación de reservas
  * desde el panel de usuario. Implementa paginación y filtros por fecha y estado.
+ */
+/**
+ * Shows the history of bookings for the logged-in client.
  */
 class MyBookingsController
 {
