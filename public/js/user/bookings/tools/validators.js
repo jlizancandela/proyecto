@@ -17,7 +17,7 @@
 const getWeekStart = (date) => {
   const d = new Date(date);
   const day = d.getDay();
-  const diff = d.getDate() - day + (day === 0 ? -6 : 1); // Adjust for Sunday (0) to be last day
+  const diff = d.getDate() - day + (day === 0 ? -6 : 1);
   return new Date(d.setDate(diff));
 };
 
@@ -45,6 +45,14 @@ const isDateInSameWeek = (date1, date2) => {
   return week1Start.getTime() === week2Start.getTime();
 };
 
+/**
+ * Checks if a user already has an active booking for the same service within the same week.
+ *
+ * @param {Array} bookings - The list of user bookings to check.
+ * @param {number} serviceId - The ID of the service to check for.
+ * @param {string} targetDate - The target date for the new booking (YYYY-MM-DD).
+ * @returns {boolean} True if a weekly conflict exists, false otherwise.
+ */
 export const hasWeeklyBookingForService = (bookings, serviceId, targetDate) => {
   const activeBookings = bookings.filter((booking) => booking.estado !== "Cancelada");
 

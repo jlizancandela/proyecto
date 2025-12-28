@@ -16,6 +16,13 @@ class StatsApiController
     private ReservaService $reservaService;
     private ServicioService $servicioService;
 
+    /**
+     * StatsApiController constructor.
+     *
+     * @param EspecialistaRepository $especialistaRepository The repository for specialist data.
+     * @param ReservaService $reservaService The service for booking operations.
+     * @param ServicioService $servicioService The service for salon services management.
+     */
     public function __construct(
         EspecialistaRepository $especialistaRepository,
         ReservaService $reservaService,

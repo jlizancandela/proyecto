@@ -42,9 +42,7 @@ require_once __DIR__ . '/../dependencies.php';
 
 $router = new Router();
 
-// =============================================================================
-//  GLOBAL MIDDLEWARE (Applied before route handlers)
-// =============================================================================
+
 
 /**
  * Protect all /admin/api/* routes - Require admin authentication for API
@@ -88,9 +86,7 @@ $router->before('GET|POST|PUT|DELETE', '/api/reservas.*', function () {
     AuthMiddleware::apiRequireAuth();
 });
 
-// =============================================================================
-//  PUBLIC ROUTES
-// =============================================================================
+
 
 /**
  * Home page
@@ -108,9 +104,6 @@ $router->post('/contacto', function () use ($latte, $emailService) {
     $controller->contact();
 });
 
-// =============================================================================
-//  AUTHENTICATION ROUTES
-// =============================================================================
 
 /**
  * Show login page
@@ -200,9 +193,6 @@ $router->post('/reactivate', function () use ($latte, $authService, $emailServic
     $controller->reactivate();
 });
 
-// =============================================================================
-//  ADMIN ROUTES (Web Pages)
-// =============================================================================
 
 /**
  * Admin dashboard
@@ -235,10 +225,6 @@ $router->get('/admin/bookings', function () use ($latte, $userService, $servicio
     $controller = new AdminController($latte, $userService, $servicioService, $reservaService, null, $especialistaRepository);
     echo $controller->bookingsManagement();
 });
-
-// =============================================================================
-//  USER ROUTES
-// =============================================================================
 
 /**
  * User dashboard
@@ -312,9 +298,7 @@ $router->get('/user/reservas/pdf', function () use ($latte, $reservaService) {
     $controller->exportReservas();
 });
 
-// =============================================================================
-//  SPECIALIST ROUTES
-// =============================================================================
+
 
 /**
  * Specialist dashboard
@@ -340,9 +324,7 @@ $router->get('/specialist/profile', function () use ($latte, $especialistaReposi
     echo $controller->profile();
 });
 
-// =============================================================================
-//  PDF EXPORT ROUTES (Admin)
-// =============================================================================
+
 
 /**
  * Export bookings to PDF
@@ -360,9 +342,7 @@ $router->get('/admin/users/pdf', function () use ($latte, $reservaService, $user
     $controller->exportAdminUsers();
 });
 
-// =============================================================================
-//  ADMIN API ROUTES - Users
-// =============================================================================
+
 
 /**
  * Get all users
@@ -412,9 +392,7 @@ $router->delete('/admin/api/users/(\\d+)', function ($id) use ($latte, $userServ
     $controller->deleteUser((int)$id);
 });
 
-// =============================================================================
-//  ADMIN API ROUTES - Services
-// =============================================================================
+
 
 /**
  * Get all services
@@ -464,9 +442,7 @@ $router->post('/admin/api/services/(\\d+)/deactivate', function ($id) use ($serv
     $controller->deactivateService((int)$id);
 });
 
-// =============================================================================
-//  ADMIN API ROUTES - Bookings
-// =============================================================================
+
 
 /**
  * Get all bookings
@@ -508,9 +484,7 @@ $router->delete('/admin/api/reservas/(\\d+)', function ($id) use ($reservaServic
     $controller->deleteBooking((int)$id);
 });
 
-// =============================================================================
-//  ADMIN API ROUTES - Statistics
-// =============================================================================
+
 
 /**
  * Get all specialists
@@ -544,9 +518,7 @@ $router->get('/admin/api/stats/today-kpis', function () use ($especialistaReposi
     $controller->getTodayKpis();
 });
 
-// =============================================================================
-//  PUBLIC API ROUTES
-// =============================================================================
+
 
 /**
  * Get available services
@@ -588,8 +560,6 @@ $router->get('/api/me', function () use ($latte, $userService, $especialistaServ
     $controller->getCurrentUser();
 });
 
-// =============================================================================
-//  RUN ROUTER
-// =============================================================================
+
 
 $router->run();

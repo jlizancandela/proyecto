@@ -10,6 +10,7 @@ use Servicios\Domain\Servicio;
 use Servicios\Infrastructure\ServicioRepository;
 use Respect\Validation\Validator as v;
 use Respect\Validation\Exceptions\ValidationException;
+use Shared\Domain\Exceptions\{ServiceNotFoundException, ServiceOperationException, ServiceValidationException};
 
 /**
  * Service class that coordinates service-related operations.
@@ -18,6 +19,10 @@ class ServicioService
 {
     private ServicioRepository $repository;
 
+    /**
+     * ServicioService constructor.
+     * @param ServicioRepository $repository The repository for service data operations.
+     */
     public function __construct(ServicioRepository $repository)
     {
         $this->repository = $repository;
@@ -27,7 +32,8 @@ class ServicioService
      * Creates a new service after validation
      * @param array $data Service data
      * @return Servicio Created service
-     * @throws \Exception If validation fails
+     * @throws ServiceValidationException If validation fails
+     * @throws ServiceOperationException If the service could not be saved
      */
     public function createService(array $data): Servicio
     {
@@ -43,7 +49,7 @@ class ServicioService
         $id = $this->repository->save($servicio);
 
         if (!$id) {
-            throw new \Exception('Error creating service');
+            throw new ServiceOperationException('Error creating service');
         }
 
         return new Servicio(
@@ -60,14 +66,16 @@ class ServicioService
      * @param int $id Service ID
      * @param array $data Updated service data
      * @return Servicio Updated service
-     * @throws \Exception If validation fails or service not found
+     * @throws ServiceNotFoundException If service not found
+     * @throws ServiceValidationException If validation fails
+     * @throws ServiceOperationException If the update fails
      */
     public function updateService(int $id, array $data): Servicio
     {
         $existingService = $this->repository->getServicioById($id);
 
         if (!$existingService) {
-            throw new \Exception('Service not found');
+            throw new ServiceNotFoundException('Service not found');
         }
 
         $this->validateServiceData($data);
@@ -83,7 +91,7 @@ class ServicioService
         $success = $this->repository->update($servicio);
 
         if (!$success) {
-            throw new \Exception('Error updating service');
+            throw new ServiceOperationException('Error updating service');
         }
 
         return $servicio;
@@ -92,40 +100,42 @@ class ServicioService
     /**
      * Deactivates a service (soft delete)
      * @param int $id Service ID
-     * @throws \Exception If service not found
+     * @throws ServiceNotFoundException If service not found
+     * @throws ServiceOperationException If the deactivation fails
      */
     public function deactivateService(int $id): void
     {
         $existingService = $this->repository->getServicioById($id);
 
         if (!$existingService) {
-            throw new \Exception('Service not found');
+            throw new ServiceNotFoundException('Service not found');
         }
 
         $success = $this->repository->deactivate($id);
 
         if (!$success) {
-            throw new \Exception('Error deactivating service');
+            throw new ServiceOperationException('Error deactivating service');
         }
     }
 
     /**
      * Activates a service
      * @param int $id Service ID
-     * @throws \Exception If service not found
+     * @throws ServiceNotFoundException If service not found
+     * @throws ServiceOperationException If the activation fails
      */
     public function activateService(int $id): void
     {
         $existingService = $this->repository->getServicioById($id);
 
         if (!$existingService) {
-            throw new \Exception('Service not found');
+            throw new ServiceNotFoundException('Service not found');
         }
 
         $success = $this->repository->activate($id);
 
         if (!$success) {
-            throw new \Exception('Error activating service');
+            throw new ServiceOperationException('Error activating service');
         }
     }
 
@@ -142,7 +152,7 @@ class ServicioService
     /**
      * Gets all services, optionally filtered by active status
      * @param bool|null $activo Filter by active status (null = all)
-     * @return array Array of Servicio objects
+     * @return Servicio[] Array of Servicio objects
      */
     public function getAllServices(?bool $activo = null): array
     {
@@ -152,7 +162,7 @@ class ServicioService
     /**
      * Validates service data
      * @param array $data Service data to validate
-     * @throws \Exception If validation fails
+     * @throws ServiceValidationException If validation fails
      */
     private function validateServiceData(array $data): void
     {
@@ -163,7 +173,7 @@ class ServicioService
                 ->key('precio', v::numericVal()->min(0))
                 ->assert($data);
         } catch (ValidationException $e) {
-            throw new \Exception('Validation error: ' . $e->getMessage());
+            throw new ServiceValidationException('Validation error: ' . $e->getMessage());
         }
     }
 }

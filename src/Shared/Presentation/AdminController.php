@@ -24,6 +24,16 @@ class AdminController
     private ?\Especialistas\Infrastructure\EspecialistaServicioRepository $especialistaServicioRepository;
     private ?\Especialistas\Infrastructure\EspecialistaRepository $especialistaRepository;
 
+    /**
+     * AdminController constructor.
+     *
+     * @param Engine $latte The Latte templating engine instance.
+     * @param UserService|null $userService The user management service.
+     * @param ServicioService|null $servicioService The salon services service.
+     * @param \Reservas\Application\ReservaService|null $reservaService The booking management service.
+     * @param \Especialistas\Infrastructure\EspecialistaServicioRepository|null $especialistaServicioRepository
+     * @param \Especialistas\Infrastructure\EspecialistaRepository|null $especialistaRepository
+     */
     public function __construct(
         Engine $latte,
         ?UserService $userService = null,
@@ -40,6 +50,11 @@ class AdminController
         $this->especialistaRepository = $especialistaRepository;
     }
 
+    /**
+     * Renders the main admin dashboard page.
+     *
+     * @return string The rendered HTML content.
+     */
     public function index(): string
     {
         return $this->latte->renderToString(
@@ -51,6 +66,11 @@ class AdminController
         );
     }
 
+    /**
+     * Renders the user management page with filtering and pagination.
+     *
+     * @return string The rendered HTML content.
+     */
     public function usersManagement(): string
     {
         $limit = 10;
@@ -79,6 +99,11 @@ class AdminController
         );
     }
 
+    /**
+     * Renders the services management page.
+     *
+     * @return string The rendered HTML content.
+     */
     public function servicesManagement(): string
     {
         $servicios = $this->servicioService->getAllServices();
@@ -104,6 +129,11 @@ class AdminController
         );
     }
 
+    /**
+     * Renders the bookings management page with filtering and pagination.
+     *
+     * @return string The rendered HTML content.
+     */
     public function bookingsManagement(): string
     {
         $limit = 10;

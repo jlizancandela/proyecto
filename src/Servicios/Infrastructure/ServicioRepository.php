@@ -16,6 +16,10 @@ class ServicioRepository
 {
     private PDO $db;
 
+    /**
+     * ServicioRepository constructor.
+     * @param PDO $db The PDO database connection.
+     */
     public function __construct(PDO $db)
     {
         $this->db = $db;
@@ -24,7 +28,7 @@ class ServicioRepository
     /**
      * Gets all services, optionally filtered by active status
      * @param bool|null $activo Filter by active status (null = all)
-     * @return array Array of Servicio objects
+     * @return Servicio[] Array of Servicio objects
      */
     public function getAllServicios(?bool $activo = null): array
     {
@@ -48,6 +52,11 @@ class ServicioRepository
         }
     }
 
+    /**
+     * Retrieves a service by its ID.
+     * @param int $id The ID of the service.
+     * @return Servicio|null The Servicio object or null if not found.
+     */
     public function getServicioById(int $id): ?Servicio
     {
         try {
@@ -62,6 +71,11 @@ class ServicioRepository
         }
     }
 
+    /**
+     * Saves a new service in the database.
+     * @param Servicio $servicio The service object to save.
+     * @return int|null The ID of the newly created service or null on failure.
+     */
     public function save(Servicio $servicio): ?int
     {
         try {
@@ -85,11 +99,16 @@ class ServicioRepository
         }
     }
 
+    /**
+     * Updates an existing service record.
+     * @param Servicio $servicio The service object with updated data.
+     * @return bool True on success, false on failure.
+     */
     public function update(Servicio $servicio): bool
     {
         try {
             $stmt = $this->db->prepare(
-                "UPDATE SERVICIO 
+                "UPDATE SERVICIO
                 SET nombre_servicio = :nombre_servicio,
                     duracion_minutos = :duracion_minutos,
                     precio = :precio,
@@ -144,6 +163,10 @@ class ServicioRepository
         }
     }
 
+    /**
+     * Gets the total count of services in the system.
+     * @return int The total number of services.
+     */
     public function getTotalCount(): int
     {
         try {

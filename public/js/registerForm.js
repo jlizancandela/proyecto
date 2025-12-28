@@ -58,7 +58,6 @@ const displayErrors = (errors) => {
       errorDiv.className = "form-text text-danger";
       errorDiv.textContent = errors[field];
 
-      // Handle radio/checkbox groups where input might be a NodeList
       const targetInput = input instanceof NodeList ? input[0] : input;
 
       targetInput.classList.add("is-invalid");

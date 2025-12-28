@@ -10,6 +10,8 @@ use Usuarios\Domain\Usuario;
 use Usuarios\Domain\UserRole;
 use Usuarios\Infrastructure\UserRepository;
 use Respect\Validation\Validator as v;
+use Shared\Domain\Exceptions\InvalidEmailException;
+use Shared\Domain\Exceptions\InvalidUserDataException;
 
 /**
  * Servicio de gestión de usuarios
@@ -22,8 +24,15 @@ use Respect\Validation\Validator as v;
  */
 class UserService
 {
-    private $userRepository;
+    /**
+     * @var UserRepository The repository for user data operations.
+     */
+    private UserRepository $userRepository;
 
+    /**
+     * UserService constructor.
+     * @param UserRepository $userRepository The repository for user data operations.
+     */
     public function __construct(UserRepository $userRepository)
     {
         $this->userRepository = $userRepository;
@@ -36,7 +45,7 @@ class UserService
      * @param int $offset Desplazamiento para paginación
      * @param string $sort Campo por el que ordenar
      * @param string $order Dirección del ordenamiento (asc/desc)
-     * @return array Array de usuarios
+     * @return Usuario[] Array de usuarios
      */
     public function getAllUsers($limit = 10, $offset = 0, $sort = '', $order = 'asc'): array
     {
@@ -68,7 +77,7 @@ class UserService
      * Obtiene todos los usuarios con un rol específico
      *
      * @param UserRole $role Rol a filtrar (ADMIN, ESPECIALISTA, CLIENTE)
-     * @return array Array de usuarios con ese rol
+     * @return Usuario[] Array de usuarios con ese rol
      */
     public function getUserByRole(UserRole $role): array
     {
@@ -83,7 +92,7 @@ class UserService
      * @param int $offset Desplazamiento para paginación
      * @param string $sort Campo por el que ordenar
      * @param string $order Dirección del ordenamiento (asc/desc)
-     * @return array Array de usuarios con ese rol
+     * @return Usuario[] Array de usuarios con ese rol
      */
     public function getUsersByRole(string $rol, int $limit = 10, int $offset = 0, $sort = '', $order = 'asc'): array
     {
@@ -109,7 +118,7 @@ class UserService
      * @param int $offset Desplazamiento para paginación
      * @param string $sort Campo por el que ordenar
      * @param string $order Dirección del ordenamiento (asc/desc)
-     * @return array Array de usuarios que coinciden con la búsqueda
+     * @return Usuario[] Array de usuarios que coinciden con la búsqueda
      */
     public function searchUsers(string $search, int $limit = 10, int $offset = 0, $sort = '', $order = 'asc'): array
     {
@@ -133,7 +142,7 @@ class UserService
      * @param array $filters Filtros asociados arrays asociativo
      * @param int $limit Límite
      * @param int $offset Desplazamiento
-     * @return array Array de usuarios
+     * @return Usuario[] Array de usuarios
      */
     public function getAllUsersWithFilters(array $filters = [], int $limit = 50, int $offset = 0): array
     {
@@ -159,7 +168,8 @@ class UserService
      *
      * @param Usuario $user Usuario a crear
      * @return void
-     * @throws \RuntimeException Si los datos son inválidos o el email ya existe
+     * @throws InvalidEmailException Si el email ya existe
+     * @throws InvalidUserDataException Si los datos del usuario son inválidos
      */
     public function setUser(Usuario $user): void
     {
@@ -182,7 +192,8 @@ class UserService
      *
      * @param Usuario $user Usuario con datos actualizados
      * @return void
-     * @throws \RuntimeException Si los datos son inválidos o el email está en uso
+     * @throws InvalidEmailException Si el email ya está en uso por otro usuario
+     * @throws InvalidUserDataException Si los datos del usuario son inválidos
      */
     public function updateUser(Usuario $user): void
     {
@@ -204,7 +215,7 @@ class UserService
      *
      * @param Usuario $user Usuario a validar
      * @return void
-     * @throws \RuntimeException Si algún dato no cumple las reglas
+     * @throws InvalidUserDataException Si algún dato no cumple las reglas
      */
     private function validateUser(Usuario $user): void
     {
@@ -222,7 +233,7 @@ class UserService
                 $telefonoValidator->assert($user->getTelefono());
             }
         } catch (\Respect\Validation\Exceptions\ValidationException $e) {
-            throw new InvalidEmailException('Datos de usuario inválidos: ' . $e->getMessage());
+            throw new InvalidUserDataException('Datos de usuario inválidos: ' . $e->getMessage());
         }
     }
 

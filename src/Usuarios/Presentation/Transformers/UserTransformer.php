@@ -13,6 +13,12 @@ use Usuarios\Domain\Usuario;
  */
 class UserTransformer
 {
+    /**
+     * Transforms a single user domain model into a flat array for general presentation.
+     *
+     * @param Usuario $user The user domain model to transform.
+     * @return array The transformed array containing user data.
+     */
     public static function toArray(Usuario $user): array
     {
         return [
@@ -29,11 +35,23 @@ class UserTransformer
         ];
     }
 
+    /**
+     * Transforms a collection of user domain models into an array of arrays.
+     *
+     * @param Usuario[] $users The list of users to transform.
+     * @return array[] A collection of user data arrays.
+     */
     public static function toArrayCollection(array $users): array
     {
         return array_map([self::class, 'toArray'], $users);
     }
 
+    /**
+     * Transforms a single user domain model into a structure suitable for JSON APIs.
+     *
+     * @param Usuario $user The user domain model to transform.
+     * @return array The user data as an associative array.
+     */
     public static function toJsonApi(Usuario $user): array
     {
         return [
@@ -48,11 +66,23 @@ class UserTransformer
         ];
     }
 
+    /**
+     * Transforms a collection of user domain models into a JSON API-ready structure.
+     *
+     * @param Usuario[] $users The list of users to transform.
+     * @return array[] A collection of user associative arrays.
+     */
     public static function toJsonApiCollection(array $users): array
     {
         return array_map([self::class, 'toJsonApi'], $users);
     }
 
+    /**
+     * Determines the Bootstrap badge color based on the user's role.
+     *
+     * @param string $role The user role name.
+     * @return string The associated CSS color class.
+     */
     private static function getRoleBadgeColor(string $role): string
     {
         $colors = [

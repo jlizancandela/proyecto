@@ -219,7 +219,7 @@ class ReservaRepository
      * @param int $id_cliente The client's user ID.
      * @param int $limit Max number of results.
      * @param int $offset Offset for pagination.
-     * @return array List of bookings.
+     * @return ReservaCompletaDTO[] List of bookings.
      */
     public function findByClient(
         int $id_cliente,
@@ -255,7 +255,7 @@ class ReservaRepository
      * @param array $filtros Filters to apply (client, specialist, service, state, date range).
      * @param int $limit Max number of results.
      * @param int $offset Offset for pagination.
-     * @return array List of matching bookings.
+     * @return ReservaCompletaDTO[] List of matching bookings.
      */
     public function findAllFiltered(
         array $filtros = [],
@@ -271,8 +271,7 @@ class ReservaRepository
             $this->applyFilters($filtros, $sql, $params);
 
 
-            // Dynamic ORDER BY based on sort parameter
-            $orderBy = "r.fecha_reserva DESC, r.hora_inicio DESC"; // Default
+            $orderBy = "r.fecha_reserva DESC, r.hora_inicio DESC";
 
             if (isset($filtros['sort'])) {
                 $order = isset($filtros['order']) && strtoupper($filtros['order']) === 'DESC' ? 'DESC' : 'ASC';
@@ -433,7 +432,7 @@ class ReservaRepository
      * @param int $userId The user ID.
      * @param int $limit Max results.
      * @param int $offset Pagination offset.
-     * @return array List of bookings.
+     * @return ReservaCompletaDTO[] List of bookings.
      */
     public function findByUserId(int $userId, int $limit = 50, int $offset = 0): array
     {

@@ -32,9 +32,11 @@ class Especialista extends Usuario
             $dto->email,
             $dto->passwordHash,
             $dto->telefono,
-            $dto->fechaRegistro,
-            $dto->activo,
-            $dto->usuarioId
+            [
+                'fecha_registro' => $dto->fechaRegistro,
+                'activo' => $dto->activo,
+                'id_usuario' => $dto->usuarioId
+            ]
         );
 
         $this->idUsuario = $dto->idUsuario;

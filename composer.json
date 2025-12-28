@@ -13,7 +13,10 @@
             "Especialistas\\": "src/Especialistas/",
             "Usuarios\\": "src/Usuarios/",
             "Shared\\": "src/Shared/"
-        }
+        },
+        "files": [
+            "src/Shared/Domain/Exceptions/AppExceptions.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {

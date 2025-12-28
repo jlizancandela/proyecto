@@ -10,18 +10,14 @@ use Latte\Engine;
 use Reservas\Application\ReservaService;
 
 /**
- * Controlador para la gestión de reservas del usuario
- * 
- * Maneja la visualización, filtrado, cancelación y modificación de reservas
- * desde el panel de usuario. Implementa paginación y filtros por fecha y estado.
- */
-/**
  * Shows the history of bookings for the logged-in client.
  */
 class MyBookingsController
 {
     private Engine $latte;
     private ReservaService $reservaService;
+
+    private const ITEMS_PER_PAGE = 6;
 
     /**
      * MyBookingsController constructor.
@@ -36,48 +32,43 @@ class MyBookingsController
 
     /**
      * Muestra el listado paginado de reservas del usuario con filtros opcionales
-     * 
+     *
      * Permite filtrar por rango de fechas (desde/hasta) y estado de la reserva.
      * Los filtros se mantienen en la URL para persistir al cambiar de página.
-     * 
+     *
      * @return string HTML renderizado de la página de reservas
      */
     public function index()
     {
         $page = (int)($_GET['page'] ?? 1);
-        $limit = 6;
+        $limit = self::ITEMS_PER_PAGE;
         $offset = ($page - 1) * $limit;
 
-        // Get optional filter parameters
-        $fechaDesde = $_GET['fecha_desde'] ?? null;
-        $fechaHasta = $_GET['fecha_hasta'] ?? null;
-        $estado = $_GET['estado'] ?? null;
+        $fromDate = $_GET['fecha_desde'] ?? null;
+        $toDate = $_GET['fecha_hasta'] ?? null;
+        $status = $_GET['estado'] ?? null;
 
-        // Convert empty strings to null
-        if ($fechaDesde === '') {
-            $fechaDesde = null;
+        if ($fromDate === '') {
+            $fromDate = null;
         }
-        if ($fechaHasta === '') {
-            $fechaHasta = null;
+        if ($toDate === '') {
+            $toDate = null;
         }
-        if ($estado === '') {
-            $estado = null;
+        if ($status === '') {
+            $status = null;
         }
 
-        // Validate fecha_desde format if provided
-        if ($fechaDesde && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $fechaDesde)) {
-            $fechaDesde = null; // Invalid format, ignore
+        if ($fromDate && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $fromDate)) {
+            $fromDate = null;
         }
 
-        // Validate fecha_hasta format if provided
-        if ($fechaHasta && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $fechaHasta)) {
-            $fechaHasta = null; // Invalid format, ignore
+        if ($toDate && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $toDate)) {
+            $toDate = null;
         }
 
-        // Validate estado if provided
-        $validEstados = ['Pendiente', 'Confirmada', 'Completada', 'Cancelada'];
-        if ($estado && !in_array($estado, $validEstados)) {
-            $estado = null; // Invalid status, ignore
+        $validStatuses = ['Pendiente', 'Confirmada', 'Completada', 'Cancelada'];
+        if ($status && !in_array($status, $validStatuses)) {
+            $status = null;
         }
 
         $userId = $_SESSION['user_id'] ?? null;
@@ -87,31 +78,29 @@ class MyBookingsController
             exit;
         }
 
-        // Get user bookings with pagination and filters
         $bookings = $this->reservaService->getAllReservasByFilter(
             $userId,
             $limit,
             $offset,
-            $fechaDesde,
-            $fechaHasta,
-            $estado
+            $fromDate,
+            $toDate,
+            $status
         );
 
         $totalBookings = $this->reservaService->countReservasByFilter(
             $userId,
-            $fechaDesde,
-            $fechaHasta,
-            $estado
+            $fromDate,
+            $toDate,
+            $status
         );
 
         $totalPages = ceil($totalBookings / $limit);
 
-        // Construir URL para PDF con filtros
         $pdfUrl = '/user/reservas/pdf';
         $filterParams = array_filter([
-            'fecha_desde' => $fechaDesde,
-            'fecha_hasta' => $fechaHasta,
-            'estado' => $estado
+            'fecha_desde' => $fromDate,
+            'fecha_hasta' => $toDate,
+            'estado' => $status
         ]);
         if (!empty($filterParams)) {
             $pdfUrl .= '?' . http_build_query($filterParams);
@@ -127,9 +116,9 @@ class MyBookingsController
                 'totalPages' => $totalPages,
                 'totalBookings' => $totalBookings,
                 'filters' => [
-                    'fecha_desde' => $fechaDesde,
-                    'fecha_hasta' => $fechaHasta,
-                    'estado' => $estado
+                    'fecha_desde' => $fromDate,
+                    'fecha_hasta' => $toDate,
+                    'estado' => $status
                 ],
                 'pdfUrl' => $pdfUrl
             ]
@@ -138,10 +127,10 @@ class MyBookingsController
 
     /**
      * Cancela una reserva verificando permisos del usuario
-     * 
+     *
      * Valida que la reserva pertenezca al usuario logueado antes de cancelar.
      * Redirige a la lista de reservas con mensaje de éxito o error.
-     * 
+     *
      * @param int $bookingId ID de la reserva a cancelar
      * @return void
      */
@@ -155,7 +144,6 @@ class MyBookingsController
         }
 
         try {
-            // Verificar que la reserva pertenece al usuario
             $booking = $this->reservaService->getReservaById($bookingId);
             if (!$booking || $booking->id_cliente !== $userId) {
                 $_SESSION['error'] = 'No tienes permisos para cancelar esta reserva';
@@ -163,7 +151,6 @@ class MyBookingsController
                 exit;
             }
 
-            // Cancelar la reserva
             $success = $this->reservaService->updateReservaStatus($bookingId, 'Cancelada');
 
             if ($success) {
@@ -182,10 +169,10 @@ class MyBookingsController
 
     /**
      * Modifica una reserva cancelándola y redirigiendo al formulario de nueva reserva
-     * 
+     *
      * Cancela la reserva actual y redirige al usuario al formulario para crear
      * una nueva reserva con los mismos datos base.
-     * 
+     *
      * @param int $bookingId ID de la reserva a modificar
      * @return void
      */
@@ -199,7 +186,6 @@ class MyBookingsController
         }
 
         try {
-            // Verificar que la reserva pertenece al usuario
             $booking = $this->reservaService->getReservaById($bookingId);
             if (!$booking || $booking->id_cliente !== $userId) {
                 $_SESSION['error'] = 'No tienes permisos para modificar esta reserva';
@@ -207,7 +193,6 @@ class MyBookingsController
                 exit;
             }
 
-            // Cancelar la reserva actual
             $success = $this->reservaService->updateReservaStatus($bookingId, 'Cancelada');
 
             if ($success) {

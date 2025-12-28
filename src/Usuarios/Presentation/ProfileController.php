@@ -124,7 +124,6 @@ class ProfileController
         try {
             $userId = $_SESSION['user_id'];
 
-            //Baja lógica: desactivar usuario en lugar de eliminar
             $this->userService->deactivateUser($userId);
 
             session_destroy();

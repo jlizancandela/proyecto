@@ -136,23 +136,23 @@
 
 ### JSDoc / PHPDoc
 
-- [ ] Auditar que todas las funciones JS tengan JSDoc
-- [ ] Auditar que todos los métodos PHP tengan PHPDoc
-- [ ] Verificar tipos de retorno documentados
+- [x] Auditar que todas las funciones JS tengan JSDoc
+- [x] Auditar que todos los métodos PHP tengan PHPDoc
+- [x] Verificar tipos de retorno documentados
 
 ## Código Limpio
 
 ### Comentarios Innecesarios
 
-- [ ] Buscar y eliminar comentarios redundantes en JS
-- [ ] Buscar y eliminar comentarios redundantes en PHP
-- [ ] Solo mantener JSDoc/PHPDoc
+- [x] Buscar y eliminar comentarios redundantes en JS
+- [x] Buscar y eliminar comentarios redundantes en PHP
+- [x] Solo mantener JSDoc/PHPDoc
 
 ### Constantes y Variables
 
-- [ ] Verificar nombres descriptivos en inglés
-- [ ] Verificar que no haya magic numbers
-- [ ] Verificar que constantes estén en UPPER_CASE
+- [x] Verificar nombres descriptivos en inglés
+- [x] Verificar que no haya magic numbers
+- [x] Verificar que constantes estén en UPPER_CASE
 
 ## Priorización - 1 SEMANA ⏰
 
@@ -165,14 +165,14 @@
 ### 📝 Día 3-4: Documentación Rápida
 
 - [x] File headers en todos los JS (2-3 líneas)
-- [ ] JSDoc en funciones principales
-- [ ] PHPDoc en archivos críticos (ReservaRepository, UserRepository)
+- [x] JSDoc en funciones principales
+- [x] PHPDoc en archivos críticos (ReservaRepository, UserRepository)
 
 ### 🧹 Día 5: Limpieza de Código
 
-- [ ] Eliminar comentarios redundantes
-- [ ] Verificar nombres en inglés
-- [ ] Eliminar magic numbers
+- [x] Eliminar comentarios redundantes
+- [x] Verificar nombres en inglés
+- [x] Eliminar magic numbers
 
 ### 🎯 Día 6-7: Lo Más Crítico
 

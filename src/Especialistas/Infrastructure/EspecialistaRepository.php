@@ -36,7 +36,7 @@ class EspecialistaRepository
     {
         try {
             $stmt = $this->db->query("
-                SELECT 
+                SELECT
                     u.id_usuario,
                     u.rol,
                     u.nombre,
@@ -265,7 +265,7 @@ class EspecialistaRepository
     public function getEspecialistasDisponibles(int $idServicio, string $fecha, ?int $limit = null, ?int $offset = null): array
     {
         try {
-            // Obtener especialistas que ofrecen este servicio
+
             $query = "
                 SELECT DISTINCT
                     e.id_especialista,
@@ -283,7 +283,7 @@ class EspecialistaRepository
                 AND u.activo = 1
             ";
 
-            // Add pagination if limit is provided
+
             if ($limit !== null) {
                 $query .= " LIMIT :limit";
                 if ($offset !== null) {
@@ -305,7 +305,7 @@ class EspecialistaRepository
 
             $especialistas = [];
             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                // Obtener duración del servicio
+
                 $stmtServicio = $this->db->prepare("
                     SELECT duracion_minutos FROM SERVICIO WHERE id_servicio = :id_servicio
                 ");
@@ -313,7 +313,7 @@ class EspecialistaRepository
                 $servicio = $stmtServicio->fetch(PDO::FETCH_ASSOC);
                 $duracionMinutos = $servicio['duracion_minutos'];
 
-                // Obtener reservas del especialista para ese día
+
                 $stmtReservas = $this->db->prepare("
                     SELECT hora_inicio, hora_fin
                     FROM RESERVA
@@ -329,7 +329,7 @@ class EspecialistaRepository
 
                 $reservas = $stmtReservas->fetchAll(PDO::FETCH_ASSOC);
 
-                // Calcular horas disponibles (horario de 9:00 a 20:00)
+
                 $horasDisponibles = $this->calcularHorasDisponibles($reservas, $duracionMinutos);
 
                 $especialistas[] = [
@@ -360,7 +360,7 @@ class EspecialistaRepository
     {
         $horaInicio = new \DateTime('09:00');
         $horaFin = new \DateTime('20:00');
-        $intervalo = 30; // Intervalos de 30 minutos
+        $intervalo = 30;
 
         $horasDisponibles = [];
         $horaActual = clone $horaInicio;
@@ -369,18 +369,18 @@ class EspecialistaRepository
             $horaFinSlot = clone $horaActual;
             $horaFinSlot->modify("+{$duracionMinutos} minutes");
 
-            // Si el slot se pasa del horario de cierre, no lo incluimos
+
             if ($horaFinSlot > $horaFin) {
                 break;
             }
 
-            // Verificar si hay conflicto con alguna reserva
+
             $hayConflicto = false;
             foreach ($reservas as $reserva) {
                 $reservaInicio = new \DateTime($reserva['hora_inicio']);
                 $reservaFin = new \DateTime($reserva['hora_fin']);
 
-                // Hay conflicto si el slot se solapa con la reserva
+
                 if ($horaActual < $reservaFin && $horaFinSlot > $reservaInicio) {
                     $hayConflicto = true;
                     break;
@@ -434,7 +434,7 @@ class EspecialistaRepository
     {
         try {
             $stmt = $this->db->prepare("
-                SELECT 
+                SELECT
                     e.id_especialista,
                     e.descripcion,
                     e.foto_url,

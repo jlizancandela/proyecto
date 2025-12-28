@@ -16,7 +16,10 @@ use Usuarios\Domain\UserRole;
  */
 class UserRepository
 {
-    private $db;
+    /**
+     * @var PDO The database connection instance.
+     */
+    private PDO $db;
 
     /**
      * UserRepository constructor.
@@ -79,7 +82,7 @@ class UserRepository
      * @param int $offset The number of users to skip for pagination.
      * @param string $sort The column to sort by (e.g., 'nombre', 'email', 'rol', 'fecha').
      * @param string $order The sorting order ('asc' or 'desc').
-     * @return array An array of Usuario objects.
+     * @return Usuario[] An array of Usuario objects.
      * @throws PDOException If there is a database error.
      */
     public function getAllUsers($limit = 10, $offset = 0, $sort = '', $order = 'asc'): array
@@ -134,7 +137,7 @@ class UserRepository
      * @param int $offset The number of users to skip for pagination.
      * @param string $sort The column to sort by.
      * @param string $order The sorting order ('asc' or 'desc').
-     * @return array An array of Usuario objects matching the search criteria.
+     * @return Usuario[] An array of Usuario objects matching the search criteria.
      * @throws PDOException If there is a database error.
      */
     public function searchUsers(string $search, int $limit = 10, int $offset = 0, $sort = '', $order = 'asc'): array
@@ -229,7 +232,7 @@ class UserRepository
      * Retrieves users by their role.
      *
      * @param UserRole $role The role to filter by.
-     * @return array An array of Usuario objects matching the specified role.
+     * @return Usuario[] An array of Usuario objects matching the specified role.
      * @throws PDOException If there is a database error.
      */
     public function getUserByRole(UserRole $role): array
@@ -261,7 +264,7 @@ class UserRepository
      * @param int $offset The number of users to skip for pagination.
      * @param string $sort The column to sort by.
      * @param string $order The sorting order ('asc' or 'desc').
-     * @return array An array of Usuario objects matching the specified role.
+     * @return Usuario[] An array of Usuario objects matching the specified role.
      * @throws PDOException If there is a database error.
      */
     public function getUsersByRole(string $rol, int $limit = 10, int $offset = 0, $sort = '', $order = 'asc'): array
@@ -494,7 +497,7 @@ class UserRepository
      * @param array $filters Filtros (rol, search, sort, order)
      * @param int $limit Límite de resultados
      * @param int $offset Desplazamiento
-     * @return array Array de usuarios
+     * @return Usuario[] Array de usuarios
      */
     public function findAllFiltered(array $filters = [], int $limit = 50, int $offset = 0): array
     {
@@ -502,7 +505,6 @@ class UserRepository
             $sql = "SELECT * FROM USUARIO WHERE 1=1";
             $params = [];
 
-            // Filter by search term
             if (!empty($filters['search'])) {
                 $sql .= " AND (nombre LIKE :search1 OR apellidos LIKE :search2 OR email LIKE :search3 OR telefono LIKE :search4)";
                 $searchParam = "%{$filters['search']}%";
@@ -512,25 +514,21 @@ class UserRepository
                 $params['search4'] = $searchParam;
             }
 
-            // Filter by role
             if (!empty($filters['rol'])) {
                 $sql .= " AND rol = :rol";
                 $params['rol'] = $filters['rol'];
             }
 
-            // Filter by active status
             if (isset($filters['estado']) && $filters['estado'] !== '') {
                 $sql .= " AND activo = :estado";
                 $params['estado'] = (int)$filters['estado'];
             }
 
-            // Order By
             $sort = $filters['sort'] ?? '';
             $order = $filters['order'] ?? 'asc';
             $orderBy = $this->buildOrderBy($sort, $order);
             $sql .= " ORDER BY $orderBy";
 
-            // Pagination
             $sql .= " LIMIT :limit OFFSET :offset";
 
             $stmt = $this->db->prepare($sql);
@@ -569,7 +567,6 @@ class UserRepository
             $sql = "SELECT COUNT(*) as total FROM USUARIO WHERE 1=1";
             $params = [];
 
-            // Filter by search term
             if (!empty($filters['search'])) {
                 $sql .= " AND (nombre LIKE :search1 OR apellidos LIKE :search2 OR email LIKE :search3 OR telefono LIKE :search4)";
                 $searchParam = "%{$filters['search']}%";
@@ -579,13 +576,11 @@ class UserRepository
                 $params['search4'] = $searchParam;
             }
 
-            // Filter by role
             if (!empty($filters['rol'])) {
                 $sql .= " AND rol = :rol";
                 $params['rol'] = $filters['rol'];
             }
 
-            // Filter by active status
             if (isset($filters['estado']) && $filters['estado'] !== '') {
                 $sql .= " AND activo = :estado";
                 $params['estado'] = (int)$filters['estado'];

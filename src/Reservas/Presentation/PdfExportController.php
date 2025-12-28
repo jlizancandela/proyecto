@@ -16,6 +16,8 @@ use Shared\Domain\Exceptions\MissingDependencyException;
  */
 class PdfExportController
 {
+    private const MAX_EXPORT_ROWS = 1000;
+
     private Engine $latte;
     private  ?\Usuarios\Application\UserService $userService = null;
     private ReservaService $reservaService;
@@ -44,9 +46,9 @@ class PdfExportController
      */
     public function exportReservas(): void
     {
-        $fechaDesde = $_GET['fecha_desde'] ?? null;
-        $fechaHasta = $_GET['fecha_hasta'] ?? null;
-        $estado = $_GET['estado'] ?? null;
+        $fromDate = $_GET['fecha_desde'] ?? null;
+        $toDate = $_GET['fecha_hasta'] ?? null;
+        $status = $_GET['estado'] ?? null;
 
         $userId = $_SESSION['user_id'] ?? null;
 
@@ -59,9 +61,9 @@ class PdfExportController
             $userId,
             1000,
             0,
-            $fechaDesde,
-            $fechaHasta,
-            $estado
+            $fromDate,
+            $toDate,
+            $status
         );
 
         $html = $this->latte->renderToString(
@@ -69,9 +71,9 @@ class PdfExportController
             [
                 'userName' => ucfirst($_SESSION['name'] ?? 'Usuario'),
                 'bookings' => $bookings,
-                'fechaDesde' => $fechaDesde,
-                'fechaHasta' => $fechaHasta,
-                'estado' => $estado
+                'fechaDesde' => $fromDate,
+                'fechaHasta' => $toDate,
+                'estado' => $status
             ]
         );
 
@@ -90,39 +92,39 @@ class PdfExportController
      */
     public function exportAdminReservas(): void
     {
-        $filtros = [];
+        $filters = [];
 
         if (!empty($_GET['cliente'])) {
-            $filtros['cliente'] = (int)$_GET['cliente'];
+            $filters['cliente'] = (int)$_GET['cliente'];
         }
 
         if (!empty($_GET['especialista'])) {
-            $filtros['especialista'] = (int)$_GET['especialista'];
+            $filters['especialista'] = (int)$_GET['especialista'];
         }
 
         if (!empty($_GET['estado'])) {
-            $filtros['estado'] = $_GET['estado'];
+            $filters['estado'] = $_GET['estado'];
         }
 
         if (!empty($_GET['fecha_desde'])) {
-            $filtros['fecha_desde'] = $_GET['fecha_desde'];
+            $filters['fecha_desde'] = $_GET['fecha_desde'];
         }
 
         if (!empty($_GET['fecha_hasta'])) {
-            $filtros['fecha_hasta'] = $_GET['fecha_hasta'];
+            $filters['fecha_hasta'] = $_GET['fecha_hasta'];
         }
 
         if (!empty($_GET['sort'])) {
-            $filtros['sort'] = $_GET['sort'];
+            $filters['sort'] = $_GET['sort'];
         }
 
         if (!empty($_GET['order'])) {
-            $filtros['order'] = $_GET['order'];
+            $filters['order'] = $_GET['order'];
         }
 
         $bookings = $this->reservaService->getAllReservasWithFilters(
-            $filtros,
-            1000,
+            $filters,
+            self::MAX_EXPORT_ROWS,
             0
         );
 
@@ -130,11 +132,11 @@ class PdfExportController
             __DIR__ . '/../../../views/pdf/admin-reservas-pdf.latte',
             [
                 'bookings' => $bookings,
-                'fechaDesde' => $filtros['fecha_desde'] ?? null,
-                'fechaHasta' => $filtros['fecha_hasta'] ?? null,
-                'estado' => $filtros['estado'] ?? null,
-                'clienteId' => $filtros['cliente'] ?? null,
-                'especialistaId' => $filtros['especialista'] ?? null
+                'fechaDesde' => $filters['fecha_desde'] ?? null,
+                'fechaHasta' => $filters['fecha_hasta'] ?? null,
+                'estado' => $filters['estado'] ?? null,
+                'clienteId' => $filters['cliente'] ?? null,
+                'especialistaId' => $filters['especialista'] ?? null
             ]
         );
 
@@ -157,39 +159,39 @@ class PdfExportController
             throw new MissingDependencyException('UserService is required for this action');
         }
 
-        $filtros = [];
+        $filters = [];
 
         if (!empty($_GET['search'])) {
-            $filtros['search'] = $_GET['search'];
+            $filters['search'] = $_GET['search'];
         }
 
         if (!empty($_GET['rol'])) {
-            $filtros['rol'] = $_GET['rol'];
+            $filters['rol'] = $_GET['rol'];
         }
 
         if (isset($_GET['estado']) && $_GET['estado'] !== '') {
-            $filtros['estado'] = $_GET['estado'];
+            $filters['estado'] = $_GET['estado'];
         }
 
         if (!empty($_GET['sort'])) {
-            $filtros['sort'] = $_GET['sort'];
+            $filters['sort'] = $_GET['sort'];
         }
 
         if (!empty($_GET['order'])) {
-            $filtros['order'] = $_GET['order'];
+            $filters['order'] = $_GET['order'];
         }
 
-        $users = $this->userService->getAllUsersWithFilters($filtros, 1000, 0);
+        $users = $this->userService->getAllUsersWithFilters($filters, self::MAX_EXPORT_ROWS, 0);
 
         $html = $this->latte->renderToString(
             __DIR__ . '/../../../views/pdf/admin-users-pdf.latte',
             [
                 'users' => $users,
-                'search' => $filtros['search'] ?? null,
-                'rol' => $filtros['rol'] ?? null,
-                'estado' => $filtros['estado'] ?? null,
-                'sort' => $filtros['sort'] ?? null,
-                'order' => $filtros['order'] ?? null
+                'search' => $filters['search'] ?? null,
+                'rol' => $filters['rol'] ?? null,
+                'estado' => $filters['estado'] ?? null,
+                'sort' => $filters['sort'] ?? null,
+                'order' => $filters['order'] ?? null
             ]
         );
 

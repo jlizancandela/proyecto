@@ -21,6 +21,14 @@ class AuthController
     private EmailService $emailService;
     private ?UserService $userService;
 
+    /**
+     * AuthController constructor.
+     *
+     * @param Engine $latte The Latte templating engine instance.
+     * @param AuthService $authService Service for authentication logic.
+     * @param EmailService $emailService Service for sending emails.
+     * @param UserService|null $userService Service for user management (optional).
+     */
     public function __construct(
         Engine $latte,
         AuthService $authService,
@@ -33,6 +41,11 @@ class AuthController
         $this->userService = $userService;
     }
 
+    /**
+     * Displays the login page.
+     *
+     * @return string The rendered login page HTML.
+     */
     public function showLogin(): string
     {
         return $this->latte->renderToString(
@@ -45,6 +58,12 @@ class AuthController
         );
     }
 
+    /**
+     * Handles the login request.
+     * Verifies credentials, starts a session, and redirects.
+     *
+     * @return void
+     */
     public function login(): void
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -83,6 +102,12 @@ class AuthController
         exit;
     }
 
+    /**
+     * Handles the logout request.
+     * Destroys the session and redirects to the login page.
+     *
+     * @return void
+     */
     public function logout(): void
     {
         $this->authService->logout();
@@ -90,6 +115,11 @@ class AuthController
         exit;
     }
 
+    /**
+     * Displays the registration page.
+     *
+     * @return string The rendered registration page HTML.
+     */
     public function showRegister(): string
     {
         return $this->latte->renderToString(
@@ -101,6 +131,12 @@ class AuthController
         );
     }
 
+    /**
+     * Handles the registration request.
+     * Creates a new user, starts a session, and redirects.
+     *
+     * @return void
+     */
     public function register(): void
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {

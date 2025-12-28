@@ -34,13 +34,13 @@ class EspecialistaApiController
         header('Content-Type: application/json');
 
         try {
-            // Obtener parámetros de la query string
+
             $idServicio = $_GET['servicio'] ?? null;
             $fecha = $_GET['fecha'] ?? null;
             $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : null;
             $offset = isset($_GET['offset']) ? (int)$_GET['offset'] : null;
 
-            // Validar parámetros requeridos
+
             if (!$idServicio || !$fecha) {
                 http_response_code(400);
                 echo json_encode([
@@ -49,7 +49,7 @@ class EspecialistaApiController
                 return;
             }
 
-            // Validar formato de fecha
+
             $fechaObj = \DateTime::createFromFormat('Y-m-d', $fecha);
             if (!$fechaObj || $fechaObj->format('Y-m-d') !== $fecha) {
                 http_response_code(400);
@@ -59,12 +59,12 @@ class EspecialistaApiController
                 return;
             }
 
-            // Obtener total de especialistas disponibles
+
             $total = $this->repository->countEspecialistasDisponibles(
                 (int)$idServicio
             );
 
-            // Obtener especialistas disponibles con paginación
+
             $especialistas = $this->repository->getEspecialistasDisponibles(
                 (int)$idServicio,
                 $fecha,

@@ -9,6 +9,13 @@ namespace Reservas\Application;
 use Reservas\Domain\Reserva;
 use Reservas\Infrastructure\ReservaRepository;
 use Respect\Validation\Validator as v;
+use Shared\Domain\Exceptions\{
+    BookingConflictException,
+    BookingLimitException,
+    BookingNotFoundException,
+    BookingOperationException,
+    BookingValidationException
+};
 
 class ReservaService
 {
@@ -27,7 +34,10 @@ class ReservaService
      *
      * @param array $data Booking data
      * @return int Created booking ID
-     * @throws \RuntimeException If validation fails or conflicts exist
+     * @throws BookingValidationException If validation fails
+     * @throws BookingConflictException If conflicts exist
+     * @throws BookingLimitException If booking limits are exceeded
+     * @throws BookingOperationException If the booking could not be saved
      */
     public function createReserva(array $data): int
     {
@@ -63,7 +73,7 @@ class ReservaService
         $reservaId = $this->reservaRepository->addReserva($reserva);
 
         if (!$reservaId) {
-            throw new \RuntimeException('Error al crear la reserva');
+            throw new BookingOperationException('Error al crear la reserva');
         }
 
         return $reservaId;
@@ -75,14 +85,16 @@ class ReservaService
      * @param int $reservaId Booking ID
      * @param array $data Updated booking data
      * @return bool True if updated successfully
-     * @throws \RuntimeException If validation fails
+     * @throws BookingNotFoundException If the booking is not found
+     * @throws BookingValidationException If validation fails
+     * @throws BookingConflictException If conflicts exist
      */
     public function updateReserva(int $reservaId, array $data): bool
     {
         $existingReserva = $this->reservaRepository->findById($reservaId);
 
         if (!$existingReserva) {
-            throw new \RuntimeException('Reserva no encontrada');
+            throw new BookingNotFoundException('Reserva no encontrada');
         }
 
         $this->validateReservaData($data);
@@ -131,14 +143,14 @@ class ReservaService
      * @param int $reservaId Booking ID
      * @param string $newStatus New status
      * @return bool True if updated successfully
-     * @throws \RuntimeException If status is invalid
+     * @throws BookingValidationException If status is invalid
      */
     public function updateReservaStatus(int $reservaId, string $newStatus): bool
     {
         $validStatuses = ['Pendiente', 'Confirmada', 'Completada', 'Cancelada'];
 
         if (!in_array($newStatus, $validStatuses)) {
-            throw new \RuntimeException('Estado de reserva inválido');
+            throw new BookingValidationException('Estado de reserva inválido');
         }
 
         return $this->reservaRepository->updateStatus($reservaId, $newStatus);
@@ -150,7 +162,7 @@ class ReservaService
      * @param int $clientId Client ID
      * @param int $limit Max results
      * @param int $offset Pagination offset
-     * @return array Array of bookings
+     * @return Reserva[] Array of bookings
      */
     public function getReservasByClient(int $clientId, int $limit = 50, int $offset = 0): array
     {
@@ -163,7 +175,7 @@ class ReservaService
      * @param int $id Booking ID
      * @return ReservaCompletaDTO|null Complete booking DTO or null
      */
-    public function getReservaById(int $id)
+    public function getReservaById(int $id): ?ReservaCompletaDTO
     {
         return $this->reservaRepository->getReservaCompletaById($id);
     }
@@ -177,7 +189,7 @@ class ReservaService
      * @param string|null $fechaDesde Start date filter
      * @param string|null $fechaHasta End date filter
      * @param string|null $estado Status filter
-     * @return array Array of complete booking DTOs
+     * @return ReservaCompletaDTO[] Array of complete booking DTOs
      */
     public function getAllReservasByFilter(
         int $userId,
@@ -226,7 +238,7 @@ class ReservaService
      * @param int $userId User ID
      * @return ReservaCompletaDTO|null Latest booking or null
      */
-    public function getLatestReserva(int $userId)
+    public function getLatestReserva(int $userId): ?ReservaCompletaDTO
     {
         return $this->reservaRepository->findLatestByUserId($userId);
     }
@@ -237,7 +249,7 @@ class ReservaService
      * @param array $filtros Filters array
      * @param int $limit Max results
      * @param int $offset Pagination offset
-     * @return array Array of complete booking DTOs
+     * @return ReservaCompletaDTO[] Array of complete booking DTOs
      */
     public function getAllReservasWithFilters(
         array $filtros = [],
@@ -263,7 +275,7 @@ class ReservaService
      *
      * @param array $data Data to validate
      * @return void
-     * @throws \RuntimeException If validation fails
+     * @throws BookingValidationException If validation fails
      */
     private function validateReservaData(array $data): void
     {
@@ -278,14 +290,14 @@ class ReservaService
         try {
             $validator->assert($data);
         } catch (\Respect\Validation\Exceptions\ValidationException $e) {
-            throw new \RuntimeException($e->getMessage());
+            throw new BookingValidationException($e->getMessage());
         }
 
         $reservaDate = new \DateTime($data['fecha']);
         $today = new \DateTime('today');
 
         if ($reservaDate < $today) {
-            throw new \RuntimeException('La fecha de reserva debe ser futura');
+            throw new BookingValidationException('La fecha de reserva debe ser futura');
         }
     }
 
@@ -321,7 +333,7 @@ class ReservaService
      * @param int $specialistId Specialist ID
      * @param int $clientId Client ID
      * @return void
-     * @throws \RuntimeException If conflicts exist
+     * @throws BookingConflictException If conflicts exist
      */
     private function validateNoConflicts(
         string $date,
@@ -338,7 +350,7 @@ class ReservaService
         );
 
         if ($hasConflict) {
-            throw new \RuntimeException('El horario seleccionado ya no está disponible');
+            throw new BookingConflictException('El horario seleccionado ya no está disponible');
         }
 
         $clientConflict = $this->reservaRepository->findClientConflicts(
@@ -349,7 +361,7 @@ class ReservaService
         );
 
         if ($clientConflict) {
-            throw new \RuntimeException('Ya tienes otra reserva en ese horario');
+            throw new BookingConflictException('Ya tienes otra reserva en ese horario');
         }
     }
 
@@ -363,7 +375,7 @@ class ReservaService
      * @param int $clientId Client ID
      * @param int $excludeReservaId Booking ID to exclude from check
      * @return void
-     * @throws \RuntimeException If conflicts exist
+     * @throws BookingConflictException If conflicts exist
      */
     private function validateNoConflictsForUpdate(
         string $date,
@@ -382,7 +394,7 @@ class ReservaService
         );
 
         if ($hasConflict) {
-            throw new \RuntimeException('El horario seleccionado ya no está disponible');
+            throw new BookingConflictException('El horario seleccionado ya no está disponible');
         }
 
         $clientConflict = $this->reservaRepository->findClientConflicts(
@@ -394,7 +406,7 @@ class ReservaService
         );
 
         if ($clientConflict) {
-            throw new \RuntimeException('El cliente ya tiene otra reserva en ese horario');
+            throw new BookingConflictException('El cliente ya tiene otra reserva en ese horario');
         }
     }
 
@@ -405,7 +417,7 @@ class ReservaService
      * @param int $serviceId Service ID
      * @param string $date Booking date
      * @return void
-     * @throws \RuntimeException If weekly limit exceeded
+     * @throws BookingLimitException If weekly limit exceeded
      */
     private function validateWeeklyLimit(int $clientId, int $serviceId, string $date): void
     {
@@ -425,7 +437,7 @@ class ReservaService
         });
 
         if (count($activeReservas) > 0) {
-            throw new \RuntimeException('Ya tienes una reserva de este servicio en esta semana');
+            throw new BookingLimitException('Ya tienes una reserva de este servicio en esta semana');
         }
     }
 }

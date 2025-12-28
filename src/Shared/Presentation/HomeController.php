@@ -86,7 +86,7 @@ class HomeController
                 </html>
             ";
 
-            // Enviar email al administrador (usando el sender como receptor por simplicidad o configurar uno específico)
+
             $this->emailService->sendEmail(
                 $_ENV['EMAIL_SENDER'],
                 $subject,

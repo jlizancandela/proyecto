@@ -11,10 +11,10 @@ use Usuarios\Domain\UserRole;
 use Usuarios\Infrastructure\UserRepository;
 use Usuarios\Infrastructure\PasswordResetRepository;
 use Respect\Validation\Validator as v;
-use Usuarios\Application\InvalidPasswordException;
-use Usuarios\Application\InvalidEmailException;
-use Usuarios\Application\InvalidUserDataException;
-use Usuarios\Application\InvalidUserException;
+use Shared\Domain\Exceptions\InvalidPasswordException;
+use Shared\Domain\Exceptions\InvalidEmailException;
+use Shared\Domain\Exceptions\InvalidUserDataException;
+use Shared\Domain\Exceptions\InvalidUserException;
 
 /**
  * Servicio de autenticación y gestión de sesiones
@@ -28,6 +28,15 @@ class AuthService
     private UserService $userService;
     private PasswordResetRepository $passwordResetRepository;
 
+    private const TOKEN_EXPIRATION_SECONDS = 3600;
+
+    /**
+     * AuthService constructor.
+     *
+     * @param UserRepository $userRepository Repository for user data operations.
+     * @param UserService $userService Service for high-level user management.
+     * @param PasswordResetRepository $passwordResetRepository Repository for password reset tokens.
+     */
     public function __construct(
         UserRepository $userRepository,
         UserService $userService,
@@ -46,7 +55,9 @@ class AuthService
      *
      * @param array $userData Datos del usuario (nombre, apellidos, email, password, telefono, rol)
      * @return Usuario Usuario creado
-     * @throws \RuntimeException Si los datos son inválidos o el email ya existe
+     * @throws InvalidEmailException Si el email ya está registrado
+     * @throws InvalidUserDataException Si los datos del usuario son inválidos
+     * @throws InvalidPasswordException Si la contraseña no cumple los requisitos
      */
     public function register(array $userData): Usuario
     {
@@ -81,7 +92,8 @@ class AuthService
      *
      * @param array $userData Datos a validar
      * @return void
-     * @throws \RuntimeException Si algún dato no cumple las reglas de validación
+     * @throws InvalidUserDataException Si algún dato no cumple las reglas de validación
+     * @throws InvalidPasswordException Si la contraseña no cumple los requisitos
      */
     private function validateUserData(array $userData): void
     {
@@ -275,7 +287,7 @@ class AuthService
      *
      * @param string $email Email del usuario
      * @return string Token generado
-     * @throws \RuntimeException Si el usuario no existe
+     * @throws InvalidUserException Si el usuario no existe
      */
     public function generatePasswordResetToken(string $email): string
     {
@@ -285,13 +297,11 @@ class AuthService
             throw new InvalidUserException("Usuario no encontrado");
         }
 
-        // Generar token único de 32 bytes (64 caracteres hexadecimales)
         $token = bin2hex(random_bytes(32));
 
         // Establecer expiración en 1 hora
-        $expiration = date('Y-m-d H:i:s', time() + 3600);
+        $expiration = date('Y-m-d H:i:s', time() + self::TOKEN_EXPIRATION_SECONDS);
 
-        // Guardar token y expiración en la base de datos
         $this->passwordResetRepository->savePasswordResetToken($user->getId(), $token, $expiration);
 
         return $token;
@@ -331,7 +341,7 @@ class AuthService
      * @param string $token Token de recuperación
      * @param string $newPassword Nueva contraseña en texto plano
      * @return bool True si se reseteo correctamente, false si el token es inválido
-     * @throws \RuntimeException Si la contraseña no cumple los requisitos
+     * @throws InvalidPasswordException Si la contraseña no cumple los requisitos
      */
     public function resetPassword(string $token, string $newPassword): bool
     {
@@ -341,15 +351,12 @@ class AuthService
             return false;
         }
 
-        // Validar nueva contraseña
         $this->validatePassword($newPassword);
 
-        // Hashear y actualizar contraseña
         $newPasswordHash = password_hash($newPassword, PASSWORD_DEFAULT);
         $user->setPassword($newPasswordHash);
         $this->userService->updateUser($user);
 
-        // Limpiar token para que no pueda reutilizarse
         $this->passwordResetRepository->clearResetToken($user->getId());
 
         return true;
