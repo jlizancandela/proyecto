@@ -86,14 +86,14 @@
 
 #### `AuthService.php` (363 líneas)
 
-- [ ] Revisar lógica de autenticación
-- [ ] PHPDoc completo
-- [ ] Tests unitarios
+- [x] Revisar lógica de autenticación
+- [x] PHPDoc completo (ya estaba 100%)
+- [x] Tests unitarios ✅ 14 tests, 24 assertions
 
 #### `AuthController.php` (339 líneas)
 
-- [ ] Revisar manejo de sesiones
-- [ ] PHPDoc completo
+- [x] Revisar manejo de sesiones ✅ (ya correcto - delega a AuthService)
+- [x] PHPDoc completo (ya estaba 100%)
 
 ## Tests - Pendientes
 
