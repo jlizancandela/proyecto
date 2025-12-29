@@ -46,14 +46,14 @@ export const ResumenCita = ({ selectedService, selectedEspecialista, dia, select
       <${ResumenItem}
         icon="calendar-event"
         label="Fecha y Hora"
-        value="${fechaCapitalizada} a las ${selectedHora}"
+        value="${fechaCapitalizada} a las ${selectedHora || "..."}"
       />
 
       <div class="d-flex gap-3">
         <${ResumenItem}
           icon="clock"
           label="Duración"
-          value="Aprox. ${selectedService?.duracion} min"
+          value="Aprox. ${selectedService?.duracion_minutos || 0} min"
         />
       </div>
     </div>

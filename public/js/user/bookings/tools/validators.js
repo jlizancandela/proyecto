@@ -62,3 +62,38 @@ export const hasWeeklyBookingForService = (bookings, serviceId, targetDate) => {
     return isSameService && isSameWeek;
   });
 };
+
+/**
+ * Calculates the total hours of active bookings for a specific week.
+ *
+ * @param {Array} bookings - The list of user bookings.
+ * @param {string} targetDate - The date to check the week for (YYYY-MM-DD).
+ * @returns {number} Total duration in hours.
+ */
+export const getTotalWeeklyHours = (bookings, targetDate) => {
+  const activeBookings = bookings.filter((booking) => booking.estado !== "Cancelada");
+  const target = new Date(targetDate);
+
+  const totalMinutes = activeBookings.reduce((sum, booking) => {
+    if (isDateInSameWeek(new Date(booking.fecha_reserva), target)) {
+      return sum + (booking.duracion_minutos || 60);
+    }
+    return sum;
+  }, 0);
+
+  return totalMinutes / 60;
+};
+
+/**
+ * Checks if a new booking would exceed the weekly hours limit.
+ *
+ * @param {Array} bookings - The list of user bookings.
+ * @param {string} targetDate - The target date (YYYY-MM-DD).
+ * @param {number} newDuration - Duration of the new booking in minutes.
+ * @param {number} [limit=40] - Maximum allowed hours per week.
+ * @returns {boolean} True if the limit would be exceeded.
+ */
+export const exceedsWeeklyHoursLimit = (bookings, targetDate, newDuration, limit = 40) => {
+  const currentHours = getTotalWeeklyHours(bookings, targetDate);
+  return currentHours + newDuration / 60 > limit;
+};

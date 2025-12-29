@@ -20,6 +20,8 @@ use Shared\Domain\Exceptions\{
 class ReservaService
 {
     private ReservaRepository $reservaRepository;
+    private const MAX_WEEKLY_HOURS = 40;
+    private const TOKEN_EXPIRATION_SECONDS = 3600;
 
     /**
      * @param ReservaRepository $reservaRepository
@@ -57,6 +59,12 @@ class ReservaService
             $bookingData['clientId'],
             $bookingData['serviceId'],
             $bookingData['date']
+        );
+
+        $this->validateTotalHoursLimit(
+            $bookingData['clientId'],
+            $bookingData['date'],
+            $data['duracion'] ?? 60
         );
 
         $reserva = new Reserva(
@@ -438,6 +446,43 @@ class ReservaService
 
         if (count($activeReservas) > 0) {
             throw new BookingLimitException('Ya tienes una reserva de este servicio en esta semana');
+        }
+    }
+    /**
+     * Validates that the client does not exceed the weekly hours limit.
+     *
+     * @param int $clientId Client ID
+     * @param string $date Booking date
+     * @param int $newDuration New booking duration in minutes
+     * @return void
+     * @throws BookingLimitException If the limit is exceeded
+     */
+    private function validateTotalHoursLimit(int $clientId, string $date, int $newDuration): void
+    {
+        $reservaDate = new \DateTime($date);
+        $weekStart = (clone $reservaDate)->modify('monday this week')->format('Y-m-d');
+        $weekEnd = (clone $reservaDate)->modify('sunday this week')->format('Y-m-d');
+
+        $weeklyReservas = $this->reservaRepository->findAllFiltered([
+            'cliente' => $clientId,
+            'fecha_desde' => $weekStart,
+            'fecha_hasta' => $weekEnd
+        ]);
+
+        $totalMinutes = 0;
+        foreach ($weeklyReservas as $reserva) {
+            if ($reserva->estado !== 'Cancelada') {
+                $totalMinutes += $reserva->servicio_duracion_minutos;
+            }
+        }
+
+        $totalHours = ($totalMinutes + $newDuration) / 60;
+
+        if ($totalHours > self::MAX_WEEKLY_HOURS) {
+            throw new BookingLimitException(sprintf(
+                'Ya has alcanzado el máximo de %d horas permitidas por ley para esta semana',
+                self::MAX_WEEKLY_HOURS
+            ));
         }
     }
 }
