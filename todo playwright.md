@@ -14,15 +14,15 @@ Este listado representa la batería de pruebas necesaria para validar el cumplim
 
 - [x] **Reactivación de Cuenta:** Intentar login con cuenta inactiva, verificar que el sistema ofrece reactivarla y permite el acceso tras aceptar.
 
-- [ ] **Recuperación de Contraseña:** Validar el flujo de "Olvidé mi contraseña" hasta el envío o cambio de la misma.
+- [x] **Recuperación de Contraseña:** Validar el flujo de "Olvidé mi contraseña" hasta el envío o cambio de la misma.
 
 ## 📅 Módulo 2: Sistema de Reservas (Cliente)
 
 - [x] **Disponibilidad en Calendario:** Seleccionar un recurso y verificar que el calendario carga días y horas disponibles mediante JS.
 
-- [ ] **Restricción de Frecuencia (JS):** Intentar reservar el mismo tipo de recurso dos veces en la misma semana y confirmar que el sistema lo impide.
-
-- [ ] **Control de Carga:** Validar que no se exceda la cantidad de horas permitidas por usuario en un periodo.
+- [x] **Restricción de Frecuencia (JS):** Intentar reservar el mismo tipo de recurso dos veces en la misma semana y confirmar que el sistema lo impide.
+- [x] **Control de Carga:** Validar que no se exceda la cantidad de horas permitidas por usuario en un periodo (40h/semana).
+- [x] **Conflictos de Horario:** Verificar que no se permitan solapamientos de citas para el mismo usuario.
 
 - [ ] **Cancelación de Reserva Propia:** El usuario puede eliminar una de sus reservas desde su listado personal.
 

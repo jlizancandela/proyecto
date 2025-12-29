@@ -30,7 +30,7 @@ import {
   getUserBookings,
 } from "../api/bookingsApi.js";
 import { formatearFechaISO } from "../tools/formatters.js";
-import { hasWeeklyBookingForService } from "../tools/validators.js";
+import { hasWeeklyBookingForService, exceedsWeeklyHoursLimit } from "../tools/validators.js";
 
 /**
  * Current application state (active route)
@@ -265,12 +265,16 @@ export const confirmReservaAction = async () => {
       throw new Error("Ya tienes una reserva de este servicio en esta semana");
     }
 
+    if (exceedsWeeklyHoursLimit(userBookings, targetDate, draft.service.duracion_minutos || 60)) {
+      throw new Error("Ya has alcanzado el máximo de 40 horas permitidas por ley para esta semana");
+    }
+
     const reservaData = {
       servicio_id: draft.service.id,
       especialista_id: draft.especialista.id_especialista,
       fecha: targetDate,
       hora: draft.hora,
-      duracion: draft.service.duracion,
+      duracion: draft.service.duracion_minutos,
     };
 
     await createReserva(reservaData);
