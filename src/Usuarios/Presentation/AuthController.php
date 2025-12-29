@@ -163,10 +163,10 @@ class AuthController
                 'rol' => 'Cliente'
             ]);
 
-            $this->authService->startSession($user);
             unset($_SESSION['register_error']);
+            $_SESSION['login_success'] = 'Cuenta creada con éxito';
 
-            header('Location: /');
+            header('Location: /login');
             exit;
         } catch (\Exception $e) {
             $_SESSION['register_error'] = $e->getMessage();
