@@ -35,10 +35,10 @@ class PasswordResetRepository
     public function savePasswordResetToken(int $userId, string $token, string $expiration): void
     {
         $stmt = $this->db->prepare(
-            "UPDATE usuarios
+            "UPDATE USUARIO
             SET reset_token = :token,
-                reset_token_expiration = :expiration
-            WHERE id = :userId"
+                reset_expiration = :expiration
+            WHERE id_usuario = :userId"
         );
 
         $stmt->execute([
@@ -56,9 +56,9 @@ class PasswordResetRepository
     public function getUserByResetToken(string $token): ?Usuario
     {
         $stmt = $this->db->prepare(
-            "SELECT * FROM usuarios
+            "SELECT * FROM USUARIO
             WHERE reset_token = :token
-            AND reset_token_expiration > NOW()"
+            AND reset_expiration > NOW()"
         );
 
         $stmt->execute([':token' => $token]);
@@ -75,10 +75,10 @@ class PasswordResetRepository
     public function clearResetToken(int $userId): void
     {
         $stmt = $this->db->prepare(
-            "UPDATE usuarios
+            "UPDATE USUARIO
             SET reset_token = NULL,
-                reset_token_expiration = NULL
-            WHERE id = :userId"
+                reset_expiration = NULL
+            WHERE id_usuario = :userId"
         );
 
         $stmt->execute([':userId' => $userId]);

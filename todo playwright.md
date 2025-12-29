@@ -4,21 +4,21 @@ Este listado representa la batería de pruebas necesaria para validar el cumplim
 
 ## 🔐 Módulo 1: Gestión de Usuarios y Acceso
 
-- [ ] **Validación de Alta de Usuario:** Verificar que el sistema valida formatos (email, longitud de campos) antes de guardar en la BD.
+- [x] **Validación de Alta de Usuario:** Verificar que el sistema valida formatos (email, longitud de campos) antes de guardar en la BD.
 
-- [ ] **Funcionalidad "El Ojo":** Comprobar que el botón conmuta la visibilidad de la contraseña en login y registro.
+- [x] **Funcionalidad "El Ojo":** Comprobar que el botón conmuta la visibilidad de la contraseña en login y registro.
 
-- [ ] **Login de Usuario Activo:** Confirmar que un usuario con credenciales correctas inicia sesión y crea la sesión.
+- [x] **Login de Usuario Activo:** Confirmar que un usuario con credenciales correctas inicia sesión y crea la sesión.
 
-- [ ] **Baja Lógica de Usuario:** Acceder al perfil, solicitar baja y verificar que el campo `activo` cambia a `0` en la BD.
+- [x] **Baja Lógica de Usuario:** Acceder al perfil, solicitar baja y verificar que el campo `activo` cambia a `0` en la BD.
 
-- [ ] **Reactivación de Cuenta:** Intentar login con cuenta inactiva, verificar que el sistema ofrece reactivarla y permite el acceso tras aceptar.
+- [x] **Reactivación de Cuenta:** Intentar login con cuenta inactiva, verificar que el sistema ofrece reactivarla y permite el acceso tras aceptar.
 
 - [ ] **Recuperación de Contraseña:** Validar el flujo de "Olvidé mi contraseña" hasta el envío o cambio de la misma.
 
 ## 📅 Módulo 2: Sistema de Reservas (Cliente)
 
-- [ ] **Disponibilidad en Calendario:** Seleccionar un recurso y verificar que el calendario carga días y horas disponibles mediante JS.
+- [x] **Disponibilidad en Calendario:** Seleccionar un recurso y verificar que el calendario carga días y horas disponibles mediante JS.
 
 - [ ] **Restricción de Frecuencia (JS):** Intentar reservar el mismo tipo de recurso dos veces en la misma semana y confirmar que el sistema lo impide.
 

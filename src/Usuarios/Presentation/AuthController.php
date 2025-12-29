@@ -212,8 +212,10 @@ class AuthController
 
         try {
             $token = $this->authService->generatePasswordResetToken($email);
+
             $baseUrl = $_ENV['APP_URL'] ?? 'https://proyecto.ddev.site';
             $resetUrl = "{$baseUrl}/reset-password?token={$token}";
+
             $this->emailService->sendPasswordRecoveryEmail($email, $resetUrl);
 
             $_SESSION['forgot_success'] = 'Si el email existe, recibirás instrucciones para recuperar tu contraseña';

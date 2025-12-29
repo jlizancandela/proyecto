@@ -10,7 +10,7 @@
         <div n:if="isset($success)" class="alert alert-success">{$success}</div>
         <div n:if="isset($error)" class="alert alert-danger">{$error}</div>
 
-        <form action="/login" method="post">
+        <form id="login-form" action="/login" method="post">
           <div class="mb-3">
             <label for="email" class="form-label">Email</label>
             <input

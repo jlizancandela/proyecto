@@ -47,4 +47,70 @@ test.describe("Registration", () => {
     await expect(page).toHaveURL("/login");
     await expect(page.locator("text=Cuenta creada con éxito")).toBeVisible();
   });
+
+  test("should toggle password visibility with eye button", async ({ page }) => {
+    // Test on registration page
+    await page.goto("/register");
+
+    // Fill password field
+    await page.fill("#password", "MySecretPassword123!");
+
+    // Initially password should be hidden (type="password")
+    await expect(page.locator("#password")).toHaveAttribute("type", "password");
+
+    // Verify the eye icon is showing (bi-eye)
+    const eyeIcon = page.locator("#toggle-password i");
+    await expect(eyeIcon).toHaveClass(/bi-eye/);
+
+    // Click the eye button to show password
+    const passwordToggle = page.locator("#toggle-password");
+    await passwordToggle.click();
+
+    // Password should now be visible (type="text")
+    await expect(page.locator("#password")).toHaveAttribute("type", "text");
+
+    // Verify the icon changed to eye-slash
+    await expect(eyeIcon).toHaveClass(/bi-eye-slash/);
+
+    // Click again to hide password
+    await passwordToggle.click();
+
+    // Password should be hidden again (type="password")
+    await expect(page.locator("#password")).toHaveAttribute("type", "password");
+
+    // Verify the icon changed back to eye
+    await expect(eyeIcon).toHaveClass(/bi-eye/);
+
+    // Test on login page
+    await page.goto("/login");
+
+    // Fill password field
+    await page.fill("#password", "AnotherPassword456!");
+
+    // Initially password should be hidden (type="password")
+    await expect(page.locator("#password")).toHaveAttribute("type", "password");
+
+    // Verify the eye icon is showing (bi-eye)
+    const loginEyeIcon = page.locator("#toggle-password i");
+    await expect(loginEyeIcon).toHaveClass(/bi-eye/);
+
+    // Click the eye button to show password
+    const loginPasswordToggle = page.locator("#toggle-password");
+    await loginPasswordToggle.click();
+
+    // Password should now be visible (type="text")
+    await expect(page.locator("#password")).toHaveAttribute("type", "text");
+
+    // Verify the icon changed to eye-slash
+    await expect(loginEyeIcon).toHaveClass(/bi-eye-slash/);
+
+    // Click again to hide password
+    await loginPasswordToggle.click();
+
+    // Password should be hidden again (type="password")
+    await expect(page.locator("#password")).toHaveAttribute("type", "password");
+
+    // Verify the icon changed back to eye
+    await expect(loginEyeIcon).toHaveClass(/bi-eye/);
+  });
 });

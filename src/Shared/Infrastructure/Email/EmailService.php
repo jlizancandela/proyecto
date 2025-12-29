@@ -6,9 +6,7 @@
 
 namespace Shared\Infrastructure\Email;
 
-/**
- * Servicio para enviar emails usando Brevo API con curl
- */
+
 /**
  * Communicates with the Brevo API to deliver transactional emails.
  */
@@ -19,9 +17,9 @@ class EmailService
     private string $apiUrl = 'https://api.brevo.com/v3/smtp/email';
 
     /**
-     * Constructor del servicio de email
-     * 
-     * @throws \RuntimeException Si faltan las variables de entorno
+     * Email service constructor
+     *
+     * @throws \RuntimeException If environment variables are missing
      */
     public function __construct()
     {
@@ -29,19 +27,19 @@ class EmailService
         $this->senderEmail = $_ENV['EMAIL_SENDER'] ?? '';
 
         if (empty($this->apiKey) || empty($this->senderEmail)) {
-            throw new \RuntimeException('Faltan configuraciones de email en .env');
+            throw new \RuntimeException('Missing email configurations in .env');
         }
     }
 
     /**
-     * Envía un email genérico usando Brevo API
-     * 
-     * @param string $to Email del destinatario
-     * @param string $subject Asunto del email
-     * @param string $htmlContent Contenido HTML del email
-     * @param string $textContent Contenido en texto plano (opcional)
-     * @return array Respuesta de la API
-     * @throws \RuntimeException Si falla el envío
+     * Sends a generic email using Brevo API
+     *
+     * @param string $to Recipient email
+     * @param string $subject Email subject
+     * @param string $htmlContent HTML content of the email
+     * @param string $textContent Plain text content (optional)
+     * @return array API response
+     * @throws \RuntimeException If sending fails
      */
     public function sendEmail(
         string $to,
@@ -64,16 +62,23 @@ class EmailService
             $data['textContent'] = $textContent;
         }
 
+        error_log(sprintf(
+            '[EmailService] Sending email to: %s | Subject: %s | Time: %s',
+            $to,
+            $subject,
+            date('Y-m-d H:i:s')
+        ));
+
         return $this->sendRequest($data);
     }
 
     /**
-     * Envía un email de recuperación de contraseña
-     * 
-     * @param string $to Email del destinatario
-     * @param string $resetLink Link de recuperación
-     * @return array Respuesta de la API
-     * @throws \RuntimeException Si falla el envío
+     * Sends a password recovery email
+     *
+     * @param string $to Recipient email
+     * @param string $resetLink Recovery link
+     * @return array API response
+     * @throws \RuntimeException If sending fails
      */
     public function sendPasswordRecoveryEmail(string $to, string $resetLink): array
     {
@@ -103,15 +108,44 @@ class EmailService
             . "Si no solicitaste este cambio, ignora este mensaje.\n"
             . "Este enlace expirará en 1 hora.";
 
+        // In development, save token to file for testing
+        $host = $_SERVER['SERVER_NAME'] ?? '';
+        $isDev = str_contains($host, '.ddev.site') || $host === 'localhost';
+
+        if ($isDev) {
+            // Extract token from reset link
+            if (preg_match('/token=([^&]+)/', $resetLink, $matches)) {
+                $token = $matches[1];
+                // Use public directory which is accessible from both container and host
+                $logDir = $_SERVER['DOCUMENT_ROOT'] . '/.tokens';
+
+                // Create directory if it doesn't exist
+                if (!is_dir($logDir)) {
+                    mkdir($logDir, 0777, true);
+                }
+
+                // Write token to file (one file per email)
+                $filename = $logDir . '/' . md5($to) . '.txt';
+                file_put_contents($filename, $token);
+            }
+        }
+
+        // Log password recovery email sent (metadata only for security)
+        error_log(sprintf(
+            '[EmailService] Password recovery sent to: %s | Time: %s',
+            $to,
+            date('Y-m-d H:i:s')
+        ));
+
         return $this->sendEmail($to, $subject, $htmlContent, $textContent);
     }
 
     /**
-     * Envía la petición a la API de Brevo usando curl
-     * 
-     * @param array $data Datos a enviar
-     * @return array Respuesta de la API
-     * @throws \RuntimeException Si falla la petición
+     * Sends the request to Brevo API using curl
+     *
+     * @param array $data Data to send
+     * @return array API response
+     * @throws \RuntimeException If the request fails
      */
     private function sendRequest(array $data): array
     {
@@ -133,14 +167,14 @@ class EmailService
         $curlError = curl_error($ch);
 
         if ($curlError) {
-            throw new \RuntimeException("Error en curl: {$curlError}");
+            throw new \RuntimeException("Curl error: {$curlError}");
         }
 
         $result = json_decode($response, true);
 
         if ($httpCode < 200 || $httpCode >= 300) {
-            $errorMsg = $result['message'] ?? 'Error desconocido';
-            throw new \RuntimeException("Error al enviar email: {$errorMsg} (HTTP {$httpCode})");
+            $errorMsg = $result['message'] ?? 'Unknown error';
+            throw new \RuntimeException("Error sending email: {$errorMsg} (HTTP {$httpCode})");
         }
 
         return $result;
