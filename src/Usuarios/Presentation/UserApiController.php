@@ -272,9 +272,7 @@ class UserApiController
                 $data['email'],
                 password_hash($data['password'], PASSWORD_BCRYPT),
                 $data['telefono'] ?? null,
-                null,
-                true,
-                null
+                ['activo' => true]
             );
 
             $this->userService->setUser($user);
@@ -294,11 +292,11 @@ class UserApiController
                 'success' => false,
                 'error' => $e->getMessage()
             ], JSON_PRETTY_PRINT);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             http_response_code(500);
             echo json_encode([
                 'success' => false,
-                'error' => $e->getMessage()
+                'error' => 'Error interno: ' . $e->getMessage()
             ], JSON_PRETTY_PRINT);
         }
     }
@@ -361,9 +359,11 @@ class UserApiController
                 $email,
                 $passwordHash,
                 $telefono,
-                $existingUser->getFechaRegistro()->format('Y-m-d H:i:s'),
-                $activo,
-                $id
+                [
+                    'fecha_registro' => $existingUser->getFechaRegistro()->format('Y-m-d H:i:s'),
+                    'activo' => $activo,
+                    'id_usuario' => $id
+                ]
             );
 
             $this->userService->updateUser($user);
@@ -383,11 +383,11 @@ class UserApiController
                 'success' => false,
                 'error' => $e->getMessage()
             ], JSON_PRETTY_PRINT);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             http_response_code(500);
             echo json_encode([
                 'success' => false,
-                'error' => $e->getMessage()
+                'error' => 'Error interno: ' . $e->getMessage()
             ], JSON_PRETTY_PRINT);
         }
     }

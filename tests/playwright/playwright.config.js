@@ -4,6 +4,7 @@
  */
 
 const { defineConfig, devices } = require("@playwright/test");
+require("dotenv").config({ path: __dirname + "/.env" });
 
 module.exports = defineConfig({
   testDir: "./tests",
