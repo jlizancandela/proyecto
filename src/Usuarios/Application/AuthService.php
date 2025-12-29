@@ -116,8 +116,7 @@ class AuthService
     /**
      * Valida que la contraseña cumpla con los requisitos de seguridad
      *
-     * Requisitos: mínimo 8 caracteres, una mayúscula, una minúscula,
-     * un número y un carácter especial.
+     * Requisitos: mínimo 6 caracteres.
      *
      * @param string $password Contraseña a validar
      * @return void
@@ -125,18 +124,12 @@ class AuthService
      */
     private function validatePassword(string $password): void
     {
-        $passwordValidator = v::allOf(
-            v::length(8, null),
-            v::regex('/[A-Z]/'),
-            v::regex('/[a-z]/'),
-            v::regex('/[0-9]/'),
-            v::regex('/[@$!%*?&#.,;:\-_+]/')
-        );
+        $passwordValidator = v::length(6, null);
 
         try {
             $passwordValidator->assert($password);
         } catch (\Respect\Validation\Exceptions\ValidationException $e) {
-            throw new InvalidPasswordException();
+            throw new InvalidPasswordException('La contraseña debe tener al menos 6 caracteres');
         }
     }
 
