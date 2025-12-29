@@ -32,7 +32,7 @@ Este listado representa la batería de pruebas necesaria para validar el cumplim
 
 - [x] **Listado de Clientes:** Verificar visualización, búsqueda, ordenación y paginación de los usuarios registrados.
 
-- [ ] **Protección de Auto-Baja:** Intentar que el administrador se dé de baja a sí mismo o se cambie el rol; el sistema debe bloquearlo.
+- [x] **Protección de Auto-Baja:** Intentar que el administrador se dé de baja a sí mismo o se cambie el rol; el sistema debe bloquearlo.
 
 - [ ] **Gestión de Recursos:** Insertar, editar y aplicar baja lógica a un recurso (Especialista/Servicio).
 
