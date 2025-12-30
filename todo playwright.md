@@ -26,7 +26,7 @@ Este listado representa la batería de pruebas necesaria para validar el cumplim
 
 - [x] **Cancelación de Reserva Propia:** El usuario puede eliminar una de sus reservas desde su listado personal.
 
-- [ ] **Visualización Personal:** Comprobar que el usuario ve solo sus reservas y los recursos disponibles.
+- [x] **Visualización Personal:** Comprobar que el usuario ve solo sus reservas y los recursos disponibles.
 
 ## 👑 Módulo 3: Panel de Administrador (Gestión Global)
 
@@ -34,11 +34,9 @@ Este listado representa la batería de pruebas necesaria para validar el cumplim
 
 - [x] **Protección de Auto-Baja:** Intentar que el administrador se dé de baja a sí mismo o se cambie el rol; el sistema debe bloquearlo.
 
-- [ ] **Gestión de Recursos:** Insertar, editar y aplicar baja lógica a un recurso (Especialista/Servicio).
+- [x] **Gestión de Recursos:** Insertar, editar y aplicar baja lógica a un recurso (Especialista/Servicio).
 
-- [ ] **Paginación y Búsqueda de Recursos:** Confirmar que estas herramientas funcionan en la tabla de recursos.
-
-- [ ] **Gestión de Reservas de Terceros:** El administrador crea o edita una reserva para cualquier usuario sin restricciones de tiempo.
+- [x] **Gestión de Reservas de Terceros:** El administrador crea o edita una reserva para cualquier usuario sin restricciones de tiempo.
 
 ## 📂 Módulo 4: Lógica de Eliminación e Historial
 
