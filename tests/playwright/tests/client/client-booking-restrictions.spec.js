@@ -1,212 +1,211 @@
 /**
- * @file Booking Restrictions tests (Mocked with Login).
- * @project app-reservas
+ * @file Booking Restrictions Real E2E Test.
+ * @description Verifies business logic enforcement (weekly limits, overlaps) against real DB.
  */
 
 const { test, expect } = require("@playwright/test");
+const mysql = require("mysql2/promise");
+const bcrypt = require("bcryptjs");
+const { dbConfig } = require("../../helpers/db-config");
 
 test.describe("Booking Restrictions", () => {
-  test.beforeEach(async ({ page }) => {
-    // 1. Register/Login to get a valid session
-    await page.goto("/register");
-    const timestamp = Date.now();
-    const userEmail = `mock_test_${timestamp}@example.com`;
-    const password = "TestUser123!";
+  let connection;
 
-    await page.fill("#nombre", "Mock");
-    await page.fill("#apellidos", "User");
-    await page.fill("#email", userEmail);
-    await page.fill("#telefono", "600000000");
-    await page.fill("#password", password);
-    await page.fill("#password-confirm", password);
-
-    await page.click('button[type="submit"]');
-    await page.waitForURL("**/login");
-
-    await page.fill("#email", userEmail);
-    await page.fill("#password", password);
-    await page.click('button[type="submit"]');
-    await page.waitForURL("**/");
-
-    // 2. Setup API Mocks
-
-    // Mock Services
-    await page.route("**/api/services", async (route) => {
-      await route.fulfill({
-        json: {
-          success: true,
-          servicios: [
-            { id: 1, nombre: "Corte de Pelo", duracion_minutos: 30, precio: 15 },
-            { id: 2, nombre: "Tinte", duracion_minutos: 60, precio: 40 },
-          ],
-        },
-      });
-    });
-
-    // Mock Availability (Future time for Today)
-    await page.route("**/api/especialistas/disponibles**", async (route) => {
-      await route.fulfill({
-        json: {
-          data: [
-            {
-              id_especialista: 1,
-              nombre: "Juan",
-              apellidos: "Perez",
-              horas_disponibles: ["22:00", "23:00", "23:30"],
-            },
-          ],
-          total: 1,
-        },
-      });
-    });
-
-    // Mock Bookings (GET) - Initially empty
-    await page.route("**/api/reservas", async (route) => {
-      if (route.request().method() === "GET") {
-        await route.fulfill({
-          json: { reservas: [] },
-        });
-      } else {
-        await route.continue();
-      }
-    });
-
-    await page.route("**/api/me", async (route) => {
-      await route.fulfill({
-        json: {
-          success: true,
-          data: { id: 1, nombre: "Mock", apellidos: "User", email: userEmail },
-        },
-      });
-    });
+  test.beforeEach(async () => {
+    connection = await mysql.createConnection(dbConfig);
   });
+
+  test.afterEach(async () => {
+    if (connection) {
+      await connection.end();
+    }
+  });
+
+  async function createTestUser(email) {
+    const password = "TestPassword123!";
+    const passwordHash = await bcrypt.hash(password, 10);
+    const [userResult] = await connection.execute(
+      `INSERT INTO USUARIO (rol, nombre, apellidos, email, telefono, password_hash, fecha_registro, activo)
+       VALUES (?, ?, ?, ?, ?, ?, CURDATE(), ?)`,
+      ["Cliente", "Restriction", "Test User", email, "600000001", passwordHash, 1]
+    );
+    return { id: userResult.insertId, email, password };
+  }
+
+  async function cleanTestUser(userId) {
+    try {
+      await connection.execute("DELETE FROM RESERVA WHERE id_cliente = ?", [userId]);
+      await connection.execute("DELETE FROM USUARIO WHERE id_usuario = ?", [userId]);
+    } catch (e) {
+      console.warn(`Cleanup failed for user ${userId}: ${e.message}`);
+    }
+  }
 
   test("should prevent booking the same service twice in the same week", async ({ page }) => {
-    const today = new Date();
-    const dateStr = today.toISOString().split("T")[0];
+    const user = await createTestUser(`test-same-week-${Date.now()}@playwright.test`);
 
-    // Mock existing booking same week
-    await page.route("**/api/reservas", async (route) => {
-      if (route.request().method() === "GET") {
-        await route.fulfill({
-          json: {
-            reservas: [
-              {
-                id: 100,
-                id_servicio: 1, // Corrected key
-                fecha_reserva: dateStr, // Corrected key
-                hora: "23:00",
-                estado: "confirmada",
-              },
-            ],
-          },
-        });
-      } else if (route.request().method() === "POST") {
-        await route.fulfill({ status: 200, json: { success: true } });
-      }
-    });
+    try {
+      const today = new Date();
+      const dateStr = today.toISOString().split("T")[0];
 
-    await page.goto("/user/reservas/nueva");
-    await page.waitForSelector("#bookings-app");
+      // Pre-insert a booking for today (Service ID 2 = Corte de Cabello Hombre)
+      await connection.execute(
+        `INSERT INTO RESERVA (id_cliente, id_especialista, id_servicio, fecha_reserva, hora_inicio, hora_fin, estado)
+         VALUES (?, ?, ?, ?, ?, ?, ?)`,
+        [user.id, 1, 2, dateStr, "09:00:00", "10:00:00", "Confirmada"]
+      );
 
-    // Select Service 1
-    await page.locator(".card").first().click();
-    await expect(page.locator("text=Paso 2/3")).toBeVisible();
+      // Login
+      await page.goto("/login");
+      await page.fill('input[name="email"]', user.email);
+      await page.fill('input[name="password"]', user.password);
+      await page.click('button[type="submit"]');
+      await page.waitForURL("/");
 
-    // Select 23:00
-    const timeButton = page.locator('button:has-text("23:00")').first();
-    await expect(timeButton).toBeVisible();
-    await timeButton.click();
-    await page.waitForTimeout(500);
-    await page.locator("button.btn-primary.rounded-circle:has(i.bi-chevron-right)").click();
+      await page.goto("/user/reservas/nueva");
+      await page.waitForSelector("#bookings-app");
 
-    await page.locator('button:has-text("Confirmar Reserva")').click();
+      // Select "Corte de Cabello Hombre" (ID 2) - Alphabetically index 0
+      await page.locator(".card").nth(0).click();
 
-    await expect(page.locator(".alert-danger")).toContainText(
-      /Ya tienes una reserva de este servicio en esta semana/i
-    );
+      // Select tomorrow's date to ensure available slots
+      await page.waitForTimeout(1000);
+      const tomorrowDate = page
+        .locator("button.btn.rounded-circle")
+        .filter({ hasNotText: /Paso|Siguiente|Anterior/ })
+        .nth(1);
+      await expect(tomorrowDate).toBeVisible({ timeout: 10000 });
+      await tomorrowDate.click();
+      await page.waitForTimeout(1500);
+
+      const timeButton = page.locator("button.btn-outline-primary:not([disabled])").first();
+      await expect(timeButton).toBeVisible({ timeout: 15000 });
+      await timeButton.click();
+
+      // Go to summary
+      await page.locator("button.btn-primary.rounded-circle:has(i.bi-chevron-right)").click();
+
+      // Confirm step
+      const confirmBtn = page.locator('button:has-text("Confirmar Reserva")');
+      await confirmBtn.waitFor({ state: "visible" });
+      await confirmBtn.click();
+
+      // Expect error
+      const alert = page.locator(".alert-danger");
+      await expect(alert).toBeVisible({ timeout: 15000 });
+      await expect(alert).toContainText(/Ya tienes una reserva de este servicio en esta semana/i);
+    } finally {
+      await cleanTestUser(user.id);
+    }
   });
 
-  test("should prevent overlapping bookings (Charge Control)", async ({ page }) => {
-    const today = new Date();
-    const dateStr = today.toISOString().split("T")[0];
+  test("should prevent overlapping bookings", async ({ page }) => {
+    const user = await createTestUser(`test-overlap-${Date.now()}@playwright.test`);
 
-    await page.route("**/api/reservas", async (route) => {
-      if (route.request().method() === "GET") {
-        await route.fulfill({
-          json: {
-            reservas: [
-              {
-                id: 101,
-                id_servicio: 2, // Corrected key
-                fecha_reserva: dateStr, // Corrected key
-                hora: "23:00",
-                duracion_minutos: 60,
-                estado: "confirmada",
-              },
-            ],
-          },
-        });
-      } else if (route.request().method() === "POST") {
-        await route.fulfill({
-          status: 400,
-          json: { error: "Ya tienes otra reserva en ese horario" },
-        });
-      }
-    });
+    try {
+      // Use tomorrow's date (same as what the UI will select)
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      const tomorrowStr = tomorrow.toISOString().split("T")[0];
 
-    await page.goto("/user/reservas/nueva");
-    await page.waitForSelector("#bookings-app");
+      // Pre-insert a booking 15:00 - 16:00 for TOMORROW
+      await connection.execute(
+        `INSERT INTO RESERVA (id_cliente, id_especialista, id_servicio, fecha_reserva, hora_inicio, hora_fin, estado)
+         VALUES (?, ?, ?, ?, ?, ?, ?)`,
+        [user.id, 1, 2, tomorrowStr, "15:00:00", "16:00:00", "Confirmada"]
+      );
 
-    await page.locator(".card").first().click();
+      await page.goto("/login");
+      await page.fill('input[name="email"]', user.email);
+      await page.fill('input[name="password"]', user.password);
+      await page.click('button[type="submit"]');
+      await page.waitForURL("/");
 
-    // Select same time 23:00
-    const timeButton = page.locator('button:has-text("23:00")').first();
-    await expect(timeButton).toBeVisible();
-    await timeButton.click();
+      await page.goto("/user/reservas/nueva");
+      await page.waitForSelector("#bookings-app");
 
-    await page.waitForTimeout(500);
-    await page.locator("button.btn-primary.rounded-circle:has(i.bi-chevron-right)").click();
+      // Select different service (Mujer - index 1)
+      await page.locator(".card").nth(1).click();
 
-    await page.locator('button:has-text("Confirmar Reserva")').click();
+      // Select tomorrow's date to ensure available slots
+      await page.waitForTimeout(1000);
+      const tomorrowDate = page
+        .locator("button.btn.rounded-circle")
+        .filter({ hasNotText: /Paso|Siguiente|Anterior/ })
+        .nth(1);
+      await expect(tomorrowDate).toBeVisible({ timeout: 10000 });
+      await tomorrowDate.click();
+      await page.waitForTimeout(1500);
 
-    await expect(page.locator(".alert-danger")).toContainText(/Ya tienes otra reserva|horario/i);
+      const timeButton = page.locator('button:has-text("15:30")').first();
+      await expect(timeButton).toBeVisible();
+      await timeButton.click();
+
+      await page.locator("button.btn-primary.rounded-circle:has(i.bi-chevron-right)").click();
+      await page.locator('button:has-text("Confirmar Reserva")').click();
+
+      await expect(page.locator(".alert-danger")).toContainText(/Ya tienes otra reserva|horario/i);
+    } finally {
+      await cleanTestUser(user.id);
+    }
   });
 
   test("should enforce maximum weekly hours limit (40h)", async ({ page }) => {
-    await page.route("**/api/reservas", async (route) => {
-      if (route.request().method() === "GET") {
-        const bookings = [];
-        for (let i = 0; i < 40; i++) {
-          bookings.push({
-            id: 200 + i,
-            id_servicio: 2, // Corrected key
-            fecha_reserva: new Date().toISOString().split("T")[0], // Corrected key
-            hora: "08:00",
-            duracion_minutos: 60,
-            estado: "confirmada",
-          });
-        }
+    const user = await createTestUser(`test-40h-${Date.now()}@playwright.test`);
 
-        await route.fulfill({
-          json: { reservas: bookings },
-        });
-      } else {
-        await route.continue();
+    try {
+      const today = new Date();
+      const startOfWeek = new Date(today);
+      startOfWeek.setDate(today.getDate() - today.getDay() + 1);
+
+      // Create 40 hours of existing bookings
+      for (let i = 0; i < 40; i++) {
+        const d = new Date(startOfWeek);
+        d.setDate(startOfWeek.getDate() + Math.floor(i / 8));
+        const dStr = d.toISOString().split("T")[0];
+        const h = 8 + (i % 8);
+        const hStr = `${String(h).padStart(2, "0")}:00:00`;
+        const endHStr = `${String(h + 1).padStart(2, "0")}:00:00`;
+
+        await connection.execute(
+          `INSERT INTO RESERVA (id_cliente, id_especialista, id_servicio, fecha_reserva, hora_inicio, hora_fin, estado)
+               VALUES (?, ?, ?, ?, ?, ?, ?)`,
+          [user.id, 1, 2, dStr, hStr, endHStr, "Confirmada"]
+        );
       }
-    });
 
-    await page.goto("/user/reservas/nueva");
-    await page.waitForSelector("#bookings-app");
-    await page.locator(".card").first().click();
+      await page.goto("/login");
+      await page.fill('input[name="email"]', user.email);
+      await page.fill('input[name="password"]', user.password);
+      await page.click('button[type="submit"]');
+      await page.waitForURL("/");
 
-    const timeButton = page.locator('button:has-text("23:00")').first();
-    await timeButton.click();
-    await page.waitForTimeout(500);
-    await page.locator("button.btn-primary.rounded-circle:has(i.bi-chevron-right)").click();
+      await page.goto("/user/reservas/nueva");
+      await page.waitForSelector("#bookings-app");
 
-    await page.locator('button:has-text("Confirmar Reserva")').click();
+      // Select any service
+      await page.locator(".card").nth(1).click();
 
-    await expect(page.locator(".alert-danger")).toContainText(/40 horas/i);
+      // Select tomorrow's date to ensure available slots
+      await page.waitForTimeout(1000);
+      const tomorrowDate = page
+        .locator("button.btn.rounded-circle")
+        .filter({ hasNotText: /Paso|Siguiente|Anterior/ })
+        .nth(1);
+      await expect(tomorrowDate).toBeVisible({ timeout: 10000 });
+      await tomorrowDate.click();
+      await page.waitForTimeout(1500);
+
+      const timeButton = page.locator("button.btn-outline-primary:not([disabled])").first();
+      await expect(timeButton).toBeVisible({ timeout: 15000 });
+      await timeButton.click();
+
+      await page.locator("button.btn-primary.rounded-circle:has(i.bi-chevron-right)").click();
+      await page.locator('button:has-text("Confirmar Reserva")').click();
+
+      await expect(page.locator(".alert-danger")).toContainText(/40 horas/i);
+    } finally {
+      await cleanTestUser(user.id);
+    }
   });
 });

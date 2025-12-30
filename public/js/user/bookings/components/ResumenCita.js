@@ -35,7 +35,11 @@ export const ResumenCita = ({ selectedService, selectedEspecialista, dia, select
     >
       <h5 class="fw-bold mb-4" style="color: ${TEXT_COLOR};">Resumen de la Cita</h5>
 
-      <${ResumenItem} icon="scissors" label="Servicio" value=${selectedService?.nombre} />
+      <${ResumenItem}
+        icon="scissors"
+        label="Servicio"
+        value=${selectedService?.nombre || selectedService?.nombre_servicio}
+      />
 
       <${ResumenItem}
         icon="person"

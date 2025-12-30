@@ -1,141 +1,128 @@
 /**
- * @file Booking flow tests (Mocked).
- * @project app-reservas
+ * @file Booking Process Real E2E Test.
+ * @description Verifies the full 3-step booking flow against a real database.
  */
 
 const { test, expect } = require("@playwright/test");
+const mysql = require("mysql2/promise");
+const bcrypt = require("bcryptjs");
+const { dbConfig } = require("../../helpers/db-config");
 
-test.describe("Booking Flow", () => {
-  test("should navigate through booking steps", async ({ page }) => {
-    // 1. Register/Login to get a valid session (PHP requires this)
-    await page.goto("/register");
-    const timestamp = Date.now();
-    const email = `testuser_${timestamp}@example.com`;
-    const password = "TestUser123!";
+test.describe("Booking Flow E2E", () => {
+  let connection;
+  let testUserId;
+  const testUserEmail = `test-booking-${Date.now()}@playwright.test`;
+  const testUserPassword = "TestPassword123!";
 
-    await page.fill("#nombre", "Test");
-    await page.fill("#apellidos", "User");
-    await page.fill("#email", email);
-    await page.fill("#telefono", "600123456");
-    await page.fill("#password", password);
-    await page.fill("#password-confirm", password);
+  test.beforeAll(async () => {
+    connection = await mysql.createConnection(dbConfig);
+    const passwordHash = await bcrypt.hash(testUserPassword, 10);
+    const [userResult] = await connection.execute(
+      `INSERT INTO USUARIO (rol, nombre, apellidos, email, telefono, password_hash, fecha_registro, activo)
+       VALUES (?, ?, ?, ?, ?, ?, CURDATE(), ?)`,
+      ["Cliente", "Booking", "Test User", testUserEmail, "600000002", passwordHash, 1]
+    );
+    testUserId = userResult.insertId;
+  });
 
+  test.afterAll(async () => {
+    if (connection) {
+      await connection.execute("DELETE FROM RESERVA WHERE id_cliente = ?", [testUserId]);
+      await connection.execute("DELETE FROM USUARIO WHERE id_usuario = ?", [testUserId]);
+      await connection.end();
+    }
+  });
+
+  test("should successfully complete a 3-step booking process", async ({ page }) => {
+    // 1. Login
+    await page.goto("/login");
+    await page.fill('input[name="email"]', testUserEmail);
+    await page.fill('input[name="password"]', testUserPassword);
     await page.click('button[type="submit"]');
-    await page.waitForURL("**/login");
+    await page.waitForURL("/");
 
-    await page.fill("#email", email);
-    await page.fill("#password", password);
-    await page.click('button[type="submit"]');
-    await page.waitForURL("**/");
-
-    // 2. Setup API Mocks
-    await page.route("**/api/me", async (route) => {
-      await route.fulfill({
-        json: {
-          success: true,
-          data: { id: 1, nombre: "Test", apellidos: "User", email: email },
-        },
-      });
-    });
-
-    await page.route("**/api/services", async (route) => {
-      await route.fulfill({
-        json: {
-          success: true,
-          servicios: [{ id: 1, nombre: "Corte de Pelo", duracion_minutos: 30, precio: 15 }],
-        },
-      });
-    });
-
-    // Mock Availability: Always available at 23:00 to avoid "past time" issues
-    await page.route("**/api/especialistas/disponibles**", async (route) => {
-      await route.fulfill({
-        json: {
-          data: [
-            {
-              id_especialista: 1,
-              nombre: "Juan",
-              apellidos: "e",
-              horas_disponibles: ["23:00", "23:30"],
-            },
-          ],
-          total: 1,
-        },
-      });
-    });
-
-    // Mock Bookings (POST = Success)
-    await page.route("**/api/reservas", async (route) => {
-      if (route.request().method() === "POST") {
-        await route.fulfill({
-          status: 200,
-          json: { success: true },
-        });
-      } else {
-        // GET (for Mis Reservas page)
-        await route.fulfill({
-          json: {
-            reservas: [
-              {
-                id: 101,
-                servicio_id: 1,
-                // Use a date that ensures it's visible. Today is fine.
-                fecha: new Date().toISOString().split("T")[0],
-                hora: "23:00",
-                duracion_minutos: 30,
-                estado: "confirmada",
-                servicio_nombre: "Corte de Pelo", // For generic list display if needed
-                especialista_nombre: "Juan",
-              },
-            ],
-          },
-        });
-      }
-    });
-
-    // 3. Execute Booking Flow
+    // 2. Start new booking
     await page.goto("/user/reservas/nueva");
+    await page.waitForSelector("#bookings-app");
 
-    await page.waitForSelector("#bookings-app", { state: "visible" });
-    const heading = page.locator("h1");
-    // Depending on what H1 shows. The original test expected "Nueva Reserva".
-    await expect(heading).toContainText("Nueva Reserva", { timeout: 10000 });
+    // STEP 1: Select Service
+    const serviceCard = page.locator(".card").first();
+    await expect(serviceCard).toBeVisible();
 
-    // Step 1: Select Service
-    await expect(page.locator("text=Paso 1/3")).toBeVisible();
-    const firstService = page.locator(".card").first();
-    await expect(firstService).toBeVisible();
-    await firstService.click();
+    // Extract service name from the title
+    const serviceTitle = serviceCard.locator(".card-title").first();
+    const serviceName = (await serviceTitle.textContent()).trim();
+    console.log(`Selecting service: ${serviceName}`);
+    await serviceCard.click();
 
-    // Step 2: Date and Specialist
+    // STEP 2: Date & specialist selection
     await expect(page.locator("text=Paso 2/3")).toBeVisible();
 
-    // Select the first available time slot (23:00)
-    // We target the button specifically to be robust
-    const timeSlotButton = page.locator("button:has-text('23:00')").first();
-    await expect(timeSlotButton).toBeVisible({ timeout: 10000 });
-    await timeSlotButton.click();
-    await page.waitForTimeout(500);
+    // Wait for calendar to load
+    await page.waitForTimeout(1000);
 
-    // Next
-    const nextButton = page.locator("button.btn-primary.rounded-circle:has(i.bi-chevron-right)");
-    await nextButton.click();
+    // Select tomorrow's date (not today, to ensure available slots)
+    // Date buttons have class "btn rounded-circle" and contain just the day number
+    // We need to find a date button that is NOT the currently selected one (bg-primary)
+    const tomorrowDate = page
+      .locator("button.btn.rounded-circle")
+      .filter({ hasNotText: /Paso|Siguiente|Anterior/ })
+      .nth(1);
+    await expect(tomorrowDate).toBeVisible({ timeout: 10000 });
+    await tomorrowDate.click();
 
-    // Step 3: Confirmation
-    await expect(page.locator("text=Paso 3/3")).toBeVisible({ timeout: 10000 });
+    // Wait for time slots to load after date selection
+    await page.waitForTimeout(1500);
 
-    // Confirm
-    const confirmButton = page.locator('button:has-text("Confirmar Reserva")');
-    await expect(confirmButton).toBeVisible();
-    await confirmButton.click();
+    // Select first available time slot
+    // Available slots have class "btn-outline-primary" and are NOT disabled
+    const timeButton = page.locator("button.btn-outline-primary:not([disabled])").first();
+    await expect(timeButton).toBeVisible({ timeout: 15000 });
+    const selectedTime = (await timeButton.textContent()).trim();
+    console.log(`Selecting time: ${selectedTime}`);
+    await timeButton.click();
 
-    // 4. Verify Redirect
-    await page.waitForURL("**/user/reservas", { timeout: 10000 });
+    // Wait for state to settle
+    await page.waitForTimeout(1000);
 
-    // 5. Verify "Mis Reservas" page content
-    await expect(page.locator("h1")).toContainText("Mis Reservas");
-    // Verify our mocked booking is there
-    const bookingCard = page.locator(".card").first();
-    await expect(bookingCard).toBeVisible();
+    const nextBtn = page.locator("button.btn-primary.rounded-circle:has(i.bi-chevron-right)");
+    await nextBtn.click();
+
+    // STEP 3: Confirmation
+    await expect(page.locator("text=Paso 3/3")).toBeVisible();
+
+    // Locate the summary card
+    const summaryCard = page.locator(".card").filter({ hasText: /Resumen/i });
+    await expect(summaryCard).toBeVisible({ timeout: 15000 });
+
+    // In Step 3, we expect the service name to appear eventually.
+    // Sometimes Preact needs a moment to re-render with the full state.
+    await expect(async () => {
+      const text = await summaryCard.textContent();
+      expect(text).toContain(serviceName);
+    }).toPass({ timeout: 15000 });
+
+    // Confirm booking
+    const confirmBtn = page.locator('button:has-text("Confirmar Reserva")');
+    await confirmBtn.waitFor({ state: "visible" });
+
+    await Promise.all([
+      page.waitForURL("**/user/reservas", { timeout: 15000 }),
+      confirmBtn.click(),
+    ]);
+
+    // 4. Verify in UI (Mis Reservas)
+    await expect(page.locator("h1")).toContainText(/Mis Reservas/i);
+    const firstBooking = page.locator(".card").first();
+    await expect(firstBooking).toBeVisible();
+    await expect(firstBooking).toContainText(serviceName);
+
+    // 5. Verify in Database
+    const [rows] = await connection.execute(
+      "SELECT * FROM RESERVA WHERE id_cliente = ? ORDER BY id_reserva DESC LIMIT 1",
+      [testUserId]
+    );
+    expect(rows.length).toBe(1);
+    expect(rows[0].estado.toLowerCase()).toBe("pendiente");
   });
 });

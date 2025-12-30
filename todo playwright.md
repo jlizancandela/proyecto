@@ -24,7 +24,7 @@ Este listado representa la batería de pruebas necesaria para validar el cumplim
 - [x] **Control de Carga:** Validar que no se exceda la cantidad de horas permitidas por usuario en un periodo (40h/semana).
 - [x] **Conflictos de Horario:** Verificar que no se permitan solapamientos de citas para el mismo usuario.
 
-- [ ] **Cancelación de Reserva Propia:** El usuario puede eliminar una de sus reservas desde su listado personal.
+- [x] **Cancelación de Reserva Propia:** El usuario puede eliminar una de sus reservas desde su listado personal.
 
 - [ ] **Visualización Personal:** Comprobar que el usuario ve solo sus reservas y los recursos disponibles.
 

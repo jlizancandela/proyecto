@@ -35,15 +35,16 @@ class ReservaService
      * Creates a new booking with validation and business rules.
      *
      * @param array $data Booking data
+     * @param bool $isAdmin Whether the user is an administrator (bypasses time restrictions)
      * @return int Created booking ID
      * @throws BookingValidationException If validation fails
      * @throws BookingConflictException If conflicts exist
      * @throws BookingLimitException If booking limits are exceeded
      * @throws BookingOperationException If the booking could not be saved
      */
-    public function createReserva(array $data): int
+    public function createReserva(array $data, bool $isAdmin = false): int
     {
-        $this->validateReservaData($data);
+        $this->validateReservaData($data, $isAdmin);
 
         $bookingData = $this->prepareBookingData($data);
 
@@ -92,12 +93,13 @@ class ReservaService
      *
      * @param int $reservaId Booking ID
      * @param array $data Updated booking data
+     * @param bool $isAdmin Whether the user is an administrator (bypasses time restrictions)
      * @return bool True if updated successfully
      * @throws BookingNotFoundException If the booking is not found
      * @throws BookingValidationException If validation fails
      * @throws BookingConflictException If conflicts exist
      */
-    public function updateReserva(int $reservaId, array $data): bool
+    public function updateReserva(int $reservaId, array $data, bool $isAdmin = false): bool
     {
         $existingReserva = $this->reservaRepository->findById($reservaId);
 
@@ -105,7 +107,7 @@ class ReservaService
             throw new BookingNotFoundException('Reserva no encontrada');
         }
 
-        $this->validateReservaData($data);
+        $this->validateReservaData($data, $isAdmin);
 
         $bookingData = $this->prepareBookingData($data);
 
@@ -282,10 +284,11 @@ class ReservaService
      * Validates booking data format and content.
      *
      * @param array $data Data to validate
+     * @param bool $isAdmin Whether the user is an administrator (bypasses date restrictions)
      * @return void
      * @throws BookingValidationException If validation fails
      */
-    private function validateReservaData(array $data): void
+    private function validateReservaData(array $data, bool $isAdmin = false): void
     {
         $validator = v::key('servicio_id', v::intVal()->positive())
             ->key('especialista_id', v::intVal()->positive())
@@ -301,11 +304,14 @@ class ReservaService
             throw new BookingValidationException($e->getMessage());
         }
 
-        $reservaDate = new \DateTime($data['fecha']);
-        $today = new \DateTime('today');
+        // Admins can create bookings for any date (past, present, or future)
+        if (!$isAdmin) {
+            $reservaDate = new \DateTime($data['fecha']);
+            $today = new \DateTime('today');
 
-        if ($reservaDate < $today) {
-            throw new BookingValidationException('La fecha de reserva debe ser futura');
+            if ($reservaDate < $today) {
+                throw new BookingValidationException('La fecha de reserva debe ser futura');
+            }
         }
     }
 

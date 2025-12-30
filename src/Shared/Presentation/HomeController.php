@@ -90,8 +90,7 @@ class HomeController
             $this->emailService->sendEmail(
                 $_ENV['EMAIL_SENDER'],
                 $subject,
-                $htmlContent,
-                "Mensaje de $name ($email):\n\n$message"
+                $htmlContent
             );
 
             $_SESSION['success'] = '¡Gracias por tu mensaje! Te responderemos lo antes posible.';
