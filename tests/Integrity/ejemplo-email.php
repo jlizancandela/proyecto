@@ -39,8 +39,7 @@ try {
     $resultado = $emailService->sendEmail(
         $emailDestino,
         'Asunto de prueba',
-        '<h1>Hola</h1><p>Este es un email de prueba.</p>',
-        'Hola, este es un email de prueba.'
+        '<h1>Hola</h1><p>Este es un email de prueba.</p>'
     );
     */
 } catch (\Exception $e) {

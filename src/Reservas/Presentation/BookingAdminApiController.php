@@ -139,7 +139,9 @@ class BookingAdminApiController
                 return;
             }
 
-            $bookingId = $this->reservaService->createReserva($data);
+            // Admins can create bookings without time restrictions
+            $bookingId = $this->reservaService->createReserva($data, true);
+
 
             http_response_code(201);
             echo json_encode([
@@ -182,7 +184,9 @@ class BookingAdminApiController
                 return;
             }
 
-            $success = $this->reservaService->updateReserva($id, $data);
+            // Admins can update bookings without time restrictions
+            $success = $this->reservaService->updateReserva($id, $data, true);
+
 
             if ($success) {
                 http_response_code(200);

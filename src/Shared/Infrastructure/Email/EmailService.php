@@ -37,15 +37,13 @@ class EmailService
      * @param string $to Recipient email
      * @param string $subject Email subject
      * @param string $htmlContent HTML content of the email
-     * @param string $textContent Plain text content (optional)
      * @return array API response
      * @throws \RuntimeException If sending fails
      */
     public function sendEmail(
         string $to,
         string $subject,
-        string $htmlContent,
-        string $textContent = ''
+        string $htmlContent
     ): array {
         $data = [
             'sender' => [
@@ -57,17 +55,6 @@ class EmailService
             'subject' => $subject,
             'htmlContent' => $htmlContent
         ];
-
-        if (!empty($textContent)) {
-            $data['textContent'] = $textContent;
-        }
-
-        error_log(sprintf(
-            '[EmailService] Sending email to: %s | Subject: %s | Time: %s',
-            $to,
-            $subject,
-            date('Y-m-d H:i:s')
-        ));
 
         return $this->sendRequest($data);
     }
@@ -101,44 +88,10 @@ class EmailService
             </html>
         ";
 
-        $textContent = "Recuperación de contraseña\n\n"
-            . "Has solicitado restablecer tu contraseña.\n\n"
-            . "Visita el siguiente enlace para continuar:\n"
-            . "{$resetLink}\n\n"
-            . "Si no solicitaste este cambio, ignora este mensaje.\n"
-            . "Este enlace expirará en 1 hora.";
 
-        // In development, save token to file for testing
-        $host = $_SERVER['SERVER_NAME'] ?? '';
-        $isDev = str_contains($host, '.ddev.site') || $host === 'localhost';
-
-        if ($isDev) {
-            // Extract token from reset link
-            if (preg_match('/token=([^&]+)/', $resetLink, $matches)) {
-                $token = $matches[1];
-                // Use public directory which is accessible from both container and host
-                $logDir = $_SERVER['DOCUMENT_ROOT'] . '/.tokens';
-
-                // Create directory if it doesn't exist
-                if (!is_dir($logDir)) {
-                    mkdir($logDir, 0777, true);
-                }
-
-                // Write token to file (one file per email)
-                $filename = $logDir . '/' . md5($to) . '.txt';
-                file_put_contents($filename, $token);
-            }
-        }
-
-        // Log password recovery email sent (metadata only for security)
-        error_log(sprintf(
-            '[EmailService] Password recovery sent to: %s | Time: %s',
-            $to,
-            date('Y-m-d H:i:s')
-        ));
-
-        return $this->sendEmail($to, $subject, $htmlContent, $textContent);
+        return $this->sendEmail($to, $subject, $htmlContent);
     }
+
 
     /**
      * Sends the request to Brevo API using curl

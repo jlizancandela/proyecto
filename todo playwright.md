@@ -24,21 +24,19 @@ Este listado representa la batería de pruebas necesaria para validar el cumplim
 - [x] **Control de Carga:** Validar que no se exceda la cantidad de horas permitidas por usuario en un periodo (40h/semana).
 - [x] **Conflictos de Horario:** Verificar que no se permitan solapamientos de citas para el mismo usuario.
 
-- [ ] **Cancelación de Reserva Propia:** El usuario puede eliminar una de sus reservas desde su listado personal.
+- [x] **Cancelación de Reserva Propia:** El usuario puede eliminar una de sus reservas desde su listado personal.
 
-- [ ] **Visualización Personal:** Comprobar que el usuario ve solo sus reservas y los recursos disponibles.
+- [x] **Visualización Personal:** Comprobar que el usuario ve solo sus reservas y los recursos disponibles.
 
 ## 👑 Módulo 3: Panel de Administrador (Gestión Global)
 
-- [ ] **Listado de Clientes:** Verificar visualización, búsqueda, ordenación y paginación de los usuarios registrados.
+- [x] **Listado de Clientes:** Verificar visualización, búsqueda, ordenación y paginación de los usuarios registrados.
 
-- [ ] **Protección de Auto-Baja:** Intentar que el administrador se dé de baja a sí mismo o se cambie el rol; el sistema debe bloquearlo.
+- [x] **Protección de Auto-Baja:** Intentar que el administrador se dé de baja a sí mismo o se cambie el rol; el sistema debe bloquearlo.
 
-- [ ] **Gestión de Recursos:** Insertar, editar y aplicar baja lógica a un recurso (Especialista/Servicio).
+- [x] **Gestión de Recursos:** Insertar, editar y aplicar baja lógica a un recurso (Especialista/Servicio).
 
-- [ ] **Paginación y Búsqueda de Recursos:** Confirmar que estas herramientas funcionan en la tabla de recursos.
-
-- [ ] **Gestión de Reservas de Terceros:** El administrador crea o edita una reserva para cualquier usuario sin restricciones de tiempo.
+- [x] **Gestión de Reservas de Terceros:** El administrador crea o edita una reserva para cualquier usuario sin restricciones de tiempo.
 
 ## 📂 Módulo 4: Lógica de Eliminación e Historial
 
