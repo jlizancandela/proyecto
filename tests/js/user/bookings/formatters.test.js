@@ -10,7 +10,7 @@ import {
   capitalizarPrimeraLetra,
   esHoy,
   isPastTime,
-} from "@/public/js/user/bookings/tools/formatters.js";
+} from "@/src/js/user/bookings/tools/formatters.js";
 
 describe("Formatters", () => {
   describe("formatearFechaLarga", () => {

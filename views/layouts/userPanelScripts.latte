@@ -4,20 +4,7 @@
 {block styles}{/block}
 
 <meta name="app-env" content="{getNodeEnv()}" />
-<script src="/public/js/shared/process-shim.js"></script>
 
-<script type="importmap">
-  {
-    "imports": {
-      "preact": "/node_modules/preact/dist/preact.module.js",
-      "preact/hooks": "/node_modules/preact/hooks/dist/hooks.module.js",
-      "htm": "/node_modules/htm/dist/htm.module.js",
-      "nanostores": "/node_modules/nanostores/index.js",
-      "@nanostores/preact": "/node_modules/@nanostores/preact/index.js"
-    }
-  }
-</script>
-
-<script src="/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-
-{block scripts}{/block}
+{block scripts}
+<script type="module" src="/public/js/build/client.js?v={time()}"></script>
+{/block}

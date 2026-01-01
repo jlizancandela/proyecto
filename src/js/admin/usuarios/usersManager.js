@@ -293,14 +293,30 @@ const handleEditRolChange = () => {
 };
 
 document.addEventListener("click", handleDocumentClick);
-createUserForm.addEventListener("submit", handleCreateUserFormSubmit);
-editUserForm.addEventListener("submit", handleEditUserFormSubmit);
-createUserModal.addEventListener("hidden.bs.modal", () => createUserForm.reset());
-editUserModal.addEventListener("hidden.bs.modal", () => {
-  editUserForm.reset();
-  editServiciosContainer.style.display = "none";
-  editAvatarContainer.style.display = "none";
-  editDescriptionContainer.style.display = "none";
-});
-createUserForm.elements.createRol.addEventListener("change", handleCreateRolChange);
-editUserForm.elements.editRol.addEventListener("change", handleEditRolChange);
+
+if (createUserForm) {
+  createUserForm.addEventListener("submit", handleCreateUserFormSubmit);
+  if (createUserForm.elements.createRol) {
+    createUserForm.elements.createRol.addEventListener("change", handleCreateRolChange);
+  }
+}
+
+if (editUserForm) {
+  editUserForm.addEventListener("submit", handleEditUserFormSubmit);
+  if (editUserForm.elements.editRol) {
+    editUserForm.elements.editRol.addEventListener("change", handleEditRolChange);
+  }
+}
+
+if (createUserModal) {
+  createUserModal.addEventListener("hidden.bs.modal", () => createUserForm.reset());
+}
+
+if (editUserModal) {
+  editUserModal.addEventListener("hidden.bs.modal", () => {
+    editUserForm.reset();
+    editServiciosContainer.style.display = "none";
+    editAvatarContainer.style.display = "none";
+    editDescriptionContainer.style.display = "none";
+  });
+}

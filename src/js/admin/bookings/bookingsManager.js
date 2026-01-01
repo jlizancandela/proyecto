@@ -143,5 +143,10 @@ editButtons.forEach((btn) => {
   btn.addEventListener("click", handleEditBooking);
 });
 
-createBookingForm.addEventListener("submit", handleCreateBooking);
-editBookingForm.addEventListener("submit", handleUpdateBooking);
+if (createBookingForm) {
+  createBookingForm.addEventListener("submit", handleCreateBooking);
+}
+
+if (editBookingForm) {
+  editBookingForm.addEventListener("submit", handleUpdateBooking);
+}

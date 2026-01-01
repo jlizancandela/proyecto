@@ -30,7 +30,9 @@ describe("Bookings JS Logic", () => {
       hide: vi.fn(),
     };
     globalThis.bootstrap = {
-      Modal: vi.fn(() => modalMock),
+      Modal: vi.fn(function () {
+        return modalMock;
+      }),
     };
 
     vi.resetModules();
@@ -41,7 +43,7 @@ describe("Bookings JS Logic", () => {
       modifyBooking: modBooking,
       cancelBooking: canBooking,
       confirmAction: confAction,
-    } = await import("@/public/js/shared/bookings.js");
+    } = await import("@/src/js/shared/bookings.js");
     initializeBookingListeners = initListeners;
     modifyBooking = modBooking;
     cancelBooking = canBooking;

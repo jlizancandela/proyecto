@@ -4,7 +4,7 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { hasWeeklyBookingForService } from "@/public/js/user/bookings/tools/validators.js";
+import { hasWeeklyBookingForService } from "@/src/js/user/bookings/tools/validators.js";
 
 describe("Validators", () => {
   describe("hasWeeklyBookingForService", () => {

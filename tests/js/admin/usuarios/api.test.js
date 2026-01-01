@@ -9,7 +9,7 @@ import {
   createUser,
   updateUser,
   toggleUserStatus,
-} from "@/public/js/admin/usuarios/api.js";
+} from "@/src/js/admin/usuarios/api.js";
 
 describe("Users API", () => {
   beforeEach(() => {
