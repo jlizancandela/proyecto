@@ -31,7 +31,7 @@ describe("Booking Filters", () => {
   });
 
   it("should set estado and submit form when clicking estado button", async () => {
-    await import("@/public/js/shared/booking-filters.js");
+    await import("@/src/js/shared/booking-filters.js");
 
     const pendienteBtn = document.querySelector('[data-estado="Pendiente"]');
     pendienteBtn.click();
@@ -41,7 +41,7 @@ describe("Booking Filters", () => {
   });
 
   it("should clear estado when clicking 'Todas' button", async () => {
-    await import("@/public/js/shared/booking-filters.js");
+    await import("@/src/js/shared/booking-filters.js");
 
     estadoInput.value = "Pendiente";
 
@@ -53,7 +53,7 @@ describe("Booking Filters", () => {
   });
 
   it("should handle multiple estado changes", async () => {
-    await import("@/public/js/shared/booking-filters.js");
+    await import("@/src/js/shared/booking-filters.js");
 
     const confirmadaBtn = document.querySelector('[data-estado="Confirmada"]');
     confirmadaBtn.click();
@@ -80,7 +80,7 @@ describe("Booking Filters", () => {
     const filterForm = document.getElementById("filterForm");
     filterForm.submit = vi.fn();
 
-    await import("@/public/js/shared/booking-filters.js");
+    await import("@/src/js/shared/booking-filters.js");
 
     const icon = document.querySelector(".bi-clock");
     icon.click();
@@ -90,7 +90,7 @@ describe("Booking Filters", () => {
   });
 
   it("should not submit if clicking outside buttons", async () => {
-    await import("@/public/js/shared/booking-filters.js");
+    await import("@/src/js/shared/booking-filters.js");
 
     filterForm.click();
 

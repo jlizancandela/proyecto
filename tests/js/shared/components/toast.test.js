@@ -3,8 +3,8 @@
  */
 
 import { describe, it, expect, beforeEach, vi } from "vitest";
-import "@/public/js/shared/components/toast.js";
-import { notification } from "@/public/js/shared/components/toast.js";
+import "@/src/js/shared/components/toast.js";
+import { notification } from "@/src/js/shared/components/toast.js";
 
 describe("ToastNotification Web Component", () => {
   let toastElement;
@@ -19,8 +19,11 @@ describe("ToastNotification Web Component", () => {
 
     global.bootstrap = {
       ...global.bootstrap,
-      Toast: vi.fn(() => bootstrapToastMock),
+      Toast: vi.fn(function () {
+        return bootstrapToastMock;
+      }),
     };
+    window.bootstrap = global.bootstrap;
 
     // Clean up DOM
     document.body.innerHTML = "";

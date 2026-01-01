@@ -10,11 +10,12 @@ export default defineConfig({
   test: {
     environment: "jsdom",
     globals: true,
-    setupFiles: "./setup.js",
+    setupFiles: "./tests/setup.js",
+    include: ["tests/js/**/*.test.js"],
   },
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "../../"),
+      "@": path.resolve(__dirname, "./"),
     },
   },
 });

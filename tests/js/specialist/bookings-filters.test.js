@@ -41,7 +41,7 @@ describe("Specialist Booking Filters", () => {
   });
 
   it("should navigate with all filters when applying", async () => {
-    await import("@/public/js/specialist/bookings-filters.js");
+    await import("@/src/js/specialist/bookings-filters.js");
 
     filterEstado.value = "Pendiente";
     filterCliente.value = "Juan";
@@ -58,7 +58,7 @@ describe("Specialist Booking Filters", () => {
   });
 
   it("should navigate with only estado filter", async () => {
-    await import("@/public/js/specialist/bookings-filters.js");
+    await import("@/src/js/specialist/bookings-filters.js");
 
     filterEstado.value = "Confirmada";
 
@@ -68,7 +68,7 @@ describe("Specialist Booking Filters", () => {
   });
 
   it("should navigate with only date range", async () => {
-    await import("@/public/js/specialist/bookings-filters.js");
+    await import("@/src/js/specialist/bookings-filters.js");
 
     filterFechaDesde.value = "2024-01-01";
     filterFechaHasta.value = "2024-01-31";
@@ -82,7 +82,7 @@ describe("Specialist Booking Filters", () => {
   });
 
   it("should navigate with only cliente filter", async () => {
-    await import("@/public/js/specialist/bookings-filters.js");
+    await import("@/src/js/specialist/bookings-filters.js");
 
     filterCliente.value = "Maria Garcia";
 
@@ -92,7 +92,7 @@ describe("Specialist Booking Filters", () => {
   });
 
   it("should navigate without params when no filters applied", async () => {
-    await import("@/public/js/specialist/bookings-filters.js");
+    await import("@/src/js/specialist/bookings-filters.js");
 
     btnApplyFilters.click();
 
@@ -100,7 +100,7 @@ describe("Specialist Booking Filters", () => {
   });
 
   it("should clear all filters when clicking clear button", async () => {
-    await import("@/public/js/specialist/bookings-filters.js");
+    await import("@/src/js/specialist/bookings-filters.js");
 
     filterEstado.value = "Pendiente";
     filterCliente.value = "Juan";
@@ -116,7 +116,7 @@ describe("Specialist Booking Filters", () => {
       <button id="btnApplyFilters">Aplicar</button>
     `;
 
-    await import("@/public/js/specialist/bookings-filters.js");
+    await import("@/src/js/specialist/bookings-filters.js");
 
     const btn = document.getElementById("btnApplyFilters");
 
@@ -125,7 +125,7 @@ describe("Specialist Booking Filters", () => {
   });
 
   it("should ignore empty and whitespace-only values", async () => {
-    await import("@/public/js/specialist/bookings-filters.js");
+    await import("@/src/js/specialist/bookings-filters.js");
 
     filterEstado.value = "";
     filterCliente.value = "   ";
@@ -137,7 +137,7 @@ describe("Specialist Booking Filters", () => {
   });
 
   it("should URL encode special characters in cliente name", async () => {
-    await import("@/public/js/specialist/bookings-filters.js");
+    await import("@/src/js/specialist/bookings-filters.js");
 
     filterCliente.value = "José María & García";
 

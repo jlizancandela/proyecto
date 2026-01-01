@@ -9,7 +9,7 @@ import {
   createBooking,
   updateBooking,
   deleteBooking,
-} from "@/public/js/admin/bookings/api.js";
+} from "@/src/js/admin/bookings/api.js";
 
 describe("Bookings API", () => {
   beforeEach(() => {

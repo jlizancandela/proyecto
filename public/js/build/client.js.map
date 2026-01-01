@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../../src/js/user/clientApp.js"],
+  "sourcesContent": ["/**\n * @file Entry point for Client panel pages (My Bookings, Profile, etc).\n */\n\nimport \"../shared/bookings.js\";\nimport \"../shared/booking-filters.js\";\nimport { notification } from \"../shared/components/toast.js\";\n\n// Expose toast\nwindow.toast = notification;\n\n// Import and expose Bootstrap\nimport * as bootstrap from \"bootstrap\";\nwindow.bootstrap = bootstrap;\n"],
+  "mappings": "mHAAA,IAAAA,EAAAC,EAAA,KAIAC,IACAC,IACAC,IAMAC,IAHA,OAAO,MAAQC,EAIf,OAAO,UAAYC",
+  "names": ["require_clientApp", "__commonJSMin", "init_bookings", "init_booking_filters", "init_toast", "init_bootstrap_esm", "notification", "bootstrap_esm_exports"]
+}

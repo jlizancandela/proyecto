@@ -10,7 +10,7 @@ import {
   getUserBookings,
   createReserva,
   getCurrentUser,
-} from "@/public/js/user/bookings/api/bookingsApi.js";
+} from "@/src/js/user/bookings/api/bookingsApi.js";
 
 describe("User Bookings API", () => {
   beforeEach(() => {

@@ -12,6 +12,8 @@ import { DateForm } from "./routes/dateForm.js";
 import { ServiceForm } from "./routes/serviceForm.js";
 import { ConfirmationForm } from "./routes/confirmationForm.js";
 import { BookingNavigation } from "./components/BookingNavigation.js";
+import * as bootstrap from "bootstrap";
+window.bootstrap = bootstrap;
 
 const html = htm.bind(h);
 

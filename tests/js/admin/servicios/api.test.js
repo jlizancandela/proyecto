@@ -10,7 +10,7 @@ import {
   updateService,
   activateService,
   deactivateService,
-} from "@/public/js/admin/servicios/api.js";
+} from "@/src/js/admin/servicios/api.js";
 
 describe("Services API", () => {
   beforeEach(() => {

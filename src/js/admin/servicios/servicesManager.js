@@ -148,7 +148,19 @@ const handleEditServiceFormSubmit = async (e) => {
 };
 
 document.addEventListener("click", handleDocumentClick);
-createServiceForm.addEventListener("submit", handleCreateServiceFormSubmit);
-editServiceForm.addEventListener("submit", handleEditServiceFormSubmit);
-createServiceModal.addEventListener("hidden.bs.modal", () => createServiceForm.reset());
-editServiceModal.addEventListener("hidden.bs.modal", () => editServiceForm.reset());
+
+if (createServiceForm) {
+  createServiceForm.addEventListener("submit", handleCreateServiceFormSubmit);
+}
+
+if (editServiceForm) {
+  editServiceForm.addEventListener("submit", handleEditServiceFormSubmit);
+}
+
+if (createServiceModal) {
+  createServiceModal.addEventListener("hidden.bs.modal", () => createServiceForm.reset());
+}
+
+if (editServiceModal) {
+  editServiceModal.addEventListener("hidden.bs.modal", () => editServiceForm.reset());
+}

@@ -10,11 +10,16 @@ global.fetch = vi.fn();
 
 // Mock bootstrap (used in modals)
 global.bootstrap = {
-  Modal: vi.fn(() => ({
-    show: vi.fn(),
-    hide: vi.fn(),
-  })),
+  Modal: vi.fn(function () {
+    return {
+      show: vi.fn(),
+      hide: vi.fn(),
+    };
+  }),
 };
+
+// Ensure window.bootstrap is available
+global.window.bootstrap = global.bootstrap;
 
 // Reset mocks before each test
 beforeEach(() => {

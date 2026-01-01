@@ -1,4 +1,5 @@
-{layout '../layouts/user-panel-layout.latte'} {block title}Nueva Reserva{/block} {block styles}{/block} {block content}
+{layout '../layouts/user-panel-layout.latte'} {block title}Nueva Reserva{/block} {block
+styles}{/block} {block content}
 <div class="container-fluid">
   <div id="bookings-app">
     <div class="text-center py-5">
@@ -10,5 +11,5 @@
   </div>
 </div>
 {/block} {block scripts}
-<script type="module" src="/public/js/user/bookings/bookingsApp.js?v={time()}"></script>
+<script src="/public/js/build/bookings.js?v={time()}" type="module"></script>
 {/block}
