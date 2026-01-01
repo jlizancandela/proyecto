@@ -317,13 +317,14 @@ test.describe("Admin Third-Party Booking Management", () => {
     await expect(deleteBtn).toBeVisible();
 
     // 6. Setup dialog handler and click delete
-    page.on("dialog", async (dialog) => {
-      // Source says: "¿Estás seguro de que deseas eliminar esta reserva?"
-      expect(dialog.message()).toContain("eliminar esta reserva");
-      await dialog.accept();
-    });
-
+    // 6. Delete the booking (using Custom Confirm Dialog)
     await deleteBtn.click();
+    await page.waitForTimeout(500); // Wait for modal animation
+
+    // Handle Custom Confirmation Dialog
+    const confirmDialog = page.locator("confirm-dialog dialog");
+    await expect(confirmDialog).toBeVisible();
+    await page.locator("confirm-dialog .btn-confirm").click();
 
     // 7. Wait for success message via Toast
     await expect(page.locator("toast-notification")).toContainText("eliminada correctamente", {

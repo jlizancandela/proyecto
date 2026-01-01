@@ -180,13 +180,7 @@ test.describe("Admin User Management Lifecycle", () => {
     await expect(toggleBtn).toContainText("Activo");
     await expect(toggleBtn).toHaveClass(/bg-success/);
 
-    // Listen for alerts
-    page.on("dialog", async (dialog) => {
-      console.log(`Dialog message: ${dialog.message()}`);
-      await dialog.dismiss();
-    });
-
-    // Click to Deactivate and wait for API response
+    // Click to Deactivate
     const togglePromise = page.waitForResponse(
       (response) =>
         response.url().includes(`/admin/api/users/${testUserId}`) &&

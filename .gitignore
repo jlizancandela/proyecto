@@ -33,6 +33,7 @@ yarn-error.log*
 # Build outputs
 /build/
 /dist/
+/public/js/build/
 
 # Database
 *.sql.gz

@@ -46,7 +46,13 @@ test.describe("Booking Restrictions", () => {
 
     try {
       const today = new Date();
-      const dateStr = today.toISOString().split("T")[0];
+      const year = today.getFullYear();
+      const monthRaw = today.getMonth() + 1;
+      const dayRaw = today.getDate();
+      const day = String(dayRaw).padStart(2, "0");
+      const month = String(monthRaw).padStart(2, "0");
+
+      const dateStr = `${year}-${month}-${day}`;
 
       // Pre-insert a booking for today (Service ID 2 = Corte de Cabello Hombre)
       await connection.execute(
@@ -127,7 +133,14 @@ test.describe("Booking Restrictions", () => {
       const tomorrow = new Date();
       tomorrow.setDate(tomorrow.getDate() + 1);
       const tomorrowDay = tomorrow.getDate();
-      const tomorrowStr = tomorrow.toISOString().split("T")[0];
+
+      // Use local time for DB string
+      const tYear = tomorrow.getFullYear();
+      const tMonthRaw = tomorrow.getMonth() + 1;
+      const tDayRaw = tomorrow.getDate();
+      const tDay = String(tDayRaw).padStart(2, "0");
+      const tMonth = String(tMonthRaw).padStart(2, "0");
+      const tomorrowStr = `${tYear}-${tMonth}-${tDay}`;
 
       const monthTitle = page.locator(".fw-bold.text-capitalize.fs-5");
       const currentMonthText = await monthTitle.textContent();
@@ -180,19 +193,38 @@ test.describe("Booking Restrictions", () => {
   });
 
   test("should enforce maximum weekly hours limit (40h)", async ({ page }) => {
+    // Skip on weekends as we can't book "this week" effectively if days are passed/closed
+    const today = new Date();
+    if (today.getDay() === 6 || today.getDay() === 0) {
+      test.skip(true, "Cannot test weekly limit on weekends (shop closed or week over)");
+      return;
+    }
+
     const user = await createTestUser(`test-40h-${Date.now()}@playwright.test`);
 
     try {
-      const today = new Date();
       const startOfWeek = new Date(today);
-      startOfWeek.setDate(today.getDate() - today.getDay() + 1);
+      const dayOfWeek = today.getDay() || 7; // 1 (Mon) - 7 (Sun)
+      startOfWeek.setDate(today.getDate() - dayOfWeek + 1); // Monday
 
-      // Create 40 hours of existing bookings
+      // Create 40 hours of existing bookings packed into Mon-Thu (4 days * 10 hours)
+      // This leaves Friday free for testing the failure
       for (let i = 0; i < 40; i++) {
+        // 0-9 = Day 0 (Mon), 10-19 = Day 1 (Tue), etc.
+        const dayOffset = Math.floor(i / 10);
+
         const d = new Date(startOfWeek);
-        d.setDate(startOfWeek.getDate() + Math.floor(i / 8));
-        const dStr = d.toISOString().split("T")[0];
-        const h = 8 + (i % 8);
+        d.setDate(startOfWeek.getDate() + dayOffset);
+
+        const dYear = d.getFullYear();
+        const dMonthRaw = d.getMonth() + 1;
+        const dDayRaw = d.getDate();
+        const dStr = `${dYear}-${String(dMonthRaw).padStart(2, "0")}-${String(dDayRaw).padStart(
+          2,
+          "0"
+        )}`;
+
+        const h = 8 + (i % 10); // 08:00 to 17:00
         const hStr = `${String(h).padStart(2, "0")}:00:00`;
         const endHStr = `${String(h + 1).padStart(2, "0")}:00:00`;
 
@@ -215,23 +247,24 @@ test.describe("Booking Restrictions", () => {
       // Select any service
       await page.locator(".card").nth(1).click();
 
-      // Select tomorrow's date
-      const tomorrow = new Date();
-      tomorrow.setDate(tomorrow.getDate() + 1);
-      const tomorrowDay = tomorrow.getDate();
+      // Target Friday of the current week
+      const friday = new Date(startOfWeek);
+      friday.setDate(startOfWeek.getDate() + 4);
+      const fridayDay = friday.getDate();
 
       const monthTitle = page.locator(".fw-bold.text-capitalize.fs-5");
       const currentMonthText = await monthTitle.textContent();
 
-      if (currentMonthText.toLowerCase().includes("diciembre") && tomorrowDay === 1) {
+      // Navigate month if Friday is in next month (unlikely for "this week" unless week splits month)
+      const fridayMonthName = friday.toLocaleString("es-ES", { month: "long" });
+      if (!currentMonthText.toLowerCase().includes(fridayMonthName.toLowerCase())) {
         await page.getByRole("button", { name: "Mes siguiente" }).click();
-        await expect(monthTitle).toContainText("enero", { ignoreCase: true, timeout: 5000 });
       }
 
-      const tomorrowDateBtn = page.getByRole("button", { name: `Día ${tomorrowDay}`, exact: true });
+      const fridayDateBtn = page.getByRole("button", { name: `Día ${fridayDay}`, exact: true });
 
-      await expect(tomorrowDateBtn).toBeVisible({ timeout: 10000 });
-      await tomorrowDateBtn.click();
+      await expect(fridayDateBtn).toBeVisible({ timeout: 10000 });
+      await fridayDateBtn.click();
       await page.waitForTimeout(1500);
 
       const timeButton = page.locator("button.btn-outline-primary:not([disabled])").first();

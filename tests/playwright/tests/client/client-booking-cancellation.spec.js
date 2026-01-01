@@ -51,12 +51,15 @@ test.describe("Real E2E Booking Cancellation", () => {
     // Step 1: Create a test booking in the database
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
-    const tomorrowDbStr = tomorrow.toISOString().split("T")[0];
-
-    // Format date as DD/MM/YYYY for UI matching
-    const day = String(tomorrow.getDate()).padStart(2, "0");
-    const month = String(tomorrow.getMonth() + 1).padStart(2, "0");
+    // Use local time for both DB and UI to avoid UTC mismatches (e.g., just after midnight)
     const year = tomorrow.getFullYear();
+    const monthRaw = tomorrow.getMonth() + 1;
+    const dayRaw = tomorrow.getDate();
+
+    const day = String(dayRaw).padStart(2, "0");
+    const month = String(monthRaw).padStart(2, "0");
+
+    const tomorrowDbStr = `${year}-${month}-${day}`;
     const tomorrowUiStr = `${day}/${month}/${year}`;
 
     const [result] = await connection.execute(

@@ -12,3 +12,4 @@ window.toast = notification;
 // Import and expose Bootstrap
 import * as bootstrap from "bootstrap";
 window.bootstrap = bootstrap;
+import "bootstrap/dist/css/bootstrap.min.css";
