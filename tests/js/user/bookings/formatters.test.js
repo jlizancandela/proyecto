@@ -3,7 +3,7 @@
  * @project app-reservas
  */
 
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import {
   formatearFechaLarga,
   formatearFechaISO,
@@ -86,31 +86,33 @@ describe("Formatters", () => {
   });
 
   describe("isPastTime", () => {
+    beforeEach(() => {
+      // Set fixed date: Jan 15, 2024 at 12:00:00
+      vi.useFakeTimers();
+      vi.setSystemTime(new Date("2024-01-15T12:00:00"));
+    });
+
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
     it("should return false for future dates", () => {
       const manana = new Date();
-      manana.setDate(manana.setDate() + 1);
+      manana.setDate(manana.getDate() + 1);
 
       expect(isPastTime(manana, "10:00")).toBe(false);
     });
 
     it("should return true for past time today", () => {
-      const hoy = new Date();
-      const horasPasadas = new Date();
-      horasPasadas.setHours(horasPasadas.getHours() - 2);
-
-      const hora = `${String(horasPasadas.getHours()).padStart(2, "0")}:00`;
-
-      expect(isPastTime(hoy, hora)).toBe(true);
+      const hoy = new Date(); // Will be 2024-01-15 12:00:00
+      // 10:00 is past relative to 12:00
+      expect(isPastTime(hoy, "10:00")).toBe(true);
     });
 
     it("should return false for future time today", () => {
-      const hoy = new Date();
-      const horasFuturas = new Date();
-      horasFuturas.setHours(horasFuturas.getHours() + 2);
-
-      const hora = `${String(horasFuturas.getHours()).padStart(2, "0")}:00`;
-
-      expect(isPastTime(hoy, hora)).toBe(false);
+      const hoy = new Date(); // Will be 2024-01-15 12:00:00
+      // 14:00 is future relative to 12:00
+      expect(isPastTime(hoy, "14:00")).toBe(false);
     });
   });
 });

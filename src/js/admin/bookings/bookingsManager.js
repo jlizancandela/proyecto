@@ -5,6 +5,7 @@
 
 import { fetchBooking, createBooking, updateBooking, deleteBooking } from "./api.js";
 import { notification } from "../../shared/components/toast.js";
+import { confirmAction } from "../../shared/components/confirm-dialog.js";
 
 const createBookingForm = document.getElementById("createBookingForm");
 const editBookingForm = document.getElementById("editBookingForm");
@@ -21,7 +22,7 @@ const editButtons = document.querySelectorAll(".btn-edit-booking");
 const handleDeleteBooking = async (e) => {
   const bookingId = e.currentTarget.dataset.bookingId;
 
-  if (!confirm("¿Estás seguro de que deseas eliminar esta reserva?")) {
+  if (!(await confirmAction("¿Estás seguro de que deseas eliminar esta reserva?"))) {
     return;
   }
 

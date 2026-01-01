@@ -5,6 +5,7 @@
 
 import { fetchUser, createUser, updateUser, toggleUserStatus as toggleStatus } from "./api.js";
 import { notification } from "../../shared/components/toast.js";
+import { confirmAction } from "../../shared/components/confirm-dialog.js";
 
 const editUserModal = document.getElementById("editUserModal");
 const editUserForm = document.getElementById("editUserForm");
@@ -122,7 +123,7 @@ const handleToggleUserStatus = async (userId, userName, currentStatus) => {
 /**
  * Handles document click events for edit and status toggle user buttons.
  */
-const handleDocumentClick = (e) => {
+const handleDocumentClick = async (e) => {
   if (e.target.closest(".btn-edit-user")) {
     const userId = e.target.closest(".btn-edit-user").dataset.userId;
     editUser(userId);
@@ -141,7 +142,7 @@ const handleDocumentClick = (e) => {
     const userId = button.dataset.userId;
     const userName = button.dataset.userName;
 
-    if (confirm(`¿Estás seguro de que deseas desactivar al usuario ${userName}?`)) {
+    if (await confirmAction(`¿Estás seguro de que deseas desactivar al usuario ${userName}?`)) {
       handleToggleUserStatus(userId, userName, "1");
     }
   }

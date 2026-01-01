@@ -1,9 +1,7 @@
 <?php
 
 use Reservas\Infrastructure\ReservaRepository;
-use Mockery;
-use PDO;
-use PDOStatement;
+
 
 beforeEach(function () {
     $this->pdo = Mockery::mock(PDO::class);

@@ -1,2 +1,2 @@
-import{a as m,b as p,c as t,d as a}from"./chunk-6AVE4XRM.js";import{b as i,e as o,f as r}from"./chunk-N34MI4RW.js";var n=i(()=>{m();p();a();r();window.toast=t;window.bootstrap=o});export default n();
+import{a as n,b as s,c as o,d as l}from"./chunk-BJKL7XIX.js";import{a,b as e,e as r,f as i}from"./chunk-N34MI4RW.js";var t=a(()=>{});var d=e(()=>{n();s();l();i();t();window.toast=o;window.bootstrap=r});export default d();
 //# sourceMappingURL=client.js.map

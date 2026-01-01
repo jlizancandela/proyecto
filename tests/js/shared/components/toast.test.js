@@ -46,7 +46,9 @@ describe("ToastNotification Web Component", () => {
   });
 
   it("should initialize Bootstrap Toast", () => {
-    expect(global.bootstrap.Toast).toHaveBeenCalledWith(toastElement.querySelector(".toast"));
+    expect(global.bootstrap.Toast).toHaveBeenCalledWith(toastElement.querySelector(".toast"), {
+      delay: 5000,
+    });
   });
 
   it("should show success toast with correct classes and message", () => {

@@ -18,7 +18,7 @@ class ToastNotification extends HTMLElement {
     this.closeBtn = this.querySelector(".btn-close");
 
     if (window.bootstrap) {
-      this.bsToast = new bootstrap.Toast(this.toastEl);
+      this.bsToast = new bootstrap.Toast(this.toastEl, { delay: 5000 });
     } else {
       console.error("Bootstrap JS is not loaded.");
     }
