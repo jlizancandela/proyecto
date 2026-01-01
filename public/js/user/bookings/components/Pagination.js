@@ -6,8 +6,8 @@
  * Shows previous/next buttons and numbered page buttons with current page highlighted.
  */
 
-import { h } from "https://esm.sh/preact@10.19.3";
-import htm from "https://esm.sh/htm";
+import { h } from "preact";
+import htm from "htm";
 
 const html = htm.bind(h);
 

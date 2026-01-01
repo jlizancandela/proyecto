@@ -21,7 +21,7 @@ test('savePasswordResetToken saves token successfully', function () {
 
     $this->db->shouldReceive('prepare')
         ->once()
-        ->with(Mockery::pattern('/UPDATE usuarios/i'))
+        ->with(Mockery::pattern('/UPDATE USUARIO/i'))
         ->andReturn($stmt);
 
     $stmt->shouldReceive('execute')
@@ -43,7 +43,7 @@ test('getUserByResetToken returns user when token is valid', function () {
 
     $this->db->shouldReceive('prepare')
         ->once()
-        ->with(Mockery::pattern('/SELECT \* FROM usuarios.*WHERE reset_token/is'))
+        ->with(Mockery::pattern('/SELECT \* FROM USUARIO.*WHERE reset_token/is'))
         ->andReturn($stmt);
 
     $stmt->shouldReceive('execute')
@@ -97,7 +97,7 @@ test('clearResetToken clears token successfully', function () {
 
     $this->db->shouldReceive('prepare')
         ->once()
-        ->with(Mockery::pattern('/UPDATE usuarios.*SET reset_token = NULL/is'))
+        ->with(Mockery::pattern('/UPDATE USUARIO.*SET reset_token = NULL/is'))
         ->andReturn($stmt);
 
     $stmt->shouldReceive('execute')

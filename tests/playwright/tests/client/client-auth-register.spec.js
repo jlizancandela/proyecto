@@ -4,8 +4,27 @@
  */
 
 const { test, expect } = require("@playwright/test");
+const mysql = require("mysql2/promise");
+const { dbConfig } = require("../../helpers/db-config");
+
+test.describe.configure({ mode: "serial" });
 
 test.describe("Registration", () => {
+  let connection;
+  let testEmail;
+
+  test.beforeAll(async () => {
+    connection = await mysql.createConnection(dbConfig);
+  });
+
+  test.afterAll(async () => {
+    if (connection) {
+      if (testEmail) {
+        await connection.execute("DELETE FROM USUARIO WHERE email = ?", [testEmail]);
+      }
+      await connection.end();
+    }
+  });
   test("should show register page and validate fields", async ({ page }) => {
     await page.goto("/register");
 
@@ -35,10 +54,11 @@ test.describe("Registration", () => {
     await expect(page.locator("#password-confirm")).toHaveClass(/is-invalid/);
 
     // Test successful registration
-    const email = `test.user+${Date.now()}@example.com`;
+    testEmail = `test.user+${Date.now()}@example.com`;
+    // const email = ... (replaced by assignment to var)
     await page.fill('input[name="nombre"]', "Test User");
     await page.fill('input[name="apellidos"]', "Test Apellidos");
-    await page.fill('input[name="email"]', email);
+    await page.fill('input[name="email"]', testEmail);
     await page.fill('input[name="password"]', "password123");
     await page.fill('input[name="password-confirm"]', "password123");
     await page.click('button[type="submit"]');

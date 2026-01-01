@@ -81,7 +81,10 @@ test.describe("Admin User Management Lifecycle", () => {
     // Note: Use a more specific selector for the submit button inside the form if needed
     await page.click('#createUserForm button[type="submit"]');
 
-    // Wait for modal to close or success message
+    // Wait for success message via Toast
+    await expect(page.locator("toast-notification")).toContainText("creado correctamente", {
+      timeout: 10000,
+    });
     await expect(page.locator("#createUserModal")).toBeHidden();
 
     // Verify in DB

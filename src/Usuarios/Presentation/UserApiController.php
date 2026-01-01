@@ -584,18 +584,27 @@ class UserApiController
             return null;
         }
 
-        $uploadDir = __DIR__ . '/../../../public/images/avatars/';
-        if (!file_exists($uploadDir)) {
-            mkdir($uploadDir, 0777, true);
+        try {
+            $imageKit = new \ImageKit\ImageKit(
+                $_ENV['IMAGEKIT_API_KEY'],
+                $_ENV['IMAGEKIT_PRIVATE_KEY'],
+                $_ENV['IMAGEKIT_ENDPOINT']
+            );
+
+            $upload = $imageKit->upload([
+                'file' => fopen($file['tmp_name'], 'r'),
+                'fileName' => $file['name'],
+                'folder' => '/avatars'
+            ]);
+
+            if ($upload->error) {
+                return null;
+            }
+
+            return $upload->result->url;
+        } catch (\Exception $e) {
+            error_log('Error uploading avatar to ImageKit: ' . $e->getMessage());
+            return null;
         }
-
-        $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
-        $filename = uniqid('avatar_') . '.' . $extension;
-
-        if (move_uploaded_file($file['tmp_name'], $uploadDir . $filename)) {
-            return '/public/images/avatars/' . $filename;
-        }
-
-        return null;
     }
 }

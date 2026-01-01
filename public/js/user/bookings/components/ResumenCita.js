@@ -6,8 +6,8 @@
  * specialist, date, time, and duration information.
  */
 
-import { h } from "https://esm.sh/preact@10.19.3";
-import htm from "https://esm.sh/htm";
+import { h } from "preact";
+import htm from "htm";
 import { ResumenItem } from "./ResumenItem.js";
 import { formatearFechaLarga } from "../tools/formatters.js";
 

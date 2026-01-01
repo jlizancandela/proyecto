@@ -3,7 +3,7 @@
  * @project app-reservas
  */
 
-import { atom } from "https://esm.sh/nanostores@0.9.5";
+import { atom } from "nanostores";
 import { getServices, getEspecialistasDisponibles, getCurrentUser } from "../api/bookingsApi.js";
 import { formatearFechaISO } from "../tools/formatters.js";
 

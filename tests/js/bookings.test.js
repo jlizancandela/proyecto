@@ -36,11 +36,16 @@ describe("Bookings JS Logic", () => {
     vi.resetModules();
 
     // Import the module and get the exported functions
-    const module = await import("@/public/js/bookings.js");
-    initializeBookingListeners = module.initializeBookingListeners;
-    modifyBooking = module.modifyBooking;
-    cancelBooking = module.cancelBooking;
-    confirmAction = module.confirmAction;
+    const {
+      initializeBookingListeners: initListeners,
+      modifyBooking: modBooking,
+      cancelBooking: canBooking,
+      confirmAction: confAction,
+    } = await import("@/public/js/shared/bookings.js");
+    initializeBookingListeners = initListeners;
+    modifyBooking = modBooking;
+    cancelBooking = canBooking;
+    confirmAction = confAction;
   });
 
   afterEach(() => {

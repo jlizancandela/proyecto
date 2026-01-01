@@ -18,6 +18,8 @@ test.describe("Admin Third-Party Booking Management", () => {
   let specialistId;
   let serviceId;
   let bookingId;
+  let deleteBookingId; // Promoted for cleanup
+  let pastBookingId; // Promoted for cleanup
 
   const adminEmail = `admin-bookings-${Date.now()}@test.com`;
   const adminPassword = "AdminPass123!";
@@ -97,6 +99,12 @@ test.describe("Admin Third-Party Booking Management", () => {
       // Clean up booking
       if (bookingId) {
         await connection.execute("DELETE FROM RESERVA WHERE id_reserva = ?", [bookingId]);
+      }
+      if (deleteBookingId) {
+        await connection.execute("DELETE FROM RESERVA WHERE id_reserva = ?", [deleteBookingId]);
+      }
+      if (pastBookingId) {
+        await connection.execute("DELETE FROM RESERVA WHERE id_reserva = ?", [pastBookingId]);
       }
       // Clean up specialist service
       await connection.execute("DELETE FROM ESPECIALISTA_SERVICIO WHERE id_especialista = ?", [
@@ -268,5 +276,145 @@ test.describe("Admin Third-Party Booking Management", () => {
     expect(updatedBookings[0].observaciones).toContain("admin bypass");
 
     console.log(`Booking ${bookingId} updated successfully to past date: ${dbDateStr}`);
+  });
+
+  test("should permanently delete a pending future booking", async ({ page }) => {
+    // 1. Create a pending booking for tomorrow in DB
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const tomorrowStr = tomorrow.toISOString().split("T")[0];
+
+    const [result] = await connection.execute(
+      `INSERT INTO RESERVA (id_cliente, id_especialista, id_servicio, fecha_reserva, hora_inicio, hora_fin, estado, observaciones)
+       VALUES (?, ?, ?, ?, '10:00:00', '11:00:00', 'Pendiente', 'To be deleted')`,
+      [clientUserId, specialistId, serviceId, tomorrowStr]
+    );
+    deleteBookingId = result.insertId;
+
+    // 2. Login as admin
+    await page.goto("/login");
+    await page.fill('input[name="email"]', adminEmail);
+    await page.fill('input[name="password"]', adminPassword);
+    await page.click('button[type="submit"]');
+    await page.waitForURL("/");
+
+    // 3. Navigate to bookings
+    await page.goto("/admin/bookings");
+
+    // 4. Filter to find the booking
+    await page.click('button[data-bs-target="#collapseFilters"]');
+    await page.waitForTimeout(500); // Wait for accordion
+
+    await page.fill("#fecha_desde", tomorrowStr);
+    await page.fill("#fecha_hasta", tomorrowStr);
+    await page.selectOption("#cliente", clientUserId.toString());
+
+    await page.click('button[type="submit"]:has-text("Aplicar Filtros")');
+    await page.waitForLoadState("networkidle");
+
+    // 5. Verify booking is visible
+    const deleteBtn = page.locator(`.btn-delete-booking[data-booking-id="${deleteBookingId}"]`);
+    await expect(deleteBtn).toBeVisible();
+
+    // 6. Setup dialog handler and click delete
+    page.on("dialog", async (dialog) => {
+      // Source says: "¿Estás seguro de que deseas eliminar esta reserva?"
+      expect(dialog.message()).toContain("eliminar esta reserva");
+      await dialog.accept();
+    });
+
+    await deleteBtn.click();
+
+    // 7. Wait for success message via Toast
+    await expect(page.locator("toast-notification")).toContainText("eliminada correctamente", {
+      timeout: 10000,
+    });
+    await page.waitForLoadState("networkidle");
+
+    // 8. Verify deletion in DB
+    const [rows] = await connection.execute("SELECT * FROM RESERVA WHERE id_reserva = ?", [
+      deleteBookingId,
+    ]);
+    expect(rows.length).toBe(0);
+  });
+
+  test("should block deletion of past bookings", async ({ page }) => {
+    // 1. Create a past booking (yesterday)
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    const yesterdayStr = yesterday.toISOString().split("T")[0];
+
+    const [result] = await connection.execute(
+      `INSERT INTO RESERVA (id_cliente, id_especialista, id_servicio, fecha_reserva, hora_inicio, hora_fin, estado, observaciones)
+       VALUES (?, ?, ?, ?, '12:00:00', '13:00:00', 'Confirmada', 'Historical booking')`,
+      [clientUserId, specialistId, serviceId, yesterdayStr]
+    );
+    pastBookingId = result.insertId;
+
+    // 2. Login as admin
+    await page.goto("/login");
+    await page.fill('input[name="email"]', adminEmail);
+    await page.fill('input[name="password"]', adminPassword);
+    await page.click('button[type="submit"]');
+    await page.waitForURL("/");
+
+    // 3. Navigate to bookings
+    await page.goto("/admin/bookings");
+
+    // 4. Filter to find the booking
+    await page.click('button[data-bs-target="#collapseFilters"]');
+    await page.waitForTimeout(500);
+
+    await page.fill("#fecha_desde", yesterdayStr);
+    await page.fill("#fecha_hasta", yesterdayStr);
+    await page.selectOption("#cliente", clientUserId.toString());
+
+    await page.click('button[type="submit"]:has-text("Aplicar Filtros")');
+    await page.waitForLoadState("networkidle");
+
+    // 5. Verify delete button is disabled
+    // 5. Verify delete button is disabled
+    // The disabled button in the template does NOT have data-booking-id, so we find it by row
+    const row = page.locator("tr").filter({ hasText: pastBookingId.toString() });
+    const deleteBtn = row.locator(".btn-delete-booking");
+
+    await expect(deleteBtn).toBeVisible();
+    await expect(deleteBtn).toBeDisabled();
+    // Wrapper selector: parent of button
+    const wrapper = deleteBtn.locator(".."); // XPath parent or use specific structure knowledge
+    await expect(wrapper).toHaveAttribute("title", "No se pueden eliminar reservas pasadas");
+
+    console.log(`Verified past booking ${pastBookingId} cannot be deleted.`);
+  });
+
+  test("should download bookings PDF report", async ({ page }) => {
+    // 1. Login as admin
+    await page.goto("/login");
+    await page.fill('input[name="email"]', adminEmail);
+    await page.fill('input[name="password"]', adminPassword);
+    await page.click('button[type="submit"]');
+    await page.waitForURL("/");
+
+    // 2. Navigate to bookings
+    await page.goto("/admin/bookings");
+
+    // 3. Setup download listener (must be done before click)
+    const downloadPromise = page.waitForEvent("download");
+
+    // 4. Click export button (it has target="_blank")
+    const exportBtn = page.getByRole("link", { name: "Exportar PDF" });
+    await expect(exportBtn).toBeVisible();
+    await exportBtn.click();
+
+    // 5. Verify download
+    const download = await downloadPromise;
+    const filename = download.suggestedFilename();
+    console.log("Downloaded file:", filename);
+
+    expect(filename).toContain("reservas");
+    expect(filename).toContain(".pdf");
+
+    // Optional: Verify no error page is shown (if download fails it usually stays on page or shows error)
+    await expect(page.locator("text=Error interno")).not.toBeVisible();
   });
 });

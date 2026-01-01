@@ -14,7 +14,7 @@ module.exports = defineConfig({
   workers: process.env.CI ? 1 : undefined,
   reporter: "html",
   use: {
-    baseURL: "https://proyecto.ddev.site", // DDEV URL
+    baseURL: process.env.BASE_URL || "https://proyecto.ddev.site", // DDEV URL
     trace: "on-first-retry",
     ignoreHTTPSErrors: true, // DDEV uses self-signed certs
   },

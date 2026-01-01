@@ -279,7 +279,9 @@ class EspecialistaRepository
                 FROM ESPECIALISTA e
                 INNER JOIN USUARIO u ON e.id_usuario = u.id_usuario
                 INNER JOIN ESPECIALISTA_SERVICIO es ON e.id_especialista = es.id_especialista
+                INNER JOIN HORARIO_ESPECIALISTA he ON e.id_especialista = he.id_especialista
                 WHERE es.id_servicio = :id_servicio
+                AND he.dia_semana = :dia_semana
                 AND u.activo = 1
             ";
 
@@ -293,6 +295,8 @@ class EspecialistaRepository
 
             $stmt = $this->db->prepare($query);
             $stmt->bindValue(':id_servicio', $idServicio, PDO::PARAM_INT);
+            $diaSemanaCalculado = date('N', strtotime($fecha)) === '7' ? 0 : (int)date('N', strtotime($fecha));
+            $stmt->bindValue(':dia_semana', $diaSemanaCalculado, PDO::PARAM_INT);
 
             if ($limit !== null) {
                 $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
@@ -329,8 +333,22 @@ class EspecialistaRepository
 
                 $reservas = $stmtReservas->fetchAll(PDO::FETCH_ASSOC);
 
+                // Obtener horario del especialista para este día
+                $stmtHorario = $this->db->prepare("
+                    SELECT hora_inicio, hora_fin
+                    FROM HORARIO_ESPECIALISTA
+                    WHERE id_especialista = :id_especialista
+                    AND dia_semana = :dia_semana
+                ");
+                $diaSemana = date('N', strtotime($fecha)) === '7' ? 0 : date('N', strtotime($fecha));
+                $stmtHorario->execute([
+                    'id_especialista' => $row['id_especialista'],
+                    'dia_semana' => $diaSemana
+                ]);
+                $horarios = $stmtHorario->fetchAll(PDO::FETCH_ASSOC);
 
-                $horasDisponibles = $this->calcularHorasDisponibles($reservas, $duracionMinutos);
+
+                $horasDisponibles = $this->calcularHorasDisponibles($reservas, $duracionMinutos, $horarios);
 
                 $especialistas[] = [
                     'id_especialista' => $row['id_especialista'],
@@ -354,47 +372,48 @@ class EspecialistaRepository
      *
      * @param array $reservas An array of existing bookings for the specialist on a given day.
      * @param int $duracionMinutos The duration of the service in minutes.
+     * @param array $horarios The working hours of the specialist for this day.
      * @return string[] An array of available time slots in 'HH:MM' format.
      */
-    private function calcularHorasDisponibles(array $reservas, int $duracionMinutos): array
+    private function calcularHorasDisponibles(array $reservas, int $duracionMinutos, array $horarios = []): array
     {
-        $horaInicio = new \DateTime('09:00');
-        $horaFin = new \DateTime('20:00');
+        $horasDisponibles = [];
         $intervalo = 30;
 
-        $horasDisponibles = [];
-        $horaActual = clone $horaInicio;
+        foreach ($horarios as $horario) {
+            $horaInicio = new \DateTime($horario['hora_inicio']);
+            $horaFin = new \DateTime($horario['hora_fin']);
+            $horaActual = clone $horaInicio;
 
-        while ($horaActual < $horaFin) {
-            $horaFinSlot = clone $horaActual;
-            $horaFinSlot->modify("+{$duracionMinutos} minutes");
+            while ($horaActual < $horaFin) {
+                $horaFinSlot = clone $horaActual;
+                $horaFinSlot->modify("+{$duracionMinutos} minutes");
 
-
-            if ($horaFinSlot > $horaFin) {
-                break;
-            }
-
-
-            $hayConflicto = false;
-            foreach ($reservas as $reserva) {
-                $reservaInicio = new \DateTime($reserva['hora_inicio']);
-                $reservaFin = new \DateTime($reserva['hora_fin']);
-
-
-                if ($horaActual < $reservaFin && $horaFinSlot > $reservaInicio) {
-                    $hayConflicto = true;
+                if ($horaFinSlot > $horaFin) {
                     break;
                 }
-            }
 
-            if (!$hayConflicto) {
-                $horasDisponibles[] = $horaActual->format('H:i');
-            }
+                $hayConflicto = false;
+                foreach ($reservas as $reserva) {
+                    $reservaInicio = new \DateTime($reserva['hora_inicio']);
+                    $reservaFin = new \DateTime($reserva['hora_fin']);
 
-            $horaActual->modify("+{$intervalo} minutes");
+                    if ($horaActual < $reservaFin && $horaFinSlot > $reservaInicio) {
+                        $hayConflicto = true;
+                        break;
+                    }
+                }
+
+                if (!$hayConflicto) {
+                    $horasDisponibles[] = $horaActual->format('H:i');
+                }
+
+                $horaActual->modify("+{$intervalo} minutes");
+            }
         }
 
-        return $horasDisponibles;
+        sort($horasDisponibles);
+        return array_unique($horasDisponibles);
     }
 
     /**

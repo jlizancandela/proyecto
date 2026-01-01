@@ -4,14 +4,34 @@
  */
 
 const { test, expect } = require("@playwright/test");
+const mysql = require("mysql2/promise");
+const { dbConfig } = require("../../helpers/db-config");
+
+test.describe.configure({ mode: "serial" });
 
 test.describe("Login", () => {
+  let connection;
+  let testEmail; // Capture for cleanup
+
+  test.beforeAll(async () => {
+    connection = await mysql.createConnection(dbConfig);
+  });
+
+  test.afterAll(async () => {
+    if (connection) {
+      if (testEmail) {
+        await connection.execute("DELETE FROM USUARIO WHERE email = ?", [testEmail]);
+      }
+      await connection.end();
+    }
+  });
   test("should login with valid credentials and create session", async ({ page }) => {
     // First, register a new user to ensure we have valid credentials
     await page.goto("/register");
 
     const timestamp = Date.now();
-    const email = `testuser_${timestamp}@example.com`;
+    testEmail = `testuser_${timestamp}@example.com`;
+    const email = testEmail; // Keep local const for readability if used below or just use testEmail
     const password = "TestUser123!";
 
     await page.fill("#nombre", "Test");

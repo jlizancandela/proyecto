@@ -4,6 +4,7 @@
  */
 
 import { fetchBooking, createBooking, updateBooking, deleteBooking } from "./api.js";
+import { notification } from "../../shared/components/toast.js";
 
 const createBookingForm = document.getElementById("createBookingForm");
 const editBookingForm = document.getElementById("editBookingForm");
@@ -11,33 +12,6 @@ const editBookingModal = document.getElementById("editBookingModal");
 
 const deleteButtons = document.querySelectorAll(".btn-delete-booking");
 const editButtons = document.querySelectorAll(".btn-edit-booking");
-
-/**
- * Shows a temporary success message alert.
- *
- * @param {string} message - Success message to display.
- */
-const showSuccess = (message) => {
-  const alertDiv = document.createElement("div");
-  alertDiv.className = "alert alert-success alert-dismissible fade show";
-
-  const icon = document.createElement("i");
-  icon.className = "bi bi-check-circle me-2";
-
-  const messageText = document.createTextNode(message);
-
-  const closeButton = document.createElement("button");
-  closeButton.type = "button";
-  closeButton.className = "btn-close";
-  closeButton.dataset.bsDismiss = "alert";
-
-  alertDiv.appendChild(icon);
-  alertDiv.appendChild(messageText);
-  alertDiv.appendChild(closeButton);
-
-  document.querySelector(".mb-4").prepend(alertDiv);
-  setTimeout(() => alertDiv.remove(), 3000);
-};
 
 /**
  * Handles the deletion of a booking.
@@ -55,14 +29,14 @@ const handleDeleteBooking = async (e) => {
     const data = await deleteBooking(bookingId);
 
     if (data.success) {
-      showSuccess("Reserva eliminada correctamente");
+      notification("Reserva eliminada correctamente", "success");
       setTimeout(() => globalThis.location.reload(), 1000);
     } else {
-      alert(data.error || "Error al eliminar la reserva");
+      notification(data.error || "Error al eliminar la reserva", "error");
     }
   } catch (error) {
     console.error("Error deleting booking:", error);
-    alert("Error al conectar con el servidor");
+    notification("Error al conectar con el servidor", "error");
   }
 };
 
@@ -98,11 +72,11 @@ const handleEditBooking = async (e) => {
       const modal = new bootstrap.Modal(editBookingModal);
       modal.show();
     } else {
-      alert("Error al cargar los datos de la reserva");
+      notification("Error al cargar los datos de la reserva", "error");
     }
   } catch (error) {
     console.error("Error fetching booking:", error);
-    alert("Error al conectar con el servidor");
+    notification("Error al conectar con el servidor", "error");
   }
 };
 
@@ -121,14 +95,14 @@ const handleCreateBooking = async (e) => {
     const result = await createBooking(data);
 
     if (result.success) {
-      showSuccess("Reserva creada correctamente");
+      notification("Reserva creada correctamente", "success");
       setTimeout(() => globalThis.location.reload(), 1000);
     } else {
-      alert(result.error || "Error al crear la reserva");
+      notification(result.error || "Error al crear la reserva", "error");
     }
   } catch (error) {
     console.error("Error creating booking:", error);
-    alert("Error al conectar con el servidor");
+    notification("Error al conectar con el servidor", "error");
   }
 };
 
@@ -148,14 +122,14 @@ const handleUpdateBooking = async (e) => {
     const result = await updateBooking(bookingId, data);
 
     if (result.success) {
-      showSuccess("Reserva actualizada correctamente");
+      notification("Reserva actualizada correctamente", "success");
       setTimeout(() => globalThis.location.reload(), 1000);
     } else {
-      alert(result.error || "Error al actualizar la reserva");
+      notification(result.error || "Error al actualizar la reserva", "error");
     }
   } catch (error) {
     console.error("Error updating booking:", error);
-    alert("Error al conectar con el servidor");
+    notification("Error al conectar con el servidor", "error");
   }
 };
 

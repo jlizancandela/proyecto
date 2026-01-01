@@ -11,7 +11,7 @@
  * - Maintain a clean and consistent interface
  */
 
-import { useStore } from "https://esm.sh/@nanostores/preact@0.5.1?deps=preact@10.19.3";
+import { useStore } from "@nanostores/preact";
 import { $bookingDraft, $uiState, confirmReservaAction } from "../context/bookingsStore.js";
 
 /**

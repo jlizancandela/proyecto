@@ -6,8 +6,8 @@
  * Shows specialist photos, descriptions, and available time slots with past times disabled.
  */
 
-import { h } from "https://esm.sh/preact@10.19.3";
-import htm from "https://esm.sh/htm";
+import { h } from "preact";
+import htm from "htm";
 import { Pagination } from "./Pagination.js";
 import { isPastTime } from "../tools/formatters.js";
 
@@ -82,6 +82,7 @@ const renderTimeButton = (hora, isSelected, timeHasPassed, onSelectHora, especia
       disabled=${timeHasPassed}
       title=${timeHasPassed ? "Esta hora ya ha pasado" : ""}
       style="${buttonStyle}"
+      aria-label="Seleccionar hora ${hora}"
     >
       ${hora}
       ${timeHasPassed

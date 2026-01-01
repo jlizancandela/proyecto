@@ -10,6 +10,7 @@ import {
   activateService,
   deactivateService,
 } from "./api.js";
+import { notification } from "../../shared/components/toast.js";
 
 const editServiceModal = document.getElementById("editServiceModal");
 const editServiceForm = document.getElementById("editServiceForm");
@@ -39,10 +40,10 @@ const editService = async (serviceId) => {
       const modal = new bootstrap.Modal(editServiceModal);
       modal.show();
     } else {
-      alert("Error al cargar servicio: " + result.error);
+      notification("Error al cargar servicio: " + result.error, "error");
     }
   } catch (error) {
-    alert("Error: " + error.message);
+    notification("Error: " + error.message, "error");
   }
 };
 
@@ -59,12 +60,12 @@ const toggleServiceStatus = async (serviceId, currentStatus) => {
     const result = isActive ? await deactivateService(serviceId) : await activateService(serviceId);
 
     if (result.success) {
-      globalThis.location.reload();
+      setTimeout(() => globalThis.location.reload(), 1000);
     } else {
-      alert("Error: " + result.error);
+      notification("Error: " + result.error, "error");
     }
   } catch (error) {
-    alert("Error: " + error.message);
+    notification("Error: " + error.message, "error");
   }
 };
 
@@ -104,14 +105,14 @@ const handleCreateServiceFormSubmit = async (e) => {
     const result = await createService(formData);
 
     if (result.success) {
-      alert("Servicio creado correctamente");
+      notification("Servicio creado correctamente", "success");
       bootstrap.Modal.getInstance(createServiceModal).hide();
-      globalThis.location.reload();
+      setTimeout(() => globalThis.location.reload(), 1000);
     } else {
-      alert("Error: " + result.error);
+      notification("Error: " + result.error, "error");
     }
   } catch (error) {
-    alert("Error: " + error.message);
+    notification("Error: " + error.message, "error");
   }
 };
 
@@ -135,14 +136,14 @@ const handleEditServiceFormSubmit = async (e) => {
     const result = await updateService(form.editServiceId.value, formData);
 
     if (result.success) {
-      alert("Servicio actualizado correctamente");
+      notification("Servicio actualizado correctamente", "success");
       bootstrap.Modal.getInstance(editServiceModal).hide();
-      globalThis.location.reload();
+      setTimeout(() => globalThis.location.reload(), 1000);
     } else {
-      alert("Error: " + result.error);
+      notification("Error: " + result.error, "error");
     }
   } catch (error) {
-    alert("Error: " + error.message);
+    notification("Error: " + error.message, "error");
   }
 };
 

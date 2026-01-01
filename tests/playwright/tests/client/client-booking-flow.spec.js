@@ -61,21 +61,32 @@ test.describe("Booking Flow E2E", () => {
     // Wait for calendar to load
     await page.waitForTimeout(1000);
 
-    // Select tomorrow's date (not today, to ensure available slots)
-    // Date buttons have class "btn rounded-circle" and contain just the day number
-    // We need to find a date button that is NOT the currently selected one (bg-primary)
-    const tomorrowDate = page
-      .locator("button.btn.rounded-circle")
-      .filter({ hasNotText: /Paso|Siguiente|Anterior/ })
-      .nth(1);
-    await expect(tomorrowDate).toBeVisible({ timeout: 10000 });
-    await tomorrowDate.click();
+    // Select tomorrow's date
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const tomorrowDay = tomorrow.getDate();
 
-    // Wait for time slots to load after date selection
-    await page.waitForTimeout(1500);
+    // Check current month displayed
+    const monthTitle = page.locator(".fw-bold.text-capitalize.fs-5");
+    const currentMonthText = await monthTitle.textContent();
+    console.log(`Current calendar month: ${currentMonthText}`);
+
+    // If we are in December and tomorrow is January, navigate
+    if (currentMonthText.toLowerCase().includes("diciembre") && tomorrowDay === 1) {
+      console.log("Navigating to January...");
+      await page.getByRole("button", { name: "Mes siguiente" }).click();
+
+      // Wait for the month to actually change to "enero"
+      await expect(monthTitle).toContainText("enero", { ignoreCase: true, timeout: 5000 });
+      console.log("Navigation successful, now in January.");
+    }
+
+    // Target the specific day button in the calendar
+    const tomorrowDateBtn = page.getByRole("button", { name: `Día ${tomorrowDay}`, exact: true });
+    await expect(tomorrowDateBtn).toBeVisible({ timeout: 10000 });
+    await tomorrowDateBtn.click();
 
     // Select first available time slot
-    // Available slots have class "btn-outline-primary" and are NOT disabled
     const timeButton = page.locator("button.btn-outline-primary:not([disabled])").first();
     await expect(timeButton).toBeVisible({ timeout: 15000 });
     const selectedTime = (await timeButton.textContent()).trim();
@@ -85,7 +96,8 @@ test.describe("Booking Flow E2E", () => {
     // Wait for state to settle
     await page.waitForTimeout(1000);
 
-    const nextBtn = page.locator("button.btn-primary.rounded-circle:has(i.bi-chevron-right)");
+    // Use aria-label for next button
+    const nextBtn = page.getByRole("button", { name: "Siguiente paso" });
     await nextBtn.click();
 
     // STEP 3: Confirmation

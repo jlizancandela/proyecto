@@ -2,9 +2,9 @@
  * @file Date and specialist selection form component.
  */
 
-import { h } from "https://esm.sh/preact@10.19.3";
-import { useStore } from "https://esm.sh/@nanostores/preact@0.5.1?deps=preact@10.19.3";
-import htm from "https://esm.sh/htm";
+import { h } from "preact";
+import { useStore } from "@nanostores/preact";
+import htm from "htm";
 import { Calendario } from "../components/Calendario.js";
 import { EspecialistasList } from "../components/EspecialistasList.js";
 import {

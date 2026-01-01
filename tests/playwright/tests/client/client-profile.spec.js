@@ -4,8 +4,27 @@
  */
 
 const { test, expect } = require("@playwright/test");
+const mysql = require("mysql2/promise");
+const { dbConfig } = require("../../helpers/db-config");
+
+test.describe.configure({ mode: "serial" });
 
 test.describe("User Profile", () => {
+  let connection;
+  const createdEmails = [];
+
+  test.beforeAll(async () => {
+    connection = await mysql.createConnection(dbConfig);
+  });
+
+  test.afterAll(async () => {
+    if (connection) {
+      for (const email of createdEmails) {
+        await connection.execute("DELETE FROM USUARIO WHERE email = ?", [email]);
+      }
+      await connection.end();
+    }
+  });
   /**
    * Test for user account deactivation (logical deletion).
    *
@@ -25,6 +44,7 @@ test.describe("User Profile", () => {
 
     const timestamp = Date.now();
     const email = `testuser_${timestamp}@example.com`;
+    createdEmails.push(email);
     const password = "TestUser123!";
 
     await page.fill("#nombre", "Test");
@@ -109,6 +129,7 @@ test.describe("User Profile", () => {
 
     const timestamp = Date.now();
     const email = `testuser_${timestamp}@example.com`;
+    createdEmails.push(email);
     const password = "TestUser123!";
 
     await page.fill("#nombre", "Test");

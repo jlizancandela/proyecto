@@ -7,6 +7,9 @@ const { test, expect } = require("@playwright/test");
 const mysql = require("mysql2/promise");
 const bcrypt = require("bcryptjs");
 const { dbConfig } = require("../../helpers/db-config");
+const path = require("path");
+const ImageKit = require("imagekit");
+const fs = require("fs");
 
 test.describe.configure({ mode: "serial" });
 
@@ -15,12 +18,23 @@ test.describe("Admin Specialist Management", () => {
   let adminUserId;
   let specialistUserId;
   let specialistId;
+  let uploadedPhotoUrl; // Capture for cleanup
   const adminEmail = `admin-spec-${Date.now()}@test.com`;
   const adminPassword = "AdminPass123!";
   const specialistEmail = `specialist-${Date.now()}@test.com`;
 
+  // Dummy avatar path
+  const avatarPath = path.join(__dirname, "../../../../public/images/test-avatar.jpg");
+
   test.beforeAll(async () => {
     connection = await mysql.createConnection(dbConfig);
+
+    // Create dummy avatar file
+    const minimalJpg = Buffer.from(
+      "/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAP//////////////////////////////////////////////////////////////////////////////////////wgALCAABAAEBAREA/8QAFBABAAAAAAAAAAAAAAAAAAAAAP/aAAgBAQABPxA=",
+      "base64"
+    );
+    fs.writeFileSync(avatarPath, minimalJpg);
 
     // Create admin user
     const hash = await bcrypt.hash(adminPassword, 10);
@@ -50,6 +64,39 @@ test.describe("Admin Specialist Management", () => {
       // Clean up admin user
       await connection.execute("DELETE FROM USUARIO WHERE id_usuario = ?", [adminUserId]);
       await connection.end();
+
+      // Clean up ImageKit file
+      if (uploadedPhotoUrl) {
+        try {
+          const imagekit = new ImageKit({
+            publicKey: process.env.IMAGEKIT_API_KEY,
+            privateKey: process.env.IMAGEKIT_PRIVATE_KEY,
+            urlEndpoint: process.env.IMAGEKIT_ENDPOINT,
+          });
+
+          // Extract filename from URL (e.g. https://ik.imagekit.io/.../avatars/filename.jpg)
+          const fileName = uploadedPhotoUrl.split("/").pop();
+
+          // ImageKit listFiles to find ID
+          // Note: listFiles returns an array of files
+          const files = await imagekit.listFiles({
+            searchQuery: `name = "${fileName}"`,
+            limit: 1,
+          });
+
+          if (files && files.length > 0) {
+            await imagekit.deleteFile(files[0].fileId);
+            console.log(`Deleted ImageKit file: ${fileName}`);
+          }
+        } catch (error) {
+          console.error("Failed to cleanup ImageKit file:", error.message);
+        }
+      }
+
+      // Clean up local dummy file
+      if (fs.existsSync(avatarPath)) {
+        fs.unlinkSync(avatarPath);
+      }
     }
   });
 
@@ -89,6 +136,12 @@ test.describe("Admin Specialist Management", () => {
     await expect(firstServiceCheckbox).toBeVisible();
     await firstServiceCheckbox.check();
 
+    // 4b. Upload Avatar
+    // Using the dummy file path generated in beforeAll
+    // Ensure the file input is visible or use hidden input manipulation if strictly needed,
+    // but visible check above passed for container, so input should be interactable.
+    await page.setInputFiles("#createAvatar", avatarPath);
+
     // 5. Submit form
     await page.click('#createUserForm button[type="submit"]');
     await expect(page.locator("#createUserModal")).toBeHidden();
@@ -109,13 +162,24 @@ test.describe("Admin Specialist Management", () => {
 
     // 7. Verify ESPECIALISTA record was created
     const [specRows] = await connection.execute(
-      "SELECT id_especialista FROM ESPECIALISTA WHERE id_usuario = ?",
+      "SELECT id_especialista, foto_url FROM ESPECIALISTA WHERE id_usuario = ?",
       [specialistUserId]
     );
     expect(specRows.length).toBe(1);
     specialistId = specRows[0].id_especialista;
 
-    console.log(`Specialist record created with ID: ${specialistId}`);
+    // Verify Avatar URL
+    const photoUrl = specRows[0].foto_url;
+    uploadedPhotoUrl = photoUrl; // Save for afterAll
+    console.log(`Specialist record created with ID: ${specialistId}, Photo: ${photoUrl}`);
+
+    if (photoUrl) {
+      expect(photoUrl).toContain("ik.imagekit.io");
+      expect(photoUrl).toContain("/avatars/");
+    } else {
+      // Fail explicitly if we expected an upload
+      throw new Error("Expected foto_url to be present but it was null/empty");
+    }
 
     // 8. Verify service was assigned (via UI checkbox selection)
     const [serviceAssignments] = await connection.execute(

@@ -7,9 +7,9 @@
  * to move between different booking stages.
  */
 
-import { h } from "https://esm.sh/preact@10.19.3";
-import htm from "https://esm.sh/htm";
-import { useStore } from "https://esm.sh/@nanostores/preact@0.5.1?deps=preact@10.19.3";
+import { h } from "preact";
+import htm from "htm";
+import { useStore } from "@nanostores/preact";
 import { $estado, $bookingDraft } from "../context/bookingsStore.js";
 
 const html = htm.bind(h);
@@ -79,6 +79,7 @@ const renderPrevButton = (canPrev, handlePrev) => html`
     style="width: ${BUTTON_SIZE}; height: ${BUTTON_SIZE};"
     onClick=${handlePrev}
     disabled=${!canPrev}
+    aria-label="Paso anterior"
   >
     <i class="bi bi-chevron-left"></i>
   </button>
@@ -116,6 +117,7 @@ const renderNextButtonOrSpacer = (estado, canNext, handleNext) => {
         style="width: ${BUTTON_SIZE}; height: ${BUTTON_SIZE};"
         onClick=${handleNext}
         disabled=${!canNext}
+        aria-label="Siguiente paso"
       >
         <i class="bi bi-chevron-right"></i>
       </button>

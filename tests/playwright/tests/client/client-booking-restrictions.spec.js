@@ -68,14 +68,22 @@ test.describe("Booking Restrictions", () => {
       // Select "Corte de Cabello Hombre" (ID 2) - Alphabetically index 0
       await page.locator(".card").nth(0).click();
 
-      // Select tomorrow's date to ensure available slots
-      await page.waitForTimeout(1000);
-      const tomorrowDate = page
-        .locator("button.btn.rounded-circle")
-        .filter({ hasNotText: /Paso|Siguiente|Anterior/ })
-        .nth(1);
-      await expect(tomorrowDate).toBeVisible({ timeout: 10000 });
-      await tomorrowDate.click();
+      // Select tomorrow's date
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      const tomorrowDay = tomorrow.getDate();
+
+      const monthTitle = page.locator(".fw-bold.text-capitalize.fs-5");
+      const currentMonthText = await monthTitle.textContent();
+
+      if (currentMonthText.toLowerCase().includes("diciembre") && tomorrowDay === 1) {
+        await page.getByRole("button", { name: "Mes siguiente" }).click();
+        await expect(monthTitle).toContainText("enero", { ignoreCase: true, timeout: 5000 });
+      }
+
+      const tomorrowDateBtn = page.getByRole("button", { name: `Día ${tomorrowDay}`, exact: true });
+      await expect(tomorrowDateBtn).toBeVisible({ timeout: 10000 });
+      await tomorrowDateBtn.click();
       await page.waitForTimeout(1500);
 
       const timeButton = page.locator("button.btn-outline-primary:not([disabled])").first();
@@ -83,7 +91,7 @@ test.describe("Booking Restrictions", () => {
       await timeButton.click();
 
       // Go to summary
-      await page.locator("button.btn-primary.rounded-circle:has(i.bi-chevron-right)").click();
+      await page.getByRole("button", { name: "Siguiente paso" }).click();
 
       // Confirm step
       const confirmBtn = page.locator('button:has-text("Confirmar Reserva")');
@@ -103,18 +111,6 @@ test.describe("Booking Restrictions", () => {
     const user = await createTestUser(`test-overlap-${Date.now()}@playwright.test`);
 
     try {
-      // Use tomorrow's date (same as what the UI will select)
-      const tomorrow = new Date();
-      tomorrow.setDate(tomorrow.getDate() + 1);
-      const tomorrowStr = tomorrow.toISOString().split("T")[0];
-
-      // Pre-insert a booking 15:00 - 16:00 for TOMORROW
-      await connection.execute(
-        `INSERT INTO RESERVA (id_cliente, id_especialista, id_servicio, fecha_reserva, hora_inicio, hora_fin, estado)
-         VALUES (?, ?, ?, ?, ?, ?, ?)`,
-        [user.id, 1, 2, tomorrowStr, "15:00:00", "16:00:00", "Confirmada"]
-      );
-
       await page.goto("/login");
       await page.fill('input[name="email"]', user.email);
       await page.fill('input[name="password"]', user.password);
@@ -124,27 +120,60 @@ test.describe("Booking Restrictions", () => {
       await page.goto("/user/reservas/nueva");
       await page.waitForSelector("#bookings-app");
 
-      // Select different service (Mujer - index 1)
-      await page.locator(".card").nth(1).click();
+      // Select known service (Corte de Cabello Hombre) which works in other tests
+      await page.locator(".card").filter({ hasText: "Corte de Cabello Hombre" }).click();
 
-      // Select tomorrow's date to ensure available slots
-      await page.waitForTimeout(1000);
-      const tomorrowDate = page
-        .locator("button.btn.rounded-circle")
-        .filter({ hasNotText: /Paso|Siguiente|Anterior/ })
-        .nth(1);
-      await expect(tomorrowDate).toBeVisible({ timeout: 10000 });
-      await tomorrowDate.click();
+      // Select tomorrow's date
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      const tomorrowDay = tomorrow.getDate();
+      const tomorrowStr = tomorrow.toISOString().split("T")[0];
+
+      const monthTitle = page.locator(".fw-bold.text-capitalize.fs-5");
+      const currentMonthText = await monthTitle.textContent();
+
+      if (currentMonthText.toLowerCase().includes("diciembre") && tomorrowDay === 1) {
+        await page.getByRole("button", { name: "Mes siguiente" }).click();
+        await expect(monthTitle).toContainText("enero", { ignoreCase: true, timeout: 5000 });
+      }
+
+      const tomorrowDateBtn = page.getByRole("button", { name: `Día ${tomorrowDay}`, exact: true });
+      await expect(tomorrowDateBtn).toBeVisible({ timeout: 10000 });
+      await tomorrowDateBtn.click();
       await page.waitForTimeout(1500);
 
-      const timeButton = page.locator('button:has-text("15:30")').first();
-      await expect(timeButton).toBeVisible();
+      // Find ANY available time slot
+      const timeButton = page.locator("button.btn-outline-primary:not([disabled])").first();
+      await expect(timeButton).toBeVisible({ timeout: 10000 });
+
+      const selectedTime = (await timeButton.textContent()).trim(); // e.g., "10:00"
       await timeButton.click();
 
-      await page.locator("button.btn-primary.rounded-circle:has(i.bi-chevron-right)").click();
+      await page.getByRole("button", { name: "Siguiente paso" }).click();
+
+      // NOW, inject the conflicting booking for the SAME Time
+      // We use a different service/specialist (ID 1, 1) to avoid "Specialist Busy" hidden slot issues
+      // ensuring the conflict is purely "Client Busy".
+      await connection.execute(
+        `INSERT INTO RESERVA (id_cliente, id_especialista, id_servicio, fecha_reserva, hora_inicio, hora_fin, estado)
+         VALUES (?, ?, ?, ?, ?, ?, ?)`,
+        [
+          user.id,
+          1, // Specialist 1 (Assuming Spec 1 does Service 1 too or doesn't matter for client overlap check)
+          1, // Service 1 (Corte Mujer) - DIFFERENT from Service 2 to avoid weekly limit
+          tomorrowStr,
+          `${selectedTime}:00`,
+          `${selectedTime.split(":")[0]}:59:59`, // 1 hour approx
+          "Confirmada",
+        ]
+      );
+
+      // Try to confirm
       await page.locator('button:has-text("Confirmar Reserva")').click();
 
-      await expect(page.locator(".alert-danger")).toContainText(/Ya tienes otra reserva|horario/i);
+      await expect(page.locator(".alert-danger")).toContainText(/Ya tienes otra reserva|horario/i, {
+        timeout: 10000,
+      });
     } finally {
       await cleanTestUser(user.id);
     }
@@ -186,21 +215,30 @@ test.describe("Booking Restrictions", () => {
       // Select any service
       await page.locator(".card").nth(1).click();
 
-      // Select tomorrow's date to ensure available slots
-      await page.waitForTimeout(1000);
-      const tomorrowDate = page
-        .locator("button.btn.rounded-circle")
-        .filter({ hasNotText: /Paso|Siguiente|Anterior/ })
-        .nth(1);
-      await expect(tomorrowDate).toBeVisible({ timeout: 10000 });
-      await tomorrowDate.click();
+      // Select tomorrow's date
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      const tomorrowDay = tomorrow.getDate();
+
+      const monthTitle = page.locator(".fw-bold.text-capitalize.fs-5");
+      const currentMonthText = await monthTitle.textContent();
+
+      if (currentMonthText.toLowerCase().includes("diciembre") && tomorrowDay === 1) {
+        await page.getByRole("button", { name: "Mes siguiente" }).click();
+        await expect(monthTitle).toContainText("enero", { ignoreCase: true, timeout: 5000 });
+      }
+
+      const tomorrowDateBtn = page.getByRole("button", { name: `Día ${tomorrowDay}`, exact: true });
+
+      await expect(tomorrowDateBtn).toBeVisible({ timeout: 10000 });
+      await tomorrowDateBtn.click();
       await page.waitForTimeout(1500);
 
       const timeButton = page.locator("button.btn-outline-primary:not([disabled])").first();
       await expect(timeButton).toBeVisible({ timeout: 15000 });
       await timeButton.click();
 
-      await page.locator("button.btn-primary.rounded-circle:has(i.bi-chevron-right)").click();
+      await page.getByRole("button", { name: "Siguiente paso" }).click();
       await page.locator('button:has-text("Confirmar Reserva")').click();
 
       await expect(page.locator(".alert-danger")).toContainText(/40 horas/i);

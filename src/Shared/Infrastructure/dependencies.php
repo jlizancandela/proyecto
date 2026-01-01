@@ -20,6 +20,7 @@ use Reservas\Application\ReservaService;
 
 $latte = new Engine();
 $latte->setTempDirectory(__DIR__ . '/../../../temp/cache');
+$latte->addFunction('getNodeEnv', fn() => $_ENV['NODE_ENV'] ?? 'development');
 
 $db = (new Database())->getConnection();
 

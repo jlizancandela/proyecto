@@ -21,7 +21,7 @@
  * - Global UI states (loading, error)
  */
 
-import { atom, map, computed } from "https://esm.sh/nanostores@0.9.5";
+import { atom, map, computed } from "nanostores";
 import {
   getServices,
   getEspecialistasDisponibles,
@@ -83,12 +83,9 @@ export const $uiState = map({
 });
 
 /**
- * Current month automatically calculated from the selected day
- * Updates reactively when $bookingDraft.dia changes
+ * Current month displayed in the calendar
  */
-export const $mes = computed($bookingDraft, (draft) => {
-  return draft.dia || new Date();
-});
+export const $mes = atom(new Date());
 
 /**
  * Total number of specialists (for pagination calculations)
@@ -138,7 +135,7 @@ export const selectServiceAction = async (service) => {
  * @returns {void}
  */
 export const setMesAction = (fecha) => {
-  console.log("Mes actualizado (computed):", fecha);
+  $mes.set(fecha);
 };
 
 /**
@@ -148,6 +145,7 @@ export const setMesAction = (fecha) => {
  */
 export const setDiaAction = async (dia) => {
   $bookingDraft.setKey("dia", dia);
+  $mes.set(dia);
   $pagination.setKey("current", 1);
   await loadEspecialistasAction();
 };
@@ -308,6 +306,8 @@ export const resetBookingAction = () => {
     especialista: null,
     hora: null,
   });
+
+  $mes.set(new Date());
 
   $especialistas.set([]);
   $totalEspecialistas.set(0);

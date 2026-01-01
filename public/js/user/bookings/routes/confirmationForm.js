@@ -2,9 +2,9 @@
  * @file Booking confirmation form component.
  */
 
-import { h } from "https://esm.sh/preact@10.19.3";
-import htm from "https://esm.sh/htm";
-import { useStore } from "https://esm.sh/@nanostores/preact?deps=preact@10.19.3";
+import { h } from "preact";
+import htm from "htm";
+import { useStore } from "@nanostores/preact";
 import { $estado, $userName } from "../context/bookingsStore.js";
 import { useReservas } from "../hooks/useReservas.js";
 import { ResumenCita } from "../components/ResumenCita.js";

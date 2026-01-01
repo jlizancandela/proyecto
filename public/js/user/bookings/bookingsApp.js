@@ -3,10 +3,10 @@
  * @project app-reservas
  */
 
-import { h, render } from "https://esm.sh/preact@10.19.3";
-import { useEffect } from "https://esm.sh/preact@10.19.3/hooks";
-import { useStore } from "https://esm.sh/@nanostores/preact@0.5.1?deps=preact@10.19.3";
-import htm from "https://esm.sh/htm";
+import { h, render } from "preact";
+import { useEffect } from "preact/hooks";
+import { useStore } from "@nanostores/preact";
+import htm from "htm";
 import { $estado, loadServicesAction } from "./context/bookingsStore.js";
 import { DateForm } from "./routes/dateForm.js";
 import { ServiceForm } from "./routes/serviceForm.js";

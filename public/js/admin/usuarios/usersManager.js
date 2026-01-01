@@ -4,6 +4,7 @@
  */
 
 import { fetchUser, createUser, updateUser, toggleUserStatus as toggleStatus } from "./api.js";
+import { notification } from "../../shared/components/toast.js";
 
 const editUserModal = document.getElementById("editUserModal");
 const editUserForm = document.getElementById("editUserForm");
@@ -88,10 +89,10 @@ const editUser = async (userId) => {
       const modal = new bootstrap.Modal(editUserModal);
       modal.show();
     } else {
-      alert("Error al cargar usuario: " + result.error);
+      notification("Error al cargar usuario: " + result.error, "error");
     }
   } catch (error) {
-    alert("Error: " + error.message);
+    notification("Error: " + error.message, "error");
   }
 };
 
@@ -109,12 +110,12 @@ const handleToggleUserStatus = async (userId, userName, currentStatus) => {
     const result = await toggleStatus(userId, newStatus);
 
     if (result.success) {
-      globalThis.location.reload();
+      setTimeout(() => globalThis.location.reload(), 1000);
     } else {
-      alert("Error al cambiar estado: " + result.error);
+      notification("Error al cambiar estado: " + result.error, "error");
     }
   } catch (error) {
-    alert("Error: " + error.message);
+    notification("Error: " + error.message, "error");
   }
 };
 
@@ -157,7 +158,7 @@ const handleCreateUserFormSubmit = async (e) => {
   const passwordConfirm = form.createPasswordConfirm.value;
 
   if (password !== passwordConfirm) {
-    alert("Las contraseñas no coinciden");
+    notification("Las contraseñas no coinciden", "error");
     return;
   }
 
@@ -176,7 +177,7 @@ const handleCreateUserFormSubmit = async (e) => {
     const selectedIds = Array.from(checkboxes).map((cb) => cb.value);
 
     if (selectedIds.length === 0) {
-      alert("Debes seleccionar al menos un servicio para el especialista");
+      notification("Debes seleccionar al menos un servicio para el especialista", "warning");
       return;
     }
 
@@ -192,14 +193,14 @@ const handleCreateUserFormSubmit = async (e) => {
     const result = await createUser(formData);
 
     if (result.success) {
-      alert("Usuario creado correctamente");
+      notification("Usuario creado correctamente", "success");
       bootstrap.Modal.getInstance(createUserModal).hide();
-      globalThis.location.reload();
+      setTimeout(() => globalThis.location.reload(), 1000);
     } else {
-      alert("Error: " + result.error);
+      notification("Error: " + result.error, "error");
     }
   } catch (error) {
-    alert("Error: " + error.message);
+    notification("Error: " + error.message, "error");
   }
 };
 
@@ -215,7 +216,7 @@ const handleEditUserFormSubmit = async (e) => {
   const passwordConfirm = form.editPasswordConfirm.value;
 
   if (password && password !== passwordConfirm) {
-    alert("Las contraseñas no coinciden");
+    notification("Las contraseñas no coinciden", "error");
     return;
   }
 
@@ -238,7 +239,7 @@ const handleEditUserFormSubmit = async (e) => {
     const selectedIds = Array.from(checkboxes).map((cb) => cb.value);
 
     if (selectedIds.length === 0) {
-      alert("Debes seleccionar al menos un servicio para el especialista");
+      notification("Debes seleccionar al menos un servicio para el especialista", "warning");
       return;
     }
 
@@ -254,14 +255,14 @@ const handleEditUserFormSubmit = async (e) => {
     const result = await updateUser(userId, formData);
 
     if (result.success) {
-      alert("Usuario actualizado correctamente");
+      notification("Usuario actualizado correctamente", "success");
       bootstrap.Modal.getInstance(editUserModal).hide();
-      globalThis.location.reload();
+      setTimeout(() => globalThis.location.reload(), 1000);
     } else {
-      alert("Error: " + result.error);
+      notification("Error: " + result.error, "error");
     }
   } catch (error) {
-    alert("Error: " + error.message);
+    notification("Error: " + error.message, "error");
   }
 };
 

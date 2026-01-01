@@ -7,8 +7,8 @@
  * Disables past dates and Sundays (non-working days).
  */
 
-import { h } from "https://esm.sh/preact@10.19.3";
-import htm from "https://esm.sh/htm";
+import { h } from "preact";
+import htm from "htm";
 
 const html = htm.bind(h);
 
@@ -93,11 +93,16 @@ const renderNavigationButtons = (year, month, textMonth, textYear, handleMesChan
         class="btn btn-sm btn-link text-decoration-none text-dark p-0"
         disabled=${isPreviousDisabled}
         onClick=${prev}
+        aria-label="Mes anterior"
       >
         <i class="bi bi-chevron-left"></i>
       </button>
       <div class="fw-bold text-capitalize fs-5">${textMonth} ${textYear}</div>
-      <button class="btn btn-sm btn-link text-decoration-none text-dark p-0" onClick=${next}>
+      <button
+        class="btn btn-sm btn-link text-decoration-none text-dark p-0"
+        onClick=${next}
+        aria-label="Mes siguiente"
+      >
         <i class="bi bi-chevron-right"></i>
       </button>
     </div>
@@ -172,6 +177,7 @@ const renderCell = (dia, year, month, diaSeleccionado, handleDiaChange) => {
       <span
         class="d-flex align-items-center justify-content-center text-secondary"
         style="width: ${CELL_WIDTH}; height: ${CELL_HEIGHT};"
+        aria-label="Día ${dia} no disponible"
       >
         ${dia}
       </span>
@@ -185,6 +191,7 @@ const renderCell = (dia, year, month, diaSeleccionado, handleDiaChange) => {
         class="btn rounded-circle d-flex align-items-center justify-content-center bg-primary text-white border-0"
         style="width: ${CELL_WIDTH}; height: ${CELL_HEIGHT};"
         onClick=${() => handleDiaChange(new Date(year, month, dia))}
+        aria-label="Día ${dia}"
       >
         ${dia}
       </button>
@@ -197,6 +204,7 @@ const renderCell = (dia, year, month, diaSeleccionado, handleDiaChange) => {
       class="btn rounded-circle d-flex align-items-center justify-content-center text-black border-0"
       style="width: ${CELL_WIDTH}; height: ${CELL_HEIGHT};"
       onClick=${() => handleDiaChange(new Date(year, month, dia))}
+      aria-label="Día ${dia}"
     >
       ${dia}
     </button>

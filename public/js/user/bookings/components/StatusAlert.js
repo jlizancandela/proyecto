@@ -6,8 +6,8 @@
  * Shows loading indicator during confirmation and error messages if issues occur.
  */
 
-import { h } from "https://esm.sh/preact@10.19.3";
-import htm from "https://esm.sh/htm";
+import { h } from "preact";
+import htm from "htm";
 
 const html = htm.bind(h);
 
