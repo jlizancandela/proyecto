@@ -82,7 +82,10 @@ const handleDocumentClick = (e) => {
     const badge = e.target.closest(".btn-toggle-status");
     const serviceId = badge.dataset.serviceId;
     const currentStatus = badge.dataset.currentStatus;
-    toggleServiceStatus(serviceId, currentStatus);
+
+    if (serviceId) {
+      toggleServiceStatus(serviceId, currentStatus);
+    }
   }
 };
 

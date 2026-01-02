@@ -134,7 +134,10 @@ const handleDocumentClick = async (e) => {
     const userId = badge.dataset.userId;
     const userName = badge.dataset.userName;
     const currentStatus = badge.dataset.currentStatus;
-    handleToggleUserStatus(userId, userName, currentStatus);
+
+    if (userId) {
+      handleToggleUserStatus(userId, userName, currentStatus);
+    }
   }
 
   if (e.target.closest(".btn-delete-user")) {
