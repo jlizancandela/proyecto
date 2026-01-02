@@ -7,9 +7,6 @@
  */
 
 import { h } from "preact";
-import htm from "htm";
-
-const html = htm.bind(h);
 
 const MIN_HEIGHT = "120px";
 const SHADOW_COLOR = "rgba(13, 110, 253, 0.5)";
@@ -34,24 +31,24 @@ const handleServiceClick = (service, onSelect) => {
  * @returns {Object} Preact component.
  */
 export const Service = ({ service, onSelect, isSelected = false }) => {
-  return html`
+  return (
     <div
-      class="card ${isSelected ? "border-primary border-3" : ""}"
-      onclick=${() => handleServiceClick(service, onSelect)}
-      style="cursor: pointer; min-height: ${MIN_HEIGHT}; ${isSelected
-        ? `box-shadow: 0 0 10px ${SHADOW_COLOR};`
-        : ""}"
+      class={`card ${isSelected ? "border-primary border-3" : ""}`}
+      onClick={() => handleServiceClick(service, onSelect)}
+      style={`cursor: pointer; min-height: ${MIN_HEIGHT}; ${
+        isSelected ? `box-shadow: 0 0 10px ${SHADOW_COLOR};` : ""
+      }`}
     >
       <div class="card-body d-flex align-items-center gap-3">
         <i class="bi bi-scissors fs-1 text-primary"></i>
         <div class="flex-grow-1">
-          <h5 class="card-title mb-2">${service.nombre_servicio}</h5>
+          <h5 class="card-title mb-2">{service.nombre_servicio}</h5>
           <p class="card-text text-muted mb-0">
             <i class="bi bi-clock me-1"></i>
-            ${service.duracion_minutos} minutos
+            {service.duracion_minutos} minutos
           </p>
         </div>
       </div>
     </div>
-  `;
+  );
 };

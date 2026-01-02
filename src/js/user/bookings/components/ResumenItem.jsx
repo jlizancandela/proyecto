@@ -7,9 +7,6 @@
  */
 
 import { h } from "preact";
-import htm from "htm";
-
-const html = htm.bind(h);
 
 const ICON_BOX_SIZE = "48px";
 const BACKGROUND_COLOR = "#fce7f3";
@@ -26,18 +23,20 @@ const TEXT_COLOR = "#2d3748";
  * @returns {Object} Preact component.
  */
 export const ResumenItem = ({ icon, label, value }) => {
-  return html`
+  return (
     <div class="d-flex gap-3 mb-4">
       <div
         class="d-flex align-items-center justify-content-center rounded-3"
-        style="width: ${ICON_BOX_SIZE}; height: ${ICON_BOX_SIZE}; background-color: ${BACKGROUND_COLOR}; flex-shrink: 0;"
+        style={`width: ${ICON_BOX_SIZE}; height: ${ICON_BOX_SIZE}; background-color: ${BACKGROUND_COLOR}; flex-shrink: 0;`}
       >
-        <i class="bi bi-${icon}" style="font-size: ${ICON_SIZE}; color: ${ICON_COLOR};"></i>
+        <i class={`bi bi-${icon}`} style={`font-size: ${ICON_SIZE}; color: ${ICON_COLOR};`}></i>
       </div>
       <div>
-        <p class="text-muted small mb-1">${label}</p>
-        <p class="fw-semibold mb-0" style="color: ${TEXT_COLOR};">${value}</p>
+        <p class="text-muted small mb-1">{label}</p>
+        <p class="fw-semibold mb-0" style={`color: ${TEXT_COLOR};`}>
+          {value}
+        </p>
       </div>
     </div>
-  `;
+  );
 };

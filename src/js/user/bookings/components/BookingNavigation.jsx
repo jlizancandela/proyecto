@@ -8,11 +8,8 @@
  */
 
 import { h } from "preact";
-import htm from "htm";
 import { useStore } from "@nanostores/preact";
 import { $estado, $bookingDraft } from "../context/bookingsStore.js";
-
-const html = htm.bind(h);
 
 const BUTTON_SIZE = "40px";
 const SPACER_SIZE = "120px";
@@ -73,34 +70,34 @@ const canNavigateNext = (estado, booking) => {
  * @param {Function} handlePrev - Callback for previous button click.
  * @returns {Object} Preact component.
  */
-const renderPrevButton = (canPrev, handlePrev) => html`
+const renderPrevButton = (canPrev, handlePrev) => (
   <button
     class="btn btn-light rounded-circle text-secondary"
-    style="width: ${BUTTON_SIZE}; height: ${BUTTON_SIZE};"
-    onClick=${handlePrev}
-    disabled=${!canPrev}
+    style={`width: ${BUTTON_SIZE}; height: ${BUTTON_SIZE};`}
+    onClick={handlePrev}
+    disabled={!canPrev}
     aria-label="Paso anterior"
   >
     <i class="bi bi-chevron-left"></i>
   </button>
-`;
+);
 
 /**
  * Renders the step information display.
  * @param {Object} stepInfo - Step information object.
  * @returns {Object} Preact component.
  */
-const renderStepInfo = (stepInfo) => html`
-  <div class="text-center" style="min-width: ${SPACER_SIZE};">
+const renderStepInfo = (stepInfo) => (
+  <div class="text-center" style={`min-width: ${SPACER_SIZE};`}>
     <div
       class="text-xs text-muted fw-bold text-uppercase"
       style="font-size: 0.7rem; letter-spacing: 1px;"
     >
-      Paso ${stepInfo.number}/3
+      Paso {stepInfo.number}/3
     </div>
-    <div class="fw-bold fs-6">${stepInfo.title}</div>
+    <div class="fw-bold fs-6">{stepInfo.title}</div>
   </div>
-`;
+);
 
 /**
  * Renders the next navigation button or spacer.
@@ -111,22 +108,20 @@ const renderStepInfo = (stepInfo) => html`
  */
 const renderNextButtonOrSpacer = (estado, canNext, handleNext) => {
   if (estado !== "ConfirmationForm") {
-    return html`
+    return (
       <button
         class="btn btn-primary rounded-circle"
-        style="width: ${BUTTON_SIZE}; height: ${BUTTON_SIZE};"
-        onClick=${handleNext}
-        disabled=${!canNext}
+        style={`width: ${BUTTON_SIZE}; height: ${BUTTON_SIZE};`}
+        onClick={handleNext}
+        disabled={!canNext}
         aria-label="Siguiente paso"
       >
         <i class="bi bi-chevron-right"></i>
       </button>
-    `;
+    );
   }
 
-  return html`
-    <div style="width: ${BUTTON_SIZE};"></div>
-  `;
+  return <div style={`width: ${BUTTON_SIZE};`}></div>;
 };
 
 /**
@@ -141,18 +136,18 @@ export const BookingNavigation = () => {
   const canNext = canNavigateNext(estado, booking);
   const stepInfo = getStepInfo(estado);
 
-  return html`
+  return (
     <div
       class="position-sticky bottom-0 pb-4 d-flex justify-content-center"
-      style="z-index: ${Z_INDEX}; pointer-events: none;"
+      style={`z-index: ${Z_INDEX}; pointer-events: none;`}
     >
       <div
         class="bg-white shadow-lg rounded-pill px-4 py-2 d-flex align-items-center gap-4 border"
         style="pointer-events: auto;"
       >
-        ${renderPrevButton(canPrev, () => handlePrevStep(estado))} ${renderStepInfo(stepInfo)}
-        ${renderNextButtonOrSpacer(estado, canNext, () => handleNextStep(estado))}
+        {renderPrevButton(canPrev, () => handlePrevStep(estado))} {renderStepInfo(stepInfo)}
+        {renderNextButtonOrSpacer(estado, canNext, () => handleNextStep(estado))}
       </div>
     </div>
-  `;
+  );
 };

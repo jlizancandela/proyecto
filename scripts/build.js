@@ -5,7 +5,7 @@ const isWatch = process.argv.includes("--watch");
 
 const buildOptions = {
   entryPoints: {
-    bookings: "src/js/user/bookings/bookingsApp.js",
+    bookings: "src/js/user/bookings/bookingsApp.jsx",
     client: "src/js/user/clientApp.js",
     admin: "src/js/admin/adminApp.js",
     auth: "src/js/auth/authApp.js",

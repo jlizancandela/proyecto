@@ -7,34 +7,31 @@
  */
 
 import { h } from "preact";
-import htm from "htm";
-
-const html = htm.bind(h);
 
 /**
  * Renders a loading alert with spinner.
  * @returns {Object} Preact component.
  */
-const renderLoadingAlert = () => html`
+const renderLoadingAlert = () => (
   <div class="alert alert-info d-flex align-items-center" role="alert">
     <div class="spinner-border spinner-border-sm me-2" role="status">
       <span class="visually-hidden">Loading...</span>
     </div>
     <div>Confirming your booking...</div>
   </div>
-`;
+);
 
 /**
  * Renders an error alert.
  * @param {string} error - Error message to display.
  * @returns {Object} Preact component.
  */
-const renderErrorAlert = (error) => html`
+const renderErrorAlert = (error) => (
   <div class="alert alert-danger" role="alert">
     <i class="bi bi-exclamation-triangle me-2"></i>
-    ${error}
+    {error}
   </div>
-`;
+);
 
 /**
  * Renders status alert based on loading or error state.

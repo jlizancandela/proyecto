@@ -7,9 +7,6 @@
  */
 
 import { h } from "preact";
-import htm from "htm";
-
-const html = htm.bind(h);
 
 /**
  * Handles previous page navigation.
@@ -46,13 +43,11 @@ const renderPageNumbers = (totalPages, currentPage, onPageChange) => {
 
   for (let i = 1; i <= totalPages; i++) {
     pages.push(
-      html`
-        <li class="page-item ${currentPage === i ? "active" : ""}">
-          <button class="page-link" onClick=${() => onPageChange(i)} disabled=${currentPage === i}>
-            ${i}
-          </button>
-        </li>
-      `
+      <li class={`page-item ${currentPage === i ? "active" : ""}`}>
+        <button class="page-link" onClick={() => onPageChange(i)} disabled={currentPage === i}>
+          {i}
+        </button>
+      </li>
     );
   }
 
@@ -72,14 +67,14 @@ export const Pagination = ({ currentPage, totalPages, onPageChange }) => {
     return null;
   }
 
-  return html`
+  return (
     <nav aria-label="Pagination">
       <ul class="pagination justify-content-center">
-        <li class="page-item ${currentPage === 1 ? "disabled" : ""}">
+        <li class={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
           <button
             class="page-link"
-            onClick=${() => handlePreviousPage(currentPage, onPageChange)}
-            disabled=${currentPage === 1}
+            onClick={() => handlePreviousPage(currentPage, onPageChange)}
+            disabled={currentPage === 1}
             aria-label="Previous"
           >
             <span aria-hidden="true">«</span>
@@ -87,13 +82,13 @@ export const Pagination = ({ currentPage, totalPages, onPageChange }) => {
           </button>
         </li>
 
-        ${renderPageNumbers(totalPages, currentPage, onPageChange)}
+        {renderPageNumbers(totalPages, currentPage, onPageChange)}
 
-        <li class="page-item ${currentPage === totalPages ? "disabled" : ""}">
+        <li class={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
           <button
             class="page-link"
-            onClick=${() => handleNextPage(currentPage, totalPages, onPageChange)}
-            disabled=${currentPage === totalPages}
+            onClick={() => handleNextPage(currentPage, totalPages, onPageChange)}
+            disabled={currentPage === totalPages}
             aria-label="Next"
           >
             <span aria-hidden="true">»</span>
@@ -102,5 +97,5 @@ export const Pagination = ({ currentPage, totalPages, onPageChange }) => {
         </li>
       </ul>
     </nav>
-  `;
+  );
 };

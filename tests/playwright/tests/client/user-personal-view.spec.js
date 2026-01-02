@@ -7,13 +7,7 @@ const { test, expect } = require("@playwright/test");
 const mysql = require("mysql2/promise");
 const bcrypt = require("bcryptjs");
 
-const dbConfig = {
-  host: "127.0.0.1",
-  port: 32773,
-  user: "db",
-  password: "db",
-  database: "sistema_reservas",
-};
+const { dbConfig } = require("../../helpers/db-config");
 
 test.describe.configure({ mode: "serial" });
 

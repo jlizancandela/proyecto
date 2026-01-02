@@ -7,9 +7,6 @@
  */
 
 import { h } from "preact";
-import htm from "htm";
-
-const html = htm.bind(h);
 
 const BUTTON_PADDING = "px-4";
 const BUTTON_PADDING_CONFIRM = "px-5";
@@ -26,29 +23,31 @@ const PRIMARY_COLOR = "#e83e8c";
  * @returns {Object} Preact component.
  */
 export const ConfirmationActions = ({ loading, onModificar, onConfirmar }) => {
-  return html`
+  return (
     <div class="d-flex gap-3 justify-content-end flex-wrap">
       <button
-        class="btn btn-outline-secondary rounded-pill ${BUTTON_PADDING}"
-        onclick=${onModificar}
-        disabled=${loading}
-        style="border-color: ${BORDER_COLOR}; color: ${TEXT_COLOR};"
+        class={`btn btn-outline-secondary rounded-pill ${BUTTON_PADDING}`}
+        onClick={onModificar}
+        disabled={loading}
+        style={`border-color: ${BORDER_COLOR}; color: ${TEXT_COLOR};`}
       >
         Modificar selección
       </button>
       <button
-        class="btn rounded-pill ${BUTTON_PADDING_CONFIRM}"
-        onclick=${onConfirmar}
-        disabled=${loading}
-        style="background-color: ${PRIMARY_COLOR}; border: none; color: white; font-weight: 600;"
+        class={`btn rounded-pill ${BUTTON_PADDING_CONFIRM}`}
+        onClick={onConfirmar}
+        disabled={loading}
+        style={`background-color: ${PRIMARY_COLOR}; border: none; color: white; font-weight: 600;`}
       >
-        ${loading
-          ? html`
-              <span class="spinner-border spinner-border-sm me-2" role="status"></span>
-              Confirmando...
-            `
-          : "Confirmar Reserva"}
+        {loading ? (
+          <span>
+            <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+            Confirmando...
+          </span>
+        ) : (
+          "Confirmar Reserva"
+        )}
       </button>
     </div>
-  `;
+  );
 };

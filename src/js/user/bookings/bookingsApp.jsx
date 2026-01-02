@@ -6,16 +6,13 @@
 import { h, render } from "preact";
 import { useEffect } from "preact/hooks";
 import { useStore } from "@nanostores/preact";
-import htm from "htm";
 import { $estado, loadServicesAction } from "./context/bookingsStore.js";
-import { DateForm } from "./routes/dateForm.js";
-import { ServiceForm } from "./routes/serviceForm.js";
-import { ConfirmationForm } from "./routes/confirmationForm.js";
-import { BookingNavigation } from "./components/BookingNavigation.js";
+import { DateForm } from "./routes/dateForm.jsx";
+import { ServiceForm } from "./routes/serviceForm.jsx";
+import { ConfirmationForm } from "./routes/confirmationForm.jsx";
+import { BookingNavigation } from "./components/BookingNavigation.jsx";
 import * as bootstrap from "bootstrap";
 window.bootstrap = bootstrap;
-
-const html = htm.bind(h);
 
 /**
  * Main application component for user bookings.
@@ -28,16 +25,16 @@ const BookingsApp = () => {
     loadServicesAction();
   }, []);
 
-  return html`
+  return (
     <div class="d-flex flex-column position-relative" style="min-height: 75vh;">
       <h1 class="h2 text-dark mb-5">Nueva Reserva</h1>
 
-      <!-- Content Area -->
-      <div class="flex-grow-1 mb-5">${renderCurrentStep(estado)}</div>
+      {/* Content Area */}
+      <div class="flex-grow-1 mb-5">{renderCurrentStep(estado)}</div>
 
-      <${BookingNavigation} />
+      <BookingNavigation />
     </div>
-  `;
+  );
 };
 
 /**
@@ -47,31 +44,18 @@ const BookingsApp = () => {
  */
 const renderCurrentStep = (estado) => {
   if (!estado) {
-    return html`
-      <div class="alert alert-warning">Cargando...</div>
-    `;
+    return <div class="alert alert-warning">Cargando...</div>;
   }
 
   if (estado === "ConfirmationForm") {
-    return html`
-      <${ConfirmationForm} />
-    `;
+    return <ConfirmationForm />;
   }
 
   if (estado === "DateForm") {
-    return html`
-      <${DateForm} />
-    `;
+    return <DateForm />;
   }
 
-  return html`
-    <${ServiceForm} />
-  `;
+  return <ServiceForm />;
 };
 
-render(
-  html`
-    <${BookingsApp} />
-  `,
-  document.getElementById("bookings-app")
-);
+render(<BookingsApp />, document.getElementById("bookings-app"));

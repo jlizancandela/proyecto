@@ -7,11 +7,8 @@
  */
 
 import { h } from "preact";
-import htm from "htm";
-import { Pagination } from "./Pagination.js";
+import { Pagination } from "./Pagination.jsx";
 import { isPastTime } from "../tools/formatters.js";
-
-const html = htm.bind(h);
 
 const MIN_PHOTO_HEIGHT = "150px";
 const PHOTO_OBJECT_FIT = "cover";
@@ -21,13 +18,12 @@ const PHOTO_OBJECT_POSITION = "top center";
  * Renders the empty state when no specialists are available.
  * @returns {Object} Preact component.
  */
-const renderEmptyState = () =>
-  html`
-    <div class="text-center py-5">
-      <i class="bi bi-calendar-x fs-1 text-muted"></i>
-      <p class="text-muted mt-2">No hay especialistas disponibles para esta fecha</p>
-    </div>
-  `;
+const renderEmptyState = () => (
+  <div class="text-center py-5">
+    <i class="bi bi-calendar-x fs-1 text-muted"></i>
+    <p class="text-muted mt-2">No hay especialistas disponibles para esta fecha</p>
+  </div>
+);
 
 /**
  * Renders specialist photo or placeholder.
@@ -37,24 +33,24 @@ const renderEmptyState = () =>
  */
 const renderSpecialistPhoto = (fotoUrl, nombre) => {
   if (fotoUrl) {
-    return html`
+    return (
       <img
-        src="${fotoUrl}"
-        alt="${nombre}"
+        src={fotoUrl}
+        alt={nombre}
         class="img-fluid w-100 h-100"
-        style="object-fit: ${PHOTO_OBJECT_FIT}; object-position: ${PHOTO_OBJECT_POSITION}; min-height: ${MIN_PHOTO_HEIGHT};"
+        style={`object-fit: ${PHOTO_OBJECT_FIT}; object-position: ${PHOTO_OBJECT_POSITION}; min-height: ${MIN_PHOTO_HEIGHT};`}
       />
-    `;
+    );
   }
 
-  return html`
+  return (
     <div
       class="w-100 h-100 bg-light d-flex align-items-center justify-content-center text-secondary"
-      style="min-height: ${MIN_PHOTO_HEIGHT};"
+      style={`min-height: ${MIN_PHOTO_HEIGHT};`}
     >
       <i class="bi bi-person-fill fs-1"></i>
     </div>
-  `;
+  );
 };
 
 /**
@@ -75,23 +71,19 @@ const renderTimeButton = (hora, isSelected, timeHasPassed, onSelectHora, especia
 
   const buttonStyle = timeHasPassed ? "cursor: not-allowed; opacity: 0.5;" : "";
 
-  return html`
+  return (
     <button
-      class="${buttonClass}"
-      onClick=${() => !timeHasPassed && onSelectHora(especialista, hora)}
-      disabled=${timeHasPassed}
-      title=${timeHasPassed ? "Esta hora ya ha pasado" : ""}
-      style="${buttonStyle}"
-      aria-label="Seleccionar hora ${hora}"
+      class={buttonClass}
+      onClick={() => !timeHasPassed && onSelectHora(especialista, hora)}
+      disabled={timeHasPassed}
+      title={timeHasPassed ? "Esta hora ya ha pasado" : ""}
+      style={buttonStyle}
+      aria-label={`Seleccionar hora ${hora}`}
     >
-      ${hora}
-      ${timeHasPassed
-        ? html`
-            <i class="bi bi-lock-fill ms-1 small"></i>
-          `
-        : ""}
+      {hora}
+      {timeHasPassed ? <i class="bi bi-lock-fill ms-1 small"></i> : ""}
     </button>
-  `;
+  );
 };
 
 /**
@@ -112,11 +104,11 @@ const renderAvailableTimes = (
   onSelectHora,
   especialista
 ) => {
-  return html`
+  return (
     <div>
       <strong class="d-block small text-secondary mb-2">Horarios disponibles:</strong>
       <div class="d-flex flex-wrap gap-2">
-        ${horasDisponibles.map((hora) => {
+        {horasDisponibles.map((hora) => {
           const isSelected =
             selectedEspecialista &&
             selectedHora &&
@@ -129,7 +121,7 @@ const renderAvailableTimes = (
         })}
       </div>
     </div>
-  `;
+  );
 };
 
 /**
@@ -148,17 +140,19 @@ const renderSpecialistCard = (
   diaSeleccionado,
   onSelectHora
 ) => {
-  return html`
+  return (
     <div class="card border border-0 shadow-sm overflow-hidden">
       <div class="row g-0">
         <div class="col-4 col-sm-3 col-md-2 p-0 position-relative">
-          ${renderSpecialistPhoto(especialista.foto_url, especialista.nombre)}
+          {renderSpecialistPhoto(especialista.foto_url, especialista.nombre)}
         </div>
         <div class="col-8 col-sm-9 col-md-10">
           <div class="card-body">
-            <h5 class="card-title fw-bold">${especialista.nombre} ${especialista.apellidos}</h5>
-            <p class="card-text text-muted small mb-3">${especialista.descripcion}</p>
-            ${renderAvailableTimes(
+            <h5 class="card-title fw-bold">
+              {especialista.nombre} {especialista.apellidos}
+            </h5>
+            <p class="card-text text-muted small mb-3">{especialista.descripcion}</p>
+            {renderAvailableTimes(
               especialista.horas_disponibles,
               selectedEspecialista,
               selectedHora,
@@ -170,7 +164,7 @@ const renderSpecialistCard = (
         </div>
       </div>
     </div>
-  `;
+  );
 };
 
 /**
@@ -200,11 +194,11 @@ export const EspecialistasList = ({
     return renderEmptyState();
   }
 
-  return html`
+  return (
     <div>
       <h5 class="card-title mb-3">Especialistas disponibles</h5>
       <div class="d-flex flex-column gap-3 mb-4">
-        ${especialistas.map((especialista) =>
+        {especialistas.map((especialista) =>
           renderSpecialistCard(
             especialista,
             selectedEspecialista,
@@ -215,11 +209,7 @@ export const EspecialistasList = ({
         )}
       </div>
 
-      <${Pagination}
-        currentPage=${currentPage}
-        totalPages=${totalPages}
-        onPageChange=${onPageChange}
-      />
+      <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={onPageChange} />
     </div>
-  `;
+  );
 };

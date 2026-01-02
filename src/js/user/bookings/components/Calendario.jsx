@@ -8,9 +8,6 @@
  */
 
 import { h } from "preact";
-import htm from "htm";
-
-const html = htm.bind(h);
 
 const DAYS_OF_WEEK = ["L", "M", "X", "J", "V", "S", "D"];
 const CALENDAR_WIDTH = "380px";
@@ -39,23 +36,20 @@ export const Calendario = ({ fecha, diaSeleccionado, handleDiaChange, handleMesC
 
   const calendarioCompleto = buildCalendarDays(primerDiaMes, diasTotalesMes);
 
-  return html`
+  return (
     <div
       class="card border-0 shadow-sm rounded-4 p-4 bg-white"
-      style="width: ${CALENDAR_WIDTH}; margin: 0 auto;"
+      style={`width: ${CALENDAR_WIDTH}; margin: 0 auto;`}
     >
-      ${renderNavigationButtons(year, month, textMonth, textYear, handleMesChange)}
+      {renderNavigationButtons(year, month, textMonth, textYear, handleMesChange)}
       <div class="row g-0 text-center small text-primary fw-bold mb-2">
-        ${DAYS_OF_WEEK.map(
-          (d) =>
-            html`
-              <div class="col">${d}</div>
-            `
-        )}
+        {DAYS_OF_WEEK.map((d) => (
+          <div class="col">{d}</div>
+        ))}
       </div>
-      ${renderWeeks(calendarioCompleto, year, month, diaSeleccionado, handleDiaChange)}
+      {renderWeeks(calendarioCompleto, year, month, diaSeleccionado, handleDiaChange)}
     </div>
-  `;
+  );
 };
 
 /**
@@ -87,26 +81,28 @@ const renderNavigationButtons = (year, month, textMonth, textYear, handleMesChan
   const prev = () => handleMesChange(new Date(year, month - 1));
   const next = () => handleMesChange(new Date(year, month + 1));
 
-  return html`
+  return (
     <div class="d-flex justify-content-between align-items-center mb-4 px-2">
       <button
         class="btn btn-sm btn-link text-decoration-none text-dark p-0"
-        disabled=${isPreviousDisabled}
-        onClick=${prev}
+        disabled={isPreviousDisabled}
+        onClick={prev}
         aria-label="Mes anterior"
       >
         <i class="bi bi-chevron-left"></i>
       </button>
-      <div class="fw-bold text-capitalize fs-5">${textMonth} ${textYear}</div>
+      <div class="fw-bold text-capitalize fs-5">
+        {textMonth} {textYear}
+      </div>
       <button
         class="btn btn-sm btn-link text-decoration-none text-dark p-0"
-        onClick=${next}
+        onClick={next}
         aria-label="Mes siguiente"
       >
         <i class="bi bi-chevron-right"></i>
       </button>
     </div>
-  `;
+  );
 };
 
 /**
@@ -137,20 +133,15 @@ const renderWeeks = (calendarioCompleto, year, month, diaSeleccionado, handleDia
     weeks.push(calendarioCompleto.slice(i, i + 7));
   }
 
-  return weeks.map(
-    (week) => html`
-      <div class="row g-0 text-center mb-2">
-        ${week.map(
-          (d) =>
-            html`
-              <div class="col d-flex justify-content-center">
-                ${renderCell(d, year, month, diaSeleccionado, handleDiaChange)}
-              </div>
-            `
-        )}
-      </div>
-    `
-  );
+  return weeks.map((week) => (
+    <div class="row g-0 text-center mb-2">
+      {week.map((d) => (
+        <div class="col d-flex justify-content-center">
+          {renderCell(d, year, month, diaSeleccionado, handleDiaChange)}
+        </div>
+      ))}
+    </div>
+  ));
 };
 
 /**
@@ -163,52 +154,49 @@ const renderWeeks = (calendarioCompleto, year, month, diaSeleccionado, handleDia
  * @returns {Object} Preact component.
  */
 const renderCell = (dia, year, month, diaSeleccionado, handleDiaChange) => {
-  if (!dia)
-    return html`
-      <div style="width: ${CELL_WIDTH}; height: ${CELL_HEIGHT};"></div>
-    `;
+  if (!dia) return <div style={`width: ${CELL_WIDTH}; height: ${CELL_HEIGHT};`}></div>;
 
   const isSelected = isDaySelected(dia, month, year, diaSeleccionado);
   const isPast = isDayInPast(dia, month, year);
   const isSunday = new Date(year, month, dia).getDay() === 0;
 
   if (isPast || isSunday) {
-    return html`
+    return (
       <span
         class="d-flex align-items-center justify-content-center text-secondary"
-        style="width: ${CELL_WIDTH}; height: ${CELL_HEIGHT};"
-        aria-label="Día ${dia} no disponible"
+        style={`width: ${CELL_WIDTH}; height: ${CELL_HEIGHT};`}
+        aria-label={`Día ${dia} no disponible`}
       >
-        ${dia}
+        {dia}
       </span>
-    `;
+    );
   }
 
   if (isSelected) {
-    return html`
+    return (
       <button
         type="button"
         class="btn rounded-circle d-flex align-items-center justify-content-center bg-primary text-white border-0"
-        style="width: ${CELL_WIDTH}; height: ${CELL_HEIGHT};"
-        onClick=${() => handleDiaChange(new Date(year, month, dia))}
-        aria-label="Día ${dia}"
+        style={`width: ${CELL_WIDTH}; height: ${CELL_HEIGHT};`}
+        onClick={() => handleDiaChange(new Date(year, month, dia))}
+        aria-label={`Día ${dia}`}
       >
-        ${dia}
+        {dia}
       </button>
-    `;
+    );
   }
 
-  return html`
+  return (
     <button
       type="button"
       class="btn rounded-circle d-flex align-items-center justify-content-center text-black border-0"
-      style="width: ${CELL_WIDTH}; height: ${CELL_HEIGHT};"
-      onClick=${() => handleDiaChange(new Date(year, month, dia))}
-      aria-label="Día ${dia}"
+      style={`width: ${CELL_WIDTH}; height: ${CELL_HEIGHT};`}
+      onClick={() => handleDiaChange(new Date(year, month, dia))}
+      aria-label={`Día ${dia}`}
     >
-      ${dia}
+      {dia}
     </button>
-  `;
+  );
 };
 
 /**
