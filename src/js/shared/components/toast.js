@@ -45,8 +45,10 @@ class ToastNotification extends HTMLElement {
   show(message, type = "info") {
     if (!this.bsToast) return;
 
-    const bgClass = `bg-${type}`;
-    const textColor = type === "warning" || type === "info" ? "text-dark" : "text-white";
+    const effectiveType = type === "error" ? "danger" : type;
+    const bgClass = `bg-${effectiveType}`;
+    const textColor =
+      effectiveType === "warning" || effectiveType === "info" ? "text-dark" : "text-white";
     const btnWhite = textColor === "text-white" ? "btn-close-white" : "";
 
     this.toastEl.className = `toast align-items-center border-0 ${bgClass} ${textColor}`;
