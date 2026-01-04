@@ -20,9 +20,10 @@ const PRIMARY_COLOR = "#e83e8c";
  * @param {boolean} props.loading - Whether a request is in progress.
  * @param {Function} props.onModificar - Callback for modify button click.
  * @param {Function} props.onConfirmar - Callback for confirm button click.
+ * @param {Function} [props.onPagar] - Callback for pay button click (optional).
  * @returns {Object} Preact component.
  */
-export const ConfirmationActions = ({ loading, onModificar, onConfirmar }) => {
+export const ConfirmationActions = ({ loading, onModificar, onConfirmar, onPagar }) => {
   return (
     <div class="d-flex gap-3 justify-content-end flex-wrap">
       <button
@@ -33,6 +34,18 @@ export const ConfirmationActions = ({ loading, onModificar, onConfirmar }) => {
       >
         Modificar selección
       </button>
+      
+      {onPagar && (
+        <button
+          class={`btn btn-success rounded-pill ${BUTTON_PADDING_CONFIRM}`}
+          onClick={onPagar}
+          disabled={loading}
+          style="font-weight: 600;"
+        >
+          {loading ? "Procesando..." : "Pagar ahora"}
+        </button>
+      )}
+
       <button
         class={`btn rounded-pill ${BUTTON_PADDING_CONFIRM}`}
         onClick={onConfirmar}
@@ -45,7 +58,7 @@ export const ConfirmationActions = ({ loading, onModificar, onConfirmar }) => {
             Confirmando...
           </span>
         ) : (
-          "Confirmar Reserva"
+          "Pagar en el local"
         )}
       </button>
     </div>

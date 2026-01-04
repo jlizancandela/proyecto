@@ -146,6 +146,33 @@ export const createReserva = async (reservaData) => {
 };
 
 /**
+ * Initiates a Stripe Checkout Session
+ * @param {number} bookingId Booking ID
+ * @returns {Promise<Object>} URL to redirect
+ */
+export const createCheckoutSession = async (bookingId) => {
+    try {
+        const response = await fetch("/api/reservas/checkout-session", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ bookingId }),
+        });
+
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.error || "Error iniciando sesión de pago");
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error("Error creating checkout session:", error);
+        throw error;
+    }
+};
+
+/**
  * Fetches the current authenticated user.
  * @returns {Promise<Object|null>} User object or null if not authenticated.
  */

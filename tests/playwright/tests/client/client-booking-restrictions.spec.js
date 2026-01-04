@@ -106,7 +106,7 @@ test.describe.serial("Booking Restrictions", () => {
       await page.getByRole("button", { name: "Siguiente paso" }).click();
 
       // Confirm step
-      const confirmBtn = page.locator('button:has-text("Confirmar Reserva")');
+      const confirmBtn = page.locator('button:has-text("Pagar en el local")');
       await confirmBtn.waitFor({ state: "visible" });
       await confirmBtn.click();
 
@@ -188,7 +188,7 @@ test.describe.serial("Booking Restrictions", () => {
       );
 
       // Try to confirm
-      await page.locator('button:has-text("Confirmar Reserva")').click();
+      await page.locator('button:has-text("Pagar en el local")').click();
 
       await expect(page.locator(".alert-danger")).toContainText(/Ya tienes otra reserva|horario/i, {
         timeout: 10000,
@@ -278,7 +278,7 @@ test.describe.serial("Booking Restrictions", () => {
       await timeButton.click();
 
       await page.getByRole("button", { name: "Siguiente paso" }).click();
-      await page.locator('button:has-text("Confirmar Reserva")').click();
+      await page.locator('button:has-text("Pagar en el local")').click();
 
       await expect(page.locator(".alert-danger")).toContainText(/40 horas/i);
     } finally {

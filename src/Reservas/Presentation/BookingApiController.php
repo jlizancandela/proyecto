@@ -44,6 +44,10 @@ class BookingApiController
 
             $data['id_cliente'] = (int) $_SESSION['user_id'];
 
+            if (isset($data['payment_intent_id'])) {
+                $data['estado'] = 'Pagada';
+            }
+
             $bookingId = $this->reservaService->createReserva($data);
 
             http_response_code(201);

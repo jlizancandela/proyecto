@@ -75,7 +75,7 @@ class ReservaService
             $bookingData['date'],
             $bookingData['startTime'],
             $bookingData['endTime'],
-            'Pendiente',
+            $data['estado'] ?? 'Pendiente',
             $bookingData['observaciones']
         );
 
@@ -157,7 +157,7 @@ class ReservaService
      */
     public function updateReservaStatus(int $reservaId, string $newStatus): bool
     {
-        $validStatuses = ['Pendiente', 'Confirmada', 'Completada', 'Cancelada'];
+        $validStatuses = ['Pendiente', 'Confirmada', 'Completada', 'Cancelada', 'Pagada'];
 
         if (!in_array($newStatus, $validStatuses)) {
             throw new BookingValidationException('Estado de reserva inválido');
