@@ -556,16 +556,16 @@ $router->post('/api/reservas', function () use ($reservaService) {
 /**
  * Create Stripe Checkout Session
  */
-$router->post('/api/reservas/checkout-session', function () use ($userService, $reservaService) {
-    $controller = new PaymentController($userService, $reservaService);
+$router->post('/api/reservas/checkout-session', function () use ($userService, $reservaService, $authService) {
+    $controller = new PaymentController($userService, $reservaService, $authService);
     $controller->createCheckoutSession();
 });
 
 /**
  * Payment Success Callback
  */
-$router->get('/payment/success', function () use ($userService, $reservaService) {
-    $controller = new PaymentController($userService, $reservaService);
+$router->get('/payment/success', function () use ($userService, $reservaService, $authService) {
+    $controller = new PaymentController($userService, $reservaService, $authService);
     $controller->handleSuccess();
 });
 

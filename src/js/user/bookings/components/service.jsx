@@ -9,7 +9,6 @@
 import { h } from "preact";
 
 const MIN_HEIGHT = "120px";
-const SHADOW_COLOR = "rgba(13, 110, 253, 0.5)";
 
 /**
  * Handles service selection.
@@ -33,11 +32,9 @@ const handleServiceClick = (service, onSelect) => {
 export const Service = ({ service, onSelect, isSelected = false }) => {
   return (
     <div
-      class={`card ${isSelected ? "border-primary border-3" : ""}`}
+      class={`card ${isSelected ? "border-primary border-3 shadow" : "shadow-sm"}`}
       onClick={() => handleServiceClick(service, onSelect)}
-      style={`cursor: pointer; min-height: ${MIN_HEIGHT}; ${
-        isSelected ? `box-shadow: 0 0 10px ${SHADOW_COLOR};` : ""
-      }`}
+      style={`cursor: pointer; min-height: ${MIN_HEIGHT};`}
     >
       <div class="card-body d-flex align-items-center gap-3">
         <i class="bi bi-scissors fs-1 text-primary"></i>

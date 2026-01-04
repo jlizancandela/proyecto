@@ -35,7 +35,7 @@ export const ConfirmationForm = () => {
   return (
     <div class="container py-4">
       <div class="mb-4">
-        <h2 class="fw-bold mb-2" style="color: #2d3748;">
+        <h2 class="fw-bold mb-2 text-dark">
           Confirma tu Cita
         </h2>
         <p class="text-muted">Revisa los detalles de tu reserva antes de confirmar.</p>
@@ -54,7 +54,7 @@ export const ConfirmationForm = () => {
         <div class="col-12 col-lg-7">
           <div class="card border-0 shadow-sm rounded-4 p-4 h-100 d-flex flex-column justify-content-between">
             <div>
-              <h5 class="fw-bold mb-3" style="color: #2d3748;">
+              <h5 class="fw-bold mb-3 text-dark">
                 Todo listo, {userName}
               </h5>
               <p class="text-muted mb-4">
