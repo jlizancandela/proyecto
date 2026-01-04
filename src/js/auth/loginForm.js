@@ -23,6 +23,6 @@ const handlePasswordToggle = () => {
 };
 
 const toggleButton = document.getElementById("toggle-password");
-if (toggleButton) {
+if (loginForm && toggleButton) {
   toggleButton.addEventListener("click", handlePasswordToggle);
 }

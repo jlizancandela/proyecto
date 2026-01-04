@@ -129,6 +129,6 @@ if (registerForm) {
 }
 
 const toggleButton = document.getElementById("toggle-password");
-if (toggleButton) {
+if (registerForm && toggleButton) {
   toggleButton.addEventListener("click", handlePasswordToggle);
 }

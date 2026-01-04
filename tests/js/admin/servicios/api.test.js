@@ -29,6 +29,8 @@ describe("Services API", () => {
       };
 
       fetch.mockResolvedValueOnce({
+        ok: true,
+        headers: { get: () => "application/json" },
         json: async () => ({ success: true, data: mockService }),
       });
 
@@ -50,6 +52,8 @@ describe("Services API", () => {
       };
 
       fetch.mockResolvedValueOnce({
+        ok: true,
+        headers: { get: () => "application/json" },
         json: async () => ({ success: true, data: { id: 5 } }),
       });
 
@@ -73,6 +77,8 @@ describe("Services API", () => {
       };
 
       fetch.mockResolvedValueOnce({
+        ok: true,
+        headers: { get: () => "application/json" },
         json: async () => ({ success: true }),
       });
 
@@ -89,6 +95,8 @@ describe("Services API", () => {
   describe("activateService", () => {
     it("should activate service", async () => {
       fetch.mockResolvedValueOnce({
+        ok: true,
+        headers: { get: () => "application/json" },
         json: async () => ({ success: true }),
       });
 
@@ -104,6 +112,8 @@ describe("Services API", () => {
   describe("deactivateService", () => {
     it("should deactivate service", async () => {
       fetch.mockResolvedValueOnce({
+        ok: true,
+        headers: { get: () => "application/json" },
         json: async () => ({ success: true }),
       });
 

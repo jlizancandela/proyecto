@@ -1,2 +1,125 @@
-import{b as a,c as i,e as c,f as w}from"./chunk-N34MI4RW.js";var m=a(()=>{var b=document.getElementById("login-form"),f=()=>{let e=b.elements,s=document.getElementById("toggle-password");if(!s||!e.password)return;let o=s.querySelector("i"),t=e.password.type==="password";e.password.type=t?"text":"password",o.className=t?"bi bi-eye-slash":"bi bi-eye",s.setAttribute("aria-label",t?"Ocultar contrase\xF1a":"Mostrar contrase\xF1a")},d=document.getElementById("toggle-password");d&&d.addEventListener("click",f)});var u=a(()=>{var r=document.getElementById("register-form"),E=/^[^\s@]+@[^\s@]+\.[^\s@]+$/,p=2,y=6,v=e=>{let s={};return(!e.nombre||e.nombre.length<p)&&(s.nombre="El nombre debe tener al menos 2 caracteres"),(!e.apellidos||e.apellidos.length<p)&&(s.apellidos="Los apellidos deben tener al menos 2 caracteres"),(!e.email||!E.test(e.email))&&(s.email="El email no es v\xE1lido"),(!e.password||e.password.length<y)&&(s.password="La contrase\xF1a debe tener al menos 6 caracteres"),e.password!==e["password-confirm"]&&(s["password-confirm"]="Las contrase\xF1as no coinciden"),s},h=e=>{let s=r.elements;Object.keys(e).forEach(o=>{let t=s[o];if(t){let n=document.createElement("div");n.className="form-text text-danger",n.textContent=e[o];let l=t instanceof NodeList?t[0]:t;l.classList.add("is-invalid"),l.parentElement.appendChild(n)}})},I=()=>{document.querySelectorAll(".form-text.text-danger").forEach(o=>o.remove()),document.querySelectorAll(".is-invalid").forEach(o=>o.classList.remove("is-invalid"))},L=e=>{e.preventDefault(),I();let s=e.target.elements,o={nombre:s.nombre.value,apellidos:s.apellidos.value,email:s.email.value,telefono:s.telefono.value,password:s.password.value,"password-confirm":s["password-confirm"].value},t=v(o);if(Object.keys(t).length>0){h(t);return}r.submit()},B=()=>{let e=r.elements,s=document.getElementById("toggle-password");if(!s||!e.password||!e["password-confirm"])return;let o=s.querySelector("i"),t=e.password.type==="password";e.password.type=t?"text":"password",e["password-confirm"].type=t?"text":"password",o.className=t?"bi bi-eye-slash":"bi bi-eye",s.setAttribute("aria-label",t?"Ocultar contrase\xF1a":"Mostrar contrase\xF1a")};r&&r.addEventListener("submit",L);var g=document.getElementById("toggle-password");g&&g.addEventListener("click",B)});var N=a(()=>{var O=i(m()),P=i(u());w();window.bootstrap=c});export default N();
+import {
+  __commonJS,
+  __toESM,
+  bootstrap_esm_exports,
+  init_bootstrap_esm
+} from "./chunk-JPOHOG3X.js";
+
+// src/js/auth/loginForm.js
+var require_loginForm = __commonJS({
+  "src/js/auth/loginForm.js"() {
+    var loginForm = document.getElementById("login-form");
+    var handlePasswordToggle = () => {
+      const form = loginForm.elements;
+      const toggleButton2 = document.getElementById("toggle-password");
+      if (!toggleButton2 || !form.password) return;
+      const icon = toggleButton2.querySelector("i");
+      const isPassword = form.password.type === "password";
+      form.password.type = isPassword ? "text" : "password";
+      icon.className = isPassword ? "bi bi-eye-slash" : "bi bi-eye";
+      toggleButton2.setAttribute("aria-label", isPassword ? "Ocultar contrase\xF1a" : "Mostrar contrase\xF1a");
+    };
+    var toggleButton = document.getElementById("toggle-password");
+    if (loginForm && toggleButton) {
+      toggleButton.addEventListener("click", handlePasswordToggle);
+    }
+  }
+});
+
+// src/js/auth/registerForm.js
+var require_registerForm = __commonJS({
+  "src/js/auth/registerForm.js"() {
+    var registerForm = document.getElementById("register-form");
+    var EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    var MIN_NAME_LENGTH = 2;
+    var MIN_PASSWORD_LENGTH = 6;
+    var validateForm = (formData) => {
+      const errors = {};
+      if (!formData.nombre || formData.nombre.length < MIN_NAME_LENGTH) {
+        errors.nombre = "El nombre debe tener al menos 2 caracteres";
+      }
+      if (!formData.apellidos || formData.apellidos.length < MIN_NAME_LENGTH) {
+        errors.apellidos = "Los apellidos deben tener al menos 2 caracteres";
+      }
+      if (!formData.email || !EMAIL_REGEX.test(formData.email)) {
+        errors.email = "El email no es v\xE1lido";
+      }
+      if (!formData.password || formData.password.length < MIN_PASSWORD_LENGTH) {
+        errors.password = "La contrase\xF1a debe tener al menos 6 caracteres";
+      }
+      if (formData.password !== formData["password-confirm"]) {
+        errors["password-confirm"] = "Las contrase\xF1as no coinciden";
+      }
+      return errors;
+    };
+    var displayErrors = (errors) => {
+      const form = registerForm.elements;
+      Object.keys(errors).forEach((field) => {
+        const input = form[field];
+        if (input) {
+          const errorDiv = document.createElement("div");
+          errorDiv.className = "form-text text-danger";
+          errorDiv.textContent = errors[field];
+          const targetInput = input instanceof NodeList ? input[0] : input;
+          targetInput.classList.add("is-invalid");
+          targetInput.parentElement.appendChild(errorDiv);
+        }
+      });
+    };
+    var clearErrors = () => {
+      const errorMessages = document.querySelectorAll(".form-text.text-danger");
+      errorMessages.forEach((error) => error.remove());
+      const invalidInputs = document.querySelectorAll(".is-invalid");
+      invalidInputs.forEach((input) => input.classList.remove("is-invalid"));
+    };
+    var handleRegisterFormSubmit = (e) => {
+      e.preventDefault();
+      clearErrors();
+      const form = e.target.elements;
+      const formData = {
+        nombre: form.nombre.value,
+        apellidos: form.apellidos.value,
+        email: form.email.value,
+        telefono: form.telefono.value,
+        password: form.password.value,
+        "password-confirm": form["password-confirm"].value
+      };
+      const errors = validateForm(formData);
+      if (Object.keys(errors).length > 0) {
+        displayErrors(errors);
+        return;
+      }
+      registerForm.submit();
+    };
+    var handlePasswordToggle = () => {
+      const form = registerForm.elements;
+      const toggleButton2 = document.getElementById("toggle-password");
+      if (!toggleButton2 || !form.password || !form["password-confirm"]) return;
+      const icon = toggleButton2.querySelector("i");
+      const isPassword = form.password.type === "password";
+      form.password.type = isPassword ? "text" : "password";
+      form["password-confirm"].type = isPassword ? "text" : "password";
+      icon.className = isPassword ? "bi bi-eye-slash" : "bi bi-eye";
+      toggleButton2.setAttribute("aria-label", isPassword ? "Ocultar contrase\xF1a" : "Mostrar contrase\xF1a");
+    };
+    if (registerForm) {
+      registerForm.addEventListener("submit", handleRegisterFormSubmit);
+    }
+    var toggleButton = document.getElementById("toggle-password");
+    if (registerForm && toggleButton) {
+      toggleButton.addEventListener("click", handlePasswordToggle);
+    }
+  }
+});
+
+// src/js/auth/authApp.js
+var require_authApp = __commonJS({
+  "src/js/auth/authApp.js"() {
+    var import_loginForm = __toESM(require_loginForm());
+    var import_registerForm = __toESM(require_registerForm());
+    init_bootstrap_esm();
+    window.bootstrap = bootstrap_esm_exports;
+  }
+});
+export default require_authApp();
 //# sourceMappingURL=auth.js.map

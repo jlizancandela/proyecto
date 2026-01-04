@@ -8,7 +8,7 @@ const mysql = require("mysql2/promise");
 const bcrypt = require("bcryptjs");
 const { dbConfig } = require("../../helpers/db-config");
 
-test.describe("Booking Restrictions", () => {
+test.describe.serial("Booking Restrictions", () => {
   let connection;
 
   test.beforeEach(async () => {
@@ -42,6 +42,12 @@ test.describe("Booking Restrictions", () => {
   }
 
   test("should prevent booking the same service twice in the same week", async ({ page }) => {
+    // Skip if today is Sunday, because "Tomorrow" would be next week, invalidating the "Same Week" check
+    if (new Date().getDay() === 0) {
+      test.skip(true, "Skipping on Sundays as 'tomorrow' falls in the next week");
+      return;
+    }
+
     const user = await createTestUser(`test-same-week-${Date.now()}@playwright.test`);
 
     try {
