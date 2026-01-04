@@ -10,9 +10,6 @@ import { h } from "preact";
 
 const BUTTON_PADDING = "px-4";
 const BUTTON_PADDING_CONFIRM = "px-5";
-const BORDER_COLOR = "#cbd5e0";
-const TEXT_COLOR = "#4a5568";
-const PRIMARY_COLOR = "#e83e8c";
 
 /**
  * Renders confirmation and modification buttons.
@@ -30,7 +27,6 @@ export const ConfirmationActions = ({ loading, onModificar, onConfirmar, onPagar
         class={`btn btn-outline-secondary rounded-pill ${BUTTON_PADDING}`}
         onClick={onModificar}
         disabled={loading}
-        style={`border-color: ${BORDER_COLOR}; color: ${TEXT_COLOR};`}
       >
         Modificar selección
       </button>
@@ -47,10 +43,10 @@ export const ConfirmationActions = ({ loading, onModificar, onConfirmar, onPagar
       )}
 
       <button
-        class={`btn rounded-pill ${BUTTON_PADDING_CONFIRM}`}
+        class={`btn btn-primary rounded-pill ${BUTTON_PADDING_CONFIRM}`}
         onClick={onConfirmar}
         disabled={loading}
-        style={`background-color: ${PRIMARY_COLOR}; border: none; color: white; font-weight: 600;`}
+        style="font-weight: 600;"
       >
         {loading ? (
           <span>

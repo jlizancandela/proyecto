@@ -97,7 +97,7 @@ export const getUserBookings = async () => {
 
 /**
  * Creates a new booking with the provided data.
- * @param {Object} reservaData - The booking data containing servicio_id, especialista_id, fecha, and hora.
+ * @param {Object} reservaData - The booking data.
  * @returns {Promise<Object>} The created booking data.
  * @throws {Error} If validation fails or API request fails.
  */
@@ -151,25 +151,25 @@ export const createReserva = async (reservaData) => {
  * @returns {Promise<Object>} URL to redirect
  */
 export const createCheckoutSession = async (bookingId) => {
-    try {
-        const response = await fetch("/api/reservas/checkout-session", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ bookingId }),
-        });
+  try {
+    const response = await fetch("/api/reservas/checkout-session", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ bookingId }),
+    });
 
-        if (!response.ok) {
-            const error = await response.json();
-            throw new Error(error.error || "Error iniciando sesión de pago");
-        }
-
-        return await response.json();
-    } catch (error) {
-        console.error("Error creating checkout session:", error);
-        throw error;
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || "Error iniciando sesión de pago");
     }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error creating checkout session:", error);
+    throw error;
+  }
 };
 
 /**

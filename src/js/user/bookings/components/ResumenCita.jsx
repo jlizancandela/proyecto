@@ -10,9 +10,6 @@ import { h } from "preact";
 import { ResumenItem } from "./ResumenItem.jsx";
 import { formatearFechaLarga } from "../tools/formatters.js";
 
-const BACKGROUND_COLOR = "#f8f9fa";
-const TEXT_COLOR = "#2d3748";
-
 /**
  * Renders appointment summary with service, specialist, date, and time details.
  * @param {Object} props - Component props.
@@ -26,11 +23,8 @@ export const ResumenCita = ({ selectedService, selectedEspecialista, dia, select
   const fechaCapitalizada = formatearFechaLarga(dia);
 
   return (
-    <div
-      class="card border-0 shadow-sm rounded-4 p-4"
-      style={`background-color: ${BACKGROUND_COLOR};`}
-    >
-      <h5 class="fw-bold mb-4" style={`color: ${TEXT_COLOR};`}>
+    <div class="card border-0 shadow-sm rounded-4 p-4 bg-light">
+      <h5 class="fw-bold mb-4 text-dark">
         Resumen de la Cita
       </h5>
 

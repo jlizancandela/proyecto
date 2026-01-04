@@ -304,7 +304,6 @@ class ReservaService
             throw new BookingValidationException($e->getMessage());
         }
 
-        // Admins can create bookings for any date (past, present, or future)
         if (!$isAdmin) {
             $reservaDate = new \DateTime($data['fecha']);
             $today = new \DateTime('today');

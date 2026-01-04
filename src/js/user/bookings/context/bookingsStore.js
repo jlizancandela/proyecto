@@ -290,7 +290,6 @@ export const confirmReservaWithPaymentAction = async () => {
     $uiState.setKey("error", null);
 
     try {
-        // 1. Validations
         const userBookings = await getUserBookings();
         const targetDate = formatearFechaISO(draft.dia);
 
@@ -302,7 +301,6 @@ export const confirmReservaWithPaymentAction = async () => {
             throw new Error("Ya has alcanzado el máximo de 40 horas permitidas por ley para esta semana");
         }
 
-        // 2. Create Booking (Pending)
         const reservaData = {
             servicio_id: draft.service.id,
             especialista_id: draft.especialista.id_especialista,
@@ -318,11 +316,9 @@ export const confirmReservaWithPaymentAction = async () => {
             throw new Error("Error: No se pudo crear la reserva inicial.");
         }
 
-        // 3. Create Checkout Session
         const session = await createCheckoutSession(response.id_reserva);
         
         if (session.url) {
-            // 4. Redirect to Stripe
             globalThis.location.href = session.url;
         } else {
             throw new Error("Error: No se recibió la URL de pago.");
