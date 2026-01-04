@@ -33,7 +33,7 @@ export const ConfirmationActions = ({ loading, onModificar, onConfirmar, onPagar
       
       {onPagar && (
         <button
-          class={`btn btn-success rounded-pill ${BUTTON_PADDING_CONFIRM}`}
+          class={`btn btn-primary rounded-pill ${BUTTON_PADDING_CONFIRM}`}
           onClick={onPagar}
           disabled={loading}
           style="font-weight: 600;"
@@ -43,7 +43,7 @@ export const ConfirmationActions = ({ loading, onModificar, onConfirmar, onPagar
       )}
 
       <button
-        class={`btn btn-primary rounded-pill ${BUTTON_PADDING_CONFIRM}`}
+        class={`btn btn-outline-primary rounded-pill ${BUTTON_PADDING_CONFIRM}`}
         onClick={onConfirmar}
         disabled={loading}
         style="font-weight: 600;"
