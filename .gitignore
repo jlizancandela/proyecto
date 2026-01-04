@@ -52,6 +52,7 @@ Thumbs.db
 
 # Documentos y pruebas
 /documentos/*
+AGENTS.md
 
 /test
 # /tests/
