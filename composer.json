@@ -5,7 +5,8 @@
         "latte/latte": "^3.1",
         "bramus/router": "^1.6",
         "dompdf/dompdf": "^2.0",
-        "imagekit/imagekit": "^4.0"
+        "imagekit/imagekit": "^4.0",
+        "stripe/stripe-php": "^19.1"
     },
     "autoload": {
         "psr-4": {

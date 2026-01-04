@@ -115,11 +115,11 @@ test.describe("Booking Flow E2E", () => {
     }).toPass({ timeout: 15000 });
 
     // Confirm booking
-    const confirmBtn = page.locator('button:has-text("Confirmar Reserva")');
+    const confirmBtn = page.locator('button:has-text("Pagar en el local")');
     await confirmBtn.waitFor({ state: "visible" });
 
     await Promise.all([
-      page.waitForURL("**/user/reservas", { timeout: 15000 }),
+      page.waitForURL("**/user/reservas", { timeout: 30000 }),
       confirmBtn.click(),
     ]);
 

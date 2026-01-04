@@ -189,7 +189,7 @@ test.describe("Admin Third-Party Booking Management", () => {
     expect(bookings.length).toBe(1);
     expect(bookings[0].id_servicio).toBe(serviceId);
     expect(bookings[0].hora_inicio).toBe("14:00:00");
-    expect(bookings[0].estado).toBe("Pendiente"); // Default status when created by admin
+    expect(bookings[0].estado).toBe("Confirmada"); // Matches what was selected in the form
 
     expect(bookings[0].observaciones).toContain("Test booking");
 

@@ -1,7 +1,3 @@
-/**
- * @file Booking confirmation form component.
- */
-
 import { h } from "preact";
 import { useStore } from "@nanostores/preact";
 import { $estado, $userName } from "../context/bookingsStore.js";
@@ -25,10 +21,15 @@ export const ConfirmationForm = () => {
     loading,
     error,
     confirmarReserva,
+    confirmarReservaConPago,
   } = useReservas();
 
   const handleModificar = () => {
     $estado.set("DateForm");
+  };
+
+  const handlePayNow = () => {
+      confirmarReservaConPago();
   };
 
   return (
@@ -67,6 +68,7 @@ export const ConfirmationForm = () => {
               loading={loading}
               onModificar={handleModificar}
               onConfirmar={confirmarReserva}
+              onPagar={handlePayNow}
             />
           </div>
         </div>

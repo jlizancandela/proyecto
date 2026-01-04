@@ -1,24 +1,6 @@
 /**
  * @file Bookings Store - Centralized State
  * @project app-reservas
- *
- * ========================================
- * BOOKINGS STORE - Centralized State
- * ========================================
- *
- * Main store for the booking system using Nano Stores.
- *
- * Why Nanostores?
- * - Provides global state accessible from any component
- * - Eliminates prop drilling between parent and child components
- * - Lightweight and performant for Preact applications
- *
- * Architecture:
- * - Atomic state pattern for reactive updates
- * - Grouped maps for related data
- * - Computed stores for derived values
- * - Centralized actions for all business logic
- * - Global UI states (loading, error)
  */
 
 import { atom, map, computed } from "nanostores";
@@ -28,6 +10,7 @@ import {
   getCurrentUser,
   createReserva,
   getUserBookings,
+  createCheckoutSession,
 } from "../api/bookingsApi.js";
 import { formatearFechaISO } from "../tools/formatters.js";
 import { hasWeeklyBookingForService, exceedsWeeklyHoursLimit } from "../tools/validators.js";
@@ -290,6 +273,67 @@ export const confirmReservaAction = async () => {
     }, 800);
   }
 };
+
+/**
+ * Initiates the payment process via Stripe Checkout
+ * @returns {Promise<void>}
+ */
+export const confirmReservaWithPaymentAction = async () => {
+    const draft = $bookingDraft.get();
+    
+    if (!draft.service?.id || !draft.especialista?.id_especialista || !draft.dia || !draft.hora) {
+        $uiState.setKey("error", "Faltan datos requeridos para completar la reserva");
+        return;
+    }
+
+    $uiState.setKey("loading", true);
+    $uiState.setKey("error", null);
+
+    try {
+        // 1. Validations
+        const userBookings = await getUserBookings();
+        const targetDate = formatearFechaISO(draft.dia);
+
+        if (hasWeeklyBookingForService(userBookings, draft.service.id, targetDate)) {
+            throw new Error("Ya tienes una reserva de este servicio en esta semana");
+        }
+
+        if (exceedsWeeklyHoursLimit(userBookings, targetDate, draft.service.duracion_minutos || 60)) {
+            throw new Error("Ya has alcanzado el máximo de 40 horas permitidas por ley para esta semana");
+        }
+
+        // 2. Create Booking (Pending)
+        const reservaData = {
+            servicio_id: draft.service.id,
+            especialista_id: draft.especialista.id_especialista,
+            fecha: targetDate,
+            hora: draft.hora,
+            duracion: draft.service.duracion_minutos,
+            estado: 'Pendiente'
+        };
+
+        const response = await createReserva(reservaData);
+        
+        if (!response.id_reserva) {
+            throw new Error("Error: No se pudo crear la reserva inicial.");
+        }
+
+        // 3. Create Checkout Session
+        const session = await createCheckoutSession(response.id_reserva);
+        
+        if (session.url) {
+            // 4. Redirect to Stripe
+            globalThis.location.href = session.url;
+        } else {
+            throw new Error("Error: No se recibió la URL de pago.");
+        }
+
+    } catch (err) {
+        $uiState.setKey("error", "Error en el proceso de pago: " + err.message);
+        $uiState.setKey("loading", false);
+    }
+};
+
 
 /**
  * Completely clears the booking state

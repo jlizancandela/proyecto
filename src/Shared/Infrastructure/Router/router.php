@@ -32,6 +32,7 @@ use Shared\Presentation\SpecialistController;
 use Shared\Presentation\StatsApiController;
 use Reservas\Presentation\BookingController;
 use Reservas\Presentation\BookingApiController;
+use Reservas\Presentation\PaymentController;
 use Reservas\Presentation\BookingAdminApiController;
 use Reservas\Presentation\MyBookingsController;
 use Reservas\Presentation\PdfExportController;
@@ -550,6 +551,30 @@ $router->get('/api/reservas', function () use ($reservaService) {
 $router->post('/api/reservas', function () use ($reservaService) {
     $controller = new BookingApiController($reservaService);
     $controller->createReserva();
+});
+
+/**
+ * Create Stripe Checkout Session
+ */
+$router->post('/api/reservas/checkout-session', function () use ($userService, $reservaService) {
+    $controller = new PaymentController($userService, $reservaService);
+    $controller->createCheckoutSession();
+});
+
+/**
+ * Payment Success Callback
+ */
+$router->get('/payment/success', function () use ($userService, $reservaService) {
+    $controller = new PaymentController($userService, $reservaService);
+    $controller->handleSuccess();
+});
+
+/**
+ * Payment Cancel Callback
+ */
+$router->get('/payment/cancel', function () {
+    header('Location: /user/reservas/nueva');
+    exit;
 });
 
 /**

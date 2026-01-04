@@ -12,7 +12,7 @@
  */
 
 import { useStore } from "@nanostores/preact";
-import { $bookingDraft, $uiState, confirmReservaAction } from "../context/bookingsStore.js";
+import { $bookingDraft, $uiState, confirmReservaAction, confirmReservaWithPaymentAction } from "../context/bookingsStore.js";
 
 /**
  * Custom hook for managing bookings
@@ -26,6 +26,7 @@ import { $bookingDraft, $uiState, confirmReservaAction } from "../context/bookin
  * @returns {boolean} loading - Global loading state
  * @returns {string|null} error - Global error (if exists)
  * @returns {Function} confirmarReserva - Action to confirm the booking
+ * @returns {Function} confirmarReservaConPago - Action to confirm with payment
  */
 export const useReservas = () => {
   const booking = useStore($bookingDraft);
@@ -39,5 +40,6 @@ export const useReservas = () => {
     loading: uiState.loading,
     error: uiState.error,
     confirmarReserva: confirmReservaAction,
+    confirmarReservaConPago: confirmReservaWithPaymentAction,
   };
 };
