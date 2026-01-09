@@ -44,6 +44,11 @@ COPY . .
 # Copy Frontend Assets from Stage 1 (AFTER source code, to overwrite any local builds)
 COPY --from=frontend_build /app/public/js/build ./public/js/build
 
+# Copy Bootstrap and Bootstrap Icons CSS from node_modules (referenced in templates)
+COPY --from=frontend_build /app/node_modules/bootstrap/dist/css/bootstrap.min.css ./node_modules/bootstrap/dist/css/bootstrap.min.css
+COPY --from=frontend_build /app/node_modules/bootstrap/dist/css/bootstrap.min.css.map ./node_modules/bootstrap/dist/css/bootstrap.min.css.map
+COPY --from=frontend_build /app/node_modules/bootstrap-icons/font/ ./node_modules/bootstrap-icons/font/
+
 # Copy .env.example to .env if .env doesn't exist (Runtime check, acceptable here)
 # But ideally handled by entrypoint or volume mapping in prod
 RUN if [ ! -f .env ]; then cp .env.example .env; fi
