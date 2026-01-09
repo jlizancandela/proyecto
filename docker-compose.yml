@@ -1,0 +1,38 @@
+services:
+  app:
+    build: .
+    ports:
+      - "8080:80"
+    environment:
+      - DB_HOST=${DB_HOST}
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - APP_URL=${APP_URL}
+      - EMAIL_API_KEY=${EMAIL_API_KEY}
+      - EMAIL_SENDER=${EMAIL_SENDER}
+      - IMAGEKIT_API_KEY=${IMAGEKIT_API_KEY}
+      - IMAGEKIT_PRIVATE_KEY=${IMAGEKIT_PRIVATE_KEY}
+      - IMAGEKIT_ENDPOINT=${IMAGEKIT_ENDPOINT}
+      - NODE_ENV=${NODE_ENV}
+      - STRIPE_PUBLISHABLE_KEY=${STRIPE_PUBLISHABLE_KEY}
+      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
+    depends_on:
+      - db
+    volumes:
+      - .:/var/www/html
+      - /var/www/html/temp
+
+  db:
+    image: mysql:8.0
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      # Database, user and password creation handled by init script
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./docker-init.sql:/docker-entrypoint-initdb.d/init.sql
+
+volumes:
+  db_data:

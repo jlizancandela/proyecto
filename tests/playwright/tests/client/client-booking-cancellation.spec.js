@@ -68,7 +68,7 @@ test.describe("Real E2E Booking Cancellation", () => {
       [
         testUserId,
         1, // Ana Fernández
-        1, // Corte de Cabello Mujer
+        1, // Corte de Pelo
         tomorrowDbStr,
         "10:00:00",
         "10:45:00",
@@ -84,7 +84,7 @@ test.describe("Real E2E Booking Cancellation", () => {
 
     // Step 2: Login with test user
     console.log(`Attempting login with email: ${testUserEmail}`);
-    await page.goto("https://proyecto.ddev.site/login");
+    await page.goto(`${process.env.BASE_URL}/login`);
 
     await page.fill('input[name="email"]', testUserEmail);
     await page.fill('input[name="password"]', testUserPassword);
@@ -98,7 +98,7 @@ test.describe("Real E2E Booking Cancellation", () => {
 
     // Step 3: Navigate to bookings page
     console.log("Navigating to bookings page...");
-    await page.goto("https://proyecto.ddev.site/user/reservas");
+    await page.goto(`${process.env.BASE_URL}/user/reservas`);
     await page.waitForLoadState("networkidle");
 
     // Step 4: Find the test booking card
@@ -108,7 +108,7 @@ test.describe("Real E2E Booking Cancellation", () => {
     const bookingCard = page
       .locator(".card")
       .filter({
-        hasText: "Corte de Cabello Mujer",
+        hasText: "Corte de Pelo",
       })
       .filter({
         hasText: tomorrowUiStr,
@@ -140,7 +140,7 @@ test.describe("Real E2E Booking Cancellation", () => {
     const updatedCard = page
       .locator(".card")
       .filter({
-        hasText: "Corte de Cabello Mujer",
+        hasText: "Corte de Pelo",
       })
       .filter({
         hasText: tomorrowUiStr,

@@ -42,7 +42,7 @@ yarn-error.log*
 
 # PHP
 composer.phar
-/phpunit.xml
+
 /.phpunit.result.cache
 
 
@@ -70,3 +70,9 @@ tests/playwright/playwright-report/
 tests/playwright/test-results/
 **/test-results/
 **/playwright-report/
+
+
+
+
+
+

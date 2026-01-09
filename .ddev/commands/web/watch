@@ -1,9 +1,0 @@
-#!/bin/bash
-
-#ddev-generated
-## Description: Run esbuild in watch mode
-## Usage: watch
-## Example: "ddev watch"
-
-echo "Starting esbuild watch mode..."
-npm run watch

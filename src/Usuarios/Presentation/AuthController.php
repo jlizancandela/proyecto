@@ -33,7 +33,7 @@ class AuthController
         Engine $latte,
         AuthService $authService,
         EmailService $emailService,
-        UserService $userService = null
+        ?UserService $userService = null
     ) {
         $this->latte = $latte;
         $this->authService = $authService;

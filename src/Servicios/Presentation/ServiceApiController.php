@@ -30,7 +30,7 @@ class ServiceApiController
      */
     public function getAll(): void
     {
-        header('Content-Type: application/json');
+        header('Content-Type: application/json; charset=utf-8');
         try {
             $servicios = $this->service->getAllServices();
 
@@ -65,7 +65,7 @@ class ServiceApiController
      */
     public function getServiceById(int $id): void
     {
-        header('Content-Type: application/json');
+        header('Content-Type: application/json; charset=utf-8');
 
         try {
             $servicio = $this->service->getServiceById($id);
@@ -105,7 +105,7 @@ class ServiceApiController
      */
     public function createService(): void
     {
-        header('Content-Type: application/json');
+        header('Content-Type: application/json; charset=utf-8');
 
         try {
             $data = json_decode(file_get_contents('php://input'), true);
@@ -149,7 +149,7 @@ class ServiceApiController
      */
     public function updateService(int $id): void
     {
-        header('Content-Type: application/json');
+        header('Content-Type: application/json; charset=utf-8');
 
         try {
             $data = json_decode(file_get_contents('php://input'), true);
@@ -193,7 +193,7 @@ class ServiceApiController
      */
     public function deactivateService(int $id): void
     {
-        header('Content-Type: application/json');
+        header('Content-Type: application/json; charset=utf-8');
 
         try {
             $this->service->deactivateService($id);
@@ -218,7 +218,7 @@ class ServiceApiController
      */
     public function activateService(int $id): void
     {
-        header('Content-Type: application/json');
+        header('Content-Type: application/json; charset=utf-8');
 
         try {
             $this->service->activateService($id);

@@ -48,3 +48,4 @@ Aplicación web para la gestión de reservas en una peluquería.
 
 6.  **Acceder**
     Entra en: https://proyecto.ddev.site
+
