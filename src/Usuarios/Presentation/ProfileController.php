@@ -126,7 +126,7 @@ class ProfileController
 
             // Prevent admins from deleting their own accounts
             $currentUser = $this->userService->getUserById($userId);
-            if ($currentUser && $currentUser->getRol() === 'Administrador') {
+            if ($currentUser && $currentUser->getRol() === \Usuarios\Domain\UserRole::Admin) {
                 $_SESSION['error_message'] = 'Los administradores no pueden darse de baja. Contacta con otro administrador si necesitas desactivar tu cuenta.';
                 header('Location: /user/profile');
                 exit;
