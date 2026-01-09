@@ -38,13 +38,11 @@ RUN a2enmod rewrite
 # Copy PHP dependencies from Stage 2
 COPY --from=composer_build /app/vendor ./vendor
 
-# Copy Frontend Assets from Stage 1
-# Assuming compiled assets go to public/js/build and public/css based on previous analysis
-COPY --from=frontend_build /app/public/js/build ./public/js/build
-# Copy other compiled assets if any exists. safely copy public structure if needed.
-
-# Copy Application Source Code
+# Copy Application Source Code FIRST
 COPY . .
+
+# Copy Frontend Assets from Stage 1 (AFTER source code, to overwrite any local builds)
+COPY --from=frontend_build /app/public/js/build ./public/js/build
 
 # Copy .env.example to .env if .env doesn't exist (Runtime check, acceptable here)
 # But ideally handled by entrypoint or volume mapping in prod
