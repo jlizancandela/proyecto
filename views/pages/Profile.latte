@@ -125,7 +125,7 @@
         </div>
       </div>
 
-      {* Zona de peligro - Solo para no-administradores *} {if $user->getRol() !== 'Administrador'}
+      {* Zona de peligro - Solo para no-administradores *} {if $user->getRol()->value !== 'Admin'}
       <div class="card border-danger shadow-sm">
         <div class="card-header bg-danger bg-opacity-10 border-danger py-3">
           <h5 class="mb-0 fw-semibold text-danger">
