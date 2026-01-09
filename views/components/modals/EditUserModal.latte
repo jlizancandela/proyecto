@@ -33,6 +33,7 @@
                   name="nombre"
                   required
                   minlength="2"
+                  autocomplete="given-name"
                 />
                 <div class="invalid-feedback"></div>
               </div>
@@ -47,6 +48,7 @@
                   name="apellidos"
                   required
                   minlength="2"
+                  autocomplete="family-name"
                 />
                 <div class="invalid-feedback"></div>
               </div>
@@ -54,14 +56,27 @@
               {* Email *}
               <div class="mb-3">
                 <label for="editEmail" class="form-label">Email *</label>
-                <input type="email" class="form-control" id="editEmail" name="email" required />
+                <input
+                  type="email"
+                  class="form-control"
+                  id="editEmail"
+                  name="email"
+                  required
+                  autocomplete="email"
+                />
                 <div class="invalid-feedback"></div>
               </div>
 
               {* Teléfono *}
               <div class="mb-3">
                 <label for="editTelefono" class="form-label">Teléfono</label>
-                <input type="tel" class="form-control" id="editTelefono" name="telefono" />
+                <input
+                  type="tel"
+                  class="form-control"
+                  id="editTelefono"
+                  name="telefono"
+                  autocomplete="tel"
+                />
                 <div class="invalid-feedback"></div>
               </div>
 
@@ -94,6 +109,7 @@
                   id="editPassword"
                   name="password"
                   minlength="6"
+                  autocomplete="new-password"
                 />
                 <div class="invalid-feedback"></div>
               </div>
@@ -109,6 +125,7 @@
                   id="editPasswordConfirm"
                   name="password-confirm"
                   minlength="6"
+                  autocomplete="new-password"
                 />
                 <div class="invalid-feedback"></div>
               </div>
