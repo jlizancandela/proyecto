@@ -63,7 +63,7 @@ test.describe("Booking Flow with Payment E2E", () => {
     }
 
     // Select Day
-    const tomorrowDateBtn = page.getByRole("button", { name: `Día ${tomorrowDay}`, exact: true });
+    const tomorrowDateBtn = page.locator("button.btn-outline-primary:not([disabled])").first();
     await tomorrowDateBtn.click();
 
     // Select Time

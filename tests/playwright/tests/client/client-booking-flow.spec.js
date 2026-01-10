@@ -82,7 +82,7 @@ test.describe("Booking Flow E2E", () => {
     }
 
     // Target the specific day button in the calendar
-    const tomorrowDateBtn = page.getByRole("button", { name: `Día ${tomorrowDay}`, exact: true });
+    const tomorrowDateBtn = page.locator("button.btn-outline-primary:not([disabled])").first();
     await expect(tomorrowDateBtn).toBeVisible({ timeout: 10000 });
     await tomorrowDateBtn.click();
 

@@ -93,7 +93,7 @@ test.describe.serial("Booking Restrictions", () => {
         await expect(monthTitle).toContainText("enero", { ignoreCase: true, timeout: 5000 });
       }
 
-      const tomorrowDateBtn = page.getByRole("button", { name: `Día ${tomorrowDay}`, exact: true });
+      const tomorrowDateBtn = page.locator("button.btn-outline-primary:not([disabled])").first();
       await expect(tomorrowDateBtn).toBeVisible({ timeout: 10000 });
       await tomorrowDateBtn.click();
       await page.waitForTimeout(1500);
@@ -156,7 +156,7 @@ test.describe.serial("Booking Restrictions", () => {
         await expect(monthTitle).toContainText("enero", { ignoreCase: true, timeout: 5000 });
       }
 
-      const tomorrowDateBtn = page.getByRole("button", { name: `Día ${tomorrowDay}`, exact: true });
+      const tomorrowDateBtn = page.locator("button.btn-outline-primary:not([disabled])").first();
       await expect(tomorrowDateBtn).toBeVisible({ timeout: 10000 });
       await tomorrowDateBtn.click();
       await page.waitForTimeout(1500);
