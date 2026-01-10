@@ -33,5 +33,8 @@
         "allow-plugins": {
             "pestphp/pest-plugin": true
         }
+    },
+    "scripts": {
+        "docs": "docker compose exec app ./phpdoc run --template='xml' -t docs/xml && docker compose exec app php scripts/xml-to-md.php"
     }
 }
