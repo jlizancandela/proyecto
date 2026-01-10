@@ -85,13 +85,23 @@ Open your browser and navigate to:
 
 ## 🧪 Development & Testing
 
-### Running Tests inside the Container
+### 1. PHP Unit Tests (Pest)
+Run tests inside the container:
 ```bash
-# PHP Unit Tests (Pest)
 docker compose exec app ./vendor/bin/pest
+```
 
-# JS Unit Tests (Vitest)
+### 2. JS Unit Tests (Vitest)
+```bash
 npm run test:unit
+```
+
+### 3. E2E Tests (Playwright)
+The application must be running (e.g., via Docker) before starting E2E tests.
+```bash
+cd tests/playwright
+npm install
+npx playwright test
 ```
 
 ### Rebuilding Assets
