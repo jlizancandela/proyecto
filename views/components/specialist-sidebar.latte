@@ -20,14 +20,14 @@
       <span>Dashboard</span>
     </a>
     <a
-      class="nav-link d-flex align-items-center gap-2 {if $currentUrl === '/specialist/bookings'}text-dark bg-light{else}text-secondary{/if} rounded mb-1 py-2"
+      class="nav-link d-flex align-items-center gap-2 {if str_contains($currentUrl, '/specialist/bookings')}text-dark bg-light{else}text-secondary{/if} rounded mb-1 py-2"
       href="/specialist/bookings"
     >
       <i class="bi bi-calendar-check"></i>
       <span>Mis Reservas</span>
     </a>
     <a
-      class="nav-link d-flex align-items-center gap-2 {if $currentUrl === '/specialist/profile'}text-dark bg-light{else}text-secondary{/if} rounded mb-1 py-2"
+      class="nav-link d-flex align-items-center gap-2 {if str_contains($currentUrl, '/specialist/profile')}text-dark bg-light{else}text-secondary{/if} rounded mb-1 py-2"
       href="/specialist/profile"
     >
       <i class="bi bi-person"></i>
@@ -40,9 +40,9 @@
       class="d-flex align-items-center dropdown-toggle"
       data-bs-toggle="dropdown"
       aria-expanded="false"
-      style="cursor: pointer"
+      role="button"
     >
-      <div class="me-2">
+      <div class="me-3">
         {if isset($userPhoto) && $userPhoto}
         <img
           src="{$userPhoto}"
@@ -95,14 +95,14 @@
         <span>Dashboard</span>
       </a>
       <a
-        class="nav-link d-flex align-items-center gap-2 {if $currentUrl === '/specialist/bookings'}text-dark bg-light{else}text-secondary{/if} rounded mb-1 py-2"
+        class="nav-link d-flex align-items-center gap-2 {if str_contains($currentUrl, '/specialist/bookings')}text-dark bg-light{else}text-secondary{/if} rounded mb-1 py-2"
         href="/specialist/bookings"
       >
         <i class="bi bi-calendar-check"></i>
         <span>Mis Reservas</span>
       </a>
       <a
-        class="nav-link d-flex align-items-center gap-2 {if $currentUrl === '/specialist/profile'}text-dark bg-light{else}text-secondary{/if} rounded mb-1 py-2"
+        class="nav-link d-flex align-items-center gap-2 {if str_contains($currentUrl, '/specialist/profile')}text-dark bg-light{else}text-secondary{/if} rounded mb-1 py-2"
         href="/specialist/profile"
       >
         <i class="bi bi-person"></i>
@@ -110,12 +110,12 @@
       </a>
     </nav>
 
-    <div class="border-top pt-3 dropup">
+    <div class="border-top pt-3 mt-auto dropup">
       <div
         class="d-flex align-items-center dropdown-toggle"
         data-bs-toggle="dropdown"
         aria-expanded="false"
-        style="cursor: pointer"
+        role="button"
       >
         <div class="me-3">
           {if isset($userPhoto) && $userPhoto}
@@ -129,8 +129,8 @@
           <i class="bi bi-person-circle fs-2 text-secondary"></i>
           {/if}
         </div>
-        <div>
-          <div class="fw-semibold small">{$userName}</div>
+        <div class="flex-grow-1 min-w-0">
+          <div class="fw-semibold small text-truncate">{$userName}</div>
           <div class="text-muted small">Especialista</div>
         </div>
       </div>
