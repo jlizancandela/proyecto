@@ -1,6 +1,47 @@
+{* Definición del menú para reutilizar *}
+{define adminMenu}
+<nav class="nav flex-column flex-grow-1 p-3">
+  <a
+    class="nav-link d-flex align-items-center gap-2 {if $currentUrl === '/admin'}text-dark bg-light{else}text-secondary{/if} rounded mb-1 py-2"
+    href="/admin"
+  >
+    <i class="bi bi-grid-3x3-gap"></i>
+    <span>Dashboard</span>
+  </a>
+  <a
+    class="nav-link d-flex align-items-center gap-2 {if str_contains($currentUrl, '/admin/bookings')}text-dark bg-light{else}text-secondary{/if} rounded mb-1 py-2"
+    href="/admin/bookings"
+  >
+    <i class="bi bi-calendar-check"></i>
+    <span>Gestión de Citas</span>
+  </a>
+  <a
+    class="nav-link d-flex align-items-center gap-2 {if str_contains($currentUrl, '/admin/users')}text-dark bg-light{else}text-secondary{/if} rounded mb-1 py-2"
+    href="/admin/users"
+  >
+    <i class="bi bi-people"></i>
+    <span>Gestión de Usuarios</span>
+  </a>
+  <a
+    class="nav-link d-flex align-items-center gap-2 {if str_contains($currentUrl, '/admin/specialists')}text-dark bg-light{else}text-secondary{/if} rounded mb-1 py-2"
+    href="/admin/specialists"
+  >
+    <i class="bi bi-person-badge"></i>
+    <span>Gestión de Especialistas</span>
+  </a>
+  <a
+    class="nav-link d-flex align-items-center gap-2 {if str_contains($currentUrl, '/admin/services')}text-dark bg-light{else}text-secondary{/if} rounded mb-1 py-2"
+    href="/admin/services"
+  >
+    <i class="bi bi-scissors"></i>
+    <span>Gestión de Servicios</span>
+  </a>
+</nav>
+{/define}
+
 {* Sidebar visible en desktop, offcanvas en móvil *}
 <aside
-  class="d-none d-md-flex col-md-2 bg-white border-end min-vh-100 flex-column sticky-md-top overflow-auto"
+  class="d-none d-md-flex col-md-3 col-lg-2 bg-white border-end min-vh-100 flex-column sticky-md-top overflow-auto"
 >
   <div class="p-4 border-bottom">
     <div class="d-flex align-items-center">
@@ -11,36 +52,7 @@
     </div>
   </div>
 
-  <nav class="nav flex-column flex-grow-1 p-3">
-    <a
-      class="nav-link d-flex align-items-center gap-2 {if $currentUrl === '/admin'}text-dark bg-light{else}text-secondary{/if} rounded mb-1 py-2"
-      href="/admin"
-    >
-      <i class="bi bi-grid-3x3-gap"></i>
-      <span>Dashboard</span>
-    </a>
-    <a
-      class="nav-link d-flex align-items-center gap-2 {if str_contains($currentUrl, '/admin/bookings')}text-dark bg-light{else}text-secondary{/if} rounded mb-1 py-2"
-      href="/admin/bookings"
-    >
-      <i class="bi bi-calendar-check"></i>
-      <span>Gestión de Citas</span>
-    </a>
-    <a
-      class="nav-link d-flex align-items-center gap-2 {if str_contains($currentUrl, '/admin/users')}text-dark bg-light{else}text-secondary{/if} rounded mb-1 py-2"
-      href="/admin/users"
-    >
-      <i class="bi bi-people"></i>
-      <span>Gestión de Usuarios</span>
-    </a>
-    <a
-      class="nav-link d-flex align-items-center gap-2 {if str_contains($currentUrl, '/admin/services')}text-dark bg-light{else}text-secondary{/if} rounded mb-1 py-2"
-      href="/admin/services"
-    >
-      <i class="bi bi-scissors"></i>
-      <span>Gestión de Servicios</span>
-    </a>
-  </nav>
+  {include adminMenu}
 
   <div class="p-3 border-top mt-auto dropup">
     <div
@@ -84,36 +96,14 @@
   </div>
 
   <div class="offcanvas-body d-flex flex-column">
-    <nav class="nav flex-column flex-grow-1">
-      <a
-        class="nav-link d-flex align-items-center gap-2 {if $currentUrl === '/admin'}text-dark bg-light{else}text-secondary{/if} rounded mb-1 py-2"
-        href="/admin"
-      >
-        <i class="bi bi-grid-3x3-gap"></i>
-        <span>Dashboard</span>
+    {include adminMenu}
+
+    <div class="px-3 py-2">
+      <a href="/" class="btn btn-outline-secondary w-100 d-flex align-items-center justify-content-center gap-2">
+        <i class="bi bi-house"></i>
+        <span>Volver a Inicio</span>
       </a>
-      <a
-        class="nav-link d-flex align-items-center gap-2 {if str_contains($currentUrl, '/admin/bookings')}text-dark bg-light{else}text-secondary{/if} rounded mb-1 py-2"
-        href="/admin/bookings"
-      >
-        <i class="bi bi-calendar-check"></i>
-        <span>Gestión de Citas</span>
-      </a>
-      <a
-        class="nav-link d-flex align-items-center gap-2 {if str_contains($currentUrl, '/admin/users')}text-dark bg-light{else}text-secondary{/if} rounded mb-1 py-2"
-        href="/admin/users"
-      >
-        <i class="bi bi-people"></i>
-        <span>Gestión de Usuarios</span>
-      </a>
-      <a
-        class="nav-link d-flex align-items-center gap-2 {if str_contains($currentUrl, '/admin/services')}text-dark bg-light{else}text-secondary{/if} rounded mb-1 py-2"
-        href="/admin/services"
-      >
-        <i class="bi bi-scissors"></i>
-        <span>Gestión de Servicios</span>
-      </a>
-    </nav>
+    </div>
 
     <div class="border-top pt-3 mt-auto dropup">
       <div

@@ -1,6 +1,40 @@
+{* Definición del menú para reutilizar *}
+{define userMenu}
+<nav class="nav flex-column flex-grow-1 p-3">
+  <a
+    class="nav-link d-flex align-items-center gap-2 {if $currentUrl === '/user'}text-dark bg-light{else}text-secondary{/if} rounded mb-1 py-2"
+    href="/user"
+  >
+    <i class="bi bi-house"></i>
+    <span>Inicio</span>
+  </a>
+  <a
+    class="nav-link d-flex align-items-center gap-2 {if str_contains($currentUrl, '/user/reservas') && !str_contains($currentUrl, '/user/reservas/nueva')}text-dark bg-light{else}text-secondary{/if} rounded mb-1 py-2"
+    href="/user/reservas"
+  >
+    <i class="bi bi-calendar-check"></i>
+    <span>Mis Reservas</span>
+  </a>
+  <a
+    class="nav-link d-flex align-items-center gap-2 {if str_contains($currentUrl, '/user/reservas/nueva')}text-dark bg-light{else}text-secondary{/if} rounded mb-1 py-2"
+    href="/user/reservas/nueva"
+  >
+    <i class="bi bi-plus-circle"></i>
+    <span>Nueva Reserva</span>
+  </a>
+  <a
+    class="nav-link d-flex align-items-center gap-2 {if str_contains($currentUrl, '/user/profile')}text-dark bg-light{else}text-secondary{/if} rounded mb-1 py-2"
+    href="/user/profile"
+  >
+    <i class="bi bi-person"></i>
+    <span>Mi Perfil</span>
+  </a>
+</nav>
+{/define}
+
 {* Sidebar visible en desktop, offcanvas en móvil *}
 <aside
-  class="d-none d-md-flex col-md-2 bg-white border-end min-vh-100 flex-column sticky-md-top overflow-auto"
+  class="d-none d-md-flex col-md-3 col-lg-2 bg-white border-end min-vh-100 flex-column sticky-md-top overflow-auto"
 >
   <div class="p-4 border-bottom">
     <div class="d-flex align-items-center">
@@ -11,38 +45,9 @@
     </div>
   </div>
 
-  <nav class="nav flex-column flex-grow-1 p-3">
-    <a
-      class="nav-link d-flex align-items-center gap-2 {if $currentUrl === '/user'}text-dark bg-light{else}text-secondary{/if} rounded mb-1 py-2"
-      href="/user"
-    >
-      <i class="bi bi-house"></i>
-      <span>Inicio</span>
-    </a>
-    <a
-      class="nav-link d-flex align-items-center gap-2 {if str_contains($currentUrl, '/user/reservas') && !str_contains($currentUrl, '/user/reservas/nueva')}text-dark bg-light{else}text-secondary{/if} rounded mb-1 py-2"
-      href="/user/reservas"
-    >
-      <i class="bi bi-calendar-check"></i>
-      <span>Mis Reservas</span>
-    </a>
-    <a
-      class="nav-link d-flex align-items-center gap-2 {if str_contains($currentUrl, '/user/reservas/nueva')}text-dark bg-light{else}text-secondary{/if} rounded mb-1 py-2"
-      href="/user/reservas/nueva"
-    >
-      <i class="bi bi-plus-circle"></i>
-      <span>Nueva Reserva</span>
-    </a>
-    <a
-      class="nav-link d-flex align-items-center gap-2 {if str_contains($currentUrl, '/user/profile')}text-dark bg-light{else}text-secondary{/if} rounded mb-1 py-2"
-      href="/user/profile"
-    >
-      <i class="bi bi-person"></i>
-      <span>Mi Perfil</span>
-    </a>
-  </nav>
+  {include userMenu}
 
-  <div class="p-3 border-top dropup">
+  <div class="p-3 border-top mt-auto dropup">
     <div
       class="d-flex align-items-center dropdown-toggle"
       data-bs-toggle="dropdown"
@@ -89,36 +94,14 @@
   </div>
 
   <div class="offcanvas-body d-flex flex-column">
-    <nav class="nav flex-column flex-grow-1">
-      <a
-        class="nav-link d-flex align-items-center gap-2 {if $currentUrl === '/user'}text-dark bg-light{else}text-secondary{/if} rounded mb-1 py-2"
-        href="/user"
-      >
+    {include userMenu}
+
+    <div class="px-3 py-2">
+      <a href="/" class="btn btn-outline-secondary w-100 d-flex align-items-center justify-content-center gap-2">
         <i class="bi bi-house"></i>
-        <span>Inicio</span>
+        <span>Volver a Inicio</span>
       </a>
-      <a
-        class="nav-link d-flex align-items-center gap-2 {if str_contains($currentUrl, '/user/reservas') && !str_contains($currentUrl, '/user/reservas/nueva')}text-dark bg-light{else}text-secondary{/if} rounded mb-1 py-2"
-        href="/user/reservas"
-      >
-        <i class="bi bi-calendar-check"></i>
-        <span>Mis Reservas</span>
-      </a>
-      <a
-        class="nav-link d-flex align-items-center gap-2 {if str_contains($currentUrl, '/user/reservas/nueva')}text-dark bg-light{else}text-secondary{/if} rounded mb-1 py-2"
-        href="/user/reservas/nueva"
-      >
-        <i class="bi bi-plus-circle"></i>
-        <span>Nueva Reserva</span>
-      </a>
-      <a
-        class="nav-link d-flex align-items-center gap-2 {if str_contains($currentUrl, '/user/profile')}text-dark bg-light{else}text-secondary{/if} rounded mb-1 py-2"
-        href="/user/profile"
-      >
-        <i class="bi bi-person"></i>
-        <span>Mi Perfil</span>
-      </a>
-    </nav>
+    </div>
 
     <div class="border-top pt-3 mt-auto dropup">
       <div
