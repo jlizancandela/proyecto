@@ -13,7 +13,11 @@ import {
   createCheckoutSession,
 } from "../api/bookingsApi.js";
 import { formatearFechaISO } from "../tools/formatters.js";
-import { hasWeeklyBookingForService, exceedsWeeklyHoursLimit } from "../tools/validators.js";
+import {
+  hasWeeklyBookingForService,
+  exceedsWeeklyHoursLimit,
+  hasOverlappingBooking,
+} from "../tools/validators.js";
 
 /**
  * Current application state (active route)
@@ -246,6 +250,17 @@ export const confirmReservaAction = async () => {
       throw new Error("Ya tienes una reserva de este servicio en esta semana");
     }
 
+    if (
+      hasOverlappingBooking(
+        userBookings,
+        targetDate,
+        draft.hora,
+        draft.service.duracion_minutos || 60
+      )
+    ) {
+      throw new Error("Ya tienes otra reserva en ese horario");
+    }
+
     if (exceedsWeeklyHoursLimit(userBookings, targetDate, draft.service.duracion_minutos || 60)) {
       throw new Error("Ya has alcanzado el máximo de 40 horas permitidas por ley para esta semana");
     }
@@ -295,6 +310,17 @@ export const confirmReservaWithPaymentAction = async () => {
 
         if (hasWeeklyBookingForService(userBookings, draft.service.id, targetDate)) {
             throw new Error("Ya tienes una reserva de este servicio en esta semana");
+        }
+
+        if (
+            hasOverlappingBooking(
+                userBookings,
+                targetDate,
+                draft.hora,
+                draft.service.duracion_minutos || 60
+            )
+        ) {
+            throw new Error("Ya tienes otra reserva en ese horario");
         }
 
         if (exceedsWeeklyHoursLimit(userBookings, targetDate, draft.service.duracion_minutos || 60)) {

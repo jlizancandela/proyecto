@@ -6,11 +6,13 @@
 
 use Especialistas\Application\EspecialistaService;
 use Especialistas\Infrastructure\EspecialistaRepository;
+use Especialistas\Infrastructure\EspecialistaServicioRepository;
 use Especialistas\Application\EspecialistaUsuarioDTO;
 
 beforeEach(function () {
     $this->repository = Mockery::mock(EspecialistaRepository::class);
-    $this->service = new EspecialistaService($this->repository);
+    $this->servicioRepository = Mockery::mock(EspecialistaServicioRepository::class);
+    $this->service = new EspecialistaService($this->repository, $this->servicioRepository);
 });
 
 afterEach(function () {

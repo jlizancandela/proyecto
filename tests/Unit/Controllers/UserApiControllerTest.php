@@ -6,21 +6,18 @@
 
 use Usuarios\Presentation\UserApiController;
 use Usuarios\Application\UserService;
-use Usuarios\Domain\Usuario;
-use Usuarios\Domain\UserRole;
+use Especialistas\Application\EspecialistaService;
 use Latte\Engine;
 
 beforeEach(function () {
     $this->userService = Mockery::mock(UserService::class);
     $this->latte = Mockery::mock(Engine::class);
-    $this->especialistaServicioRepo = Mockery::mock(\Especialistas\Infrastructure\EspecialistaServicioRepository::class);
-    $this->especialistaRepo = Mockery::mock(\Especialistas\Infrastructure\EspecialistaRepository::class);
+    $this->especialistaService = Mockery::mock(EspecialistaService::class);
 
     $this->controller = new UserApiController(
         $this->latte,
         $this->userService,
-        $this->especialistaServicioRepo,
-        $this->especialistaRepo
+        $this->especialistaService
     );
 });
 
@@ -135,14 +132,14 @@ test('enrichUsersWithServices adds services for specialists', function () {
         ['id' => 2, 'rol' => 'Cliente', 'nombre' => 'María']
     ];
 
-    $this->especialistaRepo->shouldReceive('getEspecialistaIdByUserId')
+    $this->especialistaService->shouldReceive('getEspecialistaIdByUserId')
         ->with(1)
         ->andReturn(10);
 
     $mockServicio = Mockery::mock();
     $mockServicio->shouldReceive('getNombreServicio')->andReturn('Corte de pelo');
 
-    $this->especialistaServicioRepo->shouldReceive('getServiciosForEspecialista')
+    $this->especialistaService->shouldReceive('getServiciosForEspecialista')
         ->with(10)
         ->andReturn([$mockServicio]);
 
@@ -162,7 +159,7 @@ test('enrichUsersWithServices handles specialist without services', function () 
         ['id' => 1, 'rol' => 'Especialista', 'nombre' => 'Juan']
     ];
 
-    $this->especialistaRepo->shouldReceive('getEspecialistaIdByUserId')
+    $this->especialistaService->shouldReceive('getEspecialistaIdByUserId')
         ->with(1)
         ->andReturn(null);
 
@@ -174,40 +171,6 @@ test('enrichUsersWithServices handles specialist without services', function () 
 
     expect($usersArray[0])->toHaveKey('servicios');
     expect($usersArray[0]['servicios'])->toBe([]);
-});
-
-test('handleAvatarUpload returns null for invalid file type', function () {
-    $invalidFile = [
-        'error' => UPLOAD_ERR_OK,
-        'type' => 'application/pdf',
-        'name' => 'test.pdf',
-        'tmp_name' => '/tmp/test'
-    ];
-
-    $reflection = new ReflectionClass($this->controller);
-    $method = $reflection->getMethod('handleAvatarUpload');
-    $method->setAccessible(true);
-
-    $result = $method->invoke($this->controller, $invalidFile);
-
-    expect($result)->toBeNull();
-});
-
-test('handleAvatarUpload returns null for upload error', function () {
-    $errorFile = [
-        'error' => UPLOAD_ERR_NO_FILE,
-        'type' => 'image/jpeg',
-        'name' => 'test.jpg',
-        'tmp_name' => ''
-    ];
-
-    $reflection = new ReflectionClass($this->controller);
-    $method = $reflection->getMethod('handleAvatarUpload');
-    $method->setAccessible(true);
-
-    $result = $method->invoke($this->controller, $errorFile);
-
-    expect($result)->toBeNull();
 });
 
 test('getRequestData returns POST data when no JSON input', function () {
@@ -222,57 +185,4 @@ test('getRequestData returns POST data when no JSON input', function () {
     expect($result)->toBe($_POST);
 
     $_POST = [];
-});
-
-test('handleEspecialistaCreation creates specialist with services', function () {
-    $userId = 123;
-    $data = [
-        'descripcion' => 'Especialista en cortes',
-        'servicios' => [1, 2, 3]
-    ];
-
-    $this->especialistaRepo->shouldReceive('createBasicEspecialista')
-        ->with($userId, null, 'Especialista en cortes')
-        ->andReturn(456);
-
-    $this->especialistaServicioRepo->shouldReceive('addEspecialistaServicio')
-        ->times(3);
-
-    $reflection = new ReflectionClass($this->controller);
-    $method = $reflection->getMethod('handleEspecialistaCreation');
-    $method->setAccessible(true);
-
-    $method->invoke($this->controller, $userId, $data);
-
-    // If no exception, test passes
-    expect(true)->toBeTrue();
-});
-
-test('handleEspecialistaUpdate updates specialist data', function () {
-    $userId = 123;
-    $data = [
-        'descripcion' => 'Nueva descripción',
-        'servicios' => [4, 5]
-    ];
-
-    $this->especialistaRepo->shouldReceive('getEspecialistaIdByUserId')
-        ->with($userId)
-        ->andReturn(456);
-
-    $this->especialistaRepo->shouldReceive('updateEspecialistaDescription')
-        ->with(456, 'Nueva descripción');
-
-    $this->especialistaServicioRepo->shouldReceive('deleteAllServiciosForEspecialista')
-        ->with(456);
-
-    $this->especialistaServicioRepo->shouldReceive('addEspecialistaServicio')
-        ->times(2);
-
-    $reflection = new ReflectionClass($this->controller);
-    $method = $reflection->getMethod('handleEspecialistaUpdate');
-    $method->setAccessible(true);
-
-    $method->invoke($this->controller, $userId, $data);
-
-    expect(true)->toBeTrue();
 });

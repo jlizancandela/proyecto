@@ -348,48 +348,48 @@ $router->get('/admin/users/pdf', function () use ($latte, $reservaService, $user
 /**
  * Get all users
  */
-$router->get('/admin/api/users', function () use ($latte, $userService, $especialistaServicioRepository, $especialistaRepository) {
-    $controller = new UserApiController($latte, $userService, $especialistaServicioRepository, $especialistaRepository);
+$router->get('/admin/api/users', function () use ($latte, $userService, $especialistaService) {
+    $controller = new UserApiController($latte, $userService, $especialistaService);
     $controller->getAllUsers();
 });
 
 /**
  * Create user
  */
-$router->post('/admin/api/users', function () use ($latte, $userService, $especialistaServicioRepository, $especialistaRepository) {
-    $controller = new UserApiController($latte, $userService, $especialistaServicioRepository, $especialistaRepository);
+$router->post('/admin/api/users', function () use ($latte, $userService, $especialistaService) {
+    $controller = new UserApiController($latte, $userService, $especialistaService);
     $controller->createUser();
 });
 
 /**
  * Get one user
  */
-$router->get('/admin/api/users/(\\d+)', function ($id) use ($latte, $userService, $especialistaServicioRepository, $especialistaRepository) {
-    $controller = new UserApiController($latte, $userService, $especialistaServicioRepository, $especialistaRepository);
+$router->get('/admin/api/users/(\\d+)', function ($id) use ($latte, $userService, $especialistaService) {
+    $controller = new UserApiController($latte, $userService, $especialistaService);
     $controller->getUserById((int)$id);
 });
 
 /**
  * Update user (POST)
  */
-$router->post('/admin/api/users/(\\d+)', function ($id) use ($latte, $userService, $especialistaServicioRepository, $especialistaRepository) {
-    $controller = new UserApiController($latte, $userService, $especialistaServicioRepository, $especialistaRepository);
+$router->post('/admin/api/users/(\\d+)', function ($id) use ($latte, $userService, $especialistaService) {
+    $controller = new UserApiController($latte, $userService, $especialistaService);
     $controller->updateUser((int)$id);
 });
 
 /**
  * Update user (PUT)
  */
-$router->put('/admin/api/users/(\\d+)', function ($id) use ($latte, $userService, $especialistaServicioRepository, $especialistaRepository) {
-    $controller = new UserApiController($latte, $userService, $especialistaServicioRepository, $especialistaRepository);
+$router->put('/admin/api/users/(\\d+)', function ($id) use ($latte, $userService, $especialistaService) {
+    $controller = new UserApiController($latte, $userService, $especialistaService);
     $controller->updateUser((int)$id);
 });
 
 /**
  * Delete user
  */
-$router->delete('/admin/api/users/(\\d+)', function ($id) use ($latte, $userService, $especialistaServicioRepository, $especialistaRepository) {
-    $controller = new UserApiController($latte, $userService, $especialistaServicioRepository, $especialistaRepository);
+$router->delete('/admin/api/users/(\\d+)', function ($id) use ($latte, $userService, $especialistaService) {
+    $controller = new UserApiController($latte, $userService, $especialistaService);
     $controller->deleteUser((int)$id);
 });
 
@@ -580,8 +580,8 @@ $router->get('/payment/cancel', function () {
 /**
  * Get my user data
  */
-$router->get('/api/me', function () use ($latte, $userService, $especialistaServicioRepository, $especialistaRepository) {
-    $controller = new UserApiController($latte, $userService, $especialistaServicioRepository, $especialistaRepository);
+$router->get('/api/me', function () use ($latte, $userService, $especialistaService) {
+    $controller = new UserApiController($latte, $userService, $especialistaService);
     $controller->getCurrentUser();
 });
 

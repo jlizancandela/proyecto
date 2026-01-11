@@ -58,6 +58,7 @@ Thumbs.db
 # Documentos y pruebas
 /documentos/*
 AGENTS.md
+REFACTOR_DOCUMENTATION.md
 
 /test
 # /tests/

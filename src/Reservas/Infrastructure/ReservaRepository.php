@@ -342,7 +342,8 @@ class ReservaRepository
                 WHERE id_especialista = :id_especialista
                 AND fecha_reserva = :fecha_reserva
                 AND estado != 'Cancelada'
-                AND (hora_inicio < :hora_fin AND hora_fin > :hora_inicio)
+                AND (CAST(hora_inicio AS TIME) < CAST(:hora_fin AS TIME) 
+                     AND CAST(hora_fin AS TIME) > CAST(:hora_inicio AS TIME))
             ";
 
             if ($exclude_id_reserva !== null) {
@@ -364,6 +365,12 @@ class ReservaRepository
 
             $stmt->execute($params);
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            // SAFE LOGGING to PHP Error Log
+            error_log(sprintf(
+                "CONFLICT CHECK: Spec=%d, Date=%s, Start=%s, End=%s, Count=%d",
+                $id_especialista, $fecha, $hora_inicio, $hora_fin, $result['count']
+            ));
 
             return $result['count'] > 0;
         } catch (\Exception $e) {

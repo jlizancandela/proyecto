@@ -15,6 +15,7 @@ use Servicios\Infrastructure\ServicioRepository;
 use Servicios\Application\ServicioService;
 use Especialistas\Infrastructure\EspecialistaRepository;
 use Especialistas\Infrastructure\EspecialistaServicioRepository;
+use Especialistas\Application\EspecialistaService;
 use Reservas\Infrastructure\ReservaRepository;
 use Reservas\Application\ReservaService;
 
@@ -35,5 +36,6 @@ $servicioRepository = new ServicioRepository($db);
 $servicioService = new ServicioService($servicioRepository);
 $especialistaRepository = new EspecialistaRepository($db);
 $especialistaServicioRepository = new EspecialistaServicioRepository($db);
+$especialistaService = new EspecialistaService($especialistaRepository, $especialistaServicioRepository);
 $reservaRepository = new ReservaRepository($db);
 $reservaService = new ReservaService($reservaRepository);

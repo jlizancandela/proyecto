@@ -8,14 +8,19 @@ const mysql = require("mysql2/promise");
 const bcrypt = require("bcryptjs");
 const { dbConfig } = require("../../helpers/db-config");
 
-test.describe("Booking Flow E2E", () => {
+  test.describe("Booking Flow E2E", () => {
   let connection;
   let testUserId;
+  let serviceId;
+  let specialistUserId;
   const testUserEmail = `test-booking-${Date.now()}@playwright.test`;
   const testUserPassword = "TestPassword123!";
+  const serviceName = `Test Service ${Date.now()}`;
 
   test.beforeAll(async () => {
     connection = await mysql.createConnection(dbConfig);
+    
+    // 1. Create Test Client
     const passwordHash = await bcrypt.hash(testUserPassword, 10);
     const [userResult] = await connection.execute(
       `INSERT INTO USUARIO (rol, nombre, apellidos, email, telefono, password_hash, fecha_registro, activo)
@@ -23,12 +28,59 @@ test.describe("Booking Flow E2E", () => {
       ["Cliente", "Booking", "Test User", testUserEmail, "600000002", passwordHash, 1]
     );
     testUserId = userResult.insertId;
+
+    // 2. Create Test Service
+    const [serviceResult] = await connection.execute(
+      `INSERT INTO SERVICIO (nombre_servicio, duracion_minutos, precio, descripcion)
+       VALUES (?, ?, ?, ?)`,
+      [serviceName, 30, 25.00, "Test Service for E2E Flow"]
+    );
+    serviceId = serviceResult.insertId;
+
+    // 3. Create Test Specialist User
+    const [specUserResult] = await connection.execute(
+      `INSERT INTO USUARIO (rol, nombre, apellidos, email, telefono, password_hash, fecha_registro, activo)
+       VALUES (?, ?, ?, ?, ?, ?, CURDATE(), ?)`,
+      ["Especialista", "Flow", "Specialist", `spec-flow-${Date.now()}@test.com`, "600000999", passwordHash, 1]
+    );
+    specialistUserId = specUserResult.insertId;
+
+    // 4. Create Specialist Profile
+    const [specResult] = await connection.execute(
+      `INSERT INTO ESPECIALISTA (id_usuario, descripcion) VALUES (?, ?)`,
+      [specialistUserId, "Expert in E2E Testing"]
+    );
+    const specialistId = specResult.insertId;
+
+    // 5. Assign Service to Specialist
+    await connection.execute(
+      `INSERT INTO ESPECIALISTA_SERVICIO (id_especialista, id_servicio) VALUES (?, ?)`,
+      [specialistId, serviceId]
+    );
+
+    // 6. Create Schedule (Super Robust: 0-8 covers all day numbering conventions, full day availability)
+    for (let day = 0; day <= 8; day++) {
+      await connection.execute(
+        `INSERT INTO HORARIO_ESPECIALISTA (id_especialista, dia_semana, hora_inicio, hora_fin)
+         VALUES (?, ?, ?, ?)`,
+        [specialistId, day, "00:00:00", "23:59:00"]
+      );
+    }
   });
 
   test.afterAll(async () => {
     if (connection) {
+      // Clean up Booking
       await connection.execute("DELETE FROM RESERVA WHERE id_cliente = ?", [testUserId]);
+      // Clean up Users (Cascade should handle Specialist, Schedules, etc.)
       await connection.execute("DELETE FROM USUARIO WHERE id_usuario = ?", [testUserId]);
+      if (specialistUserId) {
+        await connection.execute("DELETE FROM USUARIO WHERE id_usuario = ?", [specialistUserId]);
+      }
+      // Clean up Service
+      if (serviceId) {
+        await connection.execute("DELETE FROM SERVICIO WHERE id_servicio = ?", [serviceId]);
+      }
       await connection.end();
     }
   });
@@ -45,13 +97,11 @@ test.describe("Booking Flow E2E", () => {
     await page.goto("/user/reservas/nueva");
     await page.waitForSelector("#bookings-app");
 
-    // STEP 1: Select Service
-    const serviceCard = page.locator(".card").first();
+    // STEP 1: Select Our Test Service
+    // Filter by our specific service name to ensure we pick the one with guaranteed availability
+    const serviceCard = page.locator(".card").filter({ hasText: serviceName }).first();
     await expect(serviceCard).toBeVisible();
 
-    // Extract service name from the title
-    const serviceTitle = serviceCard.locator(".card-title").first();
-    const serviceName = (await serviceTitle.textContent()).trim();
     console.log(`Selecting service: ${serviceName}`);
     await serviceCard.click();
 
@@ -85,6 +135,9 @@ test.describe("Booking Flow E2E", () => {
     const tomorrowDateBtn = page.locator("button.btn-outline-primary:not([disabled])").first();
     await expect(tomorrowDateBtn).toBeVisible({ timeout: 10000 });
     await tomorrowDateBtn.click();
+    
+    // Tuning: Wait for time slots to regenerate properly
+    await page.waitForTimeout(2000);
 
     // Select first available time slot
     const timeButton = page.locator("button.btn-outline-primary:not([disabled])").first();

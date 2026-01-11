@@ -9,6 +9,7 @@ namespace Usuarios\Presentation;
 use Latte\Engine;
 use Shared\Infrastructure\Pagination\Paginator;
 use Usuarios\Application\UserService;
+use Especialistas\Application\EspecialistaService;
 use Usuarios\Presentation\Transformers\UserTransformer;
 use Respect\Validation\Validator as v;
 use Respect\Validation\Exceptions\ValidationException;
@@ -20,19 +21,16 @@ class UserApiController
 {
     private UserService $userService;
     private Engine $latte;
-    private \Especialistas\Infrastructure\EspecialistaServicioRepository $especialistaServicioRepository;
-    private \Especialistas\Infrastructure\EspecialistaRepository $especialistaRepository;
+    private EspecialistaService $especialistaService;
 
     public function __construct(
         Engine $latte,
         UserService $userService,
-        \Especialistas\Infrastructure\EspecialistaServicioRepository $especialistaServicioRepository,
-        \Especialistas\Infrastructure\EspecialistaRepository $especialistaRepository
+        EspecialistaService $especialistaService
     ) {
         $this->latte = $latte;
         $this->userService = $userService;
-        $this->especialistaServicioRepository = $especialistaServicioRepository;
-        $this->especialistaRepository = $especialistaRepository;
+        $this->especialistaService = $especialistaService;
     }
 
     /**
@@ -101,13 +99,13 @@ class UserApiController
             $userData = UserTransformer::toJsonApi($user);
 
             if ($user->getRol() === \Usuarios\Domain\UserRole::Especialista) {
-                $especialistaData = $this->especialistaRepository->getEspecialistaDataByUserId($id);
+                $especialistaData = $this->especialistaService->getEspecialistaDataByUserId($id);
                 if ($especialistaData) {
                     $userData['descripcion'] = $especialistaData['descripcion'];
                     $userData['foto_url'] = $especialistaData['foto_url'];
                     $especialistaId = $especialistaData['id_especialista'];
 
-                    $servicios = $this->especialistaServicioRepository->getServiciosForEspecialista($especialistaId);
+                    $servicios = $this->especialistaService->getServiciosForEspecialista($especialistaId);
                     $userData['servicios'] = array_map(fn($s) => $s->getIdServicio(), $servicios);
                 } else {
                     $userData['servicios'] = [];
@@ -278,7 +276,7 @@ class UserApiController
             $this->userService->setUser($user);
 
             if ($data['rol'] === 'Especialista' && !empty($data['servicios'])) {
-                $this->handleEspecialistaCreation($user->getId(), $data);
+                $this->especialistaService->createEspecialistaProfile($user->getId(), $data, $_FILES['avatar'] ?? null);
             }
 
             echo json_encode([
@@ -368,8 +366,8 @@ class UserApiController
 
             $this->userService->updateUser($user);
 
-            if ($rol === 'Especialista' && isset($data['servicios'])) {
-                $this->handleEspecialistaUpdate($id, $data);
+            if ($rol === 'Especialista') {
+                $this->especialistaService->updateEspecialistaProfile($id, $data, $_FILES['avatar'] ?? null);
             }
 
             echo json_encode([
@@ -470,82 +468,15 @@ class UserApiController
     {
         foreach ($usersArray as &$userData) {
             if ($userData['rol'] === 'Especialista') {
-                $especialistaId = $this->especialistaRepository->getEspecialistaIdByUserId($userData['id']);
+                $especialistaId = $this->especialistaService->getEspecialistaIdByUserId($userData['id']);
                 if ($especialistaId) {
-                    $servicios = $this->especialistaServicioRepository->getServiciosForEspecialista($especialistaId);
+                    $servicios = $this->especialistaService->getServiciosForEspecialista($especialistaId);
                     $userData['servicios'] = array_map(fn($s) => $s->getNombreServicio(), $servicios);
                 } else {
                     $userData['servicios'] = [];
                 }
             } else {
                 $userData['servicios'] = [];
-            }
-        }
-    }
-
-    /**
-     * Handles specialist creation with services and avatar.
-     *
-     * @param int $userId User ID
-     * @param array $data Request data
-     * @return void
-     */
-    private function handleEspecialistaCreation(int $userId, array $data): void
-    {
-        $avatarUrl = null;
-        if (isset($_FILES['avatar'])) {
-            $avatarUrl = $this->handleAvatarUpload($_FILES['avatar']);
-        }
-
-        $descripcion = $data['descripcion'] ?? null;
-        $especialistaId = $this->especialistaRepository->createBasicEspecialista($userId, $avatarUrl, $descripcion);
-
-        if ($especialistaId) {
-            foreach ($data['servicios'] as $servicioId) {
-                $especialistaServicio = new \Especialistas\Domain\EspecialistaServicio(
-                    $especialistaId,
-                    (int) $servicioId
-                );
-                $this->especialistaServicioRepository->addEspecialistaServicio($especialistaServicio);
-            }
-        }
-    }
-
-    /**
-     * Handles specialist update with services and avatar.
-     *
-     * @param int $userId User ID
-     * @param array $data Request data
-     * @return void
-     */
-    private function handleEspecialistaUpdate(int $userId, array $data): void
-    {
-        $especialistaId = $this->especialistaRepository->getEspecialistaIdByUserId($userId);
-
-        if (!$especialistaId) {
-            $especialistaId = $this->especialistaRepository->createBasicEspecialista($userId);
-        }
-
-        if ($especialistaId) {
-            if (isset($_FILES['avatar'])) {
-                $avatarUrl = $this->handleAvatarUpload($_FILES['avatar']);
-                if ($avatarUrl) {
-                    $this->especialistaRepository->updateEspecialistaPhoto($especialistaId, $avatarUrl);
-                }
-            }
-
-            if (isset($data['descripcion'])) {
-                $this->especialistaRepository->updateEspecialistaDescription($especialistaId, $data['descripcion']);
-            }
-
-            $this->especialistaServicioRepository->deleteAllServiciosForEspecialista($especialistaId);
-
-            foreach ($data['servicios'] as $servicioId) {
-                $especialistaServicio = new \Especialistas\Domain\EspecialistaServicio(
-                    $especialistaId,
-                    (int) $servicioId
-                );
-                $this->especialistaServicioRepository->addEspecialistaServicio($especialistaServicio);
             }
         }
     }
@@ -565,46 +496,5 @@ class UserApiController
             }
         }
         return $_POST;
-    }
-
-    /**
-     * Handles avatar file upload with validation.
-     *
-     * @param array|null $file Uploaded file data
-     * @return string|null Avatar URL or null if upload failed
-     */
-    private function handleAvatarUpload(?array $file): ?string
-    {
-        if (!$file || $file['error'] !== UPLOAD_ERR_OK) {
-            return null;
-        }
-
-        $allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
-        if (!in_array($file['type'], $allowedTypes)) {
-            return null;
-        }
-
-        try {
-            $imageKit = new \ImageKit\ImageKit(
-                $_ENV['IMAGEKIT_API_KEY'],
-                $_ENV['IMAGEKIT_PRIVATE_KEY'],
-                $_ENV['IMAGEKIT_ENDPOINT']
-            );
-
-            $upload = $imageKit->upload([
-                'file' => fopen($file['tmp_name'], 'r'),
-                'fileName' => $file['name'],
-                'folder' => '/avatars'
-            ]);
-
-            if ($upload->error) {
-                return null;
-            }
-
-            return $upload->result->url;
-        } catch (\Exception $e) {
-            error_log('Error uploading avatar to ImageKit: ' . $e->getMessage());
-            return null;
-        }
     }
 }

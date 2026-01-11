@@ -97,3 +97,34 @@ export const exceedsWeeklyHoursLimit = (bookings, targetDate, newDuration, limit
   const currentHours = getTotalWeeklyHours(bookings, targetDate);
   return currentHours + newDuration / 60 > limit;
 };
+
+/**
+ * Checks if the new booking overlaps with any existing active booking.
+ *
+ * @param {Array} bookings - The list of user bookings.
+ * @param {string} targetDate - The target date (YYYY-MM-DD).
+ * @param {string} targetTime - The target start time (HH:MM).
+ * @param {number} durationMinutes - Duration of the new booking in minutes.
+ * @returns {boolean} True if an overlap exists.
+ */
+export const hasOverlappingBooking = (bookings, targetDate, targetTime, durationMinutes) => {
+  const activeBookings = bookings.filter((booking) => booking.estado !== "Cancelada");
+  const newStart = new Date(`${targetDate}T${targetTime}:00`);
+  const newEnd = new Date(newStart.getTime() + durationMinutes * 60000);
+
+  return activeBookings.some((booking) => {
+    // Only check bookings on the same day
+    const bookingDate = booking.fecha_reserva.split("T")[0]; // Handle ISO strings if present
+    if (bookingDate !== targetDate) return false;
+
+    // Construct Date objects for comparison
+    // Assuming booking.hora_inicio is "HH:MM:SS" or "HH:MM"
+    const existingStart = new Date(`${targetDate}T${booking.hora_inicio}`);
+    const existingEnd = new Date(
+      existingStart.getTime() + (booking.duracion_minutos || 60) * 60000
+    );
+
+    // Check for overlap: (StartA < EndB) and (EndA > StartB)
+    return newStart < existingEnd && newEnd > existingStart;
+  });
+};
