@@ -1,76 +1,62 @@
 set shell := ["bash", "-c"]
 
-# Variables de configuración
+# Variables
 IMAGE := "jlizancandela/peluqueria:latest"
 DOCKERFILE := "Dockerfile"
+SERVER_IP := "138.199.203.37"
 
-# Listar todos los comandos disponibles
+# Listar comandos
 default:
     @just --list
 
-# ==========================================
-# 🛠️  ENTORNO DE DESARROLLO (DDEV)
-# ==========================================
+# --- 🚀 Ciclo de Vida (Docker Compose) ---
 
 # Levantar el entorno de desarrollo
 up:
-    ddev start
+    docker compose up -d
 
-# Apagar el entorno
+# Detener el entorno
 down:
-    ddev stop
+    docker compose down
 
-# Reiniciar el entorno
-restart: down up
+# Ver logs de la aplicación
+logs:
+    docker compose logs -f app
 
-# Entrar a la terminal del contenedor web
-ssh:
-    ddev ssh
+# Entrar a la consola del contenedor
+shell:
+    docker compose exec app bash
 
-# Instalar dependencias (PHP y Node)
+# --- 📦 Dependencias y Assets ---
+
+# Instalar dependencias de PHP y JS (Raíz y E2E)
 install:
-    ddev composer install
+    docker compose exec app composer install
     npm install
+    cd tests/playwright && npm install
 
-# ==========================================
-# 🎨 FRONTEND
-# ==========================================
-
-# Compilar assets en modo desarrollo y observar cambios
-watch:
-    npm run watch
-
-# Compilar assets para producción
-build-assets:
+# Build de assets frontend
+build:
     npm run build
 
-# ==========================================
-# 🧪 TESTING & CALIDAD
-# ==========================================
+# --- 🧪 Testing ---
 
-# Ejecutar TODOS los tests (Unitarios PHP + JS)
-test: test-php test-js
+# Correr todos los tests (Unitarios + E2E)
+test: test-unit test-e2e
 
-# Ejecutar tests de PHP (Pest) dentro del contenedor
-test-php:
-    ddev exec ./vendor/bin/pest
-
-# Ejecutar tests unitarios de JS (Vitest)
-test-js:
+# Tests unitarios (PHP con Pest y JS con Vitest)
+test-unit:
+    docker compose exec app ./vendor/bin/pest
     npm run test:unit
 
-# Ejecutar tests E2E (Playwright) - Requiere entorno levantado
+# Tests E2E con Playwright
 test-e2e:
     cd tests/playwright && npx playwright test
 
-# ==========================================
-# 🚀 DEPLOY / DOCKER
-# ==========================================
+# --- 🚢 Despliegue ---
 
-# Construir imagen de Docker localmente
-build-image:
-    docker buildx build -t {{IMAGE}} -f {{DOCKERFILE}} .
-
-# Construir y pushear imagen (Requiere login)
+# Buildear, pushear y disparar el deploy en el server
 publish:
     docker buildx build --push -t {{IMAGE}} -f {{DOCKERFILE}} .
+    ssh root@{{SERVER_IP}} just --justfile '~/proyecto/justfile' --working-directory '~/proyecto' deploy
+
