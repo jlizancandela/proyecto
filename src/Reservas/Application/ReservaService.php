@@ -311,6 +311,10 @@ class ReservaService
             if ($reservaDate < $today) {
                 throw new BookingValidationException('La fecha de reserva debe ser futura');
             }
+
+            if ($reservaDate->format('w') === '0') {
+                throw new BookingValidationException('El salón permanece cerrado los domingos');
+            }
         }
     }
 
