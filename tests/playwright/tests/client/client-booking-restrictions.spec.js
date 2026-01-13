@@ -98,6 +98,7 @@ const { dbConfig } = require("../../helpers/db-config");
     }
 
     const user = await createTestUser(`test-same-week-${Date.now()}@playwright.test`);
+    const resources = await createTestResources();
 
     try {
       const today = new Date();
@@ -109,11 +110,11 @@ const { dbConfig } = require("../../helpers/db-config");
 
       const dateStr = `${year}-${month}-${day}`;
 
-      // Pre-insert a booking for today (Service ID 2 = Corte de Cabello Hombre)
+      // Pre-insert a booking for today using our test resources
       await connection.execute(
         `INSERT INTO RESERVA (id_cliente, id_especialista, id_servicio, fecha_reserva, hora_inicio, hora_fin, estado)
          VALUES (?, ?, ?, ?, ?, ?, ?)`,
-        [user.id, 1, 1, dateStr, "09:00:00", "10:00:00", "Confirmada"]
+        [user.id, resources.specialistId, resources.serviceId, dateStr, "09:00:00", "10:00:00", "Confirmada"]
       );
 
       // Login
@@ -126,8 +127,12 @@ const { dbConfig } = require("../../helpers/db-config");
       await page.goto("/user/reservas/nueva");
       await page.waitForSelector("#bookings-app");
 
-      // Select "Corte de Pelo" (ID 1)
-      await page.locator(".card").filter({ hasText: "Corte de Pelo" }).click();
+      // Select our specific test service
+      await page.locator(".card").filter({ hasText: resources.serviceName }).click();
+
+      // Wait for calendar/specialist selection to be visible
+      await expect(page.locator("text=Paso 2/3")).toBeVisible();
+      await page.waitForTimeout(1000);
 
       // Select tomorrow's date
       const tomorrow = new Date();
@@ -164,6 +169,7 @@ const { dbConfig } = require("../../helpers/db-config");
       await expect(alert).toBeVisible({ timeout: 15000 });
       await expect(alert).toContainText(/Ya tienes una reserva de este servicio en esta semana/i);
     } finally {
+      await cleanTestResources(resources);
       await cleanTestUser(user.id);
     }
   });
