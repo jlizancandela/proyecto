@@ -36,17 +36,26 @@ class HomeController
      */
     public function index(): string
     {
-        $success = $_SESSION['success'] ?? null;
-        $error = $_SESSION['error'] ?? null;
+        $contactSuccess = $_SESSION['contact_success'] ?? null;
+        $contactError = $_SESSION['contact_error'] ?? null;
+        $globalSuccess = $_SESSION['success'] ?? null;
+        $globalError = $_SESSION['error'] ?? null;
 
-        unset($_SESSION['success'], $_SESSION['error']);
+        unset(
+            $_SESSION['contact_success'],
+            $_SESSION['contact_error'],
+            $_SESSION['success'],
+            $_SESSION['error']
+        );
 
         return $this->latte->renderToString(
             __DIR__ . '/../../../views/pages/Home.latte',
             [
                 'currentUrl' => $_SERVER['REQUEST_URI'] ?? '/',
-                'success' => $success,
-                'error' => $error
+                'contactSuccess' => $contactSuccess,
+                'contactError' => $contactError,
+                'success' => $globalSuccess,
+                'error' => $globalError
             ]
         );
     }
@@ -93,9 +102,9 @@ class HomeController
                 $htmlContent
             );
 
-            $_SESSION['success'] = '¡Gracias por tu mensaje! Te responderemos lo antes posible.';
+            $_SESSION['contact_success'] = '¡Gracias por tu mensaje! Te responderemos lo antes posible.';
         } catch (\Exception $e) {
-            $_SESSION['error'] = 'Error al enviar el mensaje: ' . $e->getMessage();
+            $_SESSION['contact_error'] = 'Error al enviar el mensaje: ' . $e->getMessage();
         }
 
         header('Location: /#contact');
