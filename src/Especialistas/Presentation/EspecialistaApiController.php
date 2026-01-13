@@ -61,7 +61,8 @@ class EspecialistaApiController
 
 
             $total = $this->repository->countEspecialistasDisponibles(
-                (int)$idServicio
+                (int)$idServicio,
+                $fecha
             );
 
 

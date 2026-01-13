@@ -152,22 +152,27 @@ test('getEspecialistaDataByUserId returns specialist data', function () {
     expect($result['descripcion'])->toBe('Test specialist');
 });
 
-test('countEspecialistasDisponibles counts active specialists for service', function () {
+test('countEspecialistasDisponibles counts active specialists for service and date', function () {
     $this->pdo->shouldReceive('prepare')
         ->once()
         ->with(Mockery::on(function ($sql) {
             return str_contains($sql, 'COUNT(DISTINCT e.id_especialista)')
                 && str_contains($sql, 'WHERE es.id_servicio = :id_servicio')
+                && str_contains($sql, 'AND he.dia_semana = :dia_semana')
                 && str_contains($sql, 'AND u.activo = 1');
         }))
         ->andReturn($this->stmt);
 
-    $this->stmt->shouldReceive('execute')->with(['id_servicio' => 5]);
+    $fecha = '2024-12-09'; // Monday (1)
+    $this->stmt->shouldReceive('execute')->with([
+        'id_servicio' => 5,
+        'dia_semana' => 1
+    ]);
     $this->stmt->shouldReceive('fetch')
         ->with(PDO::FETCH_ASSOC)
         ->andReturn(['total' => 3]);
 
-    $result = $this->repository->countEspecialistasDisponibles(5);
+    $result = $this->repository->countEspecialistasDisponibles(5, $fecha);
 
     expect($result)->toBe(3);
 });
