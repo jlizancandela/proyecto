@@ -32,12 +32,21 @@ class UserController
             $latestReserva = $this->reservaService->getLatestReserva((int)$userId);
         }
 
+        $globalSuccess = $_SESSION['success'] ?? null;
+        $globalError = $_SESSION['error'] ?? null;
+        $globalInfo = $_SESSION['info'] ?? null;
+
+        unset($_SESSION['success'], $_SESSION['error'], $_SESSION['info']);
+
         return $this->latte->renderToString(
             __DIR__ . '/../../../views/pages/User.latte',
             [
                 'userName' => ucfirst($_SESSION['name'] ?? 'Usuario'),
                 'currentUrl' => $_SERVER['REQUEST_URI'] ?? '/user',
-                'latestReserva' => $latestReserva
+                'latestReserva' => $latestReserva,
+                'success' => $globalSuccess,
+                'error' => $globalError,
+                'info' => $globalInfo
             ]
         );
     }

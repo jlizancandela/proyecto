@@ -76,6 +76,11 @@ class SpecialistController
             }
         }
 
+        $success = $_SESSION['success'] ?? null;
+        $error = $_SESSION['error'] ?? null;
+        $info = $_SESSION['info'] ?? null;
+        unset($_SESSION['success'], $_SESSION['error'], $_SESSION['info']);
+
         return $this->latte->renderToString(
             __DIR__ . '/../../../views/pages/Specialist.latte',
             [
@@ -84,7 +89,10 @@ class SpecialistController
                 'currentUrl' => $_SERVER['REQUEST_URI'] ?? '/specialist',
                 'totalBookings' => $totalBookings,
                 'upcomingBookings' => $upcomingBookings,
-                'estimatedRevenue' => number_format($estimatedRevenue, 2, '.', '')
+                'estimatedRevenue' => number_format($estimatedRevenue, 2, '.', ''),
+                'success' => $success,
+                'error' => $error,
+                'info' => $info
             ]
         );
     }
@@ -135,6 +143,11 @@ class SpecialistController
 
         $reservasData = array_map(fn($reserva) => $reserva->toArray(), $reservas);
 
+        $success = $_SESSION['success'] ?? null;
+        $error = $_SESSION['error'] ?? null;
+        $info = $_SESSION['info'] ?? null;
+        unset($_SESSION['success'], $_SESSION['error'], $_SESSION['info']);
+
         return $this->latte->renderToString(
             __DIR__ . '/../../../views/pages/SpecialistBookings.latte',
             [
@@ -150,7 +163,10 @@ class SpecialistController
                     'fecha_hasta' => $fechaHasta,
                     'estado' => $estado,
                     'cliente' => $clienteSearch
-                ]
+                ],
+                'success' => $success,
+                'error' => $error,
+                'info' => $info
             ]
         );
     }
@@ -170,13 +186,21 @@ class SpecialistController
             exit;
         }
 
+        $success = $_SESSION['success'] ?? null;
+        $error = $_SESSION['error'] ?? null;
+        $info = $_SESSION['info'] ?? null;
+        unset($_SESSION['success'], $_SESSION['error'], $_SESSION['info']);
+
         return $this->latte->renderToString(
             __DIR__ . '/../../../views/pages/SpecialistProfile.latte',
             [
                 'userName' => ucfirst($_SESSION['name'] ?? 'Especialista'),
                 'userPhoto' => $profileData['foto_url'] ?? null,
                 'currentUrl' => $_SERVER['REQUEST_URI'] ?? '/specialist/profile',
-                'profile' => $profileData
+                'profile' => $profileData,
+                'success' => $success,
+                'error' => $error,
+                'info' => $info
             ]
         );
     }

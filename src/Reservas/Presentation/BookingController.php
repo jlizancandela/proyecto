@@ -29,11 +29,19 @@ class BookingController
      */
     public function index()
     {
+        $success = $_SESSION['success'] ?? null;
+        $error = $_SESSION['error'] ?? null;
+        $info = $_SESSION['info'] ?? null;
+        unset($_SESSION['success'], $_SESSION['error'], $_SESSION['info']);
+
         return $this->latte->renderToString(
             __DIR__ . '/../../../views/pages/NewBooking.latte',
             [
                 'userName' => ucfirst($_SESSION['name'] ?? 'Usuario'),
-                'currentUrl' => $_SERVER['REQUEST_URI'] ?? '/user/reservas/nueva'
+                'currentUrl' => $_SERVER['REQUEST_URI'] ?? '/user/reservas/nueva',
+                'success' => $success,
+                'error' => $error,
+                'info' => $info
             ]
         );
     }

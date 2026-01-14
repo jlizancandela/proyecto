@@ -40,12 +40,14 @@ class HomeController
         $contactError = $_SESSION['contact_error'] ?? null;
         $globalSuccess = $_SESSION['success'] ?? null;
         $globalError = $_SESSION['error'] ?? null;
+        $globalInfo = $_SESSION['info'] ?? null;
 
         unset(
             $_SESSION['contact_success'],
             $_SESSION['contact_error'],
             $_SESSION['success'],
-            $_SESSION['error']
+            $_SESSION['error'],
+            $_SESSION['info']
         );
 
         return $this->latte->renderToString(
@@ -55,7 +57,8 @@ class HomeController
                 'contactSuccess' => $contactSuccess,
                 'contactError' => $contactError,
                 'success' => $globalSuccess,
-                'error' => $globalError
+                'error' => $globalError,
+                'info' => $globalInfo
             ]
         );
     }
