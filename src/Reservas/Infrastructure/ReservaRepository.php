@@ -681,8 +681,8 @@ class ReservaRepository
                 INNER JOIN USUARIO ue ON e.id_usuario = ue.id_usuario
                 INNER JOIN SERVICIO s ON r.id_servicio = s.id_servicio
                 WHERE r.id_cliente = :userId
-                AND r.estado IN ('pendiente', 'confirmada')
-                AND CONCAT(r.fecha_reserva, ' ', r.hora_inicio) >= NOW()
+                AND r.estado IN ('Pendiente', 'Confirmada', 'Pagada')
+                AND TIMESTAMP(r.fecha_reserva, r.hora_inicio) >= NOW()
                 ORDER BY r.fecha_reserva ASC, r.hora_inicio ASC
                 LIMIT 1
             ";

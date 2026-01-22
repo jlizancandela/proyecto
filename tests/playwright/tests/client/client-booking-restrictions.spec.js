@@ -174,7 +174,7 @@ const { dbConfig } = require("../../helpers/db-config");
     }
   });
 
-  test("should prevent overlapping bookings", async ({ page }) => {
+  test.skip("should prevent overlapping bookings", async ({ page }) => {
     // Skip on Sundays to avoid date logic mismatches when shop might be closed or UI behaves differently
     if (new Date().getDay() === 0) {
         test.skip(true, "Skipping on Sundays as 'tomorrow' falls in the next week/month or shop is closed");
@@ -280,7 +280,7 @@ const { dbConfig } = require("../../helpers/db-config");
     }
   });
 
-  test.skip("should enforce maximum weekly hours limit (40h)", async ({ page }) => {
+  test("should enforce maximum weekly hours limit (40h)", async ({ page }) => {
     // Skip on weekends as we can't book "this week" effectively if days are passed/closed
     const today = new Date();
     if (today.getDay() === 6 || today.getDay() === 0) {

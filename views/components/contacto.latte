@@ -9,19 +9,19 @@
     </div>
     <div class="col-12 col-md-6">
       <div
-        n:if="isset($success) && $success"
+        n:if="isset($contactSuccess) && $contactSuccess"
         class="alert alert-success alert-dismissible fade show"
         role="alert"
       >
-        {$success}
+        {$contactSuccess}
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
       </div>
       <div
-        n:if="isset($error) && $error"
+        n:if="isset($contactError) && $contactError"
         class="alert alert-danger alert-dismissible fade show"
         role="alert"
       >
-        {$error}
+        {$contactError}
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
       </div>
 

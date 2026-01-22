@@ -4,31 +4,19 @@
     <div class="col-12">
       <h1 class="h2 mb-2 text-dark fw-bold">
         Hola, {$userName}
-        <span style="display: inline-block; animation: wave 2.5s infinite;">👋</span>
-        <style>
-          @keyframes wave {
-            0% { transform: rotate(0deg); }
-            10% { transform: rotate(14deg); }
-            20% { transform: rotate(-8deg); }
-            30% { transform: rotate(14deg); }
-            40% { transform: rotate(-4deg); }
-            50% { transform: rotate(10deg); }
-            60% { transform: rotate(0deg); }
-            100% { transform: rotate(0deg); }
-          }
-        </style>
+        <span class="wave-emoji">👋</span>
       </h1>
       <p class="text-muted">Bienvenido de nuevo a tu panel de control.</p>
     </div>
   </div>
 
-  {* Tarjeta de Próxima Cita *} {if isset($latestReserva) && $latestReserva}
+  {* Next Appointment Card *} {if isset($latestReserva) && $latestReserva}
   <div class="row mb-4">
     <div class="col-12">
       {include '../components/booking-last-card.latte', latestReserva: $latestReserva}
     </div>
   </div>
-  {/if} {* Si no hay cita próxima, mostrar información general *} {if !isset($latestReserva) ||
+  {/if} {* If no upcoming appointment, show general info *} {if !isset($latestReserva) ||
   !$latestReserva}
   <div class="alert alert-light border shadow-sm rounded-4 p-4 mb-4">
     <div class="d-flex align-items-center">
@@ -46,11 +34,27 @@
       </a>
     </div>
   </div>
-  {/if} {* Sección de Accesos Rápidos *}
+  {/if} {* Quick Actions Section *}
   <h4 class="h5 fw-bold text-dark mb-3">Accesos Rápidos</h4>
-  {include '../components/user-quick-actions.latte'} {* Sección de Ofertas (Estática por ahora) *}
+  {include '../components/user-quick-actions.latte'} {* Offers Section (Static for now) *}
   <h4 class="h5 fw-bold text-dark mb-3">Ofertas para ti</h4>
   {include '../components/user-offers.latte'}
 </div>
 
+<style>
+  .wave-emoji {
+    display: inline-block;
+    animation: wave 2.5s infinite;
+  }
+  @keyframes wave {
+    0% { transform: rotate(0deg); }
+    10% { transform: rotate(14deg); }
+    20% { transform: rotate(-8deg); }
+    30% { transform: rotate(14deg); }
+    40% { transform: rotate(-4deg); }
+    50% { transform: rotate(10deg); }
+    60% { transform: rotate(0deg); }
+    100% { transform: rotate(0deg); }
+  }
+</style>
 {/block}

@@ -8,7 +8,7 @@
     </a>
   </div>
 
-  {* Filtros en acordeón *}
+  {* Filter Accordion *}
   <div class="accordion mb-3" id="filtersAccordion">
     <div class="accordion-item">
       <h2 class="accordion-header">
@@ -32,19 +32,20 @@
         <div class="accordion-body">
           <form method="GET" action="/admin/bookings">
             <div class="row g-3 mb-3">
-              {* Filtro por estado *}
+              {* Status Filter *}
               <div class="col-12 col-md-6 col-lg-4">
                 <label for="estado" class="form-label">Estado</label>
                 <select name="estado" id="estado" class="form-select">
                   <option value="">Todos</option>
-                  <option value="Pendiente" {if ($filtros['estado'] ?? '') === 'Pendiente'}selected{/if}>Pendiente</option>
-                  <option value="Confirmada" {if ($filtros['estado'] ?? '') === 'Confirmada'}selected{/if}>Confirmada</option>
-                  <option value="Completada" {if ($filtros['estado'] ?? '') === 'Completada'}selected{/if}>Completada</option>
-                  <option value="Cancelada" {if ($filtros['estado'] ?? '') === 'Cancelada'}selected{/if}>Cancelada</option>
+<option value="Pendiente" {if ($filtros['estado'] ?? '') === 'Pendiente'}selected{/if}>Pendiente</option>
+                   <option value="Confirmada" {if ($filtros['estado'] ?? '') === 'Confirmada'}selected{/if}>Confirmada</option>
+                   <option value="Pagada" {if ($filtros['estado'] ?? '') === 'Pagada'}selected{/if}>Pagada</option>
+                   <option value="Completada" {if ($filtros['estado'] ?? '') === 'Completada'}selected{/if}>Completada</option>
+                   <option value="Cancelada" {if ($filtros['estado'] ?? '') === 'Cancelada'}selected{/if}>Cancelada</option>
                 </select>
               </div>
 
-              {* Filtro por cliente *}
+              {* Client Filter *}
               <div class="col-12 col-md-6 col-lg-4">
                 <label for="cliente" class="form-label">Cliente</label>
                 <select name="cliente" id="cliente" class="form-select">
@@ -57,7 +58,7 @@
                 </select>
               </div>
 
-              {* Filtro por especialista *}
+              {* Specialist Filter *}
               <div class="col-12 col-md-6 col-lg-4">
                 <label for="especialista" class="form-label">Especialista</label>
                 <select name="especialista" id="especialista" class="form-select">
@@ -107,20 +108,20 @@
     </div>
   </div>
 
-  {* Botón flotante para nueva reserva *}
+  {* New Booking Floating Button *}
   <button
     type="button"
-    class="btn btn-success rounded-circle shadow-lg"
+    class="btn btn-success rounded-circle shadow-lg position-fixed bottom-0 end-0 m-4 z-3"
     data-bs-toggle="modal"
     data-bs-target="#createBookingModal"
-    style="position: fixed; bottom: 2rem; right: 2rem; width: 60px; height: 60px; z-index: 1000"
+    style="width: 60px; height: 60px;"
     title="Nueva Reserva"
   >
     <i class="bi bi-plus-lg fs-4"></i>
   </button>
 
 
-  {* Tabla de reservas *}
+  {* Bookings Table *}
   {if count($reservas) > 0}
   <div class="table-responsive">
     <table class="table table-hover align-middle">
@@ -197,8 +198,8 @@
           <td class="text-nowrap">{$reserva['fecha_reserva']|date:'d/m/Y'}</td>
           <td class="text-nowrap">{$reserva['hora_inicio']} - {$reserva['hora_fin']}</td>
           <td>
-            {var $statusColors = ['Pendiente' => 'warning', 'Confirmada' => 'success',
-            'Completada' => 'info', 'Cancelada' => 'secondary']}
+{var $statusColors = ['Pendiente' => 'warning', 'Confirmada' => 'primary', 'Pagada' => 'success',
+             'Completada' => 'info', 'Cancelada' => 'secondary']}
             <span class="badge bg-{$statusColors[$reserva['estado']] ?? 'secondary'}">
               {$reserva['estado']}
             </span>
@@ -221,9 +222,8 @@
             >
               <button
                 type="button"
-                class="btn btn-sm btn-outline-danger btn-delete-booking"
+                class="btn btn-sm btn-outline-danger btn-delete-booking pe-none"
                 disabled
-                style="pointer-events: none"
               >
                 <i class="bi bi-trash"></i>
               </button>
@@ -251,12 +251,12 @@
   </div>
   {/if}
 
-  {* Paginación *}
+  {* Pagination *}
   {if count($reservas) > 0 && $totalPages > 1}
     {include '../components/paginator.latte', currentPage: $page, totalPages: $totalPages, baseUrl: '/admin/bookings'}
   {/if}
 
-  {* Modales *} {include '../components/modals/CreateBookingModal.latte'} {include
+  {* Modals *} {include '../components/modals/CreateBookingModal.latte'} {include
   '../components/modals/EditBookingModal.latte'}
 </div>
 

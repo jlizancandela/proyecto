@@ -358,7 +358,7 @@ class UserRepository
             $telefono = $user->getTelefono();
             $passwordHash = $user->getPassword();
             $fechaRegistro = $user->getFechaRegistro()->format("Y-m-d");
-            $activo = $user->getActivo() ? 1 : 0;
+            $activo = $user->getActivo();
 
             $stmt->bindParam(":rol", $rol);
             $stmt->bindParam(":nombre", $nombre);
@@ -400,7 +400,7 @@ class UserRepository
             $telefono = $user->getTelefono();
             $passwordHash = $user->getPassword();
             $fechaRegistro = $user->getFechaRegistro()->format("Y-m-d");
-            $activo = $user->getActivo() ? 1 : 0;
+            $activo = $user->getActivo();
             $id = $user->getId();
 
             $stmt->bindParam(":rol", $rol);
@@ -426,18 +426,17 @@ class UserRepository
      * Sets the active status of a user.
      *
      * @param int $id The ID of the user.
-     * @param bool $active The new active status (true for active, false for inactive).
+     * @param int $active The new active status (1 for active, 0 for inactive, 2 for banned).
      * @return void
      * @throws PDOException If there is a database error.
      */
-    public function setUserStatus(int $id, bool $active): void
+    public function setUserStatus(int $id, int $active): void
     {
         try {
             $query =
                 "UPDATE USUARIO SET activo = :activo WHERE id_usuario = :id";
             $stmt = $this->db->prepare($query);
-            $activoValue = $active ? 1 : 0;
-            $stmt->bindParam(":activo", $activoValue);
+            $stmt->bindParam(":activo", $active);
             $stmt->bindParam(":id", $id);
             $stmt->execute();
         } catch (PDOException $e) {

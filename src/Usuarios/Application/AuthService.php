@@ -17,10 +17,10 @@ use Shared\Domain\Exceptions\InvalidUserDataException;
 use Shared\Domain\Exceptions\InvalidUserException;
 
 /**
- * Servicio de autenticación y gestión de sesiones
+ * Authentication and session management service.
  *
- * Maneja el registro de usuarios, login, logout y validación de credenciales.
- * Implementa reglas de validación de contraseñas y gestión de sesiones PHP.
+ * Handles user registration, login, logout, and credential validation.
+ * Implements password validation rules and PHP session management.
  */
 class AuthService
 {
@@ -48,16 +48,16 @@ class AuthService
     }
 
     /**
-     * Registra un nuevo usuario validando datos y verificando email único
+     * Registers a new user by validating data and checking for unique email.
      *
-     * Valida formato de datos, verifica que el email no esté registrado,
-     * hashea la contraseña y crea el usuario en la base de datos.
+     * Validates data format, checks that the email is not registered,
+     * hashes the password, and creates the user in the database.
      *
-     * @param array $userData Datos del usuario (nombre, apellidos, email, password, telefono, rol)
-     * @return Usuario Usuario creado
-     * @throws InvalidEmailException Si el email ya está registrado
-     * @throws InvalidUserDataException Si los datos del usuario son inválidos
-     * @throws InvalidPasswordException Si la contraseña no cumple los requisitos
+     * @param array $userData User data (name, surname, email, password, phone, role)
+     * @return Usuario Created user
+     * @throws InvalidEmailException If the email is already registered
+     * @throws InvalidUserDataException If user data is invalid
+     * @throws InvalidPasswordException If password does not meet requirements
      */
     public function register(array $userData): Usuario
     {
@@ -85,15 +85,15 @@ class AuthService
     }
 
     /**
-     * Valida el formato y contenido de los datos del usuario
+     * Validates the format and content of user data.
      *
-     * Verifica que nombre, apellidos, email y contraseña cumplan con los requisitos.
-     * Delega la validación de contraseña a validatePassword().
+     * Verifies that name, surname, email, and password meet requirements.
+     * Delegates password validation to validatePassword().
      *
-     * @param array $userData Datos a validar
+     * @param array $userData Data to validate
      * @return void
-     * @throws InvalidUserDataException Si algún dato no cumple las reglas de validación
-     * @throws InvalidPasswordException Si la contraseña no cumple los requisitos
+     * @throws InvalidUserDataException If any data does not meet validation rules
+     * @throws InvalidPasswordException If password does not meet requirements
      */
     private function validateUserData(array $userData): void
     {
@@ -114,13 +114,13 @@ class AuthService
     }
 
     /**
-     * Valida que la contraseña cumpla con los requisitos de seguridad
+     * Validates that the password meets security requirements.
      *
-     * Requisitos: mínimo 6 caracteres.
+     * Requirements: minimum 6 characters.
      *
-     * @param string $password Contraseña a validar
+     * @param string $password Password to validate
      * @return void
-     * @throws InvalidPasswordException Si la contraseña no cumple los requisitos
+     * @throws InvalidPasswordException If password does not meet requirements
      */
     private function validatePassword(string $password): void
     {
@@ -134,14 +134,14 @@ class AuthService
     }
 
     /**
-     * Autentica un usuario verificando email y contraseña
+     * Authenticates a user by verifying email and password.
      *
-     * Busca el usuario por email y verifica que la contraseña coincida
-     * usando password_verify().
+     * Finds the user by email and verifies the password matches
+     * using password_verify().
      *
-     * @param string $email Email del usuario
-     * @param string $password Contraseña en texto plano
-     * @return Usuario|null Usuario si las credenciales son correctas, null si no
+     * @param string $email User email
+     * @param string $password Plain text password
+     * @return Usuario|null User if credentials are correct, null otherwise
      */
     public function login(string $email, string $password): ?Usuario
     {
@@ -155,12 +155,12 @@ class AuthService
     }
 
     /**
-     * Inicia una sesión PHP para el usuario autenticado
+     * Starts a PHP session for the authenticated user.
      *
-     * Guarda datos del usuario en $_SESSION y regenera el ID de sesión
-     * por seguridad.
+     * Stores user data in $_SESSION and regenerates the session ID
+     * for security.
      *
-     * @param Usuario $user Usuario autenticado
+     * @param Usuario $user Authenticated user
      * @return void
      */
     public function startSession(Usuario $user): void
@@ -178,9 +178,9 @@ class AuthService
     }
 
     /**
-     * Cierra la sesión del usuario actual
+     * Logs out the current user.
      *
-     * Limpia todas las variables de sesión y destruye la sesión PHP.
+     * Clears all session variables and destroys the PHP session.
      *
      * @return void
      */
@@ -195,11 +195,11 @@ class AuthService
     }
 
     /**
-     * Obtiene el usuario actualmente autenticado
+     * Retrieves the currently authenticated user.
      *
-     * Busca el usuario en la base de datos usando el ID almacenado en sesión.
+     * Finds the user in the database using the ID stored in the session.
      *
-     * @return Usuario|null Usuario actual o null si no hay sesión activa
+     * @return Usuario|null Current user or null if no active session
      */
     public function getCurrentUser(): ?Usuario
     {
@@ -213,9 +213,9 @@ class AuthService
     }
 
     /**
-     * Verifica si hay un usuario autenticado
+     * Checks if there is an authenticated user.
      *
-     * @return bool True si existe una sesión activa con user_id
+     * @return bool True if there is an active session with user_id
      */
     public function isAuthenticated(): bool
     {
@@ -227,15 +227,15 @@ class AuthService
     }
 
     /**
-     * Cambia la contraseña de un usuario verificando la contraseña actual
+     * Changes a user's password verifying the current password.
      *
-     * Valida que la contraseña actual sea correcta antes de actualizar.
-     * La nueva contraseña se hashea antes de guardar.
+     * Validates that the current password is correct before updating.
+     * The new password is hashed before saving.
      *
-     * @param int $userId ID del usuario
-     * @param string $oldPassword Contraseña actual en texto plano
-     * @param string $newPassword Nueva contraseña en texto plano
-     * @return bool True si se cambió correctamente, false si la contraseña actual es incorrecta
+     * @param int $userId User ID
+     * @param string $oldPassword Current password in plain text
+     * @param string $newPassword New password in plain text
+     * @return bool True if changed successfully, false if current password is incorrect
      */
     public function changePassword(
         int $userId,
@@ -256,10 +256,10 @@ class AuthService
     }
 
     /**
-     * Verifica si el usuario actual tiene un rol específico
+     * Checks if the current user has a specific role.
      *
-     * @param UserRole $role Rol a verificar
-     * @return bool True si el usuario tiene el rol especificado
+     * @param UserRole $role Role to check
+     * @return bool True if the user has the specified role
      */
     public function hasRole(UserRole $role): bool
     {
@@ -273,14 +273,14 @@ class AuthService
     }
 
     /**
-     * Genera un token de recuperación de contraseña para un usuario
+     * Generates a password reset token for a user.
      *
-     * Crea un token único usando random_bytes y establece una expiración
-     * de 1 hora. El token se guarda en la base de datos.
+     * Creates a unique token using random_bytes and sets an expiration
+     * of 1 hour. The token is saved in the database.
      *
-     * @param string $email Email del usuario
-     * @return string Token generado
-     * @throws InvalidUserException Si el usuario no existe
+     * @param string $email User email
+     * @return string Generated token
+     * @throws InvalidUserException If the user does not exist
      */
     public function generatePasswordResetToken(string $email): string
     {
@@ -292,7 +292,7 @@ class AuthService
 
         $token = bin2hex(random_bytes(32));
 
-        // Establecer expiración en 1 hora
+        // Set expiration to 1 hour
         $expiration = date('Y-m-d H:i:s', time() + self::TOKEN_EXPIRATION_SECONDS);
 
         $this->passwordResetRepository->savePasswordResetToken($user->getId(), $token, $expiration);
@@ -301,12 +301,12 @@ class AuthService
     }
 
     /**
-     * Valida un token de recuperación de contraseña
+     * Validates a password reset token.
      *
-     * Verifica que el token exista y no haya expirado.
+     * Verifies that the token exists and has not expired.
      *
-     * @param string $token Token de recuperación
-     * @return Usuario|null Usuario si el token es válido, null si no
+     * @param string $token Reset token
+     * @return Usuario|null User if token is valid, null otherwise
      */
     public function validateResetToken(string $token): ?Usuario
     {
@@ -326,15 +326,15 @@ class AuthService
     }
 
     /**
-     * Resetea la contraseña de un usuario usando un token válido
+     * Resets a user's password using a valid token.
      *
-     * Valida el token, valida la nueva contraseña, la hashea,
-     * actualiza en base de datos y limpia el token.
+     * Validates the token, validates the new password, hashes it,
+     * updates it in the database, and clears the token.
      *
-     * @param string $token Token de recuperación
-     * @param string $newPassword Nueva contraseña en texto plano
-     * @return bool True si se reseteo correctamente, false si el token es inválido
-     * @throws InvalidPasswordException Si la contraseña no cumple los requisitos
+     * @param string $token Reset token
+     * @param string $newPassword New password in plain text
+     * @return bool True if reset successfully, false if token is invalid
+     * @throws InvalidPasswordException If password does not meet requirements
      */
     public function resetPassword(string $token, string $newPassword): bool
     {

@@ -8,7 +8,7 @@
     </a>
   </div>
 
-  {* Barra de búsqueda, filtros y botón crear *} {* Acordeón de filtros *}
+  {* Search bar, filters and create button *} {* Filters Accordion *}
   <div class="accordion mb-3" id="filtersAccordion">
     <div class="accordion-item">
       <h2 class="accordion-header" id="headingFilters">
@@ -34,7 +34,7 @@
       >
         <div class="accordion-body">
           <div class="row g-3 justify-content-between">
-            {* Buscador *}
+            {* Search input *}
             <div class="col-12 col-md-6 col-lg-4">
               <form method="GET" action="/admin/users" class="position-relative">
                 <input
@@ -63,65 +63,58 @@
               </form>
             </div>
 
-            {* Filtros por rol *}
+            {* Role filters *}
             <div class="col-12 col-md-6 col-lg-6">
               <div class="d-flex flex-column gap-2 align-items-end">
-                {* Filtros por rol *}
+                {* Role filters *}
                 <div class="d-flex gap-2 flex-wrap justify-content-end">
                   <a
                     href="?{http_build_query(array_merge(array_diff_key($_GET, ['rol' => '']), ['rol' => null]))}"
-                    class="badge {!isset($_GET['rol']) ? 'bg-dark' : 'bg-secondary'} text-decoration-none"
-                    style="cursor: pointer; padding: 0.5rem 0.75rem"
+                    class="badge {!isset($_GET['rol']) ? 'bg-dark' : 'bg-secondary'} text-decoration-none py-2 px-3"
                   >
                     Todos los Roles
                   </a>
                   <a
                     href="?{http_build_query(array_merge($_GET, ['rol' => 'Admin']))}"
-                    class="badge {isset($_GET['rol']) && $_GET['rol'] === 'Admin' ? 'bg-danger' : 'bg-secondary'} text-decoration-none"
-                    style="cursor: pointer; padding: 0.5rem 0.75rem"
+                    class="badge {isset($_GET['rol']) && $_GET['rol'] === 'Admin' ? 'bg-danger' : 'bg-secondary'} text-decoration-none py-2 px-3"
                   >
                     <i class="bi bi-shield-fill me-1"></i>
                     Admin
                   </a>
                   <a
                     href="?{http_build_query(array_merge($_GET, ['rol' => 'Especialista']))}"
-                    class="badge {isset($_GET['rol']) && $_GET['rol'] === 'Especialista' ? 'bg-warning' : 'bg-secondary'} text-decoration-none"
-                    style="cursor: pointer; padding: 0.5rem 0.75rem"
+                    class="badge {isset($_GET['rol']) && $_GET['rol'] === 'Especialista' ? 'bg-warning' : 'bg-secondary'} text-decoration-none py-2 px-3"
                   >
                     <i class="bi bi-person-badge me-1"></i>
                     Especialista
                   </a>
                   <a
                     href="?{http_build_query(array_merge($_GET, ['rol' => 'Cliente']))}"
-                    class="badge {isset($_GET['rol']) && $_GET['rol'] === 'Cliente' ? 'bg-primary' : 'bg-secondary'} text-decoration-none"
-                    style="cursor: pointer; padding: 0.5rem 0.75rem"
+                    class="badge {isset($_GET['rol']) && $_GET['rol'] === 'Cliente' ? 'bg-primary' : 'bg-secondary'} text-decoration-none py-2 px-3"
                   >
                     <i class="bi bi-person me-1"></i>
                     Cliente
                   </a>
                 </div>
 
-                {* Filtros por estado *}
+                {* Status filters *}
                 <div class="d-flex gap-2 flex-wrap justify-content-end">
                   <a
                     href="?{http_build_query(array_merge(array_diff_key($_GET, ['estado' => '']), ['estado' => null]))}"
-                    class="badge {!isset($_GET['estado']) ? 'bg-dark' : 'bg-secondary'} text-decoration-none"
-                    style="cursor: pointer; padding: 0.5rem 0.75rem"
+                    class="badge {!isset($_GET['estado']) ? 'bg-dark' : 'bg-secondary'} text-decoration-none py-2 px-3"
                   >
                     Todos los Estados
                   </a>
                   <a
                     href="?{http_build_query(array_merge($_GET, ['estado' => '1']))}"
-                    class="badge {isset($_GET['estado']) && $_GET['estado'] === '1' ? 'bg-success' : 'bg-secondary'} text-decoration-none"
-                    style="cursor: pointer; padding: 0.5rem 0.75rem"
+                    class="badge {isset($_GET['estado']) && $_GET['estado'] === '1' ? 'bg-success' : 'bg-secondary'} text-decoration-none py-2 px-3"
                   >
                     <i class="bi bi-check-circle me-1"></i>
                     Activos
                   </a>
                   <a
                     href="?{http_build_query(array_merge($_GET, ['estado' => '0']))}"
-                    class="badge {isset($_GET['estado']) && $_GET['estado'] === '0' ? 'bg-danger' : 'bg-secondary'} text-decoration-none"
-                    style="cursor: pointer; padding: 0.5rem 0.75rem"
+                    class="badge {isset($_GET['estado']) && $_GET['estado'] === '0' ? 'bg-danger' : 'bg-secondary'} text-decoration-none py-2 px-3"
                   >
                     <i class="bi bi-x-circle me-1"></i>
                     Inactivos
@@ -135,19 +128,19 @@
     </div>
   </div>
 
-  {* Botón flotante para nuevo usuario *}
+  {* Floating button for new user *}
   <button
     type="button"
-    class="btn btn-primary rounded-circle shadow-lg"
+    class="btn btn-primary rounded-circle shadow-lg position-fixed bottom-0 end-0 m-4 z-3"
     data-bs-toggle="modal"
     data-bs-target="#createUserModal"
-    style="position: fixed; bottom: 2rem; right: 2rem; width: 60px; height: 60px; z-index: 1000"
+    style="width: 60px; height: 60px;"
     title="Nuevo Usuario"
   >
     <i class="bi bi-plus-lg fs-4"></i>
   </button>
 
-  {* Tabla de usuarios *} {if count($users) > 0}
+  {* Users Table *} {if count($users) > 0}
   <table class="table table-hover align-middle">
     <thead class="table-light">
       <tr>
@@ -231,28 +224,13 @@
         </td>
         <td class="text-nowrap">{$user['telefono'] ?? '-'}</td>
         <td class="text-nowrap">{$user['fechaRegistro']}</td>
-        <td class="text-nowrap">
-          {if $user['rol'] !== 'Admin'}
-          <span
-            class="badge bg-{$user['activo'] ? 'success' : 'secondary'} btn-toggle-status"
-            style="cursor: pointer"
-            data-user-id="{$user['id']}"
-            data-user-name="{$user['nombreCompleto']}"
-            data-current-status="{$user['activo'] ? '1' : '0'}"
-            title="Click para {$user['activo'] ? 'desactivar' : 'activar'}"
-          >
-            {$user['activo'] ? 'Activo' : 'Inactivo'}
-          </span>
-          {else}
-          <span
-            class="badge bg-{$user['activo'] ? 'success' : 'secondary'}"
-            style="cursor: not-allowed"
-            title="No se puede desactivar al Administrador"
-          >
-            {$user['activo'] ? 'Activo' : 'Inactivo'}
-          </span>
-          {/if}
-        </td>
+          <td class="text-nowrap">
+            {var $statusColor = $user['activo'] === 1 ? 'success' : ($user['activo'] === 2 ? 'danger' : 'secondary')}
+            {var $statusText = $user['activo'] === 1 ? 'Activo' : ($user['activo'] === 2 ? 'Baneado' : 'Inactivo')}
+            <span class="badge bg-{$statusColor}">
+              {$statusText}
+            </span>
+          </td>
         <td class="text-end text-nowrap">
           <button
             type="button"
@@ -268,24 +246,24 @@
     </tbody>
   </table>
 
-  {* Paginación *} {if $totalPages > 1}
+  {* Pagination *} {if $totalPages > 1}
   <nav aria-label="Paginación de usuarios" class="mt-4">
     <ul class="pagination justify-content-center">
-      {* Botón anterior *}
+      {* Previous button *}
       <li class="page-item {$page <= 1 ? 'disabled' : ''}">
         <a
           class="page-link"
-          href="/admin/users?page={$page - 1}{$search ? '&search=' . $search : ''}"
+          href="/admin/users?{http_build_query(array_merge($_GET, ['page' => $page - 1]))}"
           aria-label="Anterior"
         >
           <span aria-hidden="true">&laquo;</span>
         </a>
       </li>
 
-      {* Páginas *} {for $i = 1; $i <= $totalPages; $i++} {if $i == 1 || $i == $totalPages || ($i >=
+      {* Pages *} {for $i = 1; $i <= $totalPages; $i++} {if $i == 1 || $i == $totalPages || ($i >=
       $page - 2 && $i <= $page + 2)}
       <li class="page-item {$i == $page ? 'active' : ''}">
-        <a class="page-link" href="/admin/users?page={$i}{$search ? '&search=' . $search : ''}">
+        <a class="page-link" href="/admin/users?{http_build_query(array_merge($_GET, ['page' => $i]))}">
           {$i}
         </a>
       </li>
@@ -293,11 +271,11 @@
       <li class="page-item disabled">
         <span class="page-link">...</span>
       </li>
-      {/if} {/for} {* Botón siguiente *}
+      {/if} {/for} {* Next button *}
       <li class="page-item {$page >= $totalPages ? 'disabled' : ''}">
         <a
           class="page-link"
-          href="/admin/users?page={$page + 1}{$search ? '&search=' . $search : ''}"
+          href="/admin/users?{http_build_query(array_merge($_GET, ['page' => $page + 1]))}"
           aria-label="Siguiente"
         >
           <span aria-hidden="true">&raquo;</span>
@@ -308,9 +286,8 @@
   {/if} {else}
   <div class="alert alert-info">
     <i class="bi bi-info-circle me-2"></i>
-    {$search ? 'No se encontraron usuarios con ese criterio de búsqueda.' : 'No hay usuarios
-    registrados.'}
+    {$search ? 'No se encontraron usuarios con ese criterio de búsqueda.' : 'No hay usuarios registrados.'}
   </div>
-  {/if} {* Modales *} {include '../components/modals/CreateUserModal.latte'} {include
+  {/if} {* Modals *} {include '../components/modals/CreateUserModal.latte'} {include
   '../components/modals/EditUserModal.latte'}
 </div>

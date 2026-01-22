@@ -21,7 +21,7 @@ class Usuario
     private ?string $telefono;
     private string $password_hash;
     private string $fecha_registro;
-    private bool $activo;
+    private int $activo;
 
     /**
      * Usuario constructor.
@@ -50,7 +50,7 @@ class Usuario
         $this->password_hash = $password_hash;
         $this->telefono = $telefono;
         $this->fecha_registro = $options['fecha_registro'] ?? date("Y-m-d H:i:s");
-        $this->activo = $options['activo'] ?? true;
+        $this->activo = (int)($options['activo'] ?? 1);
         if (isset($options['id_usuario'])) {
             $this->id_usuario = $options['id_usuario'];
         }
@@ -122,9 +122,9 @@ class Usuario
 
     /**
      * Checks if the user account is active.
-     * @return bool True if active, false otherwise.
+     * @return int 1 if active, 0 if inactive, 2 if banned.
      */
-    public function getActivo(): bool
+    public function getActivo(): int
     {
         return $this->activo;
     }
@@ -214,7 +214,7 @@ class Usuario
             $data["telefono"] ?? null,
             [
                 'fecha_registro' => $data["fecha_registro"],
-                'activo' => (bool) ($data["activo"] ?? true),
+                'activo' => (int) ($data["activo"] ?? 1),
                 'id_usuario' => $data["id_usuario"] ?? null
             ]
         );

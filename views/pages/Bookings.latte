@@ -18,8 +18,8 @@
     </div>
   </div>
 
-  {* Componente de filtros *} {include '../components/booking-filters.latte', filters: $filters ??
-  []} {* Estado vacío *}
+  {* Filters Component *} {include '../components/booking-filters.latte', filters: $filters ??
+  []} {* Empty State *}
   <div n:if="!isset($bookings) || count($bookings) === 0">
     {include '../components/empty-state.latte', title: 'No hay reservas', message: 'No tienes
     reservas en este momento.
@@ -28,7 +28,7 @@
     '/user/reservas/nueva', iconClass: 'bi bi-calendar-x' }
   </div>
 
-  {* Lista de reservas *}
+  {* Bookings List *}
   <div class="row mb-4" n:if="isset($bookings) && count($bookings) > 0">
     <div class="col-12">
       <div n:foreach="$bookings as $booking">
@@ -37,12 +37,12 @@
     </div>
   </div>
 
-  {* Paginador *} {include '../components/paginator.latte', currentPage: $currentPage ?? 1,
-  totalPages: $totalPages ?? 1, baseUrl: '/user/reservas', ariaLabel: 'Paginación de reservas',
+  {* Paginator *} {include '../components/paginator.latte', currentPage: $currentPage ?? 1,
+  totalPages: $totalPages ?? 1, baseUrl: '/user/reservas', ariaLabel: 'Bookings pagination',
   filters: $filters ?? [] }
 </div>
 
-{* Modal de confirmación de acciones *}
+{* Action Confirmation Modal *}
 <div
   class="modal fade"
   id="actionModal"

@@ -496,10 +496,11 @@ Calculates available time slots for a specialist based on their existing booking
 ---
 
 #### `public function countEspecialistasDisponibles()`
-Counts the total number of available specialists for a specific service.
+Counts the total number of available specialists for a specific service and date.
 
 **Parameters:**
 - `int` **idServicio** The ID of the service.
+- `string` **fecha** The date to check availability.
 
 **Returns:** `int` The total count of available specialists.
 

@@ -417,12 +417,13 @@ class EspecialistaRepository
     }
 
     /**
-     * Counts the total number of available specialists for a specific service.
+     * Counts the total number of available specialists for a specific service and date.
      *
      * @param int $idServicio The ID of the service.
+     * @param string $fecha The date to check availability.
      * @return int The total count of available specialists.
      */
-    public function countEspecialistasDisponibles(int $idServicio): int
+    public function countEspecialistasDisponibles(int $idServicio, string $fecha): int
     {
         try {
             $stmt = $this->db->prepare("
@@ -430,10 +431,17 @@ class EspecialistaRepository
                 FROM ESPECIALISTA e
                 INNER JOIN USUARIO u ON e.id_usuario = u.id_usuario
                 INNER JOIN ESPECIALISTA_SERVICIO es ON e.id_especialista = es.id_especialista
+                INNER JOIN HORARIO_ESPECIALISTA he ON e.id_especialista = he.id_especialista
                 WHERE es.id_servicio = :id_servicio
+                AND he.dia_semana = :dia_semana
                 AND u.activo = 1
             ");
-            $stmt->execute(['id_servicio' => $idServicio]);
+
+            $diaSemana = date('N', strtotime($fecha)) === '7' ? 0 : (int)date('N', strtotime($fecha));
+            $stmt->execute([
+                'id_servicio' => $idServicio,
+                'dia_semana' => $diaSemana
+            ]);
 
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
             return (int)$result['total'];

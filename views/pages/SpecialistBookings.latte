@@ -8,7 +8,7 @@
     <h1 class="mb-0">Mis Reservas</h1>
   </div>
 
-  {* Filtros en acordeón *}
+  {* Filter Accordion *}
   <div class="accordion mb-3" id="filtersAccordion">
     <div class="accordion-item">
       <h2 class="accordion-header">
@@ -29,11 +29,11 @@
         class="accordion-collapse collapse"
         data-bs-parent="#filtersAccordion"
       >
-        <div class="accordion-body">
-          <div class="row g-3 mb-3">
-            {* Filtro por estado *}
-            <div class="col-12 col-md-6 col-lg-4">
-              <label for="filterEstado" class="form-label">Estado</label>
+          <div class="accordion-body">
+            <div class="row g-3 mb-3">
+              {* Status Filter *}
+              <div class="col-12 col-md-6 col-lg-4">
+                <label for="filterEstado" class="form-label">Estado</label>
               <select id="filterEstado" class="form-select">
                 <option value="">Todos</option>
                 <option value="Pendiente" {if ($filtros['estado'] ?? '') === 'Pendiente'}selected{/if}>Pendiente</option>
@@ -43,9 +43,9 @@
               </select>
             </div>
 
-            {* Filtro por cliente *}
-            <div class="col-12 col-md-6 col-lg-4">
-              <label for="filterCliente" class="form-label">Cliente</label>
+              {* Client Filter *}
+              <div class="col-12 col-md-6 col-lg-4">
+                <label for="filterCliente" class="form-label">Cliente</label>
               <input
                 type="text"
                 id="filterCliente"
@@ -83,7 +83,7 @@
     </div>
   </div>
 
-  {* Tabla de reservas *}
+  {* Bookings Table *}
   {if count($reservas) > 0}
   <div class="table-responsive">
     <table class="table table-hover align-middle">
@@ -95,6 +95,7 @@
           <th>Fecha</th>
           <th>Hora</th>
           <th>Estado</th>
+          <th>Acciones</th>
         </tr>
       </thead>
       <tbody>
@@ -115,10 +116,32 @@
           <td class="text-nowrap">{$reserva['hora_inicio']} - {$reserva['hora_fin']}</td>
           <td>
             {var $statusColors = ['Pendiente' => 'warning', 'Confirmada' => 'success',
-            'Completada' => 'info', 'Cancelada' => 'secondary']}
+            'Completada' => 'info', 'Cancelada' => 'secondary', 'Pagada' => 'success']}
             <span class="badge bg-{$statusColors[$reserva['estado']] ?? 'secondary'}">
               {$reserva['estado']}
             </span>
+          </td>
+          <td class="text-nowrap">
+            {if $reserva['estado'] !== 'Completada' && $reserva['estado'] !== 'Cancelada'}
+            <div class="btn-group btn-group-sm">
+              <button 
+                class="btn btn-outline-success btn-complete" 
+                data-id="{$reserva['id_reserva']}"
+                title="Marcar como Completada"
+              >
+                <i class="bi bi-check-lg"></i>
+              </button>
+              <button 
+                class="btn btn-outline-danger btn-cancel" 
+                data-id="{$reserva['id_reserva']}"
+                title="Marcar como Cancelada"
+              >
+                <i class="bi bi-x-lg"></i>
+              </button>
+            </div>
+            {else}
+              <span class="text-muted small">Sin acciones</span>
+            {/if}
           </td>
         </tr>
         {/foreach}
@@ -132,7 +155,7 @@
   </div>
   {/if}
 
-  {* Paginación *}
+  {* Pagination *}
   {if count($reservas) > 0 && $totalPages > 1}
   {include '../components/paginator.latte', currentPage: $page, totalPages: $totalPages, baseUrl: '/specialist/bookings'}
   {/if}
@@ -141,5 +164,65 @@
 {/block}
 
 {block scripts}
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // Helper to update status
+    const updateStatus = async (id, status) => {
+        if (!confirm(`¿Estás seguro de marcar esta reserva como ${"$"}{status}?`)) return;
 
+        try {
+            const response = await fetch(`/specialist/api/reservas/${"$"}{id}/status`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ estado: status })
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                window.location.reload();
+            } else {
+                alert('Error: ' + (result.error || 'No se pudo actualizar la reserva'));
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Error crítico al conectar con el servidor');
+        }
+    };
+
+    // Event Delegation
+    document.querySelectorAll('.btn-complete').forEach(btn => {
+        btn.addEventListener('click', () => updateStatus(btn.dataset.id, 'Completada'));
+    });
+
+    document.querySelectorAll('.btn-cancel').forEach(btn => {
+        btn.addEventListener('click', () => updateStatus(btn.dataset.id, 'Cancelada'));
+    });
+
+    // Filters Logic (Keep existing if any, otherwise implement basic redirect)
+    const btnApplyFilters = document.getElementById('btnApplyFilters');
+    const btnClearFilters = document.getElementById('btnClearFilters');
+
+    btnApplyFilters.addEventListener('click', () => {
+        const estado = document.getElementById('filterEstado').value;
+        const cliente = document.getElementById('filterCliente').value;
+        const desde = document.getElementById('filterFechaDesde').value;
+        const hasta = document.getElementById('filterFechaHasta').value;
+
+        const params = new URLSearchParams();
+        if (estado) params.set('estado', estado);
+        if (cliente) params.set('cliente', cliente);
+        if (desde) params.set('fecha_desde', desde);
+        if (hasta) params.set('fecha_hasta', hasta);
+
+        window.location.href = `/specialist/bookings?${params.toString()}`;
+    });
+
+    btnClearFilters.addEventListener('click', () => {
+        window.location.href = '/specialist/bookings';
+    });
+});
+</script>
 {/block}

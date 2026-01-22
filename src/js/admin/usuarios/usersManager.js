@@ -3,7 +3,7 @@
  * @project app-reservas
  */
 
-import { fetchUser, createUser, updateUser, toggleUserStatus as toggleStatus } from "./api.js";
+import { fetchUser, createUser, updateUser, toggleUserStatus as toggleStatus, fetchMe } from "./api.js";
 import { notification } from "../../shared/components/toast.js";
 import { confirmAction } from "../../shared/components/confirm-dialog.js";
 
@@ -20,6 +20,7 @@ const createAvatarContainer = document.getElementById("createAvatarContainer");
 const createDescriptionContainer = document.getElementById("createDescriptionContainer");
 
 let currentEditUserServices = [];
+let currentUserCache = null;
 
 /**
  * Toggles services, avatar and description containers visibility based on role.
@@ -57,11 +58,23 @@ const editUser = async (userId) => {
       form.editEmail.value = user.email;
       form.editTelefono.value = user.telefono || "";
       form.editRol.value = user.rol;
-      form.editActivo.checked = user.activo;
+      // Set value of select instead of checkbox
+      form.editActivo.value = user.activo;
 
+      // Get current user to check if we are editing ourselves
+      if (!currentUserCache) {
+        const meResult = await fetchMe();
+        if (meResult.success) {
+          currentUserCache = meResult.data;
+        }
+      }
+
+      const isSelf = currentUserCache && currentUserCache.id === user.id;
       const isAdmin = user.rol === "Admin";
-      form.editRol.disabled = isAdmin;
-      form.editActivo.disabled = isAdmin;
+
+      // Disable role and status changes only if editing oneself
+      form.editRol.disabled = isAdmin && isSelf;
+      form.editActivo.disabled = isAdmin && isSelf;
 
       toggleSpecialistFields(
         user.rol,
@@ -98,30 +111,7 @@ const editUser = async (userId) => {
 };
 
 /**
- * Toggles a user's active status.
- *
- * @param {string} userId - The ID of the user.
- * @param {string} userName - The name of the user.
- * @param {string} currentStatus - Current active status ("1" or "0").
- */
-const handleToggleUserStatus = async (userId, userName, currentStatus) => {
-  const newStatus = currentStatus === "1" ? "0" : "1";
-
-  try {
-    const result = await toggleStatus(userId, newStatus);
-
-    if (result.success) {
-      setTimeout(() => globalThis.location.reload(), 1000);
-    } else {
-      notification("Error al cambiar estado: " + result.error, "error");
-    }
-  } catch (error) {
-    notification("Error: " + error.message, "error");
-  }
-};
-
-/**
- * Handles document click events for edit and status toggle user buttons.
+ * Handles document click events for edit user buttons.
  */
 const handleDocumentClick = async (e) => {
   if (e.target.closest(".btn-edit-user")) {
@@ -129,26 +119,7 @@ const handleDocumentClick = async (e) => {
     editUser(userId);
   }
 
-  if (e.target.closest(".btn-toggle-status")) {
-    const badge = e.target.closest(".btn-toggle-status");
-    const userId = badge.dataset.userId;
-    const userName = badge.dataset.userName;
-    const currentStatus = badge.dataset.currentStatus;
-
-    if (userId) {
-      handleToggleUserStatus(userId, userName, currentStatus);
-    }
-  }
-
-  if (e.target.closest(".btn-delete-user")) {
-    const button = e.target.closest(".btn-delete-user");
-    const userId = button.dataset.userId;
-    const userName = button.dataset.userName;
-
-    if (await confirmAction(`¿Estás seguro de que deseas desactivar al usuario ${userName}?`)) {
-      handleToggleUserStatus(userId, userName, "1");
-    }
-  }
+  // Delete/Toggle actions removed for safety, now handled via edit modal
 };
 
 /**
@@ -230,7 +201,7 @@ const handleEditUserFormSubmit = async (e) => {
   formData.append("email", form.editEmail.value);
   formData.append("telefono", form.editTelefono.value);
   formData.append("rol", form.editRol.value);
-  formData.append("activo", form.editActivo.checked ? "1" : "0");
+  formData.append("activo", form.editActivo.value);
 
   if (password) {
     formData.append("password", password);

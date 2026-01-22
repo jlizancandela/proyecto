@@ -34,7 +34,9 @@
           {/if}
         </td>
         <td>
-          <span class="badge bg-{$user['activo']['badge']}">{$user['activo']['texto']}</span>
+          {var $statusColor = $user['activo'] === 1 ? 'success' : ($user['activo'] === 2 ? 'danger' : 'secondary')}
+          {var $statusText = $user['activo'] === 1 ? 'Activo' : ($user['activo'] === 2 ? 'Baneado' : 'Inactivo')}
+          <span class="badge bg-{$statusColor}">{$statusText}</span>
         </td>
         <td>{$user['fechaRegistro']}</td>
         <td>

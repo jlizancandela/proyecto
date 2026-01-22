@@ -216,11 +216,16 @@ class UserApiController
                 return;
             }
 
-            if ($user->getRol() === \Usuarios\Domain\UserRole::Admin) {
+            if (session_status() === PHP_SESSION_NONE) {
+                session_start();
+            }
+            $currentUserId = $_SESSION['user_id'] ?? null;
+
+            if ($user->getRol() === \Usuarios\Domain\UserRole::Admin && $user->getId() === (int)$currentUserId) {
                 http_response_code(403);
                 echo json_encode([
                     'success' => false,
-                    'error' => 'No se puede desactivar un usuario administrador'
+                    'error' => 'No puedes desactivar tu propia cuenta de administrador'
                 ], JSON_PRETTY_PRINT);
                 return;
             }
@@ -270,7 +275,7 @@ class UserApiController
                 $data['email'],
                 password_hash($data['password'], PASSWORD_BCRYPT),
                 $data['telefono'] ?? null,
-                ['activo' => true]
+                ['activo' => 1]
             );
 
             $this->userService->setUser($user);
@@ -339,11 +344,16 @@ class UserApiController
             $apellidos = $data['apellidos'] ?? $existingUser->getApellidos();
             $email = $data['email'] ?? $existingUser->getEmail();
             $telefono = $data['telefono'] ?? $existingUser->getTelefono();
-            $activo = isset($data['activo']) ? in_array($data['activo'], [true, '1', 1, 'on'], true) : $existingUser->getActivo();
+            $activo = isset($data['activo']) ? (int)$data['activo'] : $existingUser->getActivo();
 
-            if ($existingUser->getRol() === \Usuarios\Domain\UserRole::Admin) {
+            if (session_status() === PHP_SESSION_NONE) {
+                session_start();
+            }
+            $currentUserId = $_SESSION['user_id'] ?? null;
+
+            if ($existingUser->getRol() === \Usuarios\Domain\UserRole::Admin && $existingUser->getId() === (int)$currentUserId) {
                 $rol = 'Admin';
-                $activo = true;
+                $activo = 1;
             }
 
             $passwordHash = !empty($data['password'])

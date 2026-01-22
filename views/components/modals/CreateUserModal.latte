@@ -1,4 +1,4 @@
-{* Modal para crear usuario *}
+{* User Creation Modal *}
 <div
   class="modal fade"
   id="createUserModal"
@@ -19,9 +19,9 @@
       <form id="createUserForm">
         <div class="modal-body">
           <div class="row">
-            {* Columna izquierda *}
+            {* Left Column *}
             <div class="col-md-6">
-              {* Nombre *}
+              {* Name *}
               <div class="mb-3">
                 <label for="createNombre" class="form-label">Nombre *</label>
                 <input
@@ -36,7 +36,7 @@
                 <div class="invalid-feedback"></div>
               </div>
 
-              {* Apellidos *}
+              {* Surnames *}
               <div class="mb-3">
                 <label for="createApellidos" class="form-label">Apellidos *</label>
                 <input
@@ -65,7 +65,7 @@
                 <div class="invalid-feedback"></div>
               </div>
 
-              {* Teléfono *}
+              {* Phone *}
               <div class="mb-3">
                 <label for="createTelefono" class="form-label">Teléfono</label>
                 <input
@@ -79,7 +79,7 @@
                 <div class="invalid-feedback"></div>
               </div>
 
-              {* Descripción (solo para Especialista) *}
+              {* Description (Specialist only) *}
               <div class="mb-3" id="createDescriptionContainer" style="display: none">
                 <label for="createDescripcion" class="form-label">Descripción</label>
                 <textarea
@@ -94,9 +94,9 @@
               </div>
             </div>
 
-            {* Columna derecha *}
+            {* Right Column *}
             <div class="col-md-6">
-              {* Contraseña *}
+              {* Password *}
               <div class="mb-3">
                 <label for="createPassword" class="form-label">Contraseña *</label>
                 <input
@@ -111,7 +111,7 @@
                 <div class="invalid-feedback"></div>
               </div>
 
-              {* Confirmar contraseña *}
+              {* Confirm Password *}
               <div class="mb-3">
                 <label for="createPasswordConfirm" class="form-label">Confirmar Contraseña *</label>
                 <input
@@ -126,7 +126,7 @@
                 <div class="invalid-feedback"></div>
               </div>
 
-              {* Rol *}
+              {* Role *}
               <div class="mb-3">
                 <label for="createRol" class="form-label">Rol *</label>
                 <select class="form-select" id="createRol" name="rol" required>
@@ -137,7 +137,7 @@
                 <div class="invalid-feedback"></div>
               </div>
 
-              {* Avatar (solo para Especialista) *}
+              {* Avatar (Specialist only) *}
               <div class="mb-3" id="createAvatarContainer" style="display: none">
                 <div class="mb-3">
                   <label for="createAvatar" class="form-label">Avatar</label>
@@ -155,7 +155,7 @@
             </div>
           </div>
 
-          {* Servicios - Ancho completo *}
+          {* Services - Full Width *}
           <div class="row">
             <div class="col-12">
               <div class="mb-3" id="createServicesContainer" style="display: none">

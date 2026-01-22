@@ -34,6 +34,7 @@ use Reservas\Presentation\BookingController;
 use Reservas\Presentation\BookingApiController;
 use Reservas\Presentation\PaymentController;
 use Reservas\Presentation\BookingAdminApiController;
+use Reservas\Presentation\BookingSpecialistApiController;
 use Reservas\Presentation\MyBookingsController;
 use Reservas\Presentation\PdfExportController;
 use Servicios\Presentation\ServiceApiController;
@@ -64,6 +65,13 @@ $router->before('GET|POST|PUT|DELETE', '/admin/.*', function () {
  */
 $router->before('GET|POST|PUT|DELETE', '/user/.*', function () {
     AuthMiddleware::requireAuth();
+});
+
+/**
+ * Protect all /specialist/api/* routes - Require specialist role for API
+ */
+$router->before('GET|POST|PUT|DELETE', '/specialist/api/.*', function () {
+    AuthMiddleware::apiRequireSpecialist();
 });
 
 /**
@@ -315,6 +323,14 @@ $router->get('/specialist', function () use ($latte, $especialistaRepository, $r
 $router->get('/specialist/bookings', function () use ($latte, $especialistaRepository, $reservaRepository) {
     $controller = new SpecialistController($latte, $especialistaRepository, $reservaRepository);
     echo $controller->bookings();
+});
+
+/**
+ * Specialist API: Update booking status
+ */
+$router->post('/specialist/api/reservas/(\\d+)/status', function ($id) use ($reservaService, $especialistaRepository) {
+    $controller = new BookingSpecialistApiController($reservaService, $especialistaRepository);
+    $controller->updateStatus((int)$id);
 });
 
 /**
