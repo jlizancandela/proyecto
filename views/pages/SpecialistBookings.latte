@@ -95,7 +95,7 @@
           <th>Fecha</th>
           <th>Hora</th>
           <th>Estado</th>
-          <th>Acciones</th>
+          <th class="text-end">Acciones</th>
         </tr>
       </thead>
       <tbody>
@@ -115,32 +115,30 @@
           <td class="text-nowrap">{$reserva['fecha_reserva']|date:'d/m/Y'}</td>
           <td class="text-nowrap">{$reserva['hora_inicio']} - {$reserva['hora_fin']}</td>
           <td>
-            {var $statusColors = ['Pendiente' => 'warning', 'Confirmada' => 'success',
-            'Completada' => 'info', 'Cancelada' => 'secondary', 'Pagada' => 'success']}
+            {var $statusColors = ['Pendiente' => 'warning', 'Confirmada' => 'primary', 'Pagada' => 'success',
+            'Completada' => 'info', 'Cancelada' => 'secondary']}
             <span class="badge bg-{$statusColors[$reserva['estado']] ?? 'secondary'}">
               {$reserva['estado']}
             </span>
           </td>
-          <td class="text-nowrap">
+          <td class="text-end text-nowrap">
             {if $reserva['estado'] !== 'Completada' && $reserva['estado'] !== 'Cancelada'}
-            <div class="btn-group btn-group-sm">
-              <button 
-                class="btn btn-outline-success btn-complete" 
+            <button 
+                type="button"
+                class="btn btn-sm btn-outline-success btn-complete" 
                 data-id="{$reserva['id_reserva']}"
                 title="Marcar como Completada"
               >
                 <i class="bi bi-check-lg"></i>
-              </button>
-              <button 
-                class="btn btn-outline-danger btn-cancel" 
+            </button>
+            <button 
+                type="button"
+                class="btn btn-sm btn-outline-danger btn-cancel" 
                 data-id="{$reserva['id_reserva']}"
                 title="Marcar como Cancelada"
               >
                 <i class="bi bi-x-lg"></i>
-              </button>
-            </div>
-            {else}
-              <span class="text-muted small">Sin acciones</span>
+            </button>
             {/if}
           </td>
         </tr>
