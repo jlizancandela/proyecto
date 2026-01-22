@@ -3,10 +3,14 @@
  * Handles status updates and filtering for the specialist panel.
  */
 
+import { confirmAction } from "../shared/components/confirm-dialog.js";
+import { notification } from "../shared/components/toast.js";
+
 document.addEventListener('DOMContentLoaded', () => {
     // Helper to update status
     const updateStatus = async (id, status) => {
-        if (!confirm(`¿Estás seguro de marcar esta reserva como ${status}?`)) return;
+        const confirmed = await confirmAction(`¿Estás seguro de marcar esta reserva como ${status}?`);
+        if (!confirmed) return;
 
         try {
             const response = await fetch(`/specialist/api/reservas/${id}/status`, {
@@ -20,13 +24,16 @@ document.addEventListener('DOMContentLoaded', () => {
             const result = await response.json();
 
             if (result.success) {
-                window.location.reload();
+                notification(`Reserva marcada como ${status}`, "success");
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1000);
             } else {
-                alert('Error: ' + (result.error || 'No se pudo actualizar la reserva'));
+                notification(result.error || 'No se pudo actualizar la reserva', "error");
             }
         } catch (error) {
             console.error('Error:', error);
-            alert('Error crítico al conectar con el servidor');
+            notification('Error crítico al conectar con el servidor', "error");
         }
     };
 
