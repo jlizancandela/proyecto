@@ -9,6 +9,9 @@
 namespace Reservas\Presentation;
 
 use Reservas\Application\ReservaService;
+use Shared\Domain\Exceptions\BookingConflictException;
+use Shared\Domain\Exceptions\BookingLimitException;
+use Shared\Domain\Exceptions\BookingValidationException;
 
 class BookingApiController
 {
@@ -56,6 +59,15 @@ class BookingApiController
                 'id_reserva' => $bookingId,
                 'message' => 'Reserva creada exitosamente'
             ]);
+        } catch (BookingConflictException $e) {
+            http_response_code(409); // Conflict
+            echo json_encode(['error' => $e->getMessage()]);
+        } catch (BookingLimitException $e) {
+            http_response_code(400);
+            echo json_encode(['error' => $e->getMessage()]);
+        } catch (BookingValidationException $e) {
+            http_response_code(400);
+            echo json_encode(['error' => $e->getMessage()]);
         } catch (\RuntimeException $e) {
             http_response_code(400);
             echo json_encode(['error' => $e->getMessage()]);

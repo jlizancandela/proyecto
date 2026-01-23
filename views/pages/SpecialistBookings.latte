@@ -8,7 +8,7 @@
     <h1 class="mb-0">Mis Reservas</h1>
   </div>
 
-  {* Filtros en acordeón *}
+  {* Filter Accordion *}
   <div class="accordion mb-3" id="filtersAccordion">
     <div class="accordion-item">
       <h2 class="accordion-header">
@@ -29,11 +29,11 @@
         class="accordion-collapse collapse"
         data-bs-parent="#filtersAccordion"
       >
-        <div class="accordion-body">
-          <div class="row g-3 mb-3">
-            {* Filtro por estado *}
-            <div class="col-12 col-md-6 col-lg-4">
-              <label for="filterEstado" class="form-label">Estado</label>
+          <div class="accordion-body">
+            <div class="row g-3 mb-3">
+              {* Status Filter *}
+              <div class="col-12 col-md-6 col-lg-4">
+                <label for="filterEstado" class="form-label">Estado</label>
               <select id="filterEstado" class="form-select">
                 <option value="">Todos</option>
                 <option value="Pendiente" {if ($filtros['estado'] ?? '') === 'Pendiente'}selected{/if}>Pendiente</option>
@@ -43,9 +43,9 @@
               </select>
             </div>
 
-            {* Filtro por cliente *}
-            <div class="col-12 col-md-6 col-lg-4">
-              <label for="filterCliente" class="form-label">Cliente</label>
+              {* Client Filter *}
+              <div class="col-12 col-md-6 col-lg-4">
+                <label for="filterCliente" class="form-label">Cliente</label>
               <input
                 type="text"
                 id="filterCliente"
@@ -83,7 +83,7 @@
     </div>
   </div>
 
-  {* Tabla de reservas *}
+  {* Bookings Table *}
   {if count($reservas) > 0}
   <div class="table-responsive">
     <table class="table table-hover align-middle">
@@ -95,6 +95,7 @@
           <th>Fecha</th>
           <th>Hora</th>
           <th>Estado</th>
+          <th class="text-end">Acciones</th>
         </tr>
       </thead>
       <tbody>
@@ -114,11 +115,31 @@
           <td class="text-nowrap">{$reserva['fecha_reserva']|date:'d/m/Y'}</td>
           <td class="text-nowrap">{$reserva['hora_inicio']} - {$reserva['hora_fin']}</td>
           <td>
-            {var $statusColors = ['Pendiente' => 'warning', 'Confirmada' => 'success',
+            {var $statusColors = ['Pendiente' => 'warning', 'Confirmada' => 'primary', 'Pagada' => 'success',
             'Completada' => 'info', 'Cancelada' => 'secondary']}
             <span class="badge bg-{$statusColors[$reserva['estado']] ?? 'secondary'}">
               {$reserva['estado']}
             </span>
+          </td>
+          <td class="text-end text-nowrap">
+            {if $reserva['estado'] !== 'Completada' && $reserva['estado'] !== 'Cancelada'}
+            <button 
+                type="button"
+                class="btn btn-sm btn-outline-success btn-complete" 
+                data-id="{$reserva['id_reserva']}"
+                title="Marcar como Completada"
+              >
+                <i class="bi bi-check-lg"></i>
+            </button>
+            <button 
+                type="button"
+                class="btn btn-sm btn-outline-danger btn-cancel" 
+                data-id="{$reserva['id_reserva']}"
+                title="Marcar como Cancelada"
+              >
+                <i class="bi bi-x-lg"></i>
+            </button>
+            {/if}
           </td>
         </tr>
         {/foreach}
@@ -132,7 +153,7 @@
   </div>
   {/if}
 
-  {* Paginación *}
+  {* Pagination *}
   {if count($reservas) > 0 && $totalPages > 1}
   {include '../components/paginator.latte', currentPage: $page, totalPages: $totalPages, baseUrl: '/specialist/bookings'}
   {/if}
@@ -141,5 +162,5 @@
 {/block}
 
 {block scripts}
-
+<script src="/src/js/specialist/bookings-manager.js" type="module"></script>
 {/block}

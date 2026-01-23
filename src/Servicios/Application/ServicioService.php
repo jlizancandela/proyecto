@@ -43,7 +43,9 @@ class ServicioService
             $data['nombre_servicio'],
             (int) $data['duracion_minutos'],
             $data['descripcion'],
-            (float) $data['precio']
+            (float) $data['precio'],
+            null,
+            $data['activo'] ?? true
         );
 
         $id = $this->repository->save($servicio);
@@ -85,7 +87,8 @@ class ServicioService
             (int) $data['duracion_minutos'],
             $data['descripcion'],
             (float) $data['precio'],
-            $id
+            $id,
+            $data['activo'] ?? $existingService->isActivo()
         );
 
         $success = $this->repository->update($servicio);
@@ -171,6 +174,7 @@ class ServicioService
                 ->key('descripcion', v::stringType()->notEmpty())
                 ->key('duracion_minutos', v::intType()->between(15, 300))
                 ->key('precio', v::numericVal()->min(0))
+                ->key('activo', v::boolType(), false)
                 ->assert($data);
         } catch (ValidationException $e) {
             throw new ServiceValidationException('Validation error: ' . $e->getMessage());

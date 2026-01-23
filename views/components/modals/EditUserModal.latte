@@ -144,17 +144,13 @@
 
               {* Estado Activo *}
               <div class="mb-3">
-                <div class="form-check">
-                  <input
-                    class="form-check-input"
-                    type="checkbox"
-                    id="editActivo"
-                    name="activo"
-                    checked
-                  />
-                  <label class="form-check-label" for="editActivo">Usuario activo</label>
-                </div>
-                <div class="form-text">Desmarcar para desactivar la cuenta del usuario</div>
+                <label for="editActivo" class="form-label">Estado *</label>
+                <select class="form-select" id="editActivo" name="activo">
+                  <option value="1">Activo</option>
+                  <option value="0">Inactivo (Baja)</option>
+                  <option value="2">Baneado</option>
+                </select>
+                <div class="form-text">Define el estado de acceso del usuario</div>
               </div>
 
               {* Avatar (solo para Especialista) *}

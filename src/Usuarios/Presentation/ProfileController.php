@@ -44,12 +44,12 @@ class ProfileController
         ];
 
         if (isset($_SESSION['success_message'])) {
-            $data['successMessage'] = $_SESSION['success_message'];
+            $data['success'] = $_SESSION['success_message'];
             unset($_SESSION['success_message']);
         }
 
         if (isset($_SESSION['error_message'])) {
-            $data['errorMessage'] = $_SESSION['error_message'];
+            $data['error'] = $_SESSION['error_message'];
             unset($_SESSION['error_message']);
         }
 

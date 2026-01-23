@@ -5,14 +5,14 @@
   class="card border-0 shadow rounded-4 overflow-hidden mb-4 position-relative"
   style="min-height: 200px; background-image: url('{$fotoUrl}'); background-size: cover; background-position: center 20%;"
 >
-  <!-- Overlay oscuro para legibilidad -->
+  <!-- Dark overlay for readability -->
   <div
     class="position-absolute top-0 start-0 w-100 h-100"
     style="background: linear-gradient(to right, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.6) 60%, rgba(0,0,0,0.3) 100%);"
   ></div>
 
   <div class="card-body p-4 position-relative d-flex flex-column h-100 justify-content-center">
-    <!-- Encabezado: Badge -->
+    <!-- Header: Badge -->
     <div class="d-flex justify-content-between align-items-center mb-2">
       <span
         class="badge rounded-pill bg-white text-dark px-3 py-1 fw-bold border border-light"
@@ -22,7 +22,7 @@
       </span>
     </div>
 
-    <!-- Título -->
+    <!-- Title -->
     <h3 class="card-title fw-bold text-white mb-1 h4">
       {$latestReserva->servicio_nombre}
     </h3>
@@ -30,7 +30,7 @@
       con <span class="text-white fw-medium">{$latestReserva->especialista_nombre}</span>
     </p>
 
-    <!-- Fecha y Hora -->
+    <!-- Date and Time -->
     <div class="d-flex align-items-center text-white mb-3">
       <div class="d-flex align-items-center me-3 bg-white bg-opacity-10 px-3 py-2 rounded-3 backdrop-blur-sm border border-white border-opacity-10">
         <i class="bi bi-calendar-event me-2 text-warning"></i>
@@ -42,7 +42,7 @@
       </div>
     </div>
 
-    <!-- Botones de Acción -->
+    <!-- Action Buttons -->
     <div class="mt-auto">
       <a
         href="/user/reservas/modify/{$latestReserva->id_reserva}"

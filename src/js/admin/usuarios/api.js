@@ -15,6 +15,16 @@ export const fetchUser = async (userId) => {
 };
 
 /**
+ * Fetches current authenticated user data.
+ *
+ * @return {Promise<object>} The current user data.
+ */
+export const fetchMe = async () => {
+  const response = await fetch("/api/me");
+  return response.json();
+};
+
+/**
  * Creates a new user.
  *
  * @param {FormData} formData - The user data to create (FormData for file upload support).
@@ -27,6 +37,7 @@ export const createUser = async (formData) => {
   });
   return response.json();
 };
+
 
 /**
  * Updates an existing user.

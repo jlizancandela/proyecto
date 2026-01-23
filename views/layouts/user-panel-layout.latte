@@ -34,7 +34,10 @@
         {include '../components/user-sidebar.latte', userName: $userName}
         <main class="col-md-9 col-lg-10 px-0 py-0">
           {include '../components/user-breadcrumb.latte', currentUrl: $currentUrl}
-          <div class="px-2 px-md-4 py-3 py-md-4">{block content}{/block}</div>
+          <div class="px-2 px-md-4 py-3 py-md-4">
+            {include '../components/global-alerts.latte'}
+            {block content}{/block}
+          </div>
         </main>
       </div>
     </div>

@@ -2,19 +2,19 @@
 <div class="mb-4">
   <h1 class="mb-4">Gestión de Servicios</h1>
 
-  {* Botón flotante para nuevo servicio *}
+  {* New Service Floating Button *}
   <button
     type="button"
-    class="btn btn-primary rounded-circle shadow-lg"
+    class="btn btn-primary rounded-circle shadow-lg position-fixed bottom-0 end-0 m-4 z-3"
     data-bs-toggle="modal"
     data-bs-target="#createServiceModal"
-    style="position: fixed; bottom: 2rem; right: 2rem; width: 60px; height: 60px; z-index: 1000"
+    style="width: 60px; height: 60px;"
     title="Nuevo Servicio"
   >
     <i class="bi bi-plus-lg fs-4"></i>
   </button>
 
-  {* Tabla de servicios *} {if count($servicios) > 0}
+  {* Services Table *} {if count($servicios) > 0}
   <div class="table-responsive">
     <table class="table table-hover align-middle">
       <thead class="table-light">
@@ -39,7 +39,8 @@
           <td>
             {if $servicio['activo']}
             <span
-              class="badge bg-success cursor-pointer btn-toggle-status"
+              class="badge bg-success btn-toggle-status"
+              style="cursor: pointer"
               data-service-id="{$servicio['id']}"
               data-current-status="1"
               title="Click para desactivar"
@@ -48,7 +49,8 @@
             </span>
             {else}
             <span
-              class="badge bg-secondary cursor-pointer btn-toggle-status"
+              class="badge bg-secondary btn-toggle-status"
+              style="cursor: pointer"
               data-service-id="{$servicio['id']}"
               data-current-status="0"
               title="Click para activar"
@@ -77,12 +79,6 @@
     <i class="bi bi-info-circle me-2"></i>
     No hay servicios registrados.
   </div>
-  {/if} {* Modales *} {include '../components/modals/CreateServiceModal.latte'} {include
+  {/if} {* Modals *} {include '../components/modals/CreateServiceModal.latte'} {include
   '../components/modals/EditServiceModal.latte'}
 </div>
-
-<style>
-  .cursor-pointer {
-    cursor: pointer;
-  }
-</style>

@@ -60,3 +60,7 @@ publish:
     docker buildx build --push -t {{IMAGE}} -f {{DOCKERFILE}} .
     ssh root@{{SERVER_IP}} just --justfile '~/proyecto/justfile' --working-directory '~/proyecto' deploy
 
+# IA-powered commit, push and merge workflow
+commit context="":
+    node tools/git-automation.mjs "{{context}}"
+

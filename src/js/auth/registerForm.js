@@ -54,14 +54,13 @@ const displayErrors = (errors) => {
   Object.keys(errors).forEach((field) => {
     const input = form[field];
     if (input) {
-      const errorDiv = document.createElement("div");
-      errorDiv.className = "form-text text-danger";
-      errorDiv.textContent = errors[field];
-
       const targetInput = input instanceof NodeList ? input[0] : input;
-
       targetInput.classList.add("is-invalid");
-      targetInput.parentElement.appendChild(errorDiv);
+
+      const errorDiv = document.getElementById(`${field}-error`);
+      if (errorDiv) {
+        errorDiv.textContent = errors[field];
+      }
     }
   });
 };
@@ -70,10 +69,12 @@ const displayErrors = (errors) => {
  * Clears all validation errors from the form.
  */
 const clearErrors = () => {
-  const errorMessages = document.querySelectorAll(".form-text.text-danger");
-  errorMessages.forEach((error) => error.remove());
+  const errorMessages = registerForm.querySelectorAll(".invalid-feedback");
+  errorMessages.forEach((error) => {
+    error.textContent = "";
+  });
 
-  const invalidInputs = document.querySelectorAll(".is-invalid");
+  const invalidInputs = registerForm.querySelectorAll(".is-invalid");
   invalidInputs.forEach((input) => input.classList.remove("is-invalid"));
 };
 

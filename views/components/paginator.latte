@@ -1,11 +1,10 @@
-{* Componente Paginador Parámetros: - $currentPage: int - página actual - $totalPages: int - total
-de páginas - $baseUrl: string - URL base para la paginación - $ariaLabel: string (opcional) -
-etiqueta aria para navegación - $filters: array (opcional) - filtros adicionales para mantener en la
-URL *} {var $filterQuery = ''} {if isset($filters['fecha_desde']) && $filters['fecha_desde']} {var
-$filterQuery = $filterQuery . '&fecha_desde=' . $filters['fecha_desde']} {/if} {if
-isset($filters['fecha_hasta']) && $filters['fecha_hasta']} {var $filterQuery = $filterQuery .
-'&fecha_hasta=' . $filters['fecha_hasta']} {/if} {if isset($filters['estado']) &&
-$filters['estado']} {var $filterQuery = $filterQuery . '&estado=' . $filters['estado']} {/if}
+{* Componente Paginador 
+   Parámetros: 
+   - $currentPage: int - página actual 
+   - $totalPages: int - total de páginas 
+   - $baseUrl: string - URL base para la paginación 
+   - $ariaLabel: string (opcional) - etiqueta aria para navegación 
+*} 
 
 <div class="row" n:if="$totalPages > 1">
   <div class="col-12">
@@ -13,7 +12,7 @@ $filters['estado']} {var $filterQuery = $filterQuery . '&estado=' . $filters['es
       <ul class="pagination justify-content-center">
         <!-- Previous button -->
         <li n:class="'page-item', $currentPage <= 1 ? 'disabled' : ''">
-          <a class="page-link" href="{$baseUrl}?page={$currentPage - 1}{$filterQuery}">
+          <a class="page-link" href="{$baseUrl}?{http_build_query(array_merge($_GET, ['page' => $currentPage - 1]))}">
             <i class="bi bi-chevron-left"></i>
           </a>
         </li>
@@ -23,12 +22,12 @@ $filters['estado']} {var $filterQuery = $filterQuery . '&estado=' . $filters['es
           n:for="$i = 1; $i <= $totalPages; $i++"
           n:class="'page-item', $i === $currentPage ? 'active' : ''"
         >
-          <a class="page-link" href="{$baseUrl}?page={$i}{$filterQuery}">{$i}</a>
+          <a class="page-link" href="{$baseUrl}?{http_build_query(array_merge($_GET, ['page' => $i]))}">{$i}</a>
         </li>
 
         <!-- Next button -->
         <li n:class="'page-item', $currentPage >= $totalPages ? 'disabled' : ''">
-          <a class="page-link" href="{$baseUrl}?page={$currentPage + 1}{$filterQuery}">
+          <a class="page-link" href="{$baseUrl}?{http_build_query(array_merge($_GET, ['page' => $currentPage + 1]))}">
             <i class="bi bi-chevron-right"></i>
           </a>
         </li>

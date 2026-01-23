@@ -100,7 +100,7 @@
       <strong>Filtros aplicados:</strong>
       <span n:if="$search">Búsqueda: {$search} |</span>
       <span n:if="$rol">Rol: {$rol} |</span>
-      <span n:if="$estado !== null">Estado: {$estado == '1' ? 'Activo' : 'Inactivo'} |</span>
+      <span n:if="$estado !== null">Estado: {$estado == '1' ? 'Activo' : ($estado == '2' ? 'Baneado' : 'Inactivo')} |</span>
       <span n:if="$sort">Ordenar por: {$sort} ({$order})</span>
     </div>
 
@@ -134,8 +134,10 @@
             <td>{$user->getTelefono() ?? '-'}</td>
             <td>{$user->getFechaRegistro()->format('d/m/Y')}</td>
             <td>
-              <span class="badge {$user->getActivo() ? 'badge-success' : 'badge-secondary'}">
-                {$user->getActivo() ? 'Activo' : 'Inactivo'}
+              {var $statusClass = $user->getActivo() === 1 ? 'badge-success' : ($user->getActivo() === 2 ? 'badge-danger' : 'badge-secondary')}
+              {var $statusText = $user->getActivo() === 1 ? 'Activo' : ($user->getActivo() === 2 ? 'Baneado' : 'Inactivo')}
+              <span class="badge {$statusClass}">
+                {$statusText}
               </span>
             </td>
           </tr>

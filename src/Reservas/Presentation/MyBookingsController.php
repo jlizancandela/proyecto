@@ -106,6 +106,12 @@ class MyBookingsController
             $pdfUrl .= '?' . http_build_query($filterParams);
         }
 
+        $globalSuccess = $_SESSION['success'] ?? null;
+        $globalError = $_SESSION['error'] ?? null;
+        $globalInfo = $_SESSION['info'] ?? null;
+
+        unset($_SESSION['success'], $_SESSION['error'], $_SESSION['info']);
+
         return $this->latte->renderToString(
             __DIR__ . '/../../../views/pages/Bookings.latte',
             [
@@ -115,6 +121,9 @@ class MyBookingsController
                 'currentPage' => $page,
                 'totalPages' => $totalPages,
                 'totalBookings' => $totalBookings,
+                'success' => $globalSuccess,
+                'error' => $globalError,
+                'info' => $globalInfo,
                 'filters' => [
                     'fecha_desde' => $fromDate,
                     'fecha_hasta' => $toDate,

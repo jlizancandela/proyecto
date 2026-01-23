@@ -57,11 +57,19 @@ class AdminController
      */
     public function index(): string
     {
+        $success = $_SESSION['success'] ?? null;
+        $error = $_SESSION['error'] ?? null;
+        $info = $_SESSION['info'] ?? null;
+        unset($_SESSION['success'], $_SESSION['error'], $_SESSION['info']);
+
         return $this->latte->renderToString(
             __DIR__ . '/../../../views/pages/Admin.latte',
             [
                 'userName' => ucfirst($_SESSION['name'] ?? 'admin'),
-                'currentUrl' => $_SERVER['REQUEST_URI'] ?? '/admin'
+                'currentUrl' => $_SERVER['REQUEST_URI'] ?? '/admin',
+                'success' => $success,
+                'error' => $error,
+                'info' => $info
             ]
         );
     }
@@ -84,6 +92,11 @@ class AdminController
         $totalPages = (int) ceil($total / $limit);
         $usersArray = $this->enrichUsersWithServices(UserTransformer::toArrayCollection($users));
 
+        $success = $_SESSION['success'] ?? null;
+        $error = $_SESSION['error'] ?? null;
+        $info = $_SESSION['info'] ?? null;
+        unset($_SESSION['success'], $_SESSION['error'], $_SESSION['info']);
+
         return $this->latte->renderToString(
             __DIR__ . '/../../../views/pages/UsersManagement.latte',
             [
@@ -94,7 +107,10 @@ class AdminController
                 'search' => $_GET['search'] ?? '',
                 'total' => $total,
                 'currentUrl' => $_SERVER['REQUEST_URI'] ?? '/admin/users',
-                'availableServices' => $this->servicioService->getAllServices()
+                'availableServices' => $this->servicioService->getAllServices(),
+                'success' => $success,
+                'error' => $error,
+                'info' => $info
             ]
         );
     }
@@ -119,12 +135,20 @@ class AdminController
             ];
         }, $servicios);
 
+        $success = $_SESSION['success'] ?? null;
+        $error = $_SESSION['error'] ?? null;
+        $info = $_SESSION['info'] ?? null;
+        unset($_SESSION['success'], $_SESSION['error'], $_SESSION['info']);
+
         return $this->latte->renderToString(
             __DIR__ . '/../../../views/pages/ServicesManagement.latte',
             [
                 'userName' => ucfirst($_SESSION['name'] ?? 'Usuario'),
                 'servicios' => $serviciosData,
-                'currentUrl' => $_SERVER['REQUEST_URI'] ?? '/admin/services'
+                'currentUrl' => $_SERVER['REQUEST_URI'] ?? '/admin/services',
+                'success' => $success,
+                'error' => $error,
+                'info' => $info
             ]
         );
     }
@@ -147,6 +171,11 @@ class AdminController
 
         $reservasData = array_map(fn($reserva) => $reserva->toArray(), $reservas);
 
+        $success = $_SESSION['success'] ?? null;
+        $error = $_SESSION['error'] ?? null;
+        $info = $_SESSION['info'] ?? null;
+        unset($_SESSION['success'], $_SESSION['error'], $_SESSION['info']);
+
         return $this->latte->renderToString(
             __DIR__ . '/../../../views/pages/BookingsManagement.latte',
             [
@@ -159,7 +188,10 @@ class AdminController
                 'currentUrl' => $_SERVER['REQUEST_URI'] ?? '/admin/bookings',
                 'clients' => $this->userService->getUsersByRole(\Usuarios\Domain\UserRole::Cliente->value, 1000),
                 'specialists' => $this->especialistaRepository->getAllEspecialistasWithUserData(),
-                'services' => $this->servicioService->getAllServices()
+                'services' => $this->servicioService->getAllServices(),
+                'success' => $success,
+                'error' => $error,
+                'info' => $info
             ]
         );
     }

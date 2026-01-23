@@ -115,4 +115,17 @@ class AuthMiddleware
             exit;
         }
     }
+
+    /**
+     * Requires user to be authenticated and have Especialista role for API access
+     * @return void
+     */
+    public static function apiRequireSpecialist(): void
+    {
+        if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'Especialista') {
+            http_response_code(403);
+            echo json_encode(['error' => 'Prohibido: Se requiere rol de especialista']);
+            exit;
+        }
+    }
 }

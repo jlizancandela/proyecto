@@ -14,13 +14,10 @@ use Shared\Domain\Exceptions\InvalidEmailException;
 use Shared\Domain\Exceptions\InvalidUserDataException;
 
 /**
- * Servicio de gestión de usuarios
+ * User management service
  *
- * Implementa operaciones CRUD para usuarios, búsqueda y validación de datos.
- * Verifica que los emails sean únicos antes de crear o actualizar usuarios.
- */
-/**
- * Provides methods for creating, updating, and retrieving users.
+ * Implements CRUD operations for users, search, and data validation.
+ * Verifies that emails are unique before creating or updating users.
  */
 class UserService
 {
@@ -39,13 +36,13 @@ class UserService
     }
 
     /**
-     * Obtiene todos los usuarios con paginación
+     * Retrieves all users with pagination.
      *
-     * @param int $limit Número máximo de resultados
-     * @param int $offset Desplazamiento para paginación
-     * @param string $sort Campo por el que ordenar
-     * @param string $order Dirección del ordenamiento (asc/desc)
-     * @return Usuario[] Array de usuarios
+     * @param int $limit Maximum number of results
+     * @param int $offset Offset for pagination
+     * @param string $sort Field to sort by
+     * @param string $order Sort direction (asc/desc)
+     * @return Usuario[] Array of users
      */
     public function getAllUsers($limit = 10, $offset = 0, $sort = '', $order = 'asc'): array
     {
@@ -53,9 +50,9 @@ class UserService
     }
 
     /**
-     * Cuenta el total de usuarios en el sistema
+     * Counts the total number of users in the system.
      *
-     * @return int Número total de usuarios
+     * @return int Total number of users
      */
     public function getTotalUsers(): int
     {
@@ -63,10 +60,10 @@ class UserService
     }
 
     /**
-     * Busca un usuario por su ID
+     * Finds a user by their ID.
      *
-     * @param int $id ID del usuario
-     * @return Usuario|null Usuario encontrado o null
+     * @param int $id User ID
+     * @return Usuario|null Found user or null
      */
     public function getUserById(int $id): ?Usuario
     {
@@ -74,10 +71,10 @@ class UserService
     }
 
     /**
-     * Obtiene todos los usuarios con un rol específico
+     * Retrieves all users with a specific role.
      *
-     * @param UserRole $role Rol a filtrar (ADMIN, ESPECIALISTA, CLIENTE)
-     * @return Usuario[] Array de usuarios con ese rol
+     * @param UserRole $role Role to filter (ADMIN, SPECIALIST, CLIENT)
+     * @return Usuario[] Array of users with that role
      */
     public function getUserByRole(UserRole $role): array
     {
@@ -85,14 +82,14 @@ class UserService
     }
 
     /**
-     * Obtiene usuarios por rol con paginación
+     * Retrieves users by role with pagination.
      *
-     * @param string $rol Nombre del rol (Admin, Especialista, Cliente)
-     * @param int $limit Número máximo de resultados
-     * @param int $offset Desplazamiento para paginación
-     * @param string $sort Campo por el que ordenar
-     * @param string $order Dirección del ordenamiento (asc/desc)
-     * @return Usuario[] Array de usuarios con ese rol
+     * @param string $rol Role name (Admin, Specialist, Client)
+     * @param int $limit Maximum number of results
+     * @param int $offset Offset for pagination
+     * @param string $sort Field to sort by
+     * @param string $order Sort direction (asc/desc)
+     * @return Usuario[] Array of users with that role
      */
     public function getUsersByRole(string $rol, int $limit = 10, int $offset = 0, $sort = '', $order = 'asc'): array
     {
@@ -100,10 +97,10 @@ class UserService
     }
 
     /**
-     * Cuenta el total de usuarios con un rol específico
+     * Counts the total number of users with a specific role.
      *
-     * @param string $rol Nombre del rol (Admin, Especialista, Cliente)
-     * @return int Número de usuarios con ese rol
+     * @param string $rol Role name (Admin, Specialist, Client)
+     * @return int Number of users with that role
      */
     public function getTotalUsersByRole(string $rol): int
     {
@@ -111,14 +108,14 @@ class UserService
     }
 
     /**
-     * Busca usuarios por nombre, apellidos o email con paginación
+     * Searches users by name, surname, or email with pagination.
      *
-     * @param string $search Término de búsqueda
-     * @param int $limit Número máximo de resultados
-     * @param int $offset Desplazamiento para paginación
-     * @param string $sort Campo por el que ordenar
-     * @param string $order Dirección del ordenamiento (asc/desc)
-     * @return Usuario[] Array de usuarios que coinciden con la búsqueda
+     * @param string $search Search term
+     * @param int $limit Maximum number of results
+     * @param int $offset Offset for pagination
+     * @param string $sort Field to sort by
+     * @param string $order Sort direction (asc/desc)
+     * @return Usuario[] Array of users matching the search
      */
     public function searchUsers(string $search, int $limit = 10, int $offset = 0, $sort = '', $order = 'asc'): array
     {
@@ -126,10 +123,10 @@ class UserService
     }
 
     /**
-     * Cuenta el total de resultados de una búsqueda
+     * Counts the total number of search results.
      *
-     * @param string $search Término de búsqueda
-     * @return int Número de usuarios que coinciden
+     * @param string $search Search term
+     * @return int Number of matching users
      */
     public function getTotalSearchResults(string $search): int
     {
@@ -137,12 +134,12 @@ class UserService
     }
 
     /**
-     * Obtiene usuarios aplicando múltiples filtros (visión admin)
+     * Retrieves users applying multiple filters (admin view).
      *
-     * @param array $filters Filtros asociados arrays asociativo
-     * @param int $limit Límite
-     * @param int $offset Desplazamiento
-     * @return Usuario[] Array de usuarios
+     * @param array $filters Associative array of filters
+     * @param int $limit Limit
+     * @param int $offset Offset
+     * @return Usuario[] Array of users
      */
     public function getAllUsersWithFilters(array $filters = [], int $limit = 50, int $offset = 0): array
     {
@@ -150,10 +147,10 @@ class UserService
     }
 
     /**
-     * Cuenta el total de usuarios aplicando múltiples filtros
+     * Counts the total number of users applying multiple filters.
      *
-     * @param array $filters Filtros asociados arrays asociativo
-     * @return int Total de usuarios
+     * @param array $filters Associative array of filters
+     * @return int Total users
      */
     public function countAllUsersWithFilters(array $filters = []): int
     {
@@ -161,15 +158,15 @@ class UserService
     }
 
     /**
-     * Crea un nuevo usuario validando datos y verificando email único
+     * Creates a new user by validating data and checking for unique email.
      *
-     * Valida los datos del usuario y verifica que el email no esté registrado.
-     * Asigna el ID generado al objeto Usuario.
+     * Validates user data and verifies that the email is not registered.
+     * Assigns the generated ID to the Usuario object.
      *
-     * @param Usuario $user Usuario a crear
+     * @param Usuario $user User to create
      * @return void
-     * @throws InvalidEmailException Si el email ya existe
-     * @throws InvalidUserDataException Si los datos del usuario son inválidos
+     * @throws InvalidEmailException If the email already exists
+     * @throws InvalidUserDataException If user data is invalid
      */
     public function setUser(Usuario $user): void
     {
@@ -185,15 +182,15 @@ class UserService
     }
 
     /**
-     * Actualiza un usuario existente validando datos y email único
+     * Updates an existing user validating data and unique email.
      *
-     * Valida los datos y verifica que el email no esté usado por otro usuario.
-     * Permite mantener el mismo email si no ha cambiado.
+     * Validates data and verifies that the email is not used by another user.
+     * Allows keeping the same email if it hasn't changed.
      *
-     * @param Usuario $user Usuario con datos actualizados
+     * @param Usuario $user User with updated data
      * @return void
-     * @throws InvalidEmailException Si el email ya está en uso por otro usuario
-     * @throws InvalidUserDataException Si los datos del usuario son inválidos
+     * @throws InvalidEmailException If the email is already in use by another user
+     * @throws InvalidUserDataException If user data is invalid
      */
     public function updateUser(Usuario $user): void
     {
@@ -208,14 +205,14 @@ class UserService
     }
 
     /**
-     * Valida los datos de un usuario
+     * Validates user data.
      *
-     * Verifica que email, nombre, apellidos y teléfono (opcional) cumplan
-     * con los requisitos de formato y longitud.
+     * Verifies that email, name, surname, and phone (optional) meet
+     * format and length requirements.
      *
-     * @param Usuario $user Usuario a validar
+     * @param Usuario $user User to validate
      * @return void
-     * @throws InvalidUserDataException Si algún dato no cumple las reglas
+     * @throws InvalidUserDataException If any data does not meet rules
      */
     private function validateUser(Usuario $user): void
     {
@@ -238,9 +235,9 @@ class UserService
     }
 
     /**
-     * Elimina un usuario del sistema
+     * Deletes a user from the system.
      *
-     * @param int $id ID del usuario a eliminar
+     * @param int $id ID of the user to delete
      * @return void
      */
     public function deleteUser(int $id): void
@@ -249,24 +246,24 @@ class UserService
     }
 
     /**
-     * Desactiva un usuario (baja lógica)
+     * Deactivates a user (logical deletion).
      *
-     * @param int $id ID del usuario a desactivar
+     * @param int $id ID of the user to deactivate
      * @return void
      */
     public function deactivateUser(int $id): void
     {
-        $this->userRepository->setUserStatus($id, false);
+        $this->userRepository->setUserStatus($id, 0);
     }
 
     /**
-     * Activa un usuario
+     * Activates a user.
      *
-     * @param int $id ID del usuario a activar
+     * @param int $id ID of the user to activate
      * @return void
      */
     public function activateUser(int $id): void
     {
-        $this->userRepository->setUserStatus($id, true);
+        $this->userRepository->setUserStatus($id, 1);
     }
 }

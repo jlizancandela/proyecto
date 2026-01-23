@@ -48,11 +48,15 @@ class AuthController
      */
     public function showLogin(): string
     {
+        $success = $_SESSION['login_success'] ?? $_SESSION['success'] ?? null;
+        $error = $_SESSION['login_error'] ?? $_SESSION['error'] ?? null;
+        unset($_SESSION['login_success'], $_SESSION['login_error'], $_SESSION['success'], $_SESSION['error']);
+
         return $this->latte->renderToString(
             __DIR__ . '/../../../views/pages/Login.latte',
             [
-                'success' => $_SESSION['login_success'] ?? null,
-                'error' => $_SESSION['login_error'] ?? null,
+                'success' => $success,
+                'error' => $error,
                 'currentUrl' => $_SERVER['REQUEST_URI'] ?? '/login'
             ]
         );
@@ -88,7 +92,13 @@ class AuthController
             exit;
         }
 
-        if (!$user->getActivo()) {
+        if ($user->getActivo() === 2) {
+            $_SESSION['login_error'] = 'Tu cuenta ha sido suspendida permanentemente. Contacta al administrador.';
+            header('Location: /login');
+            exit;
+        }
+
+        if ($user->getActivo() === 0) {
             $_SESSION['inactive_user_id'] = $user->getId();
             $_SESSION['inactive_user_email'] = $user->getEmail();
             header('Location: /reactivate');
@@ -122,10 +132,15 @@ class AuthController
      */
     public function showRegister(): string
     {
+        $error = $_SESSION['register_error'] ?? $_SESSION['error'] ?? null;
+        $success = $_SESSION['success'] ?? null;
+        unset($_SESSION['register_error'], $_SESSION['error'], $_SESSION['success']);
+
         return $this->latte->renderToString(
             __DIR__ . '/../../../views/pages/Register.latte',
             [
-                'error' => $_SESSION['register_error'] ?? null,
+                'error' => $error,
+                'success' => $success,
                 'currentUrl' => $_SERVER['REQUEST_URI'] ?? '/register'
             ]
         );
@@ -181,11 +196,15 @@ class AuthController
      */
     public function showForgotPasswordForm(): string
     {
+        $error = $_SESSION['forgot_error'] ?? $_SESSION['error'] ?? null;
+        $success = $_SESSION['forgot_success'] ?? $_SESSION['success'] ?? null;
+        unset($_SESSION['forgot_error'], $_SESSION['forgot_success'], $_SESSION['error'], $_SESSION['success']);
+
         return $this->latte->renderToString(
             __DIR__ . '/../../../views/pages/ForgotPassword.latte',
             [
-                'error' => $_SESSION['forgot_error'] ?? null,
-                'success' => $_SESSION['forgot_success'] ?? null,
+                'error' => $error,
+                'success' => $success,
                 'currentUrl' => $_SERVER['REQUEST_URI'] ?? '/forgot-password'
             ]
         );
@@ -235,20 +254,30 @@ class AuthController
      */
     public function showResetPasswordForm(): string
     {
-        $token = $_GET['token'] ?? '';
+        // Limpiamos el token de espacios accidentales
+        $token = trim($_GET['token'] ?? '');
+        
         $user = $this->authService->validateResetToken($token);
 
         if (!$user) {
+            // Log para debuggear problemas con Yopmail/correos externos
+            error_log("[AuthDebug] Falló validación de token. Token recibido: '{$token}'");
+            
             $_SESSION['forgot_error'] = 'El enlace de recuperación es inválido o ha expirado';
             header('Location: /forgot-password');
             exit;
         }
 
+        $error = $_SESSION['reset_error'] ?? $_SESSION['error'] ?? null;
+        $success = $_SESSION['success'] ?? null;
+        unset($_SESSION['reset_error'], $_SESSION['error'], $_SESSION['success']);
+
         return $this->latte->renderToString(
             __DIR__ . '/../../../views/pages/ResetPassword.latte',
             [
                 'token' => $token,
-                'error' => $_SESSION['reset_error'] ?? null,
+                'error' => $error,
+                'success' => $success,
                 'currentUrl' => $_SERVER['REQUEST_URI'] ?? '/reset-password'
             ]
         );

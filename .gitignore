@@ -55,6 +55,9 @@ phpdoc
 Thumbs.db
 .DS_Store
 
+# Tools
+/tools/
+
 # Documentos y pruebas
 /documentos/*
 AGENTS.md
