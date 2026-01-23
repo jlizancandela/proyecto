@@ -100,20 +100,29 @@ isset($filters['fecha_hasta']) || isset($filters['estado'])}
                 Pendiente
               </button>
 
-              <button
-                type="button"
-                class="btn btn-sm {if isset($filters['estado']) && $filters['estado'] === 'Confirmada'}btn-success{else}btn-outline-success{/if}"
-                data-estado="Confirmada"
-              >
-                <i class="bi bi-check-circle me-1"></i>
-                Confirmada
-              </button>
-
-              <button
-                type="button"
-                class="btn btn-sm {if isset($filters['estado']) && $filters['estado'] === 'Completada'}btn-info{else}btn-outline-info{/if}"
-                data-estado="Completada"
-              >
+               <button
+                 type="button"
+                 class="btn btn-sm {if isset($filters['estado']) && $filters['estado'] === 'Confirmada'}btn-success{else}btn-outline-success{/if}"
+                 data-estado="Confirmada"
+               >
+                 <i class="bi bi-check-circle me-1"></i>
+                 Confirmada
+               </button>
+ 
+               <button
+                 type="button"
+                 class="btn btn-sm {if isset($filters['estado']) && $filters['estado'] === 'Pagada'}btn-success{else}btn-outline-success{/if}"
+                 data-estado="Pagada"
+               >
+                 <i class="bi bi-cash me-1"></i>
+                 Pagada
+               </button>
+ 
+               <button
+                 type="button"
+                 class="btn btn-sm {if isset($filters['estado']) && $filters['estado'] === 'Completada'}btn-info{else}btn-outline-info{/if}"
+                 data-estado="Completada"
+               >
                 <i class="bi bi-check-all me-1"></i>
                 Completada
               </button>

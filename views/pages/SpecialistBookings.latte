@@ -36,9 +36,10 @@
                 <label for="filterEstado" class="form-label">Estado</label>
               <select id="filterEstado" class="form-select">
                 <option value="">Todos</option>
-                <option value="Pendiente" {if ($filtros['estado'] ?? '') === 'Pendiente'}selected{/if}>Pendiente</option>
-                <option value="Confirmada" {if ($filtros['estado'] ?? '') === 'Confirmada'}selected{/if}>Confirmada</option>
-                <option value="Completada" {if ($filtros['estado'] ?? '') === 'Completada'}selected{/if}>Completada</option>
+                 <option value="Pendiente" {if ($filtros['estado'] ?? '') === 'Pendiente'}selected{/if}>Pendiente</option>
+                 <option value="Confirmada" {if ($filtros['estado'] ?? '') === 'Confirmada'}selected{/if}>Confirmada</option>
+                 <option value="Pagada" {if ($filtros['estado'] ?? '') === 'Pagada'}selected{/if}>Pagada</option>
+                 <option value="Completada" {if ($filtros['estado'] ?? '') === 'Completada'}selected{/if}>Completada</option>
                 <option value="Cancelada" {if ($filtros['estado'] ?? '') === 'Cancelada'}selected{/if}>Cancelada</option>
               </select>
             </div>
