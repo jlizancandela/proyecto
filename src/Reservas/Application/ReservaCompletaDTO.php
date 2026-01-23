@@ -26,6 +26,7 @@ class ReservaCompletaDTO
     public ?string $cliente_apellidos;
     public ?string $cliente_email;
     public ?string $cliente_telefono;
+    public int $cliente_activo;
 
     public ?string $especialista_nombre;
     public ?string $especialista_apellidos;
@@ -64,6 +65,7 @@ class ReservaCompletaDTO
         $dto->cliente_apellidos = $data['cliente_apellidos'] ?? null;
         $dto->cliente_email = $data['cliente_email'] ?? null;
         $dto->cliente_telefono = $data['cliente_telefono'] ?? null;
+        $dto->cliente_activo = (int) ($data['cliente_activo'] ?? 1);
 
         $dto->especialista_nombre = $data['especialista_nombre'] ?? null;
         $dto->especialista_apellidos = $data['especialista_apellidos'] ?? null;
@@ -103,6 +105,7 @@ class ReservaCompletaDTO
                 'apellidos' => $this->cliente_apellidos,
                 'email' => $this->cliente_email,
                 'telefono' => $this->cliente_telefono,
+                'activo' => $this->cliente_activo,
             ],
             'especialista' => [
                 'nombre' => $this->especialista_nombre,
