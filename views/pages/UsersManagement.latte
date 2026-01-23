@@ -114,10 +114,17 @@
                   </a>
                   <a
                     href="?{http_build_query(array_merge($_GET, ['estado' => '0']))}"
-                    class="badge {isset($_GET['estado']) && $_GET['estado'] === '0' ? 'bg-danger' : 'bg-secondary'} text-decoration-none py-2 px-3"
+                    class="badge {isset($_GET['estado']) && $_GET['estado'] === '0' ? 'bg-dark' : 'bg-secondary'} text-decoration-none py-2 px-3"
                   >
                     <i class="bi bi-x-circle me-1"></i>
                     Inactivos
+                  </a>
+                  <a
+                    href="?{http_build_query(array_merge($_GET, ['estado' => '2']))}"
+                    class="badge {isset($_GET['estado']) && $_GET['estado'] === '2' ? 'bg-danger' : 'bg-secondary'} text-decoration-none py-2 px-3"
+                  >
+                    <i class="bi bi-slash-circle me-1"></i>
+                    Baneados
                   </a>
                 </div>
               </div>
