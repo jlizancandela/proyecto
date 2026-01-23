@@ -90,8 +90,9 @@ class ReservaRepository
         }
 
         if (isset($filtros['cliente_search']) && $filtros['cliente_search'] !== '') {
-            $sql .= " AND (c.nombre LIKE :cliente_search OR c.apellidos LIKE :cliente_search)";
-            $params['cliente_search'] = "%{$filtros['cliente_search']}%";
+            $sql .= " AND (c.nombre LIKE :cliente_search_nom OR c.apellidos LIKE :cliente_search_ape)";
+            $params['cliente_search_nom'] = "%{$filtros['cliente_search']}%";
+            $params['cliente_search_ape'] = "%{$filtros['cliente_search']}%";
         }
     }
 
