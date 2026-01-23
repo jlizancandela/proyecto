@@ -260,10 +260,14 @@ class AdminController
     {
         $filtros = [];
 
-        $keys = ['cliente', 'especialista', 'estado', 'fecha_desde', 'fecha_hasta', 'sort', 'order'];
+        $keys = ['cliente', 'especialista', 'estado', 'fecha_desde', 'fecha_hasta', 'sort', 'order', 'search'];
         foreach ($keys as $key) {
             if (!empty($_GET[$key])) {
-                $filtros[$key] = ($key === 'cliente' || $key === 'especialista') ? (int) $_GET[$key] : trim($_GET[$key]);
+                if ($key === 'search') {
+                    $filtros['cliente_search'] = trim($_GET[$key]);
+                } else {
+                    $filtros[$key] = ($key === 'cliente' || $key === 'especialista') ? (int) $_GET[$key] : trim($_GET[$key]);
+                }
             }
         }
 

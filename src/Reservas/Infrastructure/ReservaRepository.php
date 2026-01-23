@@ -625,6 +625,7 @@ class ReservaRepository
             $sql = "
                 SELECT COUNT(*) as total
                 FROM RESERVA r
+                INNER JOIN USUARIO c ON r.id_cliente = c.id_usuario
                 WHERE r.id_cliente = :userId
             ";
 
@@ -715,7 +716,7 @@ class ReservaRepository
     public function countAllFiltered(array $filtros = []): int
     {
         try {
-            $sql = "SELECT COUNT(*) as total FROM RESERVA r WHERE 1=1";
+            $sql = "SELECT COUNT(*) as total FROM RESERVA r INNER JOIN USUARIO c ON r.id_cliente = c.id_usuario WHERE 1=1";
             $params = [];
             $this->applyFilters($filtros, $sql, $params);
 
