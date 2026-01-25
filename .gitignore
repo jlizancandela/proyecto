@@ -63,6 +63,7 @@ Thumbs.db
 AGENTS.md
 /.agents/
 REFACTOR_DOCUMENTATION.md
+/.opencode/
 
 /test
 # /tests/
