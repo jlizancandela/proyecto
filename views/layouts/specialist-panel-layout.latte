@@ -20,10 +20,10 @@
         >
           <span class="navbar-toggler-icon"></span>
         </button>
-        <span class="navbar-brand mb-0 h5">
+        <a href="/" class="navbar-brand mb-0 h5 text-decoration-none">
           <i class="bi bi-scissors text-primary me-2"></i>
           SR-Peluquería
-        </span>
+        </a>
         <div></div>
         {* Spacer para centrar el título *}
       </div>
@@ -33,9 +33,12 @@
       <div class="row">
         {include '../components/specialist-sidebar.latte', userName: $userName, userPhoto:
         $userPhoto}
-        <main class="col-md-9 col-lg-10 px-2 px-md-4 py-3 py-md-4">
-          {include '../components/global-alerts.latte'}
-          {block content}{/block}
+        <main class="col-md-9 col-lg-10 px-0 py-0">
+          {include '../components/specialist-breadcrumb.latte', currentUrl: $currentUrl}
+          <div class="px-2 px-md-4 py-3 py-md-4">
+            {include '../components/global-alerts.latte'}
+            {block content}{/block}
+          </div>
         </main>
       </div>
     </div>
