@@ -29,7 +29,6 @@ services:
       - "3306:3306"
     environment:
       MYSQL_ROOT_PASSWORD: root
-      # Database, user and password creation handled by init script
     volumes:
       - db_data:/var/lib/mysql
       - ./docker-init.sql:/docker-entrypoint-initdb.d/init.sql

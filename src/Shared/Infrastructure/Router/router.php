@@ -49,35 +49,35 @@ $router = new Router();
 /**
  * Protect all /admin/api/* routes - Require admin authentication for API
  */
-$router->before('GET|POST|PUT|DELETE', '/admin/api/.*', function () {
+$router->before('GET|POST|PUT|DELETE', '/admin/api(/.*)?', function () {
     AuthMiddleware::apiRequireAdmin();
 });
 
 /**
  * Protect all /admin/* routes - Require admin authentication for web pages
  */
-$router->before('GET|POST|PUT|DELETE', '/admin/.*', function () {
+$router->before('GET|POST|PUT|DELETE', '/admin(/.*)?', function () {
     AuthMiddleware::requireAdmin();
 });
 
 /**
  * Protect all /user/* routes - Require user authentication
  */
-$router->before('GET|POST|PUT|DELETE', '/user/.*', function () {
+$router->before('GET|POST|PUT|DELETE', '/user(/.*)?', function () {
     AuthMiddleware::requireAuth();
 });
 
 /**
  * Protect all /specialist/api/* routes - Require specialist role for API
  */
-$router->before('GET|POST|PUT|DELETE', '/specialist/api/.*', function () {
+$router->before('GET|POST|PUT|DELETE', '/specialist/api(/.*)?', function () {
     AuthMiddleware::apiRequireSpecialist();
 });
 
 /**
  * Protect all /specialist/* routes - Require specialist role
  */
-$router->before('GET|POST|PUT|DELETE', '/specialist/.*', function () {
+$router->before('GET|POST|PUT|DELETE', '/specialist(/.*)?', function () {
     AuthMiddleware::requireSpecialist();
 });
 

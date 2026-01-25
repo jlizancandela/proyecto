@@ -61,7 +61,9 @@ Thumbs.db
 # Documentos y pruebas
 /documentos/*
 AGENTS.md
+/.agents/
 REFACTOR_DOCUMENTATION.md
+/.opencode/
 
 /test
 # /tests/
