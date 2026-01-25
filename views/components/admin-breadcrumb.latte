@@ -1,0 +1,43 @@
+{* Breadcrumb para el panel de administración *}
+<nav aria-label="breadcrumb" class="bg-white border-bottom mb-3">
+  <div class="container-fluid px-4 py-2">
+    <ol class="breadcrumb mb-0">
+      <li class="breadcrumb-item">
+        <a href="/admin" class="text-decoration-none">
+          <i class="bi bi-grid-3x3-gap me-1"></i>
+          Dashboard
+        </a>
+      </li>
+
+      {* Breadcrumb para Gestión de Citas *}
+      <li
+        n:if="str_contains($currentUrl, '/admin/bookings')"
+        class="breadcrumb-item active"
+        aria-current="page"
+      >
+        <i class="bi bi-calendar-check me-1"></i>
+        Gestión de Citas
+      </li>
+
+      {* Breadcrumb para Gestión de Usuarios *}
+      <li
+        n:if="str_contains($currentUrl, '/admin/users')"
+        class="breadcrumb-item active"
+        aria-current="page"
+      >
+        <i class="bi bi-people me-1"></i>
+        Gestión de Usuarios
+      </li>
+
+      {* Breadcrumb para Gestión de Servicios *}
+      <li
+        n:if="str_contains($currentUrl, '/admin/services')"
+        class="breadcrumb-item active"
+        aria-current="page"
+      >
+        <i class="bi bi-scissors me-1"></i>
+        Gestión de Servicios
+      </li>
+    </ol>
+  </div>
+</nav>
