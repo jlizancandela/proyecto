@@ -29,21 +29,30 @@ A professional, containerized booking system for hair salons. Built with a modul
 
 ```text
 .
-├── src/                    # Core Logic (Domain-Driven Lite)
-│   ├── Especialistas/      # Profiles & availability
-│   ├── Reservas/           # Booking & cancellation logic
-│   ├── Servicios/          # Services catalog
-│   ├── Usuarios/           # Auth & profile management
-│   └── Shared/             # Infrastructure & Common utilities
+├── database/               # SQL migrations & seed data
+├── public/                 # Static assets & Public entry point (index.php)
+│   ├── css/                # Styles
+│   ├── js/                 # JS (bundles are gitignored)
+│   └── images/             # Static images
+├── src/                    # Backend & Frontend Core Logic
+│   ├── Especialistas/      # Specialist profiles & availability
+│   ├── Reservas/           # Booking logic & management
+│   ├── Servicios/          # Service catalog
+│   ├── Usuarios/           # User management & Auth
+│   ├── Shared/             # Common utilities & Infrastructure
+│   └── js/                 # Preact/Frontend source code
+├── tests/                  # Test suites
+│   ├── Unit/               # PHP unit tests (Pest)
+│   ├── Integrity/          # Integration tests
+│   ├── playwright/         # E2E tests
+│   └── js/                 # Frontend unit tests (Vitest)
 ├── views/                  # Latte Templates
-│   ├── components/         # Reusable UI parts
-│   ├── layouts/            # Master layouts (Admin, Client, Landing)
-│   └── pages/              # Specific page views
-├── public/                 # Static assets & Entry point
-├── tests/                  # Test suites (PHPUnit, Pest, Playwright, Vitest)
-├── Dockerfile              # Multi-stage production build
-├── docker-compose.yml      # Service orchestration
-└── docker-init.sql         # Database initialization script
+│   ├── components/         # Reusable UI fragments
+│   ├── layouts/            # Base templates (Admin, App, Landing)
+│   └── pages/              # Main view templates
+├── docker-compose.yml      # Docker service definitions
+├── Dockerfile              # Container configuration
+└── docker-init.sql         # DB schema & initial data
 ```
 
 ---
