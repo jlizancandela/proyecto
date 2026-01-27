@@ -8,25 +8,31 @@ namespace Especialistas\Application;
 
 use Especialistas\Infrastructure\EspecialistaRepository;
 use Especialistas\Infrastructure\EspecialistaServicioRepository;
+use Especialistas\Infrastructure\HorarioEspecialistaRepository;
 use Especialistas\Application\EspecialistaUsuarioDTO;
 use Especialistas\Domain\EspecialistaServicio;
+use Especialistas\Domain\HorarioEspecialista;
 
 class EspecialistaService
 {
     private EspecialistaRepository $especialistaRepository;
     private EspecialistaServicioRepository $especialistaServicioRepository;
+    private HorarioEspecialistaRepository $horarioEspecialistaRepository;
 
     /**
      * EspecialistaService constructor.
      * @param EspecialistaRepository $especialistaRepository The specialist repository instance.
      * @param EspecialistaServicioRepository $especialistaServicioRepository The specialist-service repository instance.
+     * @param HorarioEspecialistaRepository $horarioEspecialistaRepository The schedule repository instance.
      */
     public function __construct(
         EspecialistaRepository $especialistaRepository,
-        EspecialistaServicioRepository $especialistaServicioRepository
+        EspecialistaServicioRepository $especialistaServicioRepository,
+        HorarioEspecialistaRepository $horarioEspecialistaRepository
     ) {
         $this->especialistaRepository = $especialistaRepository;
         $this->especialistaServicioRepository = $especialistaServicioRepository;
+        $this->horarioEspecialistaRepository = $horarioEspecialistaRepository;
     }
 
     /**
@@ -62,6 +68,18 @@ class EspecialistaService
                     (int) $servicioId
                 );
                 $this->especialistaServicioRepository->addEspecialistaServicio($especialistaServicio);
+            }
+        }
+
+        if ($especialistaId && !empty($data['horarios'])) {
+            foreach ($data['horarios'] as $horarioData) {
+                $horario = new HorarioEspecialista(
+                    $especialistaId,
+                    (int) $horarioData['dia'],
+                    $horarioData['inicio'],
+                    $horarioData['fin']
+                );
+                $this->horarioEspecialistaRepository->addHorario($horario);
             }
         }
     }
@@ -102,6 +120,20 @@ class EspecialistaService
                         (int) $servicioId
                     );
                     $this->especialistaServicioRepository->addEspecialistaServicio($especialistaServicio);
+                }
+            }
+
+            if (isset($data['horarios'])) {
+                $this->horarioEspecialistaRepository->deleteHorariosByEspecialista($especialistaId);
+
+                foreach ($data['horarios'] as $horarioData) {
+                    $horario = new HorarioEspecialista(
+                        $especialistaId,
+                        (int) $horarioData['dia'],
+                        $horarioData['inicio'],
+                        $horarioData['fin']
+                    );
+                    $this->horarioEspecialistaRepository->addHorario($horario);
                 }
             }
         }
@@ -170,5 +202,13 @@ class EspecialistaService
     public function getServiciosForEspecialista(int $especialistaId): array
     {
         return $this->especialistaServicioRepository->getServiciosForEspecialista($especialistaId);
+    }
+
+    /**
+     * Gets schedule for a specialist.
+     */
+    public function getHorariosForEspecialista(int $especialistaId): array
+    {
+        return $this->horarioEspecialistaRepository->getHorariosByEspecialista($especialistaId);
     }
 }

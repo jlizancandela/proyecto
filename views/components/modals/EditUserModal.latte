@@ -168,11 +168,30 @@
                     Imagen de perfil del especialista (JPG, PNG). Dejar vacío para mantener el
                     actual.
                   </div>
-                  <div class="invalid-feedback"></div>
-                </div>
-              </div>
-            </div>
-          </div>
+                 <div class="invalid-feedback"></div>
+               </div>
+             </div>
+           </div>
+
+           {* Horarios (Solo para Especialista) *}
+           <div class="row" id="editHorariosContainer" style="display: none">
+             <div class="col-12">
+               <div class="mb-3">
+                 <label class="form-label d-flex justify-content-between align-items-center">
+                   Horarios de Trabajo *
+                   <button type="button" class="btn btn-sm btn-outline-primary" id="btnAddHorarioEdit">
+                     <i class="bi bi-plus-lg me-1"></i> Añadir Turno
+                   </button>
+                 </label>
+                 <div id="editHorariosList" class="row g-2">
+                   {* Aquí se añadirán los horarios dinámicamente *}
+                 </div>
+                 <div class="form-text">Define los días y horas que el especialista estará disponible.</div>
+                 <div class="invalid-feedback"></div>
+               </div>
+             </div>
+           </div>
+         </div>
 
           {* Servicios - Ancho completo *}
           <div class="row">

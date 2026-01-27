@@ -149,11 +149,30 @@
                     accept="image/*"
                   />
                   <div class="form-text">Imagen de perfil del especialista (JPG, PNG)</div>
-                  <div class="invalid-feedback"></div>
-                </div>
-              </div>
-            </div>
-          </div>
+                 <div class="invalid-feedback"></div>
+               </div>
+             </div>
+           </div>
+
+           {* Horarios (Solo para Especialista) *}
+           <div class="row" id="createHorariosContainer" style="display: none">
+             <div class="col-12">
+               <div class="mb-3">
+                 <label class="form-label d-flex justify-content-between align-items-center">
+                   Horarios de Trabajo *
+                   <button type="button" class="btn btn-sm btn-outline-primary" id="btnAddHorarioCreate">
+                     <i class="bi bi-plus-lg me-1"></i> Añadir Turno
+                   </button>
+                 </label>
+                 <div id="createHorariosList" class="row g-2">
+                   {* Aquí se añadirán los horarios dinámicamente *}
+                 </div>
+                 <div class="form-text">Define los días y horas que el especialista estará disponible.</div>
+                 <div class="invalid-feedback"></div>
+               </div>
+             </div>
+           </div>
+         </div>
 
           {* Services - Full Width *}
           <div class="row">
