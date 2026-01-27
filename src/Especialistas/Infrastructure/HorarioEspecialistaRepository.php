@@ -32,7 +32,7 @@ class HorarioEspecialistaRepository
     public function getAllHorarios(): array
     {
         try {
-            $stmt = $this->db->query("SELECT * FROM horarios_especialistas");
+            $stmt = $this->db->query("SELECT * FROM HORARIO_ESPECIALISTA");
 
             $horarios = [];
             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
@@ -54,7 +54,7 @@ class HorarioEspecialistaRepository
     {
         try {
             $stmt = $this->db->prepare(
-                "SELECT * FROM horarios_especialistas WHERE id_horario = :id"
+                "SELECT * FROM HORARIO_ESPECIALISTA WHERE id_horario = :id"
             );
             $stmt->execute(["id" => $id]);
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -74,7 +74,7 @@ class HorarioEspecialistaRepository
     {
         try {
             $stmt = $this->db->prepare(
-                "SELECT * FROM horarios_especialistas
+                "SELECT * FROM HORARIO_ESPECIALISTA
                  WHERE id_especialista = :id_especialista
                  ORDER BY dia_semana, hora_inicio"
             );
@@ -100,7 +100,7 @@ class HorarioEspecialistaRepository
     {
         try {
             $stmt = $this->db->prepare(
-                "SELECT * FROM horarios_especialistas
+                "SELECT * FROM HORARIO_ESPECIALISTA
                  WHERE dia_semana = :dia_semana
                  ORDER BY hora_inicio"
             );
@@ -127,7 +127,7 @@ class HorarioEspecialistaRepository
     {
         try {
             $stmt = $this->db->prepare(
-                "SELECT * FROM horarios_especialistas
+                "SELECT * FROM HORARIO_ESPECIALISTA
                  WHERE id_especialista = :id_especialista AND dia_semana = :dia_semana
                  ORDER BY hora_inicio"
             );
@@ -157,7 +157,7 @@ class HorarioEspecialistaRepository
     {
         try {
             $stmt = $this->db->prepare(
-                "INSERT INTO horarios_especialistas (id_especialista, dia_semana, hora_inicio, hora_fin)
+                "INSERT INTO HORARIO_ESPECIALISTA (id_especialista, dia_semana, hora_inicio, hora_fin)
                  VALUES (:id_especialista, :dia_semana, :hora_inicio, :hora_fin)"
             );
             $stmt->execute([
@@ -182,7 +182,7 @@ class HorarioEspecialistaRepository
     {
         try {
             $stmt = $this->db->prepare(
-                "UPDATE horarios_especialistas
+                "UPDATE HORARIO_ESPECIALISTA
                  SET id_especialista = :id_especialista,
                      dia_semana = :dia_semana,
                      hora_inicio = :hora_inicio,
@@ -212,7 +212,7 @@ class HorarioEspecialistaRepository
     {
         try {
             $stmt = $this->db->prepare(
-                "DELETE FROM horarios_especialistas WHERE id_horario = :id"
+                "DELETE FROM HORARIO_ESPECIALISTA WHERE id_horario = :id"
             );
             $stmt->execute(["id" => $id]);
         } catch (\Exception $e) {
@@ -231,7 +231,7 @@ class HorarioEspecialistaRepository
     {
         try {
             $stmt = $this->db->prepare(
-                "DELETE FROM horarios_especialistas WHERE id_especialista = :id_especialista"
+                "DELETE FROM HORARIO_ESPECIALISTA WHERE id_especialista = :id_especialista"
             );
             $stmt->execute(["id_especialista" => $id_especialista]);
         } catch (\Exception $e) {
@@ -249,7 +249,7 @@ class HorarioEspecialistaRepository
     {
         try {
             $stmt = $this->db->prepare(
-                "SELECT * FROM horarios_especialistas
+                "SELECT * FROM HORARIO_ESPECIALISTA
                  WHERE id_especialista = :id_especialista
                  ORDER BY dia_semana, hora_inicio"
             );
@@ -282,7 +282,7 @@ class HorarioEspecialistaRepository
     {
         try {
             $stmt = $this->db->prepare(
-                "SELECT COUNT(*) as count FROM horarios_especialistas
+                "SELECT COUNT(*) as count FROM HORARIO_ESPECIALISTA
                  WHERE id_especialista = :id_especialista
                  AND dia_semana = :dia_semana
                  AND hora_inicio <= :hora
@@ -310,7 +310,7 @@ class HorarioEspecialistaRepository
     {
         try {
             $stmt = $this->db->prepare(
-                "SELECT DISTINCT dia_semana FROM horarios_especialistas
+                "SELECT DISTINCT dia_semana FROM HORARIO_ESPECIALISTA
                  WHERE id_especialista = :id_especialista
                  ORDER BY dia_semana"
             );
@@ -343,7 +343,7 @@ class HorarioEspecialistaRepository
     ): bool {
         try {
             $stmt = $this->db->prepare(
-                "SELECT COUNT(*) as count FROM horarios_especialistas
+                "SELECT COUNT(*) as count FROM HORARIO_ESPECIALISTA
                  WHERE id_especialista = :id_especialista
                  AND dia_semana = :dia_semana
                  AND (hora_inicio < :hora_fin AND hora_fin > :hora_inicio)"

@@ -107,9 +107,17 @@ class UserApiController
 
                     $servicios = $this->especialistaService->getServiciosForEspecialista($especialistaId);
                     $userData['servicios'] = array_map(fn($s) => $s->getIdServicio(), $servicios);
+
+                    $horarios = $this->especialistaService->getHorariosForEspecialista($especialistaId);
+                    $userData['horarios'] = array_map(fn($h) => [
+                        'dia' => $h->getDiaSemana(),
+                        'inicio' => substr($h->getHoraInicio(), 0, 5),
+                        'fin' => substr($h->getHoraFin(), 0, 5)
+                    ], $horarios);
                 } else {
                     $userData['servicios'] = [];
                     $userData['descripcion'] = '';
+                    $userData['horarios'] = [];
                 }
             }
 

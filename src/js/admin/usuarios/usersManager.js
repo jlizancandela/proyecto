@@ -18,6 +18,12 @@ const editDescriptionContainer = document.getElementById("editDescriptionContain
 const createServiciosContainer = document.getElementById("createServicesContainer");
 const createAvatarContainer = document.getElementById("createAvatarContainer");
 const createDescriptionContainer = document.getElementById("createDescriptionContainer");
+const editHorariosContainer = document.getElementById("editHorariosContainer");
+const createHorariosContainer = document.getElementById("createHorariosContainer");
+const editHorariosList = document.getElementById("editHorariosList");
+const createHorariosList = document.getElementById("createHorariosList");
+const btnAddHorarioEdit = document.getElementById("btnAddHorarioEdit");
+const btnAddHorarioCreate = document.getElementById("btnAddHorarioCreate");
 
 let currentEditUserServices = [];
 let currentUserCache = null;
@@ -30,11 +36,50 @@ let currentUserCache = null;
  * @param {HTMLElement} avatarContainer - Avatar container element.
  * @param {HTMLElement} descriptionContainer - Description container element.
  */
-const toggleSpecialistFields = (role, servicesContainer, avatarContainer, descriptionContainer) => {
+const toggleSpecialistFields = (role, servicesContainer, avatarContainer, descriptionContainer, scheduleContainer) => {
   const isSpecialist = role === "Especialista";
   servicesContainer.style.display = isSpecialist ? "block" : "none";
   avatarContainer.style.display = isSpecialist ? "block" : "none";
   descriptionContainer.style.display = isSpecialist ? "block" : "none";
+  if (scheduleContainer) {
+    scheduleContainer.style.display = isSpecialist ? "block" : "none";
+  }
+};
+
+/**
+ * Creates a schedule row element.
+ *
+ * @param {string} prefix - 'create' or 'edit'.
+ * @param {Object} data - Initial data {dia, inicio, fin}.
+ * @returns {HTMLElement} The row element.
+ */
+const createScheduleRow = (prefix, data = { dia: 1, inicio: "09:00", fin: "14:00" }) => {
+  const row = document.createElement("div");
+  row.className = "col-12 schedule-row mb-2";
+  row.innerHTML = `
+    <div class="input-group input-group-sm">
+      <span class="input-group-text">Día</span>
+      <select class="form-select schedule-dia" required>
+        <option value="1" ${data.dia == 1 ? "selected" : ""}>Lunes</option>
+        <option value="2" ${data.dia == 2 ? "selected" : ""}>Martes</option>
+        <option value="3" ${data.dia == 3 ? "selected" : ""}>Miércoles</option>
+        <option value="4" ${data.dia == 4 ? "selected" : ""}>Jueves</option>
+        <option value="5" ${data.dia == 5 ? "selected" : ""}>Viernes</option>
+        <option value="6" ${data.dia == 6 ? "selected" : ""}>Sábado</option>
+        <option value="0" ${data.dia == 0 ? "selected" : ""}>Domingo</option>
+      </select>
+      <span class="input-group-text">Inicio</span>
+      <input type="time" class="form-control schedule-inicio" value="${data.inicio}" required>
+      <span class="input-group-text">Fin</span>
+      <input type="time" class="form-control schedule-fin" value="${data.fin}" required>
+      <button type="button" class="btn btn-outline-danger btn-remove-schedule">
+        <i class="bi bi-trash"></i>
+      </button>
+    </div>
+  `;
+
+  row.querySelector(".btn-remove-schedule").addEventListener("click", () => row.remove());
+  return row;
 };
 
 /**
@@ -44,6 +89,7 @@ const toggleSpecialistFields = (role, servicesContainer, avatarContainer, descri
  */
 const editUser = async (userId) => {
   currentEditUserServices = [];
+  editHorariosList.innerHTML = "";
 
   try {
     const result = await fetchUser(userId);
@@ -80,7 +126,8 @@ const editUser = async (userId) => {
         user.rol,
         editServiciosContainer,
         editAvatarContainer,
-        editDescriptionContainer
+        editDescriptionContainer,
+        editHorariosContainer
       );
 
       if (user.rol === "Especialista") {
@@ -96,6 +143,15 @@ const editUser = async (userId) => {
           const cb = document.getElementById(`editService${serviceId}`);
           if (cb) cb.checked = true;
         });
+
+        // Populate schedules
+        if (user.horarios && user.horarios.length > 0) {
+          user.horarios.forEach((h) => {
+            editHorariosList.appendChild(createScheduleRow("edit", h));
+          });
+        } else {
+          editHorariosList.appendChild(createScheduleRow("edit"));
+        }
       } else {
         form.editDescripcion.value = "";
       }
@@ -159,6 +215,14 @@ const handleCreateUserFormSubmit = async (e) => {
     selectedIds.forEach((id) => formData.append("servicios[]", id));
     formData.append("descripcion", form.createDescripcion.value);
 
+    // Collect schedules
+    const scheduleRows = createHorariosList.querySelectorAll(".schedule-row");
+    scheduleRows.forEach((row, index) => {
+      formData.append(`horarios[${index}][dia]`, row.querySelector(".schedule-dia").value);
+      formData.append(`horarios[${index}][inicio]`, row.querySelector(".schedule-inicio").value);
+      formData.append(`horarios[${index}][fin]`, row.querySelector(".schedule-fin").value);
+    });
+
     if (form.createAvatar.files.length > 0) {
       formData.append("avatar", form.createAvatar.files[0]);
     }
@@ -221,6 +285,14 @@ const handleEditUserFormSubmit = async (e) => {
     selectedIds.forEach((id) => formData.append("servicios[]", id));
     formData.append("descripcion", form.editDescripcion.value);
 
+    // Collect schedules
+    const scheduleRows = editHorariosList.querySelectorAll(".schedule-row");
+    scheduleRows.forEach((row, index) => {
+      formData.append(`horarios[${index}][dia]`, row.querySelector(".schedule-dia").value);
+      formData.append(`horarios[${index}][inicio]`, row.querySelector(".schedule-inicio").value);
+      formData.append(`horarios[${index}][fin]`, row.querySelector(".schedule-fin").value);
+    });
+
     if (form.editAvatar.files.length > 0) {
       formData.append("avatar", form.editAvatar.files[0]);
     }
@@ -250,8 +322,13 @@ const handleCreateRolChange = () => {
     form.createRol.value,
     createServiciosContainer,
     createAvatarContainer,
-    createDescriptionContainer
+    createDescriptionContainer,
+    createHorariosContainer
   );
+
+  if (form.createRol.value === "Especialista" && createHorariosList.children.length === 0) {
+    createHorariosList.appendChild(createScheduleRow("create"));
+  }
 };
 
 /**
@@ -263,9 +340,26 @@ const handleEditRolChange = () => {
     form.editRol.value,
     editServiciosContainer,
     editAvatarContainer,
-    editDescriptionContainer
+    editDescriptionContainer,
+    editHorariosContainer
   );
+
+  if (form.editRol.value === "Especialista" && editHorariosList.children.length === 0) {
+    editHorariosList.appendChild(createScheduleRow("edit"));
+  }
 };
+
+if (btnAddHorarioCreate) {
+  btnAddHorarioCreate.addEventListener("click", () => {
+    createHorariosList.appendChild(createScheduleRow("create"));
+  });
+}
+
+if (btnAddHorarioEdit) {
+  btnAddHorarioEdit.addEventListener("click", () => {
+    editHorariosList.appendChild(createScheduleRow("edit"));
+  });
+}
 
 document.addEventListener("click", handleDocumentClick);
 
@@ -284,7 +378,10 @@ if (editUserForm) {
 }
 
 if (createUserModal) {
-  createUserModal.addEventListener("hidden.bs.modal", () => createUserForm.reset());
+  createUserModal.addEventListener("hidden.bs.modal", () => {
+    createUserForm.reset();
+    createHorariosList.innerHTML = "";
+  });
 }
 
 if (editUserModal) {
@@ -293,5 +390,7 @@ if (editUserModal) {
     editServiciosContainer.style.display = "none";
     editAvatarContainer.style.display = "none";
     editDescriptionContainer.style.display = "none";
+    editHorariosContainer.style.display = "none";
+    editHorariosList.innerHTML = "";
   });
 }
