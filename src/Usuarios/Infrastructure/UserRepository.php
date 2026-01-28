@@ -447,11 +447,11 @@ class UserRepository
     }
 
     /**
-     * Obtiene la fecha de expiración del token de recuperación
+     * Retrieves the password reset token expiration date.
      *
-     * @param int $userId ID del usuario
-     * @return string|null Fecha de expiración o null
-     * @throws PDOException Si hay un error en la base de datos
+     * @param int $userId User ID
+     * @return string|null Expiration date or null
+     * @throws PDOException If there is a database error
      */
     public function getResetTokenExpiration(int $userId): ?string
     {
@@ -491,12 +491,12 @@ class UserRepository
     }
 
     /**
-     * Obtiene usuarios aplicando múltiples filtros
+     * Retrieves users applying multiple filters.
      *
-     * @param array $filters Filtros (rol, search, sort, order)
-     * @param int $limit Límite de resultados
-     * @param int $offset Desplazamiento
-     * @return Usuario[] Array de usuarios
+     * @param array $filters Filters (rol, search, sort, order)
+     * @param int $limit Results limit
+     * @param int $offset Offset
+     * @return Usuario[] Array of users
      */
     public function findAllFiltered(array $filters = [], int $limit = 50, int $offset = 0): array
     {
@@ -555,10 +555,10 @@ class UserRepository
     }
 
     /**
-     * Cuenta usuarios aplicando múltiples filtros
+     * Counts users applying multiple filters.
      *
-     * @param array $filters Filtros (rol, search, estado)
-     * @return int Total de usuarios
+     * @param array $filters Filters (rol, search, estado)
+     * @return int Total users
      */
     public function countAllFiltered(array $filters = []): int
     {

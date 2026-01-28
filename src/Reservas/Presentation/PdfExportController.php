@@ -36,13 +36,13 @@ class PdfExportController
     }
 
     /**
-     * Exporta las reservas del usuario a PDF aplicando filtros opcionales
+     * Exports user bookings to PDF applying optional filters.
      *
-     * Genera un documento PDF con todas las reservas que cumplan los filtros.
-     * El PDF se muestra en el navegador (no se descarga automáticamente).
-     * Limita a 1000 reservas máximo para evitar problemas de memoria.
+     * Generates a PDF document with all bookings matching the filters.
+     * The PDF is displayed in the browser (not downloaded automatically).
+     * Limits to 1000 bookings maximum to avoid memory issues.
      *
-     * @return void Envía el PDF directamente al navegador
+     * @return void Sends the PDF directly to the browser
      */
     public function exportReservas(): void
     {
@@ -86,9 +86,9 @@ class PdfExportController
     }
 
     /**
-     * Exporta todas las reservas (visión admin) a PDF aplicando filtros
+     * Exports all bookings (admin view) to PDF applying filters.
      *
-     * @return void Envía el PDF directamente al navegador
+     * @return void Sends the PDF directly to the browser
      */
     public function exportAdminReservas(): void
     {
@@ -149,9 +149,9 @@ class PdfExportController
     }
 
     /**
-     * Exporta usuarios a PDF aplicando filtros y ordenación
+     * Exports users to PDF applying filters and sorting.
      *
-     * @return void Envía el PDF directamente al navegador
+     * @return void Sends the PDF directly to the browser
      */
     public function exportAdminUsers(): void
     {
