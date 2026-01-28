@@ -333,7 +333,7 @@ class EspecialistaRepository
 
                 $reservas = $stmtReservas->fetchAll(PDO::FETCH_ASSOC);
 
-                // Obtener horario del especialista para este día
+                // Get specialist schedule for this day
                 $stmtHorario = $this->db->prepare("
                     SELECT hora_inicio, hora_fin
                     FROM HORARIO_ESPECIALISTA
