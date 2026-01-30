@@ -36,6 +36,7 @@ yarn-error.log*
 /public/js/build/
 
 # Database
+*.sql
 *.sql.gz
 *.sqlite
 *.db

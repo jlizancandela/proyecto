@@ -74,12 +74,13 @@ test('findByEspecialistaIdWithFilters applies client search filter', function ()
         ->once()
         ->with(Mockery::on(function ($sql) {
             return str_contains($sql, 'WHERE r.id_especialista = :especialista_id')
-                && str_contains($sql, 'AND (c.nombre LIKE :cliente_search OR c.apellidos LIKE :cliente_search)');
+                && str_contains($sql, 'AND (c.nombre LIKE :cliente_search_nom OR c.apellidos LIKE :cliente_search_ape)');
         }))
         ->andReturn($this->stmt);
 
     $this->stmt->shouldReceive('bindValue')->with(':especialista_id', 99);
-    $this->stmt->shouldReceive('bindValue')->with(':cliente_search', '%John%');
+    $this->stmt->shouldReceive('bindValue')->with(':cliente_search_nom', '%John%');
+    $this->stmt->shouldReceive('bindValue')->with(':cliente_search_ape', '%John%');
     $this->stmt->shouldReceive('bindValue')->with(':limit', 50, PDO::PARAM_INT);
     $this->stmt->shouldReceive('bindValue')->with(':offset', 0, PDO::PARAM_INT);
     $this->stmt->shouldReceive('execute')->once();
