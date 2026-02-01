@@ -71,8 +71,10 @@ REFACTOR_DOCUMENTATION.md
 /open-spec
 
 
-# Playwright
-/test-results/
+
+# Tokens cache
+.tokens/
+
 /playwright-report/
 /blob-report/
 /playwright/.cache/
