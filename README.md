@@ -1,5 +1,7 @@
 # 💇‍♂️ Hair Salon Booking System (Proyecto Peluquería)
 
+> 🇪🇸 [Versión en Español](README.es.md)
+
 [![Tech Stack](https://img.shields.io/badge/Stack-PHP_8.4_|_Preact_|_MySQL_8.0-blue.svg)](https://github.com/jlizancandela/proyecto)
 [![License: ISC](https://img.shields.io/badge/License-ISC-000000.svg)](https://opensource.org/licenses/ISC)
 [![Docker](https://img.shields.io/badge/Container-Docker_Compose-informational.svg)](https://www.docker.com/)
