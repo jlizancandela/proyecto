@@ -79,6 +79,9 @@ This command will build the frontend, install PHP dependencies, and start the se
 ```bash
 docker compose up -d --build
 ```
+> **Ports:**
+> - **App:** http://localhost:8082
+> - **Database:** localhost:3307
 
 ### 4. Database Setup
 The database is automatically initialized using `docker-init.sql`. If you need to re-import it manually:
@@ -87,8 +90,7 @@ docker compose exec -T db mysql -u root -proot sistema_reservas < docker-init.sq
 ```
 
 ### 5. Access the App
-Open your browser and navigate to:
-- **Main App:** [http://localhost:8080](http://localhost:8080)
+Open your browser and navigate to: [http://localhost:8082](http://localhost:8082)
 
 ---
 
