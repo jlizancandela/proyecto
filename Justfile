@@ -63,4 +63,3 @@ publish:
 # IA-powered commit, push and merge workflow
 commit context="":
     node tools/git-automation.mjs "{{context}}"
-

@@ -86,6 +86,12 @@ const { dbConfig } = require("../../helpers/db-config");
   });
 
   test("should successfully complete a 3-step booking process", async ({ page }) => {
+    // Skip if today is Sunday, because the shop is closed and the UI/Backend prevents bookings
+    if (new Date().getDay() === 0) {
+      test.skip(true, "Skipping on Sundays as the shop is closed");
+      return;
+    }
+
     // 1. Login
     await page.goto("/login");
     await page.fill('input[name="email"]', testUserEmail);

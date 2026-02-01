@@ -54,6 +54,7 @@ test('updateService updates existing service', function () {
     ];
 
     $mockServicio = Mockery::mock(Servicio::class);
+    $mockServicio->shouldReceive('isActivo')->andReturn(true);
 
     $this->repository->shouldReceive('getServicioById')
         ->once()

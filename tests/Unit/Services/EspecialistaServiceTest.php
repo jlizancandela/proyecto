@@ -7,12 +7,14 @@
 use Especialistas\Application\EspecialistaService;
 use Especialistas\Infrastructure\EspecialistaRepository;
 use Especialistas\Infrastructure\EspecialistaServicioRepository;
+use Especialistas\Infrastructure\HorarioEspecialistaRepository;
 use Especialistas\Application\EspecialistaUsuarioDTO;
 
 beforeEach(function () {
     $this->repository = Mockery::mock(EspecialistaRepository::class);
     $this->servicioRepository = Mockery::mock(EspecialistaServicioRepository::class);
-    $this->service = new EspecialistaService($this->repository, $this->servicioRepository);
+    $this->horarioRepository = Mockery::mock(HorarioEspecialistaRepository::class);
+    $this->service = new EspecialistaService($this->repository, $this->servicioRepository, $this->horarioRepository);
 });
 
 afterEach(function () {
