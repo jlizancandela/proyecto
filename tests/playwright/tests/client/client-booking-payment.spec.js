@@ -83,6 +83,12 @@ const { dbConfig } = require("../../helpers/db-config");
   });
 
   test("should successfully complete booking and redirect to Stripe", async ({ page }) => {
+    // Skip if today is Sunday, because the shop is closed
+    if (new Date().getDay() === 0) {
+      test.skip(true, "Skipping on Sundays as the shop is closed");
+      return;
+    }
+
     // 1. Login
     await page.goto("/login");
     await page.fill('input[name="email"]', testUserEmail);

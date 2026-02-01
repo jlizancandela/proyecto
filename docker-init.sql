@@ -1,210 +1,362 @@
-SET NAMES 'utf8mb4';
--- 1. BASE DE DATOS Y USUARIO
-DROP DATABASE IF EXISTS sistema_reservas;
-CREATE DATABASE sistema_reservas CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+-- Adminer 5.4.1 MySQL 8.0.45 dump
 
-CREATE USER IF NOT EXISTS 'db'@'%' IDENTIFIED BY 'db';
-GRANT ALL PRIVILEGES ON sistema_reservas.* TO 'db'@'%';
-FLUSH PRIVILEGES;
+SET NAMES utf8;
+SET time_zone = '+00:00';
+SET foreign_key_checks = 0;
+SET sql_mode = 'NO_AUTO_VALUE_ON_ZERO';
 
-USE sistema_reservas;
+SET NAMES utf8mb4;
 
--- 2. TABLAS
-CREATE TABLE USUARIO (
-    id_usuario INT AUTO_INCREMENT PRIMARY KEY,
-    rol ENUM('Admin', 'Especialista', 'Cliente') NOT NULL,
-    nombre VARCHAR(100) NOT NULL,
-    apellidos VARCHAR(100) NOT NULL,
-    email VARCHAR(150) UNIQUE NOT NULL,
-    telefono VARCHAR(20),
-    password_hash VARCHAR(255) NOT NULL,
-    fecha_registro DATE NOT NULL,
-    activo BOOLEAN DEFAULT TRUE,
-    reset_token VARCHAR(64),
-    reset_expiration DATETIME
-) ENGINE=InnoDB;
+DROP TABLE IF EXISTS `ESPECIALISTA`;
+CREATE TABLE `ESPECIALISTA` (
+  `id_especialista` int NOT NULL AUTO_INCREMENT,
+  `id_usuario` int NOT NULL,
+  `descripcion` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `foto_url` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`id_especialista`),
+  KEY `id_usuario` (`id_usuario`),
+  CONSTRAINT `ESPECIALISTA_ibfk_1` FOREIGN KEY (`id_usuario`) REFERENCES `USUARIO` (`id_usuario`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE ESPECIALISTA (
-    id_especialista INT AUTO_INCREMENT PRIMARY KEY,
-    id_usuario INT NOT NULL,
-    descripcion VARCHAR(255),
-    foto_url VARCHAR(255),
-    FOREIGN KEY (id_usuario) REFERENCES USUARIO(id_usuario) ON DELETE CASCADE
-) ENGINE=InnoDB;
+INSERT INTO `ESPECIALISTA` (`id_especialista`, `id_usuario`, `descripcion`, `foto_url`) VALUES
+(1,	2,	'Experta en color',	'https://ik.imagekit.io/jlc84/peluqueria/mujer%2004.jpg?tr=w-300,h-300,q-80,f-auto'),
+(2,	3,	'Estilista senior',	'https://ik.imagekit.io/jlc84/peluqueria/mujer%2001.jpg?tr=w-300,h-300,q-80,f-auto'),
+(3,	4,	'Especialista en peinados',	'https://ik.imagekit.io/jlc84/peluqueria/mujer%2003.jpg?tr=w-300,h-300,q-80,f-auto'),
+(4,	5,	'Experta en color',	'https://ik.imagekit.io/jlc84/peluqueria/mujer%2004.jpg?tr=w-300,h-300,q-80,f-auto'),
+(5,	6,	'Estilista senior',	'https://ik.imagekit.io/jlc84/peluqueria/mujer%2001.jpg?tr=w-300,h-300,q-80,f-auto'),
+(6,	7,	'Especialista en peinados',	'https://ik.imagekit.io/jlc84/peluqueria/mujer%2003.jpg?tr=w-300,h-300,q-80,f-auto'),
+(7,	8,	'Experta en color',	'https://ik.imagekit.io/jlc84/peluqueria/mujer%2004.jpg?tr=w-300,h-300,q-80,f-auto'),
+(8,	9,	'Estilista senior',	'https://ik.imagekit.io/jlc84/peluqueria/mujer%2001.jpg?tr=w-300,h-300,q-80,f-auto'),
+(9,	10,	'Especialista en peinados',	'https://ik.imagekit.io/jlc84/peluqueria/mujer%2003.jpg?tr=w-300,h-300,q-80,f-auto'),
+(10,	11,	'Experta en color',	'https://ik.imagekit.io/jlc84/peluqueria/mujer%2004.jpg?tr=w-300,h-300,q-80,f-auto'),
+(11,	12,	'Barbero profesional',	'https://ik.imagekit.io/jlc84/peluqueria/hombre%2001.jpg?tr=w-300,h-300,q-80,f-auto'),
+(12,	13,	'Estilista masculino',	'https://ik.imagekit.io/jlc84/peluqueria/hombre%2003.jpg?tr=w-300,h-300,q-80,f-auto'),
+(13,	14,	'Experto en degradados',	'https://ik.imagekit.io/jlc84/peluqueria/hombre%2002.jpg?tr=w-300,h-300,q-80,f-auto'),
+(14,	15,	'Barbero profesional',	'https://ik.imagekit.io/jlc84/peluqueria/hombre%2001.jpg?tr=w-300,h-300,q-80,f-auto'),
+(15,	16,	'Estilista masculino',	'https://ik.imagekit.io/jlc84/peluqueria/hombre%2003.jpg?tr=w-300,h-300,q-80,f-auto'),
+(16,	17,	'Experto en degradados',	'https://ik.imagekit.io/jlc84/peluqueria/hombre%2002.jpg?tr=w-300,h-300,q-80,f-auto'),
+(17,	18,	'Barbero profesional',	'https://ik.imagekit.io/jlc84/peluqueria/hombre%2001.jpg?tr=w-300,h-300,q-80,f-auto'),
+(18,	19,	'Estilista masculino',	'https://ik.imagekit.io/jlc84/peluqueria/hombre%2003.jpg?tr=w-300,h-300,q-80,f-auto'),
+(19,	20,	'Experto en degradados',	'https://ik.imagekit.io/jlc84/peluqueria/hombre%2002.jpg?tr=w-300,h-300,q-80,f-auto'),
+(20,	21,	'Barbero profesional',	'https://ik.imagekit.io/jlc84/peluqueria/hombre%2001.jpg?tr=w-300,h-300,q-80,f-auto'),
+(21,	58,	'El mejor arreglando la barba',	'https://ik.imagekit.io/jlc84/avatars/hombre_03_Mvb6Kv64w.jpg'),
+(22,	59,	'El mejor arreglando la barba.',	'https://ik.imagekit.io/jlc84/avatars/hombre_02_J-xdlZ92E.jpg'),
+(23,	60,	'La que mejor moldea tu peinado',	'https://ik.imagekit.io/jlc84/avatars/mujer_04_NVKZZGXlo.jpg'),
+(24,	61,	'',	'https://ik.imagekit.io/jlc84/avatars/hombre_01.jpg'),
+(25,	62,	'La que mejor moldea el pelo',	'https://ik.imagekit.io/jlc84/avatars/mujer_03_kRbFOqA2I.jpg');
 
-CREATE TABLE SERVICIO (
-    id_servicio INT AUTO_INCREMENT PRIMARY KEY,
-    nombre_servicio VARCHAR(100) NOT NULL,
-    duracion_minutos INT NOT NULL,
-    precio DECIMAL(10,2) NOT NULL,
-    descripcion VARCHAR(255),
-    activo BOOLEAN DEFAULT TRUE
-) ENGINE=InnoDB;
+DROP TABLE IF EXISTS `ESPECIALISTA_SERVICIO`;
+CREATE TABLE `ESPECIALISTA_SERVICIO` (
+  `id_especialista` int NOT NULL,
+  `id_servicio` int NOT NULL,
+  PRIMARY KEY (`id_especialista`,`id_servicio`),
+  KEY `id_servicio` (`id_servicio`),
+  CONSTRAINT `ESPECIALISTA_SERVICIO_ibfk_1` FOREIGN KEY (`id_especialista`) REFERENCES `ESPECIALISTA` (`id_especialista`) ON DELETE CASCADE,
+  CONSTRAINT `ESPECIALISTA_SERVICIO_ibfk_2` FOREIGN KEY (`id_servicio`) REFERENCES `SERVICIO` (`id_servicio`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE ESPECIALISTA_SERVICIO (
-    id_especialista INT NOT NULL,
-    id_servicio INT NOT NULL,
-    PRIMARY KEY (id_especialista, id_servicio),
-    FOREIGN KEY (id_especialista) REFERENCES ESPECIALISTA(id_especialista) ON DELETE CASCADE,
-    FOREIGN KEY (id_servicio) REFERENCES SERVICIO(id_servicio) ON DELETE CASCADE
-);
+INSERT INTO `ESPECIALISTA_SERVICIO` (`id_especialista`, `id_servicio`) VALUES
+(1,	1),
+(2,	1),
+(4,	1),
+(6,	1),
+(7,	1),
+(9,	1),
+(11,	1),
+(12,	1),
+(14,	1),
+(16,	1),
+(17,	1),
+(19,	1),
+(21,	1),
+(22,	1),
+(23,	1),
+(1,	2),
+(3,	2),
+(4,	2),
+(6,	2),
+(8,	2),
+(9,	2),
+(11,	2),
+(13,	2),
+(14,	2),
+(16,	2),
+(18,	2),
+(19,	2),
+(1,	3),
+(3,	3),
+(5,	3),
+(6,	3),
+(8,	3),
+(10,	3),
+(11,	3),
+(13,	3),
+(15,	3),
+(16,	3),
+(18,	3),
+(20,	3),
+(25,	3),
+(2,	4),
+(3,	4),
+(5,	4),
+(7,	4),
+(8,	4),
+(10,	4),
+(12,	4),
+(13,	4),
+(15,	4),
+(17,	4),
+(18,	4),
+(20,	4),
+(2,	5),
+(4,	5),
+(5,	5),
+(7,	5),
+(9,	5),
+(10,	5),
+(12,	5),
+(14,	5),
+(15,	5),
+(17,	5),
+(19,	5),
+(20,	5),
+(21,	5),
+(22,	5),
+(24,	5),
+(23,	6),
+(25,	6),
+(23,	7),
+(24,	7),
+(25,	7);
 
-CREATE TABLE HORARIO_ESPECIALISTA (
-    id_horario INT AUTO_INCREMENT PRIMARY KEY,
-    id_especialista INT NOT NULL,
-    dia_semana INT NOT NULL,
-    hora_inicio TIME NOT NULL,
-    hora_fin TIME NOT NULL,
-    FOREIGN KEY (id_especialista) REFERENCES ESPECIALISTA(id_especialista) ON DELETE CASCADE
-);
+DROP TABLE IF EXISTS `HORARIO_ESPECIALISTA`;
+CREATE TABLE `HORARIO_ESPECIALISTA` (
+  `id_horario` int NOT NULL AUTO_INCREMENT,
+  `id_especialista` int NOT NULL,
+  `dia_semana` int NOT NULL,
+  `hora_inicio` time NOT NULL,
+  `hora_fin` time NOT NULL,
+  PRIMARY KEY (`id_horario`),
+  KEY `id_especialista` (`id_especialista`),
+  CONSTRAINT `HORARIO_ESPECIALISTA_ibfk_1` FOREIGN KEY (`id_especialista`) REFERENCES `ESPECIALISTA` (`id_especialista`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE RESERVA (
-    id_reserva INT AUTO_INCREMENT PRIMARY KEY,
-    id_cliente INT NOT NULL,
-    id_especialista INT NOT NULL,
-    id_servicio INT NOT NULL,
-    fecha_reserva DATE NOT NULL,
-    hora_inicio TIME NOT NULL,
-    hora_fin TIME NOT NULL,
-    estado VARCHAR(50) DEFAULT 'Pendiente',
-    observaciones VARCHAR(500),
-    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (id_cliente) REFERENCES USUARIO(id_usuario) ON DELETE CASCADE,
-    FOREIGN KEY (id_especialista) REFERENCES ESPECIALISTA(id_especialista) ON DELETE CASCADE,
-    FOREIGN KEY (id_servicio) REFERENCES SERVICIO(id_servicio) ON DELETE CASCADE
-);
+INSERT INTO `HORARIO_ESPECIALISTA` (`id_horario`, `id_especialista`, `dia_semana`, `hora_inicio`, `hora_fin`) VALUES
+(167,	1,	1,	'09:00:00',	'15:00:00'),
+(168,	1,	2,	'09:00:00',	'15:00:00'),
+(169,	1,	3,	'09:00:00',	'15:00:00'),
+(170,	1,	4,	'09:00:00',	'15:00:00'),
+(171,	1,	5,	'09:00:00',	'15:00:00'),
+(172,	4,	1,	'09:00:00',	'15:00:00'),
+(173,	4,	2,	'09:00:00',	'15:00:00'),
+(174,	4,	3,	'09:00:00',	'15:00:00'),
+(175,	4,	4,	'09:00:00',	'15:00:00'),
+(176,	4,	5,	'09:00:00',	'15:00:00'),
+(177,	7,	1,	'09:00:00',	'15:00:00'),
+(178,	7,	2,	'09:00:00',	'15:00:00'),
+(179,	7,	3,	'09:00:00',	'15:00:00'),
+(180,	7,	4,	'09:00:00',	'15:00:00'),
+(181,	7,	5,	'09:00:00',	'15:00:00'),
+(182,	10,	1,	'09:00:00',	'15:00:00'),
+(183,	10,	2,	'09:00:00',	'15:00:00'),
+(184,	10,	3,	'09:00:00',	'15:00:00'),
+(185,	10,	4,	'09:00:00',	'15:00:00'),
+(186,	10,	5,	'09:00:00',	'15:00:00'),
+(187,	2,	1,	'09:00:00',	'14:00:00'),
+(188,	2,	1,	'16:00:00',	'20:00:00'),
+(189,	2,	2,	'09:00:00',	'14:00:00'),
+(190,	2,	2,	'16:00:00',	'20:00:00'),
+(191,	2,	3,	'09:00:00',	'14:00:00'),
+(192,	2,	3,	'16:00:00',	'20:00:00'),
+(193,	2,	4,	'09:00:00',	'14:00:00'),
+(194,	2,	4,	'16:00:00',	'20:00:00'),
+(195,	2,	5,	'09:00:00',	'14:00:00'),
+(196,	2,	5,	'16:00:00',	'20:00:00'),
+(197,	5,	1,	'09:00:00',	'14:00:00'),
+(198,	5,	1,	'16:00:00',	'20:00:00'),
+(199,	5,	2,	'09:00:00',	'14:00:00'),
+(200,	5,	2,	'16:00:00',	'20:00:00'),
+(201,	5,	3,	'09:00:00',	'14:00:00'),
+(202,	5,	3,	'16:00:00',	'20:00:00'),
+(203,	5,	4,	'09:00:00',	'14:00:00'),
+(204,	5,	4,	'16:00:00',	'20:00:00'),
+(205,	5,	5,	'09:00:00',	'14:00:00'),
+(206,	5,	5,	'16:00:00',	'20:00:00'),
+(207,	8,	1,	'09:00:00',	'14:00:00'),
+(208,	8,	1,	'16:00:00',	'20:00:00'),
+(209,	8,	2,	'09:00:00',	'14:00:00'),
+(210,	8,	2,	'16:00:00',	'20:00:00'),
+(211,	8,	3,	'09:00:00',	'14:00:00'),
+(212,	8,	3,	'16:00:00',	'20:00:00'),
+(213,	8,	4,	'09:00:00',	'14:00:00'),
+(214,	8,	4,	'16:00:00',	'20:00:00'),
+(215,	8,	5,	'09:00:00',	'14:00:00'),
+(216,	8,	5,	'16:00:00',	'20:00:00'),
+(217,	3,	1,	'14:00:00',	'20:00:00'),
+(218,	3,	2,	'14:00:00',	'20:00:00'),
+(219,	3,	3,	'14:00:00',	'20:00:00'),
+(220,	3,	4,	'14:00:00',	'20:00:00'),
+(221,	3,	5,	'14:00:00',	'20:00:00'),
+(222,	6,	1,	'14:00:00',	'20:00:00'),
+(223,	6,	2,	'14:00:00',	'20:00:00'),
+(224,	6,	3,	'14:00:00',	'20:00:00'),
+(225,	6,	4,	'14:00:00',	'20:00:00'),
+(226,	6,	5,	'14:00:00',	'20:00:00'),
+(227,	9,	1,	'14:00:00',	'20:00:00'),
+(228,	9,	2,	'14:00:00',	'20:00:00'),
+(229,	9,	3,	'14:00:00',	'20:00:00'),
+(230,	9,	4,	'14:00:00',	'20:00:00'),
+(231,	9,	5,	'14:00:00',	'20:00:00');
 
--- 3. SERVICIOS
-INSERT INTO SERVICIO (nombre_servicio, duracion_minutos, precio, descripcion) VALUES
-('Corte de Pelo', 30, 20.00, 'Lavado y corte profesional'),
-('Tinte y Color', 90, 45.00, 'Coloración completa'),
-('Peinado y Secado', 45, 25.00, 'Lavado y peinado'),
-('Hidratación Pro', 40, 35.00, 'Tratamiento nutritivo'),
-('Arreglo de Barba', 20, 15.00, 'Perfilado y cuidado');
+DROP TABLE IF EXISTS `RESERVA`;
+CREATE TABLE `RESERVA` (
+  `id_reserva` int NOT NULL AUTO_INCREMENT,
+  `id_cliente` int NOT NULL,
+  `id_especialista` int NOT NULL,
+  `id_servicio` int NOT NULL,
+  `fecha_reserva` date NOT NULL,
+  `hora_inicio` time NOT NULL,
+  `hora_fin` time NOT NULL,
+  `estado` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT 'Pendiente',
+  `observaciones` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `fecha_creacion` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id_reserva`),
+  KEY `id_cliente` (`id_cliente`),
+  KEY `id_especialista` (`id_especialista`),
+  KEY `id_servicio` (`id_servicio`),
+  CONSTRAINT `RESERVA_ibfk_1` FOREIGN KEY (`id_cliente`) REFERENCES `USUARIO` (`id_usuario`) ON DELETE CASCADE,
+  CONSTRAINT `RESERVA_ibfk_2` FOREIGN KEY (`id_especialista`) REFERENCES `ESPECIALISTA` (`id_especialista`) ON DELETE CASCADE,
+  CONSTRAINT `RESERVA_ibfk_3` FOREIGN KEY (`id_servicio`) REFERENCES `SERVICIO` (`id_servicio`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- 4. USUARIO ADMIN
--- Password: S3cur3P@ssw0rd!
-INSERT INTO USUARIO (rol, nombre, apellidos, email, telefono, password_hash, fecha_registro) 
-VALUES ('Admin', 'Admin', 'Sistema', 'sr.tu.peluqueria+admin@gmail.com', '600000000', '$2y$12$QN97xPIT..vOECDhZYzaKOxzg1iZKa6DZEaW9j.CVjaCdMqMTlRcy', '2025-01-01');
+INSERT INTO `RESERVA` (`id_reserva`, `id_cliente`, `id_especialista`, `id_servicio`, `fecha_reserva`, `hora_inicio`, `hora_fin`, `estado`, `observaciones`, `fecha_creacion`) VALUES
+(1,	22,	1,	1,	'2026-02-01',	'09:00:00',	'09:30:00',	'Confirmada',	NULL,	'2026-01-09 19:12:03'),
+(2,	23,	1,	2,	'2026-02-01',	'10:00:00',	'11:30:00',	'Cancelada',	NULL,	'2026-01-09 19:12:03'),
+(3,	24,	2,	4,	'2026-02-01',	'10:00:00',	'10:40:00',	'Confirmada',	NULL,	'2026-01-09 19:12:03'),
+(4,	25,	3,	3,	'2026-02-02',	'11:00:00',	'11:45:00',	'Confirmada',	NULL,	'2026-01-09 19:12:03'),
+(5,	26,	4,	1,	'2026-02-03',	'12:00:00',	'12:30:00',	'Pendiente',	NULL,	'2026-01-09 19:12:03'),
+(6,	27,	5,	5,	'2026-02-04',	'13:00:00',	'13:20:00',	'Completada',	NULL,	'2026-01-09 19:12:03'),
+(7,	28,	11,	2,	'2026-02-05',	'10:00:00',	'11:30:00',	'Confirmada',	NULL,	'2026-01-09 19:12:03'),
+(8,	29,	12,	1,	'2026-02-06',	'10:30:00',	'11:00:00',	'Pendiente',	NULL,	'2026-01-09 19:12:03'),
+(9,	30,	13,	3,	'2026-02-07',	'11:00:00',	'11:45:00',	'Confirmada',	'',	'2026-01-09 19:12:03'),
+(10,	31,	14,	4,	'2026-02-08',	'09:00:00',	'09:45:00',	'Pendiente',	'',	'2026-01-09 19:12:03'),
+(11,	1,	13,	4,	'2026-01-10',	'11:00:00',	'11:40:00',	'Pendiente',	NULL,	'2026-01-09 19:42:42'),
+(12,	1,	14,	5,	'2026-01-10',	'12:30:00',	'12:50:00',	'Pendiente',	NULL,	'2026-01-09 21:12:37'),
+(13,	1,	1,	2,	'2026-01-13',	'11:30:00',	'13:00:00',	'Cancelada',	NULL,	'2026-01-09 21:13:07'),
+(14,	1,	1,	2,	'2026-01-29',	'09:00:00',	'10:30:00',	'Cancelada',	NULL,	'2026-01-10 15:14:07'),
+(15,	43,	2,	5,	'2026-01-14',	'10:00:00',	'10:20:00',	'Pendiente',	NULL,	'2026-01-13 13:50:59'),
+(16,	45,	11,	2,	'2026-01-14',	'13:30:00',	'15:00:00',	'Pagada',	NULL,	'2026-01-14 12:18:22'),
+(22,	52,	2,	5,	'2026-01-19',	'09:00:00',	'09:20:00',	'Pendiente',	NULL,	'2026-01-17 22:56:52'),
+(23,	54,	1,	1,	'2026-01-19',	'09:00:00',	'09:30:00',	'Completada',	NULL,	'2026-01-18 18:07:58'),
+(24,	56,	2,	5,	'2026-01-20',	'09:00:00',	'09:20:00',	'Cancelada',	NULL,	'2026-01-19 08:07:04'),
+(25,	1,	2,	5,	'2026-01-20',	'10:00:00',	'10:20:00',	'Cancelada',	NULL,	'2026-01-19 17:19:38'),
+(26,	1,	2,	5,	'2026-01-20',	'09:00:00',	'09:20:00',	'Cancelada',	NULL,	'2026-01-19 17:25:48'),
+(27,	1,	2,	5,	'2026-01-20',	'09:00:00',	'09:20:00',	'Pagada',	NULL,	'2026-01-19 17:26:12'),
+(28,	1,	1,	1,	'2026-01-20',	'10:00:00',	'10:30:00',	'Cancelada',	NULL,	'2026-01-19 17:28:43'),
+(29,	1,	1,	1,	'2026-01-21',	'09:00:00',	'09:30:00',	'Cancelada',	NULL,	'2026-01-19 17:35:21'),
+(32,	57,	14,	5,	'2026-02-01',	'09:40:00',	'10:40:00',	'Pendiente',	'',	'2026-01-21 17:16:31'),
+(33,	51,	1,	1,	'2026-01-26',	'09:30:00',	'10:00:00',	'Cancelada',	NULL,	'2026-01-23 18:08:02'),
+(34,	51,	1,	2,	'2026-01-30',	'09:30:00',	'11:00:00',	'Completada',	NULL,	'2026-01-23 18:09:21'),
+(35,	1,	11,	2,	'2026-01-31',	'10:00:00',	'11:30:00',	'Pendiente',	NULL,	'2026-01-24 19:48:46'),
+(36,	59,	2,	5,	'2026-01-29',	'19:30:00',	'19:50:00',	'Pagada',	NULL,	'2026-01-29 18:25:28');
 
--- 5. 20 ESPECIALISTAS (10 Mujeres, 10 Hombres)
--- Password: Sp3ci@l1st!
-INSERT INTO USUARIO (rol, nombre, apellidos, email, telefono, password_hash, fecha_registro) VALUES
-('Especialista','Ana','G1','sr.tu.peluqueria+esp1@gmail.com','666000001','$2y$12$bAWG1eK.g7K/oWWXyOQqF.K/0LvVFNjuFGcqe.7KFrPvVj129UORi','2025-01-01'),
-('Especialista','Laura','G2','sr.tu.peluqueria+esp2@gmail.com','666000002','$2y$12$bAWG1eK.g7K/oWWXyOQqF.K/0LvVFNjuFGcqe.7KFrPvVj129UORi','2025-01-01'),
-('Especialista','Elena','G3','sr.tu.peluqueria+esp3@gmail.com','666000003','$2y$12$bAWG1eK.g7K/oWWXyOQqF.K/0LvVFNjuFGcqe.7KFrPvVj129UORi','2025-01-01'),
-('Especialista','Sofia','G4','sr.tu.peluqueria+esp4@gmail.com','666000004','$2y$12$bAWG1eK.g7K/oWWXyOQqF.K/0LvVFNjuFGcqe.7KFrPvVj129UORi','2025-01-01'),
-('Especialista','Lucia','G5','sr.tu.peluqueria+esp5@gmail.com','666000005','$2y$12$bAWG1eK.g7K/oWWXyOQqF.K/0LvVFNjuFGcqe.7KFrPvVj129UORi','2025-01-01'),
-('Especialista','Marta','G6','sr.tu.peluqueria+esp6@gmail.com','666000006','$2y$12$bAWG1eK.g7K/oWWXyOQqF.K/0LvVFNjuFGcqe.7KFrPvVj129UORi','2025-01-01'),
-('Especialista','Sara','G7','sr.tu.peluqueria+esp7@gmail.com','666000007','$2y$12$bAWG1eK.g7K/oWWXyOQqF.K/0LvVFNjuFGcqe.7KFrPvVj129UORi','2025-01-01'),
-('Especialista','Julia','G8','sr.tu.peluqueria+esp8@gmail.com','666000008','$2y$12$bAWG1eK.g7K/oWWXyOQqF.K/0LvVFNjuFGcqe.7KFrPvVj129UORi','2025-01-01'),
-('Especialista','Paula','G9','sr.tu.peluqueria+esp9@gmail.com','666000009','$2y$12$bAWG1eK.g7K/oWWXyOQqF.K/0LvVFNjuFGcqe.7KFrPvVj129UORi','2025-01-01'),
-('Especialista','Nerea','G10','sr.tu.peluqueria+esp10@gmail.com','666000010','$2y$12$bAWG1eK.g7K/oWWXyOQqF.K/0LvVFNjuFGcqe.7KFrPvVj129UORi','2025-01-01'),
-('Especialista','Pedro','H1','sr.tu.peluqueria+esp11@gmail.com','666000011','$2y$12$bAWG1eK.g7K/oWWXyOQqF.K/0LvVFNjuFGcqe.7KFrPvVj129UORi','2025-01-01'),
-('Especialista','Carlos','H2','sr.tu.peluqueria+esp12@gmail.com','666000012','$2y$12$bAWG1eK.g7K/oWWXyOQqF.K/0LvVFNjuFGcqe.7KFrPvVj129UORi','2025-01-01'),
-('Especialista','Marcos','H3','sr.tu.peluqueria+esp13@gmail.com','666000013','$2y$12$bAWG1eK.g7K/oWWXyOQqF.K/0LvVFNjuFGcqe.7KFrPvVj129UORi','2025-01-01'),
-('Especialista','Diego','H4','sr.tu.peluqueria+esp14@gmail.com','666000014','$2y$12$bAWG1eK.g7K/oWWXyOQqF.K/0LvVFNjuFGcqe.7KFrPvVj129UORi','2025-01-01'),
-('Especialista','Javi','H5','sr.tu.peluqueria+esp15@gmail.com','666000015','$2y$12$bAWG1eK.g7K/oWWXyOQqF.K/0LvVFNjuFGcqe.7KFrPvVj129UORi','2025-01-01'),
-('Especialista','Raul','H6','sr.tu.peluqueria+esp16@gmail.com','666000016','$2y$12$bAWG1eK.g7K/oWWXyOQqF.K/0LvVFNjuFGcqe.7KFrPvVj129UORi','2025-01-01'),
-('Especialista','Ivan','H7','sr.tu.peluqueria+esp17@gmail.com','666000017','$2y$12$bAWG1eK.g7K/oWWXyOQqF.K/0LvVFNjuFGcqe.7KFrPvVj129UORi','2025-01-01'),
-('Especialista','Hugo','H8','sr.tu.peluqueria+esp18@gmail.com','666000018','$2y$12$bAWG1eK.g7K/oWWXyOQqF.K/0LvVFNjuFGcqe.7KFrPvVj129UORi','2025-01-01'),
-('Especialista','Marc','H9','sr.tu.peluqueria+esp19@gmail.com','666000019','$2y$12$bAWG1eK.g7K/oWWXyOQqF.K/0LvVFNjuFGcqe.7KFrPvVj129UORi','2025-01-01'),
-('Especialista','Oscar','H10','sr.tu.peluqueria+esp20@gmail.com','666000020','$2y$12$bAWG1eK.g7K/oWWXyOQqF.K/0LvVFNjuFGcqe.7KFrPvVj129UORi','2025-01-01');
+DROP TABLE IF EXISTS `SERVICIO`;
+CREATE TABLE `SERVICIO` (
+  `id_servicio` int NOT NULL AUTO_INCREMENT,
+  `nombre_servicio` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `duracion_minutos` int NOT NULL,
+  `precio` decimal(10,2) NOT NULL,
+  `descripcion` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `activo` tinyint(1) DEFAULT '1',
+  PRIMARY KEY (`id_servicio`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- 6. PERFILES DE ESPECIALISTA (URLs Optimizadas)
-INSERT INTO ESPECIALISTA (id_usuario, descripcion, foto_url) VALUES
-(2, 'Experta en color', 'https://ik.imagekit.io/jlc84/peluqueria/mujer%2004.jpg?tr=w-300,h-300,q-80,f-auto'),
-(3, 'Estilista senior', 'https://ik.imagekit.io/jlc84/peluqueria/mujer%2001.jpg?tr=w-300,h-300,q-80,f-auto'),
-(4, 'Especialista en peinados', 'https://ik.imagekit.io/jlc84/peluqueria/mujer%2003.jpg?tr=w-300,h-300,q-80,f-auto'),
-(5, 'Experta en color', 'https://ik.imagekit.io/jlc84/peluqueria/mujer%2004.jpg?tr=w-300,h-300,q-80,f-auto'),
-(6, 'Estilista senior', 'https://ik.imagekit.io/jlc84/peluqueria/mujer%2001.jpg?tr=w-300,h-300,q-80,f-auto'),
-(7, 'Especialista en peinados', 'https://ik.imagekit.io/jlc84/peluqueria/mujer%2003.jpg?tr=w-300,h-300,q-80,f-auto'),
-(8, 'Experta en color', 'https://ik.imagekit.io/jlc84/peluqueria/mujer%2004.jpg?tr=w-300,h-300,q-80,f-auto'),
-(9, 'Estilista senior', 'https://ik.imagekit.io/jlc84/peluqueria/mujer%2001.jpg?tr=w-300,h-300,q-80,f-auto'),
-(10, 'Especialista en peinados', 'https://ik.imagekit.io/jlc84/peluqueria/mujer%2003.jpg?tr=w-300,h-300,q-80,f-auto'),
-(11, 'Experta en color', 'https://ik.imagekit.io/jlc84/peluqueria/mujer%2004.jpg?tr=w-300,h-300,q-80,f-auto'),
-(12, 'Barbero profesional', 'https://ik.imagekit.io/jlc84/peluqueria/hombre%2001.jpg?tr=w-300,h-300,q-80,f-auto'),
-(13, 'Estilista masculino', 'https://ik.imagekit.io/jlc84/peluqueria/hombre%2003.jpg?tr=w-300,h-300,q-80,f-auto'),
-(14, 'Experto en degradados', 'https://ik.imagekit.io/jlc84/peluqueria/hombre%2002.jpg?tr=w-300,h-300,q-80,f-auto'),
-(15, 'Barbero profesional', 'https://ik.imagekit.io/jlc84/peluqueria/hombre%2001.jpg?tr=w-300,h-300,q-80,f-auto'),
-(16, 'Estilista masculino', 'https://ik.imagekit.io/jlc84/peluqueria/hombre%2003.jpg?tr=w-300,h-300,q-80,f-auto'),
-(17, 'Experto en degradados', 'https://ik.imagekit.io/jlc84/peluqueria/hombre%2002.jpg?tr=w-300,h-300,q-80,f-auto'),
-(18, 'Barbero profesional', 'https://ik.imagekit.io/jlc84/peluqueria/hombre%2001.jpg?tr=w-300,h-300,q-80,f-auto'),
-(19, 'Estilista masculino', 'https://ik.imagekit.io/jlc84/peluqueria/hombre%2003.jpg?tr=w-300,h-300,q-80,f-auto'),
-(20, 'Experto en degradados', 'https://ik.imagekit.io/jlc84/peluqueria/hombre%2002.jpg?tr=w-300,h-300,q-80,f-auto'),
-(21, 'Barbero profesional', 'https://ik.imagekit.io/jlc84/peluqueria/hombre%2001.jpg?tr=w-300,h-300,q-80,f-auto');
+INSERT INTO `SERVICIO` (`id_servicio`, `nombre_servicio`, `duracion_minutos`, `precio`, `descripcion`, `activo`) VALUES
+(1,	'Corte de Pelo',	30,	20.00,	'Lavado y corte profesional',	1),
+(2,	'Tinte y Color',	90,	45.00,	'Coloración completa',	1),
+(3,	'Peinado y Secado',	45,	25.00,	'Lavado y peinado',	1),
+(4,	'Hidratación Pro',	40,	35.00,	'Tratamiento nutritivo',	1),
+(5,	'Arreglo de Barba',	20,	17.00,	'Perfilado y cuidado',	1),
+(6,	'Corte especial',	40,	30.00,	'Corte especial para fines de semana.',	1),
+(7,	'Tratamiento capilar.',	60,	120.00,	'Cuida y mima tu cabello.',	1);
 
--- 7. 20 CLIENTES
--- Password: C1i3ntP@ssw0rd!
-INSERT INTO USUARIO (rol, nombre, apellidos, email, telefono, password_hash, fecha_registro) VALUES
-('Cliente','Juan','C1','sr.tu.peluqueria+cli1@gmail.com','600123001','$2y$12$srpX683wul7Y4tYPdpk4rexELgnZGXKi5kit8YA7kUsM7aQcYgvsa','2025-01-01'),
-('Cliente','Maria','C2','sr.tu.peluqueria+cli2@gmail.com','600123002','$2y$12$srpX683wul7Y4tYPdpk4rexELgnZGXKi5kit8YA7kUsM7aQcYgvsa','2025-01-01'),
-('Cliente','Luis','C3','sr.tu.peluqueria+cli3@gmail.com','600123003','$2y$12$srpX683wul7Y4tYPdpk4rexELgnZGXKi5kit8YA7kUsM7aQcYgvsa','2025-01-01'),
-('Cliente','Rosa','C4','sr.tu.peluqueria+cli4@gmail.com','600123004','$2y$12$srpX683wul7Y4tYPdpk4rexELgnZGXKi5kit8YA7kUsM7aQcYgvsa','2025-01-01'),
-('Cliente','Jose','C5','sr.tu.peluqueria+cli5@gmail.com','600123005','$2y$12$srpX683wul7Y4tYPdpk4rexELgnZGXKi5kit8YA7kUsM7aQcYgvsa','2025-01-01'),
-('Cliente','Carmen','C6','sr.tu.peluqueria+cli6@gmail.com','600123006','$2y$12$srpX683wul7Y4tYPdpk4rexELgnZGXKi5kit8YA7kUsM7aQcYgvsa','2025-01-01'),
-('Cliente','Fran','C7','sr.tu.peluqueria+cli7@gmail.com','600123007','$2y$12$srpX683wul7Y4tYPdpk4rexELgnZGXKi5kit8YA7kUsM7aQcYgvsa','2025-01-01'),
-('Cliente','Ines','C8','sr.tu.peluqueria+cli8@gmail.com','600123008','$2y$12$srpX683wul7Y4tYPdpk4rexELgnZGXKi5kit8YA7kUsM7aQcYgvsa','2025-01-01'),
-('Cliente','Alex','C9','sr.tu.peluqueria+cli9@gmail.com','600123009','$2y$12$srpX683wul7Y4tYPdpk4rexELgnZGXKi5kit8YA7kUsM7aQcYgvsa','2025-01-01'),
-('Cliente','Lola','C10','sr.tu.peluqueria+cli10@gmail.com','600123010','$2y$12$srpX683wul7Y4tYPdpk4rexELgnZGXKi5kit8YA7kUsM7aQcYgvsa','2025-01-01'),
-('Cliente','Dani','C11','sr.tu.peluqueria+cli11@gmail.com','600123011','$2y$12$srpX683wul7Y4tYPdpk4rexELgnZGXKi5kit8YA7kUsM7aQcYgvsa','2025-01-01'),
-('Cliente','Bea','C12','sr.tu.peluqueria+cli12@gmail.com','600123012','$2y$12$srpX683wul7Y4tYPdpk4rexELgnZGXKi5kit8YA7kUsM7aQcYgvsa','2025-01-01'),
-('Cliente','Toni','C13','sr.tu.peluqueria+cli13@gmail.com','600123013','$2y$12$srpX683wul7Y4tYPdpk4rexELgnZGXKi5kit8YA7kUsM7aQcYgvsa','2025-01-01'),
-('Cliente','Eva','C14','sr.tu.peluqueria+cli14@gmail.com','600123014','$2y$12$srpX683wul7Y4tYPdpk4rexELgnZGXKi5kit8YA7kUsM7aQcYgvsa','2025-01-01'),
-('Cliente','Hugo','C15','sr.tu.peluqueria+cli15@gmail.com','600123015','$2y$12$srpX683wul7Y4tYPdpk4rexELgnZGXKi5kit8YA7kUsM7aQcYgvsa','2025-01-01'),
-('Cliente','Sara','C16','sr.tu.peluqueria+cli16@gmail.com','600123016','$2y$12$srpX683wul7Y4tYPdpk4rexELgnZGXKi5kit8YA7kUsM7aQcYgvsa','2025-01-01'),
-('Cliente','Rafa','C17','sr.tu.peluqueria+cli17@gmail.com','600123017','$2y$12$srpX683wul7Y4tYPdpk4rexELgnZGXKi5kit8YA7kUsM7aQcYgvsa','2025-01-01'),
-('Cliente','Noa','C18','sr.tu.peluqueria+cli18@gmail.com','600123456','$2y$12$srpX683wul7Y4tYPdpk4rexELgnZGXKi5kit8YA7kUsM7aQcYgvsa','2025-01-01'),
-('Cliente','Leo','C19','sr.tu.peluqueria+cli19@gmail.com','600123019','$2y$12$srpX683wul7Y4tYPdpk4rexELgnZGXKi5kit8YA7kUsM7aQcYgvsa','2025-01-01'),
-('Cliente','Mia','C20','sr.tu.peluqueria+cli20@gmail.com','600123020','$2y$12$srpX683wul7Y4tYPdpk4rexELgnZGXKi5kit8YA7kUsM7aQcYgvsa','2025-01-01');
+DROP TABLE IF EXISTS `USUARIO`;
+CREATE TABLE `USUARIO` (
+  `id_usuario` int NOT NULL AUTO_INCREMENT,
+  `rol` enum('Admin','Especialista','Cliente') COLLATE utf8mb4_unicode_ci NOT NULL,
+  `nombre` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `apellidos` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `email` varchar(150) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `telefono` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `password_hash` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `fecha_registro` date NOT NULL,
+  `activo` tinyint(1) DEFAULT '1',
+  `reset_token` varchar(64) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `reset_expiration` datetime DEFAULT NULL,
+  PRIMARY KEY (`id_usuario`),
+  UNIQUE KEY `email` (`email`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- 8. ASIGNACIONES (Especialistas aleatorios a servicios aleatorios)
-INSERT INTO ESPECIALISTA_SERVICIO (id_especialista, id_servicio) VALUES
-(1, 1), (1, 2), (1, 3),
-(2, 4), (2, 5), (2, 1),
-(3, 2), (3, 3), (3, 4),
-(4, 5), (4, 1), (4, 2),
-(5, 3), (5, 4), (5, 5),
-(6, 1), (6, 2), (6, 3),
-(7, 4), (7, 5), (7, 1),
-(8, 2), (8, 3), (8, 4),
-(9, 5), (9, 1), (9, 2),
-(10, 3), (10, 4), (10, 5),
-(11, 1), (11, 2), (11, 3),
-(12, 4), (12, 5), (12, 1),
-(13, 2), (13, 3), (13, 4),
-(14, 5), (14, 1), (14, 2),
-(15, 3), (15, 4), (15, 5),
-(16, 1), (16, 2), (16, 3),
-(17, 4), (17, 5), (17, 1),
-(18, 2), (18, 3), (18, 4),
-(19, 5), (19, 1), (19, 2),
-(20, 3), (20, 4), (20, 5);
+INSERT INTO `USUARIO` (`id_usuario`, `rol`, `nombre`, `apellidos`, `email`, `telefono`, `password_hash`, `fecha_registro`, `activo`, `reset_token`, `reset_expiration`) VALUES
+(1,	'Admin',	'Alberto',	'García Ruiz',	'test+alberto.garcia@jorgelizancandela.com',	'600000000',	'$2y$12$GdBcSm9p/r/umgtTjq/W9OFZR6idICYfEomq2WhRnJqTXrv4s.Qdq',	'2025-01-01',	1,	NULL,	NULL),
+(2,	'Especialista',	'María',	'Fernández López',	'test+maria.fernandez@jorgelizancandela.com',	'666000001',	'$2y$12$GdBcSm9p/r/umgtTjq/W9OFZR6idICYfEomq2WhRnJqTXrv4s.Qdq',	'2025-01-01',	1,	NULL,	NULL),
+(3,	'Especialista',	'Carmen',	'Sánchez Torres',	'test+carmen.sanchez@jorgelizancandela.com',	'666000002',	'$2y$12$GdBcSm9p/r/umgtTjq/W9OFZR6idICYfEomq2WhRnJqTXrv4s.Qdq',	'2025-01-01',	1,	NULL,	NULL),
+(4,	'Especialista',	'Elena',	'Martínez Romero',	'test+elena.martinez@jorgelizancandela.com',	'666000003',	'$2y$12$GdBcSm9p/r/umgtTjq/W9OFZR6idICYfEomq2WhRnJqTXrv4s.Qdq',	'2025-01-01',	1,	NULL,	NULL),
+(5,	'Especialista',	'Sofía',	'Jiménez Navarro',	'test+sofia.jimenez@jorgelizancandela.com',	'666000004',	'$2y$12$GdBcSm9p/r/umgtTjq/W9OFZR6idICYfEomq2WhRnJqTXrv4s.Qdq',	'2025-01-01',	1,	NULL,	NULL),
+(6,	'Especialista',	'Lucía',	'Ruiz Molina',	'test+lucia.ruiz@jorgelizancandela.com',	'666000005',	'$2y$12$GdBcSm9p/r/umgtTjq/W9OFZR6idICYfEomq2WhRnJqTXrv4s.Qdq',	'2025-01-01',	1,	NULL,	NULL),
+(7,	'Especialista',	'Marta',	'González Pérez',	'test+marta.gonzalez@jorgelizancandela.com',	'666000006',	'$2y$12$GdBcSm9p/r/umgtTjq/W9OFZR6idICYfEomq2WhRnJqTXrv4s.Qdq',	'2025-01-01',	1,	NULL,	NULL),
+(8,	'Especialista',	'Sara',	'López García',	'test+sara.lopez@jorgelizancandela.com',	'666000007',	'$2y$12$GdBcSm9p/r/umgtTjq/W9OFZR6idICYfEomq2WhRnJqTXrv4s.Qdq',	'2025-01-01',	1,	NULL,	NULL),
+(9,	'Especialista',	'Julia',	'Díaz Moreno',	'test+julia.diaz@jorgelizancandela.com',	'666000008',	'$2y$12$GdBcSm9p/r/umgtTjq/W9OFZR6idICYfEomq2WhRnJqTXrv4s.Qdq',	'2025-01-01',	1,	NULL,	NULL),
+(10,	'Especialista',	'Paula',	'Torres Herrera',	'test+paula.torres@jorgelizancandela.com',	'666000009',	'$2y$12$GdBcSm9p/r/umgtTjq/W9OFZR6idICYfEomq2WhRnJqTXrv4s.Qdq',	'2025-01-01',	1,	NULL,	NULL),
+(11,	'Especialista',	'Nerea',	'Ramírez Castro',	'test+nerea.ramirez@jorgelizancandela.com',	'666000010',	'$2y$12$GdBcSm9p/r/umgtTjq/W9OFZR6idICYfEomq2WhRnJqTXrv4s.Qdq',	'2025-01-01',	1,	NULL,	NULL),
+(12,	'Especialista',	'Pedro',	'Morales Vega',	'test+pedro.morales@jorgelizancandela.com',	'666000011',	'$2y$12$GdBcSm9p/r/umgtTjq/W9OFZR6idICYfEomq2WhRnJqTXrv4s.Qdq',	'2025-01-01',	1,	NULL,	NULL),
+(13,	'Especialista',	'Carlos',	'Blanco Serrano',	'test+carlos.blanco@jorgelizancandela.com',	'666000012',	'$2y$12$GdBcSm9p/r/umgtTjq/W9OFZR6idICYfEomq2WhRnJqTXrv4s.Qdq',	'2025-01-01',	1,	NULL,	NULL),
+(14,	'Especialista',	'Marcos',	'Suárez Parra',	'test+marcos.suarez@jorgelizancandela.com',	'666000013',	'$2y$12$GdBcSm9p/r/umgtTjq/W9OFZR6idICYfEomq2WhRnJqTXrv4s.Qdq',	'2025-01-01',	1,	NULL,	NULL),
+(15,	'Especialista',	'Diego',	'Ortega Muñoz',	'test+diego.ortega@jorgelizancandela.com',	'666000014',	'$2y$12$GdBcSm9p/r/umgtTjq/W9OFZR6idICYfEomq2WhRnJqTXrv4s.Qdq',	'2025-01-01',	1,	NULL,	NULL),
+(16,	'Especialista',	'Javier',	'Delgado Cruz',	'test+javier.delgado@jorgelizancandela.com',	'666000015',	'$2y$12$GdBcSm9p/r/umgtTjq/W9OFZR6idICYfEomq2WhRnJqTXrv4s.Qdq',	'2025-01-01',	1,	NULL,	NULL),
+(17,	'Especialista',	'Raúl',	'Castro Méndez',	'test+raul.castro@jorgelizancandela.com',	'666000016',	'$2y$12$GdBcSm9p/r/umgtTjq/W9OFZR6idICYfEomq2WhRnJqTXrv4s.Qdq',	'2025-01-01',	1,	NULL,	NULL),
+(18,	'Especialista',	'Iván',	'Ramos Núñez',	'test+ivan.ramos@jorgelizancandela.com',	'666000017',	'$2y$12$GdBcSm9p/r/umgtTjq/W9OFZR6idICYfEomq2WhRnJqTXrv4s.Qdq',	'2025-01-01',	1,	NULL,	NULL),
+(19,	'Especialista',	'Hugo',	'Vargas Cortés',	'test+hugo.vargas@jorgelizancandela.com',	'666000018',	'$2y$12$GdBcSm9p/r/umgtTjq/W9OFZR6idICYfEomq2WhRnJqTXrv4s.Qdq',	'2025-01-01',	1,	NULL,	NULL),
+(20,	'Especialista',	'Marc',	'Reyes Aguilar',	'test+marc.reyes@jorgelizancandela.com',	'666000019',	'$2y$12$GdBcSm9p/r/umgtTjq/W9OFZR6idICYfEomq2WhRnJqTXrv4s.Qdq',	'2025-01-01',	1,	NULL,	NULL),
+(21,	'Especialista',	'Óscar',	'Iglesias Vidal',	'test+oscar.iglesias@jorgelizancandela.com',	'666000020',	'$2y$12$GdBcSm9p/r/umgtTjq/W9OFZR6idICYfEomq2WhRnJqTXrv4s.Qdq',	'2025-01-01',	1,	NULL,	NULL),
+(22,	'Cliente',	'Fernando',	'Álvarez Castro',	'test+fernando.alvarez@jorgelizancandela.com',	'600123001',	'$2y$12$GdBcSm9p/r/umgtTjq/W9OFZR6idICYfEomq2WhRnJqTXrv4s.Qdq',	'2025-01-01',	1,	NULL,	NULL),
+(23,	'Cliente',	'Patricia',	'Moreno Silva',	'test+patricia.moreno@jorgelizancandela.com',	'600123002',	'$2y$12$GdBcSm9p/r/umgtTjq/W9OFZR6idICYfEomq2WhRnJqTXrv4s.Qdq',	'2025-01-01',	1,	NULL,	NULL),
+(24,	'Cliente',	'Ricardo',	'Vega Romero',	'test+ricardo.vega@jorgelizancandela.com',	'600123003',	'$2y$12$GdBcSm9p/r/umgtTjq/W9OFZR6idICYfEomq2WhRnJqTXrv4s.Qdq',	'2025-01-01',	1,	NULL,	NULL),
+(25,	'Cliente',	'Beatriz',	'Navarro Campos',	'test+beatriz.navarro@jorgelizancandela.com',	'600123004',	'$2y$12$GdBcSm9p/r/umgtTjq/W9OFZR6idICYfEomq2WhRnJqTXrv4s.Qdq',	'2025-01-01',	1,	NULL,	NULL),
+(26,	'Cliente',	'Miguel',	'Serrano Díaz',	'test+miguel.serrano@jorgelizancandela.com',	'600123005',	'$2y$12$GdBcSm9p/r/umgtTjq/W9OFZR6idICYfEomq2WhRnJqTXrv4s.Qdq',	'2025-01-01',	1,	NULL,	NULL),
+(27,	'Cliente',	'Cristina',	'Flores Rubio',	'test+cristina.flores@jorgelizancandela.com',	'600123006',	'$2y$12$GdBcSm9p/r/umgtTjq/W9OFZR6idICYfEomq2WhRnJqTXrv4s.Qdq',	'2025-01-01',	1,	NULL,	NULL),
+(28,	'Cliente',	'Francisco',	'Gutiérrez Ortega',	'test+francisco.gutierrez@jorgelizancandela.com',	'600123007',	'$2y$12$GdBcSm9p/r/umgtTjq/W9OFZR6idICYfEomq2WhRnJqTXrv4s.Qdq',	'2025-01-01',	1,	NULL,	NULL),
+(29,	'Cliente',	'Inés',	'Delgado Ramos',	'test+ines.delgado@jorgelizancandela.com',	'600123008',	'$2y$12$GdBcSm9p/r/umgtTjq/W9OFZR6idICYfEomq2WhRnJqTXrv4s.Qdq',	'2025-01-01',	1,	NULL,	NULL),
+(30,	'Cliente',	'Alejandro',	'Soto Jiménez',	'test+alejandro.soto@jorgelizancandela.com',	'600123009',	'$2y$12$GdBcSm9p/r/umgtTjq/W9OFZR6idICYfEomq2WhRnJqTXrv4s.Qdq',	'2025-01-01',	1,	NULL,	NULL),
+(31,	'Cliente',	'Dolores',	'Herrera Vidal',	'test+dolores.herrera@jorgelizancandela.com',	'600123010',	'$2y$12$GdBcSm9p/r/umgtTjq/W9OFZR6idICYfEomq2WhRnJqTXrv4s.Qdq',	'2025-01-01',	1,	NULL,	NULL),
+(32,	'Cliente',	'Daniel',	'Peña Iglesias',	'test+daniel.pena@jorgelizancandela.com',	'600123011',	'$2y$12$GdBcSm9p/r/umgtTjq/W9OFZR6idICYfEomq2WhRnJqTXrv4s.Qdq',	'2025-01-01',	1,	NULL,	NULL),
+(33,	'Cliente',	'Belén',	'Méndez Castro',	'test+belen.mendez@jorgelizancandela.com',	'600123012',	'$2y$12$GdBcSm9p/r/umgtTjq/W9OFZR6idICYfEomq2WhRnJqTXrv4s.Qdq',	'2025-01-01',	1,	NULL,	NULL),
+(34,	'Cliente',	'Antonio',	'Núñez Cortés',	'test+antonio.nunez@jorgelizancandela.com',	'600123013',	'$2y$12$GdBcSm9p/r/umgtTjq/W9OFZR6idICYfEomq2WhRnJqTXrv4s.Qdq',	'2025-01-01',	1,	NULL,	NULL),
+(35,	'Cliente',	'Eva',	'Reyes Aguilar',	'test+eva.reyes@jorgelizancandela.com',	'600123014',	'$2y$12$GdBcSm9p/r/umgtTjq/W9OFZR6idICYfEomq2WhRnJqTXrv4s.Qdq',	'2025-01-01',	1,	NULL,	NULL),
+(36,	'Cliente',	'Hugo',	'Prieto Vargas',	'test+hugo.prieto@jorgelizancandela.com',	'600123015',	'$2y$12$GdBcSm9p/r/umgtTjq/W9OFZR6idICYfEomq2WhRnJqTXrv4s.Qdq',	'2025-01-01',	1,	NULL,	NULL),
+(37,	'Cliente',	'Sara',	'Gil Domínguez',	'test+sara.gil@jorgelizancandela.com',	'600123016',	'$2y$12$GdBcSm9p/r/umgtTjq/W9OFZR6idICYfEomq2WhRnJqTXrv4s.Qdq',	'2025-01-01',	1,	NULL,	NULL),
+(38,	'Cliente',	'Rafael',	'Pascual Molina',	'test+rafael.pascual@jorgelizancandela.com',	'600123017',	'$2y$12$GdBcSm9p/r/umgtTjq/W9OFZR6idICYfEomq2WhRnJqTXrv4s.Qdq',	'2025-01-01',	1,	NULL,	NULL),
+(39,	'Cliente',	'Noa',	'Santos Cruz',	'test+noa.santos@jorgelizancandela.com',	'600123456',	'$2y$12$GdBcSm9p/r/umgtTjq/W9OFZR6idICYfEomq2WhRnJqTXrv4s.Qdq',	'2025-01-01',	1,	NULL,	NULL),
+(40,	'Cliente',	'Leonardo',	'Cabrera Fuentes',	'test+leonardo.cabrera@jorgelizancandela.com',	'600123019',	'$2y$12$GdBcSm9p/r/umgtTjq/W9OFZR6idICYfEomq2WhRnJqTXrv4s.Qdq',	'2025-01-01',	1,	NULL,	NULL),
+(41,	'Cliente',	'Mía',	'Marín Parras',	'test+mia.marin@jorgelizancandela.com',	'600123020',	'$2y$12$GdBcSm9p/r/umgtTjq/W9OFZR6idICYfEomq2WhRnJqTXrv4s.Qdq',	'2025-01-01',	1,	NULL,	NULL),
+(42,	'Cliente',	'Andrés',	'Blanco Serrano',	'test+andres.blanco@jorgelizancandela.com',	'600123021',	'$2y$12$GdBcSm9p/r/umgtTjq/W9OFZR6idICYfEomq2WhRnJqTXrv4s.Qdq',	'2026-01-13',	1,	NULL,	NULL),
+(43,	'Cliente',	'Mónica',	'Rojas Téllez',	'test+monica.rojas@jorgelizancandela.com',	'600123022',	'$2y$12$GdBcSm9p/r/umgtTjq/W9OFZR6idICYfEomq2WhRnJqTXrv4s.Qdq',	'2026-01-13',	1,	NULL,	NULL),
+(44,	'Cliente',	'Pilar',	'Campos García',	'test+pilar.campos@jorgelizancandela.com',	'600123023',	'$2y$12$GdBcSm9p/r/umgtTjq/W9OFZR6idICYfEomq2WhRnJqTXrv4s.Qdq',	'2026-01-14',	1,	NULL,	NULL),
+(45,	'Cliente',	'Laura',	'Robles Martínez',	'test+laura.robles@jorgelizancandela.com',	'600123024',	'$2y$12$GdBcSm9p/r/umgtTjq/W9OFZR6idICYfEomq2WhRnJqTXrv4s.Qdq',	'2026-01-14',	1,	NULL,	NULL),
+(47,	'Cliente',	'Alberto',	'Sanz Medina',	'test+alberto.sanz@jorgelizancandela.com',	'600123025',	'$2y$12$GdBcSm9p/r/umgtTjq/W9OFZR6idICYfEomq2WhRnJqTXrv4s.Qdq',	'2026-01-14',	1,	NULL,	NULL),
+(49,	'Admin',	'Javier',	'Méndez Vidal',	'test+javier.mendez@jorgelizancandela.com',	'600000049',	'$2y$12$GdBcSm9p/r/umgtTjq/W9OFZR6idICYfEomq2WhRnJqTXrv4s.Qdq',	'2026-01-15',	1,	NULL,	NULL),
+(50,	'Cliente',	'Pablo',	'González Pérez',	'test+pablo.gonzalez@jorgelizancandela.com',	'600123026',	'$2y$12$GdBcSm9p/r/umgtTjq/W9OFZR6idICYfEomq2WhRnJqTXrv4s.Qdq',	'2026-01-15',	1,	NULL,	NULL),
+(51,	'Cliente',	'Laura',	'Garrido López',	'test+laura.garrido@jorgelizancandela.com',	'600123027',	'$2y$12$GdBcSm9p/r/umgtTjq/W9OFZR6idICYfEomq2WhRnJqTXrv4s.Qdq',	'2026-01-16',	1,	NULL,	NULL),
+(52,	'Cliente',	'Roberto',	'Muñoz Vega',	'test+roberto.munoz@jorgelizancandela.com',	'600123456',	'$2y$12$GdBcSm9p/r/umgtTjq/W9OFZR6idICYfEomq2WhRnJqTXrv4s.Qdq',	'2026-01-17',	1,	NULL,	NULL),
+(53,	'Cliente',	'Silvia',	'Torres Herrera',	'test+silvia.torres@jorgelizancandela.com',	'666777888',	'$2y$12$GdBcSm9p/r/umgtTjq/W9OFZR6idICYfEomq2WhRnJqTXrv4s.Qdq',	'2026-01-18',	1,	NULL,	NULL),
+(54,	'Cliente',	'Jorge',	'Ramírez Castro',	'test+jorge.ramirez@jorgelizancandela.com',	'666111222',	'$2y$12$GdBcSm9p/r/umgtTjq/W9OFZR6idICYfEomq2WhRnJqTXrv4s.Qdq',	'2026-01-18',	1,	NULL,	NULL),
+(55,	'Cliente',	'Ángela',	'Ibáñez Sánchez',	'test+angela.ibanez@jorgelizancandela.com',	'666111333',	'$2y$12$GdBcSm9p/r/umgtTjq/W9OFZR6idICYfEomq2WhRnJqTXrv4s.Qdq',	'2026-01-18',	1,	NULL,	NULL),
+(56,	'Cliente',	'Pedro',	'López García',	'test+pedro.lopez@jorgelizancandela.com',	'600123028',	'$2y$12$GdBcSm9p/r/umgtTjq/W9OFZR6idICYfEomq2WhRnJqTXrv4s.Qdq',	'2026-01-19',	1,	NULL,	NULL),
+(57,	'Cliente',	'Antonio',	'Jiménez Silva',	'test+antonio.jimenez@jorgelizancandela.com',	'600123029',	'$2y$12$GdBcSm9p/r/umgtTjq/W9OFZR6idICYfEomq2WhRnJqTXrv4s.Qdq',	'2026-01-19',	1,	NULL,	NULL),
+(58,	'Especialista',	'Adrián',	'Fuentes Cabrera',	'test+adrian.fuentes@jorgelizancandela.com',	'666000058',	'$2y$12$GdBcSm9p/r/umgtTjq/W9OFZR6idICYfEomq2WhRnJqTXrv4s.Qdq',	'2026-01-20',	0,	NULL,	NULL),
+(59,	'Especialista',	'Antonio',	'Parras Marín',	'test+antonio.parras@jorgelizancandela.com',	'666000059',	'$2y$12$GdBcSm9p/r/umgtTjq/W9OFZR6idICYfEomq2WhRnJqTXrv4s.Qdq',	'2026-01-20',	1,	NULL,	NULL),
+(60,	'Especialista',	'Ana',	'Jiménez Silva',	'test+ana.jimenez@jorgelizancandela.com',	'666000060',	'$2y$12$GdBcSm9p/r/umgtTjq/W9OFZR6idICYfEomq2WhRnJqTXrv4s.Qdq',	'2026-01-27',	1,	NULL,	NULL),
+(61,	'Especialista',	'Roberto',	'Parras Domínguez',	'test+roberto.parras@jorgelizancandela.com',	'666000061',	'$2y$12$GdBcSm9p/r/umgtTjq/W9OFZR6idICYfEomq2WhRnJqTXrv4s.Qdq',	'2026-01-27',	1,	NULL,	NULL),
+(62,	'Especialista',	'Cristina',	'Parras Rubio',	'test+cristina.parras@jorgelizancandela.com',	'666000062',	'$2y$12$GdBcSm9p/r/umgtTjq/W9OFZR6idICYfEomq2WhRnJqTXrv4s.Qdq',	'2026-01-27',	1,	NULL,	NULL);
 
--- 9. HORARIOS (Lun-Vie 9-14 para algunos, Mar-Sab 10-15 para otros)
-INSERT INTO HORARIO_ESPECIALISTA (id_especialista, dia_semana, hora_inicio, hora_fin) VALUES
--- Grupo 1 (Lun-Vie)
-(1, 1, '09:00', '14:00'), (1, 2, '09:00', '14:00'), (1, 3, '09:00', '14:00'), (1, 4, '09:00', '14:00'), (1, 5, '09:00', '14:00'),
-(2, 1, '09:00', '14:00'), (2, 2, '09:00', '14:00'), (2, 3, '09:00', '14:00'), (2, 4, '09:00', '14:00'), (2, 5, '09:00', '14:00'),
-(3, 1, '09:00', '14:00'), (3, 2, '09:00', '14:00'), (3, 3, '09:00', '14:00'), (3, 4, '09:00', '14:00'), (3, 5, '09:00', '14:00'),
-(4, 1, '09:00', '14:00'), (4, 2, '09:00', '14:00'), (4, 3, '09:00', '14:00'), (4, 4, '09:00', '14:00'), (4, 5, '09:00', '14:00'),
-(5, 1, '09:00', '14:00'), (5, 2, '09:00', '14:00'), (5, 3, '09:00', '14:00'), (5, 4, '09:00', '14:00'), (5, 5, '09:00', '14:00'),
--- Grupo 2 (Mar-Sab)
-(11, 2, '10:00', '15:00'), (11, 3, '10:00', '15:00'), (11, 4, '10:00', '15:00'), (11, 5, '10:00', '15:00'), (11, 6, '10:00', '15:00'),
-(12, 2, '10:00', '15:00'), (12, 3, '10:00', '15:00'), (12, 4, '10:00', '15:00'), (12, 5, '10:00', '15:00'), (12, 6, '10:00', '15:00'),
-(13, 2, '10:00', '15:00'), (13, 3, '10:00', '15:00'), (13, 4, '10:00', '15:00'), (13, 5, '10:00', '15:00'), (13, 6, '10:00', '15:00'),
-(14, 2, '10:00', '15:00'), (14, 3, '10:00', '15:00'), (14, 4, '10:00', '15:00'), (14, 5, '10:00', '15:00'), (14, 6, '10:00', '15:00'),
-(15, 2, '10:00', '15:00'), (15, 3, '10:00', '15:00'), (15, 4, '10:00', '15:00'), (15, 5, '10:00', '15:00'), (15, 6, '10:00', '15:00');
-
--- 10. RESERVAS DE EJEMPLO
-INSERT INTO RESERVA (id_cliente, id_especialista, id_servicio, fecha_reserva, hora_inicio, hora_fin, estado) VALUES
-(22, 1, 1, '2026-02-01', '09:00:00', '09:30:00', 'Confirmada'),
-(23, 1, 2, '2026-02-01', '10:00:00', '11:30:00', 'Pendiente'),
-(24, 2, 4, '2026-02-01', '10:00:00', '10:40:00', 'Confirmada'),
-(25, 3, 3, '2026-02-02', '11:00:00', '11:45:00', 'Confirmada'),
-(26, 4, 1, '2026-02-03', '12:00:00', '12:30:00', 'Pendiente'),
-(27, 5, 5, '2026-02-04', '13:00:00', '13:20:00', 'Completada'),
-(28, 11, 2, '2026-02-05', '10:00:00', '11:30:00', 'Confirmada'),
-(29, 12, 1, '2026-02-06', '10:30:00', '11:00:00', 'Pendiente'),
-(30, 13, 3, '2026-02-07', '11:00:00', '11:45:00', 'Confirmada'),
-(31, 14, 4, '2026-02-08', '09:00:00', '09:40:00', 'Cancelada');
+-- 2026-01-31 13:49:49 UTC
