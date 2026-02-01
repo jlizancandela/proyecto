@@ -15,13 +15,13 @@ lang: es
 **Autor:** Jorge Lizan Candela  
 **Ciclo:** Desarrollo de Aplicaciones Web (DAW)
 
-### 🔗 Enlaces del Proyecto
+### Enlaces del Proyecto
 
 | Recurso | Enlace |
 | :--- | :--- |
-| **🌐 Web Desplegada** | [https://peluqueria.jorgelizancandela.com](https://peluqueria.jorgelizancandela.com) |
-| **📂 Repositorio GitHub** | [https://github.com/jlizancandela/proyecto](https://github.com/jlizancandela/proyecto) |
-| **📺 Vídeo Demo** | [https://youtu.be/YnsUc8a9HU8](https://youtu.be/YnsUc8a9HU8) |
+| **Web Desplegada** | [https://peluqueria.jorgelizancandela.com](https://peluqueria.jorgelizancandela.com) |
+| **Repositorio GitHub** | [https://github.com/jlizancandela/proyecto](https://github.com/jlizancandela/proyecto) |
+| **Vídeo Demo** | [https://youtu.be/YnsUc8a9HU8](https://youtu.be/YnsUc8a9HU8) |
 
 ---
 
@@ -29,15 +29,15 @@ lang: es
 
 Para facilitar la corrección, se proporcionan las siguientes credenciales de prueba preconfiguradas en el sistema.
 
-### 👑 Administrador
+### [Administrador]
 *   **Email:** `test+alberto.garcia@jorgelizancandela.com`
 *   **Contraseña:** `Pelu123!`
 
-### ✂️ Especialista
+### [Especialista]
 *   **Email:** `test+maria.fernandez@jorgelizancandela.com`
 *   **Contraseña:** `Pelu123!`
 
-### 👤 Cliente de Prueba
+### [Cliente de Prueba]
 *   **Email:** `test+juan.perez@jorgelizancandela.com`
 *   **Contraseña:** `Pelu123!`
 
@@ -49,7 +49,7 @@ Para facilitar la corrección, se proporcionan las siguientes credenciales de pr
 
 El desarrollo del proyecto se ha regido por **Metodologías Ágiles (Scrum)**, organizando el trabajo en **7 Sprints** bien definidos para garantizar una entrega incremental y de valor.
 
-### 📊 Tablero de Jira
+### Tablero de Jira
 ![Cronograma de Sprints en Jira](jira.png)
 
 **Cierre del Proyecto:**
@@ -101,27 +101,28 @@ A continuación se muestra la estructura del proyecto, destacando la separación
 
 ```text
 .
-├── database/               # SQL de migraciones y datos semilla
-├── docker-compose.yml      # Orquestación de contenedores
-├── Dockerfile              # Definición de la imagen de producción
-├── public/                 # Entry point y assets estáticos
-│   ├── css/
-│   ├── js/
-│   └── index.php
-├── src/                    # Código Fuente (Arquitectura Modular)
-│   ├── Especialistas/      # Módulo de Especialistas
-│   ├── Reservas/           # Módulo de Reservas
-│   ├── Servicios/          # Módulo de Servicios
-│   ├── Usuarios/           # Módulo de Usuarios
-│   └── Shared/             # Utilidades compartidas
-├── tests/                  # Suite de Testeo
-│   ├── Unit/               # Tests Unitarios PHP (Pest)
-│   ├── js/                 # Tests Unitarios JS (Vitest)
-│   └── playwright/         # Tests E2E
-└── views/                  # Plantillas de renderizado (Latte)
-    ├── components/
-    ├── layouts/
-    └── pages/
+|-- database/               # SQL de migraciones y datos semilla
+|-- docker-compose.yml      # Orquestación de contenedores
+|-- Dockerfile              # Definición de la imagen de producción
+|-- public/                 # Entry point y assets estáticos
+|   |-- css/
+|   |-- js/
+|   `-- index.php
+|-- src/                    # Código Fuente (Arquitectura Modular)
+|   |-- Especialistas/      # Módulo de Especialistas
+|   |-- Reservas/           # Módulo de Reservas
+|   |-- Servicios/          # Módulo de Servicios
+|   |-- Usuarios/           # Módulo de Usuarios
+|   `-- Shared/             # Utilidades compartidas
+|-- tests/                  # Suite de Testeo
+|   |-- Unit/               # Tests Unitarios PHP (Pest)
+|   |-- js/                 # Tests Unitarios JS (Vitest)
+|   `-- playwright/         # Tests E2E
+`-- views/                  # Plantillas de renderizado (Latte)
+    |-- components/
+    |-- layouts/
+    `-- pages/
 ```
+
 
 
