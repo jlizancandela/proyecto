@@ -152,5 +152,4 @@ Navegador: [http://localhost:8082](http://localhost:8082)
 2. **Arquitectura:** Respetar la estructura modular.
 3. **Principio KISS:** Mantenerlo simple.
 
----
-*Created with ❤️ by the Hair Salon Booking Team.*
+
