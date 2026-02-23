@@ -7,6 +7,14 @@ SET sql_mode = 'NO_AUTO_VALUE_ON_ZERO';
 
 SET NAMES utf8mb4;
 
+CREATE DATABASE IF NOT EXISTS sistema_reservas;
+USE sistema_reservas;
+
+-- Crear usuario para la app
+CREATE USER IF NOT EXISTS 'db'@'%' IDENTIFIED BY 'db';
+GRANT ALL PRIVILEGES ON sistema_reservas.* TO 'db'@'%';
+FLUSH PRIVILEGES;
+
 DROP TABLE IF EXISTS `ESPECIALISTA`;
 CREATE TABLE `ESPECIALISTA` (
   `id_especialista` int NOT NULL AUTO_INCREMENT,
