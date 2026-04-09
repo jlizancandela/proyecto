@@ -114,12 +114,24 @@ curl http://localhost:8000
 
 ```
 proyecto/
-├── src/                    # Código de la aplicación (PSR-4)
+├── src/
+│   ├── Usuarios/           # Módulo DDD: autenticación y usuarios
+│   ├── Reservas/           # Módulo DDD: gestión de reservas
+│   ├── Especialistas/      # Módulo DDD: gestión de especialistas
+│   ├── Servicios/          # Módulo DDD: catálogo de servicios
+│   ├── Shared/             # Código transversal (excepciones, middleware, etc)
+│   └── js/                 # 🎨 Frontend con Preact (componentes interactivos)
+│       ├── user/           # App cliente
+│       │   ├── auth/       # Formularios de login/registro
+│       │   ├── bookings/   # 📅 Sistema de reservas (Preact)
+│       │   └── shared/     # Componentes compartidos
+│       ├── specialist/     # Panel de especialista
+│       └── shared/         # Utilidades globales
 ├── tests/                  # Tests unitarios (Pest)
 ├── database/               # Seeds y migraciones
 ├── views/                  # Templates Latte
-├── public/                 # Assets estáticos (CSS, JS, imágenes)
-├── docs/                   # Documentación (ARQUITECTURA, etc)
+├── public/                 # Assets estáticos (CSS, JS compilado, imágenes)
+├── docs/                   # Documentación (ARQUITECTURA, GUIA_INSTALACION, etc)
 ├── vendor/                 # Dependencias (Composer) - gitignored
 ├── docker-compose.yml      # Configuración multi-contenedor
 ├── Dockerfile              # Definición imagen PHP
@@ -194,6 +206,23 @@ docker compose down
 # Detener y borrar volúmenes (cuidado: borra BD)
 docker compose down -v
 ```
+
+### Frontend (Preact - Reservas)
+
+El sistema de reservas usa **Preact** para una interfaz interactiva:
+
+```bash
+# Build del frontend (si usas webpack/rollup)
+npm install              # Instalar deps de JS
+npm run build           # Compilar JSX → JS bundle
+
+# Ubicación del código:
+# src/js/user/bookings/  # Componentes Preact (reservas)
+# public/js/bookings.js  # Bundle compilado (cargado desde Latte)
+```
+
+**Nota:** El código Preact está en `src/js/` (similar a la estructura PHP). 
+Los componentes usan Context API para gestión de estado. Validación en tiempo real con API calls.
 
 ### Testing
 

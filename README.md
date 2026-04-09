@@ -2,6 +2,7 @@
 
 [![PHP](https://img.shields.io/badge/PHP-8.2-purple?logo=php)](https://www.php.net/)
 [![MySQL](https://img.shields.io/badge/MySQL-8.0-blue?logo=mysql)](https://www.mysql.com/)
+[![Preact](https://img.shields.io/badge/Preact-673AB8?style=flat&logo=preact&logoColor=white)](https://preactjs.com/)
 [![Docker](https://img.shields.io/badge/Docker-Compose-2496ed?logo=docker)](https://www.docker.com/)
 [![License](https://img.shields.io/badge/License-ISC-green)](LICENSE)
 
@@ -39,9 +40,10 @@ INFRAESTRUCTURA (Repositories + BD)
 
 | Capa | Tecnología | Versión | Rol |
 |------|-----------|---------|-----|
-| **Lenguaje** | PHP | 8.2 | Backend del servidor |
+| **Lenguaje Backend** | PHP | 8.2 | Backend del servidor |
 | **Servidor Web** | Apache | 2.4 | Sirve requests HTTP |
 | **BD** | MySQL | 8.0.45 | Persistencia (7 tablas) |
+| **Frontend** | Preact | 10.x | Componentes interactivos (reservas) |
 | **Enrutador** | bramus/router | 1.6 | Mapea rutas HTTP |
 | **Plantillas** | Latte | 3.1 | Motor seguro contra XSS |
 | **Validación** | respect/validation | 2.4 | Input validation |
@@ -81,7 +83,20 @@ proyecto/
 │   ├── Servicios/                 # 🏷 Service catalog
 │   │   └── [Domain/App/Infra/Presentation]
 │   │
-│   └── Shared/                    # 🔌 Cross-cutting concerns
+│   ├── js/                        # 🎨 Frontend con Preact
+│   │   ├── user/                  # App cliente
+│   │   │   ├── auth/              # Formularios login/registro
+│   │   │   ├── bookings/          # 📅 Preact booking flow
+│   │   │   │   ├── bookingsApp.jsx
+│   │   │   │   ├── components/    # Calendario, Especialistas, etc
+│   │   │   │   ├── context/       # State management
+│   │   │   │   ├── hooks/         # Custom hooks
+│   │   │   │   └── api/           # API calls
+│   │   │   └── shared/            # Shared components
+│   │   ├── specialist/            # Specialist panel
+│   │   └── shared/                # Global utilities
+│   │
+│   └── Shared/                    # 🔌 Cross-cutting concerns (PHP)
 │       ├── Domain/                # Custom exceptions
 │       ├── Infrastructure/        # Router, DI, Email, Pagination
 │       └── Presentation/          # Home, Admin, Stats controllers
