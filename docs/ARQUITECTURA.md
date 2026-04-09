@@ -11,6 +11,7 @@
 | **Latte** | 3.1 | Motor de plantillas con seguridad integrada |
 | **PDO** | Nativo | Acceso a BD con prepared statements |
 | **Respect/Validation** | 2.4 | Validación declarativa de datos |
+| **Preact** | 10.x | Framework JSX ligero para componentes interactivos (bookings) |
 | **Stripe** | 19.1 | Procesamiento de pagos |
 | **ImageKit** | 4.0 | CDN y optimización de imágenes |
 | **DOMPDF** | 3.0 | Generación de PDFs (reportes y documentos) |
@@ -20,7 +21,11 @@
 ## Arquitectura General
 ```mermaid 
 graph TB
-    subgraph Frontend["Presentación"]
+    subgraph Browser["Navegador (Cliente)"]
+        Preact["Components Preact\n(bookings/reservas)"]
+    end
+
+    subgraph Frontend["Presentación (Servidor)"]
         Controller["Controllers\n(MVC)"]
         API["API Controllers\n(REST)"]
         Views["Vistas Latte"]
@@ -43,6 +48,7 @@ graph TB
         Payment["Stripe Integration"]
     end
 
+    Preact -->|JSON| API
     Controller --> Service
     API --> Service
     Views --> Controller
@@ -93,11 +99,62 @@ src/
 │   ├── Infrastructure/         # ServicioRepository
 │   └── Presentation/           # ServicioController
 │
-└── Shared/                     # Código transversal
+├── js/                          # 🎨 Frontend con Preact (componentes interactivos)
+│   ├── user/                    # Aplicación cliente
+│   │   ├── clientApp.js         # Entry point
+│   │   ├── auth/                # Formularios de login/registro
+│   │   │   ├── loginForm.js
+│   │   │   ├── registerForm.js
+│   │   │   └── resetPasswordForm.js
+│   │   ├── bookings/            # 📅 Sistema de reservas (Preact)
+│   │   │   ├── bookingsApp.jsx  # Componente raíz
+│   │   │   ├── routes/          # Pasos del flujo de reserva
+│   │   │   │   ├── dateForm.jsx
+│   │   │   │   ├── serviceForm.jsx
+│   │   │   │   └── confirmationForm.jsx
+│   │   │   ├── components/      # Componentes reutilizables
+│   │   │   │   ├── Calendario.jsx
+│   │   │   │   ├── EspecialistasList.jsx
+│   │   │   │   ├── ResumenCita.jsx
+│   │   │   │   ├── Pagination.jsx
+│   │   │   │   └── StatusAlert.jsx
+│   │   │   ├── context/         # Estado global (Context API)
+│   │   │   │   ├── bookingsContext.js
+│   │   │   │   └── bookingsStore.js
+│   │   │   ├── hooks/           # Hooks personalizados
+│   │   │   │   └── useReservas.js
+│   │   │   ├── api/             # Llamadas a backend
+│   │   │   │   └── bookingsApi.js
+│   │   │   └── tools/           # Utilidades
+│   │   │       ├── validators.js
+│   │   │       └── formatters.js
+│   │   └── shared/              # Componentes compartidos
+│   │       ├── bookings.js
+│   │       ├── booking-filters.js
+│   │       └── password-toggle.js
+│   ├── specialist/              # Panel de especialista
+│   │   ├── bookings-manager.js
+│   │   └── bookings-filters.js
+│   └── shared/                  # Utilidades globales
+│       └── process-shim.js
+│
+└── Shared/                     # Código transversal (PHP)
     ├── Domain/                 # Excepciones base, interfaces
     ├── Infrastructure/         # Router, Middleware, DI, Email, Pagination
     └── Presentation/           # Controllers comunes (Home, Admin, Stats)
 ```
+
+### Frontend con Preact
+
+El subsistema **`src/js/user/bookings/`** implementa la interfaz de reserva usando **Preact**, un framework JSX ligero:
+
+- **Preact vs React:** 3KB vs 42KB, misma API, ideal para SPAs embebidas
+- **Context API:** Gestión de estado para el flujo multi-paso de reserva
+- **Validación:** Hooks personalizados que consultan el backend en tiempo real
+- **Componentes:** Reutilizables y testeables
+- **Build:** Compilado con Webpack/Babel → JS bundle cargado desde Latte
+
+**Ventaja:** Interfaz interactiva sin recargar página, validación inmediata, UX fluida.
 
 ## Patrones de Diseño
 
