@@ -268,13 +268,6 @@ test('crear_reserva_verifica_disponibilidad', function () {
 - **API:** Ya separada en ApiControllers
 - **Móvil:** Flutter/React Native consume endpoints API
 
-## 🤝 Contribuciones
-
-1. Fork del repo
-2. Crea rama: `git checkout -b feature/mi-feature`
-3. Haz commits: `git commit -am 'Add feature'`
-4. Push: `git push origin feature/mi-feature`
-5. Abre PR con descripción clara
 
 ## 📜 Licencia
 
@@ -288,18 +281,6 @@ ISC License - Ver [LICENSE](LICENSE)
 - Email: jlizancandela@gmail.com
 
 ---
-
-## 🎓 Para Reclutadores
-
-**¿Qué demuestra este proyecto?**
-
-1. **Arquitectura profesional:** Domain-Driven Design, separación de capas, SOLID principles
-2. **PHP moderno:** Type hints, namespaces, composer, PSR-4 autoloading
-3. **Diseño de BD:** Normalización 3NF, foreign keys, constraints, índices
-4. **Testing:** Suite de tests unitarios, setup de testing, cobertura
-5. **DevOps:** Docker, docker-compose, multi-stage builds
-6. **Seguridad:** Hashing, prepared statements, middleware de autenticación
-7. **Mentabilidad:** Código legible, documentación clara, fácil de mantener
 
 **Stack:** PHP + MySQL + Docker + Pest
 
