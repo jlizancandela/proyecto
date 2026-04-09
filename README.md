@@ -7,7 +7,7 @@
 
 Sistema profesional de reservas para peluquerías. Backend modular en PHP con Domain-Driven Design, base de datos relacional, y API REST. Listo para producción con Docker Compose.
 
-> **Para reclutadores:** Lee primero [`docs/ARQUITECTURA.md`](#-documentación) para entender cómo está construido sin ejecutar código.
+
 
 ## 🎯 Qué es
 
