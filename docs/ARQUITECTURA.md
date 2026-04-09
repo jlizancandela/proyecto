@@ -22,24 +22,24 @@
 ```mermaid
 graph TB
     subgraph Frontend["Presentación"]
-        Controller["Controllers<br/>(MVC)"]
-        API["API Controllers<br/>(REST)"]
+        Controller["Controllers\n(MVC)"]
+        API["API Controllers\n(REST)"]
         Views["Vistas Latte"]
     end
 
     subgraph Application["Lógica de Negocio"]
-        Service["Services<br/>(Use Cases)"]
-        Transformer["Transformers<br/>(DTO)"]
+        Service["Services\n(Use Cases)"]
+        Transformer["Transformers\n(DTO)"]
     end
 
     subgraph Domain["Dominio"]
-        Entity["Entidades<br/>(Usuario, Reserva, etc.)"]
-        ValueObj["Value Objects<br/>(UserRole)"]
+        Entity["Entidades\n(Usuario, Reserva, etc.)"]
+        ValueObj["Value Objects\n(UserRole)"]
     end
 
     subgraph Infrastructure["Infraestructura"]
-        Repository["Repositories<br/>(PDO)"]
-        DB[(("MySQL<br/>sistema_reservas"))]
+        Repository["Repositories\n(PDO)"]
+        DB[(("MySQL\nsistema_reservas"))]
         Email["Email Service"]
         Payment["Stripe Integration"]
     end
