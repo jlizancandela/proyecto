@@ -18,8 +18,7 @@
 | **Mockery** | 1.6 | Mocking para tests (dev) |
 
 ## Arquitectura General
-
-```mermaid
+```mermaid 
 graph TB
     subgraph Frontend["Presentación"]
         Controller["Controllers\n(MVC)"]
@@ -39,7 +38,7 @@ graph TB
 
     subgraph Infrastructure["Infraestructura"]
         Repository["Repositories\n(PDO)"]
-        DB[(("MySQL\nsistema_reservas"))]
+        DB[("MySQL: sistema_reservas")]
         Email["Email Service"]
         Payment["Stripe Integration"]
     end
