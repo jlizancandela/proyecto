@@ -12,4 +12,4 @@ El sistema permite la gestión de usuarios, especialistas y reservas, con flujos
 
 El proyecto está estructurado siguiendo un enfoque modular en el backend y una arquitectura organizada para facilitar su mantenimiento y evolución.
 
-[🔗 reservas.jorgelizancandela.com](https.reservas.jorgelizancandela.com)
+[🔗 reservas.jorgelizancandela.com](https://reservas.jorgelizancandela.com)
