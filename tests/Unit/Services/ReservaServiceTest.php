@@ -7,6 +7,24 @@
 use Reservas\Application\ReservaService;
 use Reservas\Infrastructure\ReservaRepository;
 
+/**
+ * A valid future booking date that is never a Sunday.
+ *
+ * The service rejects Sunday bookings, so anchoring a test to "+1 day" makes
+ * the outcome depend on what day today is: every Saturday it lands on a Sunday
+ * and the closed-day rule shadows whichever rule the test is named after.
+ */
+function nextBookableDate(): string
+{
+    $date = new \DateTimeImmutable('+1 day');
+
+    while ($date->format('w') === '0') {
+        $date = $date->modify('+1 day');
+    }
+
+    return $date->format('Y-m-d');
+}
+
 beforeEach(function () {
     /** @var ReservaRepository|\Mockery\MockInterface $repository */
     $repository = Mockery::mock(ReservaRepository::class)->shouldIgnoreMissing();
@@ -23,7 +41,7 @@ test('createReserva creates booking successfully', function () {
         'id_cliente' => 1,
         'especialista_id' => 2,
         'servicio_id' => 3,
-        'fecha' => date('Y-m-d', strtotime('+1 day')),
+        'fecha' => nextBookableDate(),
         'hora' => '10:00:00',
         'duracion' => 60
     ];
@@ -55,12 +73,25 @@ test('createReserva throws exception for past date', function () {
     $this->service->createReserva($data);
 })->throws(\RuntimeException::class, 'La fecha de reserva debe ser futura');
 
+test('createReserva throws exception for a sunday', function () {
+    $data = [
+        'id_cliente' => 1,
+        'especialista_id' => 2,
+        'servicio_id' => 3,
+        'fecha' => (new \DateTimeImmutable('next sunday'))->format('Y-m-d'),
+        'hora' => '10:00:00',
+        'duracion' => 60
+    ];
+
+    $this->service->createReserva($data);
+})->throws(\RuntimeException::class, 'El salón permanece cerrado los domingos');
+
 test('createReserva throws exception for specialist conflict', function () {
     $data = [
         'id_cliente' => 1,
         'especialista_id' => 2,
         'servicio_id' => 3,
-        'fecha' => date('Y-m-d', strtotime('+1 day')),
+        'fecha' => nextBookableDate(),
         'hora' => '10:00:00',
         'duracion' => 60
     ];
@@ -75,7 +106,7 @@ test('createReserva throws exception for client conflict', function () {
         'id_cliente' => 1,
         'especialista_id' => 2,
         'servicio_id' => 3,
-        'fecha' => date('Y-m-d', strtotime('+1 day')),
+        'fecha' => nextBookableDate(),
         'hora' => '10:00:00',
         'duracion' => 60
     ];
@@ -91,7 +122,7 @@ test('createReserva throws exception for weekly limit exceeded', function () {
         'id_cliente' => 1,
         'especialista_id' => 2,
         'servicio_id' => 3,
-        'fecha' => date('Y-m-d', strtotime('+1 day')),
+        'fecha' => nextBookableDate(),
         'hora' => '10:00:00',
         'duracion' => 60
     ];
