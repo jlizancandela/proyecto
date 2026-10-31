@@ -1,4 +1,6 @@
-FROM node:20 AS frontend_build
+# Node 20 reached end of life in April 2026, so the build toolchain was
+# running on an unpatched runtime.
+FROM node:24 AS frontend_build
 WORKDIR /app
 COPY package.json package-lock.json ./
 COPY scripts/ ./scripts/
@@ -7,7 +9,9 @@ COPY src/ ./src/
 RUN npm install
 RUN npm run build
 
-FROM composer:latest AS composer_build
+# Pinned rather than "latest": this stage only produces the vendor directory,
+# so the tag has no reason to float.
+FROM composer:2 AS composer_build
 WORKDIR /app
 COPY composer.json composer.lock ./
 RUN composer install --no-dev --optimize-autoloader --ignore-platform-reqs --no-interaction
