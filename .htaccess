@@ -22,9 +22,9 @@ Options -Indexes
     Deny from all
 </FilesMatch>
 
-# Deny access to composer files
+# Deny access to composer files and PHP hardening config
 
-<FilesMatch "(composer\.json|composer\.lock|\.env)$">
+<FilesMatch "(composer\.json|composer\.lock|\.env|php-hardening\.ini)$">
     Order allow,deny
     Deny from all
 </FilesMatch>

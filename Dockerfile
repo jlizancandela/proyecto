@@ -12,7 +12,10 @@ WORKDIR /app
 COPY composer.json composer.lock ./
 RUN composer install --no-dev --optimize-autoloader --ignore-platform-reqs --no-interaction
 
-FROM php:8.4-apache
+# Pinned on purpose: 8.4.27 is the first 8.4 release that fixes php2shell
+# (CVE-2026-109618, CVE-2026-109619). Never move this to a floating tag;
+# Dependabot keeps it current via .github/dependabot.yml.
+FROM php:8.4.27-apache
 WORKDIR /var/www/html
 
 RUN apt-get update && apt-get install -y \
@@ -26,6 +29,10 @@ RUN apt-get update && apt-get install -y \
 
 RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
 RUN a2enmod rewrite
+
+# Hardening settings loaded through conf.d, which PHP scans even without a
+# php.ini present in the image.
+COPY docker/php-hardening.ini /usr/local/etc/php/conf.d/99-hardening.ini
 
 COPY --from=composer_build /app/vendor ./vendor
 COPY . .
