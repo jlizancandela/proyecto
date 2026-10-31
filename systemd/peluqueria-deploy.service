@@ -1,0 +1,14 @@
+[Unit]
+Description=Deploy the published application image into the hosting stack
+Documentation=https://github.com/jlizancandela/proyecto
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/home/jorge/svr
+Environment=PATH=/usr/local/bin:/usr/bin:/bin:/home/linuxbrew/.linuxbrew/bin
+ExecStart=/home/jorge/Documentos/proyectos/proyecto/scripts/deploy-reservas.sh
+TimeoutStartSec=900
+PrivateTmp=yes
+NoNewPrivileges=yes

@@ -1,0 +1,12 @@
+[Unit]
+Description=Check for a new application image and deploy it
+
+[Timer]
+# Four times a day, so a security patch reaches production within hours
+# instead of waiting for someone to remember.
+OnCalendar=*-*-* 00/6:23:00
+Persistent=true
+RandomizedDelaySec=10m
+
+[Install]
+WantedBy=timers.target
