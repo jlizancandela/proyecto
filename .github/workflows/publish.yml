@@ -1,9 +1,9 @@
-name: Publish image
+name: Test and publish
 
-# The image is rebuilt on every change that can affect it, and once a week
-# regardless. The weekly run is the safety net that keeps the interpreter
-# current even when Dependabot finds nothing to bump: it re-reads whatever the
-# pinned tag resolves to and redeploys.
+# Tests run on every pull request and every push to main. The image is rebuilt
+# on every change that can affect it, and once a week regardless: the weekly run
+# is the safety net that keeps the interpreter current even when Dependabot
+# finds nothing to bump.
 on:
   push:
     branches: [main]
@@ -17,20 +17,57 @@ on:
       - "src/**"
       - "views/**"
       - "public/**"
+      - "tests/**"
+      - "phpunit.xml"
+      - ".github/workflows/publish.yml"
+  pull_request:
+    paths:
+      - "Dockerfile"
+      - "docker/**"
+      - "composer.json"
+      - "composer.lock"
+      - "src/**"
+      - "tests/**"
+      - "phpunit.xml"
       - ".github/workflows/publish.yml"
   schedule:
     - cron: "0 6 * * 1"
   workflow_dispatch:
 
 concurrency:
-  group: publish
-  cancel-in-progress: false
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 env:
   IMAGE: jlizancandela/peluqueria:latest
 
 jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v7
+
+      # Same minor as the image, so a test failure means the application broke
+      # rather than the runner drifting to an unrelated interpreter version.
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.4"
+          extensions: pdo_mysql, mbstring, exif, pcntl, bcmath, gd
+          coverage: none
+
+      - name: Install dependencies
+        run: composer install --no-interaction --no-progress --prefer-dist
+
+      - name: Run the test suite
+        run: ./vendor/bin/pest
+
   publish:
+    # Building and pushing is the automated half of a release; nothing is
+    # published from a pull request.
+    if: github.event_name != 'pull_request'
+    needs: test
     runs-on: ubuntu-latest
     steps:
       - name: Check out the repository
@@ -54,8 +91,8 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      # Refuse to deploy an image that still carries a vulnerable interpreter.
-      # A forgotten pin then fails loudly here instead of silently shipping.
+      # Refuse to publish an image that still carries a vulnerable interpreter.
+      # A forgotten pin then fails loudly here instead of shipping.
       - name: Verify the image runs a patched interpreter
         run: |
           docker pull "$IMAGE"
