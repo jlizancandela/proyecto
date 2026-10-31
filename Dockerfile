@@ -15,7 +15,7 @@ RUN composer install --no-dev --optimize-autoloader --ignore-platform-reqs --no-
 # Pinned on purpose: 8.4.27 is the first 8.4 release that fixes php2shell
 # (CVE-2026-109618, CVE-2026-109619). Never move this to a floating tag;
 # Dependabot keeps it current via .github/dependabot.yml.
-FROM php:8.4.27-apache
+FROM php:8.5.11-apache
 WORKDIR /var/www/html
 
 RUN apt-get update && apt-get install -y \
