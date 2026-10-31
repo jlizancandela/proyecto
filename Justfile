@@ -2,7 +2,7 @@ set shell := ["bash", "-c"]
 
 IMAGE := "jlizancandela/peluqueria:latest"
 DOCKERFILE := "Dockerfile"
-SERVER_IP := "138.199.203.37"
+STACK_DIR := "/home/jorge/svr"
 
 default:
     @just --list
@@ -38,4 +38,7 @@ test-e2e:
 
 publish:
     docker buildx build --push -t {{IMAGE}} -f {{DOCKERFILE}} .
-    ssh root@{{SERVER_IP}} just --justfile '~/proyecto/justfile' --working-directory '~/proyecto' deploy
+
+# Pull the published image into the hosting stack (recreates only the app)
+deploy:
+    cd {{STACK_DIR}} && docker compose pull reservas && docker compose up -d reservas

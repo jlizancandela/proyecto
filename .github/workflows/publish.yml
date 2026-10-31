@@ -28,13 +28,10 @@ concurrency:
 
 env:
   IMAGE: jlizancandela/peluqueria:latest
-  DEPLOY_HOST: 138.199.203.37
 
 jobs:
   publish:
     runs-on: ubuntu-latest
-    env:
-      DEPLOY_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
     steps:
       - name: Check out the repository
         uses: actions/checkout@v7
@@ -65,23 +62,6 @@ jobs:
           docker run --rm --entrypoint php "$IMAGE" \
             -r 'if (version_compare(PHP_VERSION, "8.4.27", "<")) { fwrite(STDERR, "Vulnerable PHP: ".PHP_VERSION."\n"); exit(1); } echo "PHP ".PHP_VERSION."\n";'
 
-      # Only from main, and only once the deploy key exists. Until the key is
-      # provisioned the build and push still run, so the image itself is never
-      # stale; the deploy step just skips.
-      - name: Deploy to production
-        if: github.ref == 'refs/heads/main' && env.DEPLOY_KEY != ''
-        env:
-          DEPLOY_KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
-        run: |
-          set -eu
-          install -d -m 700 ~/.ssh
-          printf '%s\n' "$DEPLOY_KEY" > ~/.ssh/id_deploy
-          chmod 600 ~/.ssh/id_deploy
-          printf '%s\n' "$DEPLOY_KNOWN_HOSTS" > ~/.ssh/known_hosts
-          chmod 644 ~/.ssh/known_hosts
-          ssh -i ~/.ssh/id_deploy \
-              -o StrictHostKeyChecking=yes \
-              -o UserKnownHostsFile=~/.ssh/known_hosts \
-              -o ConnectTimeout=15 \
-              root@"$DEPLOY_HOST" \
-              'just --justfile ~/proyecto/justfile --working-directory ~/proyecto deploy'
+      # Production is the local server stack in ~/svr, which a hosted runner
+      # cannot reach. Publishing the image is the automated half; picking it up
+      # is `just deploy` from the machine that hosts the stack.
