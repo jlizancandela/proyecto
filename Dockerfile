@@ -1,4 +1,4 @@
-FROM node:20 AS frontend_build
+FROM node:25 AS frontend_build
 WORKDIR /app
 COPY package.json package-lock.json ./
 COPY scripts/ ./scripts/
