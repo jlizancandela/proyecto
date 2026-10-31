@@ -82,22 +82,23 @@ jobs:
           username: jlizancandela
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and push
+      - name: Build
         uses: docker/build-push-action@v7
         with:
           context: .
-          push: true
+          load: true
           tags: ${{ env.IMAGE }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
       # Refuse to publish an image that still carries a vulnerable interpreter.
-      # A forgotten pin then fails loudly here instead of shipping.
+      # A forgotten pin then fails loudly here instead of shipping. The check
+      # runs before the push so a bad image never reaches the registry.
       - name: Verify the image runs a patched interpreter
-        run: |
-          docker pull "$IMAGE"
-          docker run --rm --entrypoint php "$IMAGE" \
-            -r 'if (version_compare(PHP_VERSION, "8.4.27", "<")) { fwrite(STDERR, "Vulnerable PHP: ".PHP_VERSION."\n"); exit(1); } echo "PHP ".PHP_VERSION."\n";'
+        run: docker run --rm --entrypoint php "$IMAGE" /var/www/html/scripts/check-php-version.php
+
+      - name: Push to Docker Hub
+        run: docker push "$IMAGE"
 
       # Production is the local server stack in ~/svr, which a hosted runner
       # cannot reach. Publishing the image is the automated half; picking it up
