@@ -1,6 +1,6 @@
 # Node 20 reached end of life in April 2026, so the build toolchain was
 # running on an unpatched runtime.
-FROM node:24 AS frontend_build
+FROM node:26 AS frontend_build
 WORKDIR /app
 COPY package.json package-lock.json ./
 COPY scripts/ ./scripts/
