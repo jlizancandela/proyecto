@@ -190,7 +190,15 @@ export const EspecialistasList = ({
   onPageChange,
   diaSeleccionado,
 }) => {
-  if (especialistas.length === 0) {
+  const especialistasConHuecos = especialistas.filter(
+    (especialista) =>
+      Array.isArray(especialista.horas_disponibles) &&
+      especialista.horas_disponibles.some(
+        (hora) => !(diaSeleccionado && isPastTime(diaSeleccionado, hora))
+      )
+  );
+
+  if (especialistasConHuecos.length === 0) {
     return renderEmptyState();
   }
 
@@ -198,7 +206,7 @@ export const EspecialistasList = ({
     <div>
       <h5 class="card-title mb-3">Especialistas disponibles</h5>
       <div class="d-flex flex-column gap-3 mb-4">
-        {especialistas.map((especialista) =>
+        {especialistasConHuecos.map((especialista) =>
           renderSpecialistCard(
             especialista,
             selectedEspecialista,
