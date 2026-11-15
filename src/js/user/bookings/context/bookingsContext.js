@@ -39,7 +39,6 @@ export const loadUser = async () => {
 export const loadServices = async () => {
   loadUser();
   const servicesData = await getServices();
-  console.log("Servicios cargados:", servicesData);
   $services.set(servicesData);
 };
 
@@ -66,7 +65,6 @@ export const loadEspecialistasDisponibles = async (page = null) => {
   const currentPage = page ?? $currentPage.get();
 
   if (!selectedService) {
-    console.log("No hay servicio seleccionado");
     return;
   }
 
@@ -104,7 +102,6 @@ export const loadEspecialistasDisponibles = async (page = null) => {
 export const selectEspecialistaYHora = (especialista, hora) => {
   $selectedEspecialista.set(especialista);
   $selectedHora.set(hora);
-  console.log("Selección guardada:", { especialista, hora });
 };
 
 /**
