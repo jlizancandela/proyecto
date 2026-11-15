@@ -265,6 +265,18 @@ class EspecialistaRepository
     public function getEspecialistasDisponibles(int $idServicio, string $fecha, ?int $limit = null, ?int $offset = null): array
     {
         try {
+            $stmtServicio = $this->db->prepare("
+                SELECT duracion_minutos FROM SERVICIO WHERE id_servicio = :id_servicio
+            ");
+            $stmtServicio->execute(['id_servicio' => $idServicio]);
+            $servicio = $stmtServicio->fetch(PDO::FETCH_ASSOC);
+
+            if (!$servicio) {
+                return [];
+            }
+
+            $duracionMinutos = (int)$servicio['duracion_minutos'];
+            $diaSemana = date('N', strtotime($fecha)) === '7' ? 0 : (int)date('N', strtotime($fecha));
 
             $query = "
                 SELECT DISTINCT
@@ -283,41 +295,16 @@ class EspecialistaRepository
                 WHERE es.id_servicio = :id_servicio
                 AND he.dia_semana = :dia_semana
                 AND u.activo = 1
+                ORDER BY e.id_especialista ASC
             ";
-
-
-            if ($limit !== null) {
-                $query .= " LIMIT :limit";
-                if ($offset !== null) {
-                    $query .= " OFFSET :offset";
-                }
-            }
 
             $stmt = $this->db->prepare($query);
             $stmt->bindValue(':id_servicio', $idServicio, PDO::PARAM_INT);
-            $diaSemanaCalculado = date('N', strtotime($fecha)) === '7' ? 0 : (int)date('N', strtotime($fecha));
-            $stmt->bindValue(':dia_semana', $diaSemanaCalculado, PDO::PARAM_INT);
-
-            if ($limit !== null) {
-                $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
-                if ($offset !== null) {
-                    $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
-                }
-            }
-
+            $stmt->bindValue(':dia_semana', $diaSemana, PDO::PARAM_INT);
             $stmt->execute();
 
             $especialistas = [];
             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-
-                $stmtServicio = $this->db->prepare("
-                    SELECT duracion_minutos FROM SERVICIO WHERE id_servicio = :id_servicio
-                ");
-                $stmtServicio->execute(['id_servicio' => $idServicio]);
-                $servicio = $stmtServicio->fetch(PDO::FETCH_ASSOC);
-                $duracionMinutos = $servicio['duracion_minutos'];
-
-
                 $stmtReservas = $this->db->prepare("
                     SELECT hora_inicio, hora_fin
                     FROM RESERVA
@@ -340,15 +327,17 @@ class EspecialistaRepository
                     WHERE id_especialista = :id_especialista
                     AND dia_semana = :dia_semana
                 ");
-                $diaSemana = date('N', strtotime($fecha)) === '7' ? 0 : date('N', strtotime($fecha));
                 $stmtHorario->execute([
                     'id_especialista' => $row['id_especialista'],
                     'dia_semana' => $diaSemana
                 ]);
                 $horarios = $stmtHorario->fetchAll(PDO::FETCH_ASSOC);
 
+                $horasDisponibles = $this->calcularHorasDisponibles($reservas, $duracionMinutos, $horarios, $fecha);
 
-                $horasDisponibles = $this->calcularHorasDisponibles($reservas, $duracionMinutos, $horarios);
+                if (empty($horasDisponibles)) {
+                    continue;
+                }
 
                 $especialistas[] = [
                     'id_especialista' => $row['id_especialista'],
@@ -358,6 +347,10 @@ class EspecialistaRepository
                     'foto_url' => $row['foto_url'],
                     'horas_disponibles' => $horasDisponibles
                 ];
+            }
+
+            if ($limit !== null) {
+                return array_slice($especialistas, $offset ?? 0, $limit);
             }
 
             return $especialistas;
@@ -373,12 +366,14 @@ class EspecialistaRepository
      * @param array $reservas An array of existing bookings for the specialist on a given day.
      * @param int $duracionMinutos The duration of the service in minutes.
      * @param array $horarios The working hours of the specialist for this day.
+     * @param string|null $fecha Optional target date ('YYYY-MM-DD') to exclude past slots when booking for today.
      * @return string[] An array of available time slots in 'HH:MM' format.
      */
-    private function calcularHorasDisponibles(array $reservas, int $duracionMinutos, array $horarios = []): array
+    private function calcularHorasDisponibles(array $reservas, int $duracionMinutos, array $horarios = [], ?string $fecha = null): array
     {
         $horasDisponibles = [];
         $intervalo = 30;
+        $ahora = ($fecha !== null && $fecha === date('Y-m-d')) ? new \DateTime() : null;
 
         foreach ($horarios as $horario) {
             $horaInicio = new \DateTime($horario['hora_inicio']);
@@ -391,6 +386,11 @@ class EspecialistaRepository
 
                 if ($horaFinSlot > $horaFin) {
                     break;
+                }
+
+                if ($ahora !== null && new \DateTime($fecha . ' ' . $horaActual->format('H:i:s')) <= $ahora) {
+                    $horaActual->modify("+{$intervalo} minutes");
+                    continue;
                 }
 
                 $hayConflicto = false;
@@ -413,11 +413,11 @@ class EspecialistaRepository
         }
 
         sort($horasDisponibles);
-        return array_unique($horasDisponibles);
+        return array_values(array_unique($horasDisponibles));
     }
 
     /**
-     * Counts the total number of available specialists for a specific service and date.
+     * Counts the total number of available specialists with at least one free slot for a specific service and date.
      *
      * @param int $idServicio The ID of the service.
      * @param string $fecha The date to check availability.
@@ -425,30 +425,7 @@ class EspecialistaRepository
      */
     public function countEspecialistasDisponibles(int $idServicio, string $fecha): int
     {
-        try {
-            $stmt = $this->db->prepare("
-                SELECT COUNT(DISTINCT e.id_especialista) as total
-                FROM ESPECIALISTA e
-                INNER JOIN USUARIO u ON e.id_usuario = u.id_usuario
-                INNER JOIN ESPECIALISTA_SERVICIO es ON e.id_especialista = es.id_especialista
-                INNER JOIN HORARIO_ESPECIALISTA he ON e.id_especialista = he.id_especialista
-                WHERE es.id_servicio = :id_servicio
-                AND he.dia_semana = :dia_semana
-                AND u.activo = 1
-            ");
-
-            $diaSemana = date('N', strtotime($fecha)) === '7' ? 0 : (int)date('N', strtotime($fecha));
-            $stmt->execute([
-                'id_servicio' => $idServicio,
-                'dia_semana' => $diaSemana
-            ]);
-
-            $result = $stmt->fetch(PDO::FETCH_ASSOC);
-            return (int)$result['total'];
-        } catch (\Exception $e) {
-            error_log("Error al contar especialistas disponibles: " . $e->getMessage());
-            return 0;
-        }
+        return count($this->getEspecialistasDisponibles($idServicio, $fecha));
     }
 
 
