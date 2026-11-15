@@ -10,9 +10,8 @@
 import { h } from "preact";
 
 const DAYS_OF_WEEK = ["L", "M", "X", "J", "V", "S", "D"];
-const CALENDAR_WIDTH = "380px";
-const CELL_WIDTH = "40px";
-const CELL_HEIGHT = "40px";
+const CALENDAR_MAX_WIDTH = "380px";
+const CELL_STYLE = "width: 100%; max-width: 40px; aspect-ratio: 1 / 1;";
 const FIRST_DAY_OF_WEEK = 7;
 
 /**
@@ -38,11 +37,11 @@ export const Calendario = ({ fecha, diaSeleccionado, handleDiaChange, handleMesC
 
   return (
     <div
-      class="card border-0 shadow-sm rounded-4 p-4 bg-white"
-      style={`width: ${CALENDAR_WIDTH}; margin: 0 auto;`}
+      class="card border-0 shadow-sm rounded-4 p-3 p-sm-4 bg-white"
+      style={`width: 100%; max-width: ${CALENDAR_MAX_WIDTH}; margin: 0 auto;`}
     >
       {renderNavigationButtons(year, month, textMonth, textYear, handleMesChange)}
-      <div class="row g-0 text-center small text-primary fw-bold mb-2">
+      <div class="row g-1 text-center small text-primary fw-bold mb-2">
         {DAYS_OF_WEEK.map((d) => (
           <div class="col">{d}</div>
         ))}
@@ -82,7 +81,7 @@ const renderNavigationButtons = (year, month, textMonth, textYear, handleMesChan
   const next = () => handleMesChange(new Date(year, month + 1));
 
   return (
-    <div class="d-flex justify-content-between align-items-center mb-4 px-2">
+    <div class="d-flex justify-content-between align-items-center mb-3 mb-sm-4 px-1 px-sm-2">
       <button
         class="btn btn-sm btn-link text-decoration-none text-dark p-0"
         disabled={isPreviousDisabled}
@@ -134,7 +133,7 @@ const renderWeeks = (calendarioCompleto, year, month, diaSeleccionado, handleDia
   }
 
   return weeks.map((week) => (
-    <div class="row g-0 text-center mb-2">
+    <div class="row g-1 text-center mb-1 mb-sm-2">
       {week.map((d) => (
         <div class="col d-flex justify-content-center">
           {renderCell(d, year, month, diaSeleccionado, handleDiaChange)}
@@ -154,7 +153,7 @@ const renderWeeks = (calendarioCompleto, year, month, diaSeleccionado, handleDia
  * @returns {Object} Preact component.
  */
 const renderCell = (dia, year, month, diaSeleccionado, handleDiaChange) => {
-  if (!dia) return <div style={`width: ${CELL_WIDTH}; height: ${CELL_HEIGHT};`}></div>;
+  if (!dia) return <div style={CELL_STYLE}></div>;
 
   const isSelected = isDaySelected(dia, month, year, diaSeleccionado);
   const isPast = isDayInPast(dia, month, year);
@@ -164,7 +163,7 @@ const renderCell = (dia, year, month, diaSeleccionado, handleDiaChange) => {
     return (
       <span
         class="d-flex align-items-center justify-content-center text-secondary"
-        style={`width: ${CELL_WIDTH}; height: ${CELL_HEIGHT};`}
+        style={CELL_STYLE}
         aria-label={`Día ${dia} no disponible`}
       >
         {dia}
@@ -176,8 +175,8 @@ const renderCell = (dia, year, month, diaSeleccionado, handleDiaChange) => {
     return (
       <button
         type="button"
-        class="btn rounded-circle d-flex align-items-center justify-content-center bg-primary text-white border-0"
-        style={`width: ${CELL_WIDTH}; height: ${CELL_HEIGHT};`}
+        class="btn p-0 rounded-circle d-flex align-items-center justify-content-center bg-primary text-white border-0"
+        style={CELL_STYLE}
         onClick={() => handleDiaChange(new Date(year, month, dia))}
         aria-label={`Día ${dia}`}
       >
@@ -189,8 +188,8 @@ const renderCell = (dia, year, month, diaSeleccionado, handleDiaChange) => {
   return (
     <button
       type="button"
-      class="btn rounded-circle d-flex align-items-center justify-content-center text-black border-0"
-      style={`width: ${CELL_WIDTH}; height: ${CELL_HEIGHT};`}
+      class="btn p-0 rounded-circle d-flex align-items-center justify-content-center text-black border-0"
+      style={CELL_STYLE}
       onClick={() => handleDiaChange(new Date(year, month, dia))}
       aria-label={`Día ${dia}`}
     >
