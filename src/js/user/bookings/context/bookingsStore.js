@@ -97,7 +97,6 @@ export const loadUserAction = async () => {
 export const loadServicesAction = async () => {
   loadUserAction();
   const servicesData = await getServices();
-  console.log("Servicios cargados:", servicesData);
   $services.set(servicesData.servicios || []);
 };
 
@@ -149,7 +148,6 @@ export const loadEspecialistasAction = async (page = null) => {
   const currentPage = page ?? pagination.current;
 
   if (!draft.service) {
-    console.log("No hay servicio seleccionado");
     return;
   }
 
@@ -190,7 +188,6 @@ export const loadEspecialistasAction = async (page = null) => {
 export const selectEspecialistaAction = (especialista, hora) => {
   $bookingDraft.setKey("especialista", especialista);
   $bookingDraft.setKey("hora", hora);
-  console.log("Selección guardada:", { especialista, hora });
 };
 
 /**
